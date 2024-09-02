@@ -1108,9 +1108,9 @@ VALUE parse_type(parserstate *state) {
   type_params ::= {} `[` type_param `,` ... <`]`>
                 | {<>}
 
-  type_param ::= kUNCHECKED? (kIN|kOUT|) tUIDENT    (module_type_params == true)
+  type_param ::= kUNCHECKED? (kIN|kOUT|) tUIDENT upper_bound? default_type?   (module_type_params == true)
 
-  type_param ::= tUIDENT                            (module_type_params == false)
+  type_param ::= tUIDENT upper_bound? default_type?                           (module_type_params == false)
 */
 VALUE parse_type_params(parserstate *state, range *rg, bool module_type_params) {
   VALUE params = rb_ary_new();

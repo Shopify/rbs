@@ -312,7 +312,7 @@ VALUE rbs_ast_type_param(VALUE name, VALUE variance, bool unchecked, VALUE upper
   rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(args, ID2SYM(rb_intern("variance")), variance);
   rb_hash_aset(args, ID2SYM(rb_intern("upper_bound")), upper_bound);
-  rb_hash_aset(args, ID2SYM(rb_intern("default_type")), upper_bound);
+  rb_hash_aset(args, ID2SYM(rb_intern("default_type")), default_type);
   rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
 
   VALUE type_param = CLASS_NEW_INSTANCE(RBS_AST_TypeParam, 1, &args);
