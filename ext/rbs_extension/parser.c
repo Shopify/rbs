@@ -1238,12 +1238,12 @@ VALUE parse_type_params(parserstate *state, range *rg, bool module_type_params) 
     *rg = NULL_RANGE;
   }
 
-  rb_funcall(
-    RBS_AST_TypeParam,
-    rb_intern("resolve_variables"),
-    1,
-    params
-  );
+  // rb_funcall(
+  //   RBS_AST_TypeParam,
+  //   rb_intern("resolve_variables"),
+  //   1,
+  //   params
+  // );
 
   return params;
 }

@@ -2,16 +2,16 @@
 
 module RBS
   class Location
-    def inspect
-      rks = each_required_key.to_a
-      ops = each_optional_key.to_a.map {|x| "?#{x}" }
-      src = if source.length <= 1
-        source.inspect
-      else
-        source.each_line.first&.chomp&.inspect
-      end
-      "#<#{self.class}:#{self.__id__} buffer=#{buffer.name}, start=#{start_line}:#{start_column}, pos=#{start_pos}...#{end_pos}, children=#{(rks + ops).join(",")} source=#{src}>"
-    end
+    # def inspect
+    #   rks = each_required_key.to_a
+    #   ops = each_optional_key.to_a.map {|x| "?#{x}" }
+    #   src = if source.length <= 1
+    #     source.inspect
+    #   else
+    #     source.each_line.first&.chomp&.inspect
+    #   end
+    #   "#<#{self.class}:#{self.__id__} buffer=#{buffer.name}, start=#{start_line}:#{start_column}, pos=#{start_pos}...#{end_pos}, children=#{(rks + ops).join(",")} source=#{src}>"
+    # end
 
     def self.new(buffer_ = nil, start_pos_ = nil, end_pos_ = nil, buffer: nil, start_pos: nil, end_pos: nil)
       __skip__ =
@@ -24,7 +24,7 @@ module RBS
         end
     end
 
-    alias aref []
+    # alias aref []
 
     WithChildren = self
 
