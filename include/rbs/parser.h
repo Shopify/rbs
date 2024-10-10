@@ -1,7 +1,6 @@
 #ifndef RBS__PARSER_H
 #define RBS__PARSER_H
 
-#include "ruby.h"
 #include "parserstate.h"
 
 /**

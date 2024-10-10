@@ -1,7 +1,6 @@
 #ifndef RBS_LOCATION_H
 #define RBS_LOCATION_H
 
-#include "ruby.h"
 #include "lexer.h"
 
 /**
