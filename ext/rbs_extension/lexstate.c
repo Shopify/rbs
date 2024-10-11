@@ -1,5 +1,5 @@
-#include "rbs_extension.h"
-#include "rbs_string.h"
+#include "lexer.h"
+#include "encoding.h"
 
 static const char *RBS_TOKENTYPE_NAMES[] = {
   "NullType",
@@ -110,7 +110,7 @@ unsigned int peek(lexstate *state) {
     state->last_char = '\0';
     return 0;
   } else {
-    unsigned int c = rb_enc_mbc_to_codepoint(state->string.start + state->current.byte_pos, state->string.end, rb_utf8_encoding());
+    unsigned int c = utf8_to_codepoint(rbs_string_offset(state->string, state->current.byte_pos));
     state->last_char = c;
     return c;
   }
@@ -150,7 +150,7 @@ void rbs_skip(lexstate *state) {
   if (!state->last_char) {
     peek(state);
   }
-  int byte_len = rb_enc_codelen(state->last_char, rb_utf8_encoding());
+  int byte_len = utf8_codelen(state->last_char);
 
   state->current.char_pos += 1;
   state->current.byte_pos += byte_len;
