@@ -280,7 +280,7 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
   }
 
   lexstate *lexer = calloc(1, sizeof(lexstate));
-  lexer->string = string;
+  lexer->string = (rbs_string_t) {.start = RSTRING_PTR(string), .end = RSTRING_PTR(string) + RSTRING_LEN(string)};
   lexer->current.line = 1;
   lexer->start_pos = start_pos;
   lexer->end_pos = end_pos;

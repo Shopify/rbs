@@ -4,7 +4,7 @@
   rb_intern3(\
     peek_token(parserstate->lexstate, tok),\
     token_bytes(tok),\
-    rb_enc_get(parserstate->lexstate->string)\
+    rb_utf8_encoding()\
   )
 
 #define KEYWORD_CASES \
@@ -83,9 +83,9 @@ static VALUE parse_simple(parserstate *state);
 
 static VALUE string_of_loc(parserstate *state, position start, position end) {
   return rb_enc_str_new(
-    RSTRING_PTR(state->lexstate->string) + start.byte_pos,
+    state->lexstate->string.start + start.byte_pos,
       end.byte_pos - start.byte_pos,
-      rb_enc_get(state->lexstate->string)
+      rb_utf8_encoding()
   );
 }
 
@@ -311,7 +311,7 @@ static ID intern_token_start_end(parserstate *state, token start_token, token en
   return rb_intern3(
     peek_token(state->lexstate, start_token),
     end_token.range.end.byte_pos - start_token.range.start.byte_pos,
-    rb_enc_get(state->lexstate->string)
+    rb_utf8_encoding()
   );
 }
 
@@ -823,7 +823,7 @@ VALUE parse_record_attributes(parserstate *state) {
   symbol ::= {<tSYMBOL>}
 */
 static VALUE parse_symbol(parserstate *state) {
-  VALUE string = state->lexstate->string;
+  VALUE string = rb_str_new_cstr(state->lexstate->string.start);
   rb_encoding *enc = rb_enc_get(string);
 
   int offset_bytes = rb_enc_codelen(':', enc);
@@ -1413,8 +1413,8 @@ VALUE parse_annotation(parserstate *state) {
   int offset_bytes = rb_enc_codelen('%', enc) + rb_enc_codelen('a', enc);
 
   unsigned int open_char = rb_enc_mbc_to_codepoint(
-    RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes,
-    RSTRING_END(state->lexstate->string),
+    state->lexstate->string.start + rg.start.byte_pos + offset_bytes,
+    state->lexstate->string.end,
     enc
   );
 
@@ -1443,7 +1443,7 @@ VALUE parse_annotation(parserstate *state) {
   int open_bytes = rb_enc_codelen(open_char, enc);
   int close_bytes = rb_enc_codelen(close_char, enc);
 
-  char *buffer = RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes + open_bytes;
+  const char *buffer = state->lexstate->string.start + rg.start.byte_pos + offset_bytes + open_bytes;
   VALUE string = rb_enc_str_new(
     buffer,
     rg.end.byte_pos - rg.start.byte_pos - offset_bytes - open_bytes - close_bytes,
@@ -1499,9 +1499,9 @@ VALUE parse_method_name(parserstate *state, range *range) {
       parser_advance(state);
 
       ID id = rb_intern3(
-        RSTRING_PTR(state->lexstate->string) + range->start.byte_pos,
+        state->lexstate->string.start + range->start.byte_pos,
         range->end.byte_pos - range->start.byte_pos,
-        rb_enc_get(state->lexstate->string)
+        rb_utf8_encoding()
       );
 
       return ID2SYM(id);

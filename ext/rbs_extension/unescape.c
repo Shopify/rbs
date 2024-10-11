@@ -1,12 +1,12 @@
 #include "rbs_extension.h"
 
 VALUE rbs_unquote_string(parserstate *state, range rg, int offset_bytes) {
-  VALUE string = state->lexstate->string;
+  VALUE string = rb_str_new_cstr(state->lexstate->string.start);
   rb_encoding *enc = rb_enc_get(string);
 
   unsigned int first_char = rb_enc_mbc_to_codepoint(
-    RSTRING_PTR(string) + rg.start.byte_pos + offset_bytes,
-    RSTRING_END(string),
+    state->lexstate->string.start + rg.start.byte_pos + offset_bytes,
+    state->lexstate->string.end,
     enc
   );
 
@@ -18,7 +18,7 @@ VALUE rbs_unquote_string(parserstate *state, range rg, int offset_bytes) {
     byte_length -= 2 * bs;
   }
 
-  char *buffer = RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes;
+  const char *buffer = state->lexstate->string.start + rg.start.byte_pos + offset_bytes;
   VALUE str = rb_enc_str_new(buffer, byte_length, enc);
 
   return rb_funcall(

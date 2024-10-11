@@ -1,6 +1,8 @@
 #ifndef RBS__LEXER_H
 #define RBS__LEXER_H
 
+#include "rbs_string.h"
+
 enum TokenType {
   NullType,         /* (Nothing) */
   pEOF,             /* EOF */
@@ -123,7 +125,7 @@ typedef struct {
  * ```
  * */
 typedef struct {
-  VALUE string;
+  rbs_string_t string;
   int start_pos;                  /* The character position that defines the start of the input */
   int end_pos;                    /* The character position that defines the end of the input */
   position current;               /* The current position */
