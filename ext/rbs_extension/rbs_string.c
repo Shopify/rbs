@@ -1,5 +1,7 @@
 #include "rbs_string.h"
 
+const rbs_string_t RBS_STRING_NULL = {.start = NULL, .end = NULL};
+
 rbs_string_t rbs_string_new(const char* start, const char* end) {
     return (const rbs_string_t) {.start = start, .end = end};
 }
