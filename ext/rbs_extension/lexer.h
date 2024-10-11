@@ -2,6 +2,7 @@
 #define RBS__LEXER_H
 
 #include "rbs_string.h"
+#include <stdbool.h>
 
 enum TokenType {
   NullType,         /* (Nothing) */
