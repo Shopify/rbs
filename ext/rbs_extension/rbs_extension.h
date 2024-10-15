@@ -10,19 +10,6 @@
 #include "ruby_objs.h"
 
 /**
- * Receives `parserstate` and `range`, which represents a string token or symbol token, and returns a string VALUE.
- *
- *    Input token | Output string
- *    ------------+-------------
- *    "foo\\n"    | foo\n
- *    'foo'       | foo
- *    `bar`       | bar
- *    :"baz\\t"   | baz\t
- *    :'baz'      | baz
- * */
-VALUE rbs_unquote_string(parserstate *state, range rg, int offset_bytes);
-
-/**
  * Raises RBS::ParsingError on `tok` with message constructed with given `fmt`.
  *
  * ```

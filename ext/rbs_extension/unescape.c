@@ -1,5 +1,5 @@
-#include "rbs_extension.h"
 #include "encoding.h"
+#include "unescape.h"
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -106,7 +106,8 @@ rbs_string_t unescape_string(const rbs_string_t string, bool is_double_quote) {
     return rbs_string_new(output, output + j);
 }
 
-VALUE rbs_unquote_string(parserstate *state, range rg, int offset_bytes) {
+
+rbs_string_t rbs_unquote_string(parserstate *state, range rg, int offset_bytes) {
   unsigned int first_char = utf8_to_codepoint(rbs_string_offset(state->lexstate->string, rg.start.byte_pos + offset_bytes));
   int byte_length = rg.end.byte_pos - rg.start.byte_pos - offset_bytes;
 
@@ -118,7 +119,6 @@ VALUE rbs_unquote_string(parserstate *state, range rg, int offset_bytes) {
 
   rbs_string_t string = rbs_string_offset(state->lexstate->string, rg.start.byte_pos + offset_bytes);
   string.end = string.start + byte_length;
-  rbs_string_t unescaped = unescape_string(string, first_char == '"');
-  return rb_utf8_str_new(unescaped.start, rbs_string_len(unescaped));
+  return unescape_string(string, first_char == '"');
 }
 
