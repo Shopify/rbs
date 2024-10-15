@@ -5,6 +5,7 @@
 #include "ruby/encoding.h"
 
 #include "lexer.h"
+#include "location.h"
 #include "parser.h"
 #include "constants.h"
 #include "ruby_objs.h"

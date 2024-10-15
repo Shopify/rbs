@@ -3,8 +3,8 @@
 
 #include <stdbool.h>
 
+#include "ruby.h"
 #include "lexer.h"
-#include "location.h"
 
 /**
  * id_table represents a set of IDs.
