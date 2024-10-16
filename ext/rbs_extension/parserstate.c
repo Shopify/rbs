@@ -176,7 +176,7 @@ VALUE get_comment(parserstate *state, int subject_line) {
   comment *com = comment_get_comment(state->last_comment, comment_line);
 
   if (com) {
-    return comment_to_ruby(com, rbs_buffer_to_ruby_buffer(state->buffer));
+    return comment_to_ruby(com, state->buffer);
   } else {
     return Qnil;
   }
@@ -245,9 +245,10 @@ comment *comment_get_comment(comment *com, int line) {
   return comment_get_comment(com->next_comment, line);
 }
 
-VALUE comment_to_ruby(comment *com, VALUE buffer) {
-  VALUE content = rb_funcall(buffer, rb_intern("content"), 0);
-  rb_encoding *enc = rb_enc_get(content);
+VALUE comment_to_ruby(comment *com, rbs_buffer_t buffer) {
+  rbs_string_t comment = buffer.content;
+
+  rb_encoding *enc = rb_utf8_encoding();
   VALUE string = rb_enc_str_new_cstr("", enc);
 
   int hash_bytes = rb_enc_codelen('#', enc);
@@ -256,9 +257,9 @@ VALUE comment_to_ruby(comment *com, VALUE buffer) {
   for (size_t i = 0; i < com->line_count; i++) {
     token tok = com->tokens[i];
 
-    char *comment_start = RSTRING_PTR(content) + tok.range.start.byte_pos + hash_bytes;
+    const char *comment_start = rbs_string_offset(comment, tok.range.start.byte_pos + hash_bytes).start;
     int comment_bytes = RANGE_BYTES(tok.range) - hash_bytes;
-    unsigned char c = rb_enc_mbc_to_codepoint(comment_start, RSTRING_END(content), enc);
+    unsigned char c = rb_enc_mbc_to_codepoint(comment_start, comment.end, enc);
 
     if (c == ' ') {
       comment_start += space_bytes;
@@ -271,7 +272,7 @@ VALUE comment_to_ruby(comment *com, VALUE buffer) {
 
   return rbs_ast_comment(
     string,
-    rbs_location_pp(buffer, &com->start, &com->end)
+    rbs_location_pp(rbs_buffer_to_ruby_buffer(buffer), &com->start, &com->end)
   );
 }
 
