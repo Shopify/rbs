@@ -5,6 +5,7 @@
 
 #include "ruby.h"
 #include "lexer.h"
+#include "rbs_buffer.h"
 
 /**
  * id_table represents a set of IDs.
@@ -51,7 +52,7 @@ typedef struct {
   token next_token;       /* The first lookahead token */
   token next_token2;      /* The second lookahead token */
   token next_token3;      /* The third lookahead token */
-  VALUE buffer;
+  rbs_buffer_t buffer;
 
   id_table *vars;         /* Known type variables */
   comment *last_comment;  /* Last read comment */

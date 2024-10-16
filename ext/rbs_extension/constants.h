@@ -41,6 +41,8 @@ extern VALUE RBS_AST_Members_Prepend;
 extern VALUE RBS_AST_Members_Private;
 extern VALUE RBS_AST_Members_Public;
 
+extern VALUE RBS_Buffer;
+
 extern VALUE RBS_MethodType;
 extern VALUE RBS_Namespace;
 
