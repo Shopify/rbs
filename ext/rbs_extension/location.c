@@ -1,5 +1,7 @@
+#include "rbs_buffer.h"
 #include "rbs_extension.h"
 #include "location.h"
+#include "temp_utils.h"
 
 #define RBS_LOC_REQUIRED_P(loc, i) ((loc)->children->required_p & (1 << (i)))
 #define RBS_LOC_OPTIONAL_P(loc, i) (!RBS_LOC_REQUIRED_P((loc), (i)))
@@ -191,11 +193,19 @@ static VALUE location_add_optional_no_child(VALUE self, VALUE name) {
   return Qnil;
 }
 
-VALUE rbs_new_location(VALUE buffer, range rg) {
+rbs_location_t rbs_new_location_t(rbs_buffer_t buffer, range rg) {
+  rbs_location_t location;
+  location.buffer = buffer;
+  location.rg = rbs_new_loc_range(rg);
+  location.children = NULL;
+  return location;
+}
+
+VALUE rbs_new_location(rbs_location_t location) {
   rbs_loc *loc;
   VALUE obj = TypedData_Make_Struct(RBS_Location, rbs_loc, &location_type, loc);
 
-  rbs_loc_init(loc, buffer, rbs_new_loc_range(rg));
+  rbs_loc_init(loc, rbs_buffer_to_ruby_buffer(location.buffer), location.rg);
 
   return obj;
 }
@@ -274,7 +284,9 @@ VALUE rbs_location_pp(VALUE buffer, const position *start_pos, const position *e
   rg.start = *start_pos;
   rg.end = *end_pos;
 
-  return rbs_new_location(buffer, rg);
+  rbs_buffer_t rbs_buffer = rbs_buffer_from_ruby_buffer(buffer);
+  rbs_location_t location = rbs_new_location_t(rbs_buffer, rg);
+  return rbs_new_location(location);
 }
 
 void rbs__init_location(void) {

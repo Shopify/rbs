@@ -23,3 +23,11 @@ VALUE rbs_buffer_to_ruby_buffer(const rbs_buffer_t input) {
   VALUE buffer = rb_funcallv_kw(RBS_Buffer, rb_intern("new"), 1, argv, RB_PASS_KEYWORDS);
   return buffer;
 }
+
+rbs_buffer_t rbs_buffer_from_ruby_buffer(const VALUE buffer) {
+  VALUE name = rb_hash_aref(buffer, ID2SYM(rb_intern("name")));
+  VALUE content = rb_hash_aref(buffer, ID2SYM(rb_intern("content")));
+  rbs_string_t name_str = rbs_string_from_ruby_str(name);
+  rbs_string_t content_str = rbs_string_from_ruby_str(content);
+  return rbs_buffer_new(name_str, content_str);
+}

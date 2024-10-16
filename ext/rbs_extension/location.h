@@ -3,6 +3,7 @@
 
 #include "ruby.h"
 #include "lexer.h"
+#include "rbs_buffer.h"
 
 /**
  * RBS::Location class
@@ -36,10 +37,18 @@ typedef struct {
   rbs_loc_children *children; // NULL when no children is allocated
 } rbs_loc;
 
+typedef struct {
+  rbs_buffer_t buffer;
+  rbs_loc_range rg;
+  rbs_loc_children *children; // NULL when no children is allocated
+} rbs_location_t;
+
+rbs_location_t rbs_new_location_t(rbs_buffer_t buffer, range rg);
+
 /**
  * Returns new RBS::Location object, with given buffer and range.
  * */
-VALUE rbs_new_location(VALUE buffer, range rg);
+VALUE rbs_new_location(rbs_location_t location);
 
 /**
  * Return rbs_loc associated with the RBS::Location object.
