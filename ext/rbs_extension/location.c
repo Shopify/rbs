@@ -192,15 +192,10 @@ static VALUE location_add_optional_no_child(VALUE self, VALUE name) {
 }
 
 VALUE rbs_new_location(VALUE buffer, range rg) {
-  rbs_loc *loc;
-  VALUE obj = TypedData_Make_Struct(RBS_Location, rbs_loc, &location_type, loc);
-
-  rbs_loc_init(loc, buffer, rbs_new_loc_range(rg));
-
-  return obj;
+  return rbs_new_location_from_loc_range(buffer, rbs_new_loc_range(rg));
 }
 
-static VALUE rbs_new_location_from_loc_range(VALUE buffer, rbs_loc_range rg) {
+VALUE rbs_new_location_from_loc_range(VALUE buffer, rbs_loc_range rg) {
   rbs_loc *loc;
   VALUE obj = TypedData_Make_Struct(RBS_Location, rbs_loc, &location_type, loc);
 

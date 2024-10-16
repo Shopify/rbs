@@ -1,5 +1,6 @@
 #include "rbs_extension.h"
 #include "unescape.h"
+#include "rbs_location.h"
 #include "temp_utils.h"
 
 #define INTERN_TOKEN(parserstate, tok) \
@@ -734,10 +735,13 @@ static VALUE parse_proc_type(parserstate *state) {
   VALUE block = Qnil;
   VALUE proc_self = Qnil;
   parse_function(state, &function, &block, &proc_self);
-  position end = state->current_token.range.end;
-  VALUE loc = rbs_location_pp(rbs_buffer_to_ruby_buffer(state->buffer), &start, &end);
 
-  return rbs_proc(function, block, loc, proc_self);
+  position end = state->current_token.range.end;
+  rbs_location_t loc = rbs_location_pp2(state->buffer, &start, &end);
+
+  VALUE ruby_loc = rbs_location_to_ruby_loc(loc);
+
+  return rbs_proc(function, block, ruby_loc, proc_self);
 }
 
 static void check_key_duplication(parserstate *state, VALUE fields, VALUE key) {

@@ -2,33 +2,13 @@
 #define RBS_LOCATION_H
 
 #include "ruby.h"
-#include "lexer.h"
+#include "lexer_helpers.h"
+#include "rbs_location_helpers.h"
 
 /**
  * RBS::Location class
  * */
 extern VALUE RBS_Location;
-
-typedef struct {
-  int start;
-  int end;
-} rbs_loc_range;
-
-typedef struct {
-  ID name;
-  rbs_loc_range rg;
-} rbs_loc_entry;
-
-typedef unsigned int rbs_loc_entry_bitmap;
-
-// The flexible array always allocates, but it's okay.
-// This struct is not allocated when the `rbs_loc` doesn't have children.
-typedef struct {
-  unsigned short len;
-  unsigned short cap;
-  rbs_loc_entry_bitmap required_p;
-  rbs_loc_entry entries[1];
-} rbs_loc_children;
 
 typedef struct {
   VALUE buffer;
@@ -40,6 +20,11 @@ typedef struct {
  * Returns new RBS::Location object, with given buffer and range.
  * */
 VALUE rbs_new_location(VALUE buffer, range rg);
+
+/**
+ * Returns new RBS::Location object, with given buffer and rbs_loc_range.
+ * */
+VALUE rbs_new_location_from_loc_range(VALUE buffer, rbs_loc_range rg);
 
 /**
  * Return rbs_loc associated with the RBS::Location object.

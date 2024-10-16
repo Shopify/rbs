@@ -1,7 +1,6 @@
 #ifndef RBS__RBS_BUFFER_H
 #define RBS__RBS_BUFFER_H
 
-#include <stddef.h>
 #include "rbs_string.h"
 
 typedef struct {
