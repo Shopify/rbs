@@ -4,6 +4,7 @@
 // This file contains pure-C types shared by both "location.h" and "rbs_location.h".
 
 #include <stdint.h>
+#include "lexer_helpers.h"
 
 typedef uintptr_t MyID; // A stand-in for `ID` from `ruby.h`
 
@@ -27,5 +28,7 @@ typedef struct {
   rbs_loc_entry_bitmap required_p;
   rbs_loc_entry entries[1];
 } rbs_loc_children;
+
+rbs_loc_range rbs_new_loc_range(range r);
 
 #endif

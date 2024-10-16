@@ -16,6 +16,13 @@ VALUE rbs_buffer_content_ruby_str(const rbs_buffer_t input) {
   return rbs_string_to_ruby_str(input.content);
 }
 
+rbs_buffer_t rbs_buffer_from_ruby_buffer(const VALUE input) {
+  return (rbs_buffer_t) {
+    .name = rbs_string_from_ruby_str(rb_hash_aref(input, ID2SYM(rb_intern("name")))),
+    .content = rbs_string_from_ruby_str(rb_hash_aref(input, ID2SYM(rb_intern("content")))),
+  };
+}
+
 VALUE rbs_buffer_to_ruby_buffer(const rbs_buffer_t input) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), rbs_string_to_ruby_str(input.name));
@@ -25,7 +32,17 @@ VALUE rbs_buffer_to_ruby_buffer(const rbs_buffer_t input) {
   return buffer;
 }
 
+#define RBS_LOC_CHILDREN_SIZE(cap) (sizeof(rbs_loc_children) + sizeof(rbs_loc_entry) * ((cap) - 1))
+
 VALUE rbs_location_to_ruby_loc(const rbs_location_t input) {
-  VALUE rubyBuffer = rbs_buffer_to_ruby_buffer(input.buffer);
-  return rbs_new_location_from_loc_range(rubyBuffer, input.range);
+  VALUE ruby_buffer = rbs_buffer_to_ruby_buffer(input.buffer);
+  VALUE ruby_loc = rbs_new_location_from_loc_range(ruby_buffer, input.range);
+
+  if (input.children != NULL) { // Copy over the children, if any
+    rbs_loc *loc = rbs_check_location(ruby_loc);
+    rbs_loc_alloc_children(loc, input.children->cap);
+    memcpy(loc->children, input.children, RBS_LOC_CHILDREN_SIZE(input.children->cap));
+  }
+
+  return ruby_loc;
 }
