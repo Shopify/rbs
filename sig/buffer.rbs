@@ -15,7 +15,8 @@ module RBS
 
     @ranges: Array[Range[Integer]]
 
-    def initialize: (name: untyped name, content: String content) -> void
+# TODO: maybe also Pathname?
+    def initialize: (name: String? name, content: String content) -> void
 
     def lines: () -> Array[String]
 

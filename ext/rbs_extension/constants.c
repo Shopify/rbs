@@ -42,6 +42,8 @@ VALUE RBS_AST_Members_Prepend;
 VALUE RBS_AST_Members_Private;
 VALUE RBS_AST_Members_Public;
 
+VALUE RBS_Buffer;
+
 VALUE RBS_Namespace;
 VALUE RBS_TypeName;
 
@@ -120,6 +122,8 @@ void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_Members_Prepend, RBS_AST_Members, "Prepend");
   IMPORT_CONSTANT(RBS_AST_Members_Private, RBS_AST_Members, "Private");
   IMPORT_CONSTANT(RBS_AST_Members_Public, RBS_AST_Members, "Public");
+
+  IMPORT_CONSTANT(RBS_Buffer, RBS, "Buffer");
 
   IMPORT_CONSTANT(RBS_Namespace, RBS, "Namespace");
   IMPORT_CONSTANT(RBS_TypeName, RBS, "TypeName");

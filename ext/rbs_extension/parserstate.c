@@ -1,4 +1,5 @@
 #include "rbs_extension.h"
+#include "temp_utils.h"
 
 #define RESET_TABLE_P(table) (table->size == 0)
 
@@ -175,7 +176,7 @@ VALUE get_comment(parserstate *state, int subject_line) {
   comment *com = comment_get_comment(state->last_comment, comment_line);
 
   if (com) {
-    return comment_to_ruby(com, state->buffer);
+    return comment_to_ruby(com, rbs_buffer_to_ruby_buffer(state->buffer));
   } else {
     return Qnil;
   }
@@ -292,9 +293,14 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
 }
 
 parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_pos, VALUE variables) {
+  const rbs_buffer_t rbs_buffer = rbs_buffer_new(
+    rbs_string_from_ruby_str(rb_funcall(buffer, rb_intern("name"), 0)),
+    rbs_string_from_ruby_str(rb_funcall(buffer, rb_intern("content"), 0))
+  );
+
   parserstate *parser = calloc(1, sizeof(parserstate));
   parser->lexstate = lexer;
-  parser->buffer = buffer;
+  parser->buffer = rbs_buffer;
   parser->current_token = NullToken;
   parser->next_token = NullToken;
   parser->next_token2 = NullToken;
