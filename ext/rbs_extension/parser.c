@@ -2941,10 +2941,11 @@ rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
   VALUE results = rb_ary_new();
 
   token token = NullToken;
+  rbs_buffer_t buffer_struct = rbs_buffer_copy_from_ruby_buffer(buffer);
+
   while (token.type != pEOF) {
     token = rbsparser_next_token(lexer);
     VALUE type = ID2SYM(rb_intern(token_type_str(token.type)));
-    rbs_buffer_t buffer_struct = rbs_buffer_copy_from_ruby_buffer(buffer);
     rbs_location_t location_struct = rbs_location_new_from_lexer_range(buffer_struct, token.range);
 
     VALUE location = rbs_location_to_ruby_loc(location_struct);
