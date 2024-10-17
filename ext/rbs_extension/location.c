@@ -32,8 +32,8 @@ rbs_loc_range rbs_new_loc_range(range rg) {
 // }
 
 void rbs_loc_free(rbs_location_t *loc) {
-  free(loc->children);
-  ruby_xfree(loc);
+  // free(loc->children);
+  // ruby_xfree(loc);
 }
 
 static void rbs_loc_mark(void *ptr) { /* no-op */ }
@@ -50,7 +50,7 @@ static size_t rbs_loc_memsize(const void *ptr) {
 const rb_data_type_t location_type = {
   "RBS::Location",
   {rbs_loc_mark, (RUBY_DATA_FUNC)rbs_loc_free, rbs_loc_memsize},
-  0, 0, RUBY_TYPED_FREE_IMMEDIATELY
+  0, 0, 0 // RUBY_TYPED_FREE_IMMEDIATELY
 };
 
 static VALUE location_s_allocate(VALUE klass) {
