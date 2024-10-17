@@ -29,7 +29,13 @@ static void check_children_cap(rbs_location_t *self) {
 // Constructors
 
 rbs_location_t rbs_location_new(const rbs_buffer_t buffer, const rbs_loc_range range) {
-    return (rbs_location_t) {.buffer = buffer, .range = range, .children = NULL};
+    rbs_location_t self = (rbs_location_t) {.buffer = buffer, .range = range, .children = NULL};
+    rbs_location_init(&self, buffer, range);
+    return self;
+}
+
+void rbs_location_init(rbs_location_t *self, const rbs_buffer_t buffer, const rbs_loc_range range) {
+    *self = (rbs_location_t) {.buffer = buffer, .range = range, .children = NULL};
 }
 
 rbs_location_t rbs_location_new_from_lexer_range(const rbs_buffer_t buffer, const range range) {

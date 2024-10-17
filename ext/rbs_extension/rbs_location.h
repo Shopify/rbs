@@ -13,6 +13,7 @@ typedef struct {
 
 // Constructors
 rbs_location_t rbs_location_new(const rbs_buffer_t, const rbs_loc_range);
+void rbs_location_init(rbs_location_t *self, const rbs_buffer_t, const rbs_loc_range);
 rbs_location_t rbs_location_new_from_lexer_range(const rbs_buffer_t, const range);
 rbs_location_t rbs_location_pp2(const rbs_buffer_t, const position *start, const position *end);
 

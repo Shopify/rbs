@@ -1,6 +1,5 @@
 #include "rbs_extension.h"
 #include "location.h"
-#include "rbs_location.h"
 #include "temp_utils.h"
 
 #define RBS_LOC_REQUIRED_P(loc, i) ((loc)->children->required_p & (1 << (i)))
@@ -57,8 +56,20 @@ static void check_children_cap(rbs_loc *loc) {
   }
 }
 
-void rbs_loc_add_required_child(rbs_loc *loc, ID name, range r) {
-  check_children_cap(loc);
+static void check_children_cap2(rbs_location_t *loc) {
+  if (loc->children == NULL) {
+    rbs_location_alloc_children(loc, 1);
+  } else {
+    if (loc->children->len == loc->children->cap) {
+      check_children_max(loc->children->cap + 1);
+      size_t s = RBS_LOC_CHILDREN_SIZE(++loc->children->cap);
+      loc->children = realloc(loc->children, s);
+    }
+  }
+}
+
+void rbs_loc_add_required_child(rbs_location_t *loc, ID name, range r) {
+  check_children_cap2(loc);
 
   unsigned short i = loc->children->len++;
   loc->children->entries[i].name = name;
@@ -67,8 +78,8 @@ void rbs_loc_add_required_child(rbs_loc *loc, ID name, range r) {
   loc->children->required_p |= 1 << i;
 }
 
-void rbs_loc_add_optional_child(rbs_loc *loc, ID name, range r) {
-  check_children_cap(loc);
+void rbs_loc_add_optional_child(rbs_location_t *loc, ID name, range r) {
+  check_children_cap2(loc);
 
   unsigned short i = loc->children->len++;
   loc->children->entries[i].name = name;
@@ -131,24 +142,13 @@ const rb_data_type_t location_type2 = {
 };
 
 static VALUE location_s_allocate(VALUE klass) {
-  printf("location_s_allocate was called\n");
-  exit(EXIT_FAILURE);
-  rbs_loc *loc;
-  VALUE obj = TypedData_Make_Struct(klass, rbs_loc, &location_type, loc);
+  rbs_location_t *loc;
+  VALUE obj = TypedData_Make_Struct(klass, rbs_location_t, &location_type2, loc);
 
-  rbs_loc_init(loc, Qnil, RBS_LOC_NULL_RANGE);
+  rbs_location_init(loc, RBS_BUFFER_NULL, RBS_LOC_NULL_RANGE);
 
   return obj;
 }
-
-// static VALUE location_s_allocate2(VALUE klass) {
-//   rbs_location_t *loc;
-//   VALUE obj = TypedData_Make_Struct(klass, rbs_location_t, &location_type, loc);
-
-//   rbs_loc_init2(loc, Qnil, RBS_LOC_NULL_RANGE);
-
-//   return obj;
-// }
 
 rbs_loc *rbs_check_location(VALUE obj) {
   return rb_check_typeddata(obj, &location_type);
@@ -171,6 +171,19 @@ static VALUE location_initialize(VALUE self, VALUE buffer, VALUE start_pos, VALU
   return Qnil;
 }
 
+static VALUE location_initialize2(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos) {
+  rbs_location_t *loc = rbs_check_location2(self);
+
+  int start = FIX2INT(start_pos);
+  int end = FIX2INT(end_pos);
+
+  loc->buffer = rbs_buffer_copy_from_ruby_buffer(buffer);
+  loc->range.start = start;
+  loc->range.end = end;
+
+  return Qnil;
+}
+
 static VALUE location_initialize_copy(VALUE self, VALUE other) {
   rbs_loc *self_loc = rbs_check_location(self);
   rbs_loc *other_loc = rbs_check_location(other);
@@ -179,6 +192,20 @@ static VALUE location_initialize_copy(VALUE self, VALUE other) {
   self_loc->rg = other_loc->rg;
   if (other_loc->children != NULL) {
     rbs_loc_alloc_children(self_loc, other_loc->children->cap);
+    memcpy(self_loc->children, other_loc->children, RBS_LOC_CHILDREN_SIZE(other_loc->children->cap));
+  }
+
+  return Qnil;
+}
+
+static VALUE location_initialize_copy2(VALUE self, VALUE other) {
+  rbs_location_t *self_loc = rbs_check_location2(self);
+  rbs_location_t *other_loc = rbs_check_location2(other);
+
+  self_loc->buffer = other_loc->buffer;
+  self_loc->range = other_loc->range;
+  if (other_loc->children != NULL) {
+    rbs_location_alloc_children(self_loc, other_loc->children->cap);
     memcpy(self_loc->children, other_loc->children, RBS_LOC_CHILDREN_SIZE(other_loc->children->cap));
   }
 
@@ -216,7 +243,7 @@ static VALUE location_end_pos2(VALUE self) {
 }
 
 static VALUE location_add_required_child(VALUE self, VALUE name, VALUE start, VALUE end) {
-  rbs_loc *loc = rbs_check_location(self);
+  rbs_location_t *loc = rbs_check_location2(self);
 
   range rg;
   rg.start = rbs_loc_position(FIX2INT(start));
@@ -228,7 +255,7 @@ static VALUE location_add_required_child(VALUE self, VALUE name, VALUE start, VA
 }
 
 static VALUE location_add_optional_child(VALUE self, VALUE name, VALUE start, VALUE end) {
-  rbs_loc *loc = rbs_check_location(self);
+  rbs_location_t *loc = rbs_check_location2(self);
 
   range rg;
   rg.start = rbs_loc_position(FIX2INT(start));
@@ -240,7 +267,7 @@ static VALUE location_add_optional_child(VALUE self, VALUE name, VALUE start, VA
 }
 
 static VALUE location_add_optional_no_child(VALUE self, VALUE name) {
-  rbs_loc *loc = rbs_check_location(self);
+  rbs_location_t *loc = rbs_check_location2(self);
 
   rbs_loc_add_optional_child(loc, SYM2ID(name), NULL_RANGE);
 
@@ -399,17 +426,17 @@ VALUE rbs_location_pp(VALUE buffer, const position *start_pos, const position *e
 void rbs__init_location(void) {
   RBS_Location = rb_define_class_under(RBS, "Location", rb_cObject);
   rb_define_alloc_func(RBS_Location, location_s_allocate);
-  rb_define_private_method(RBS_Location, "initialize", location_initialize, 3);
-  rb_define_private_method(RBS_Location, "initialize_copy", location_initialize_copy, 1);
-  rb_define_method(RBS_Location, "buffer", location_buffer, 0);
-  rb_define_method(RBS_Location, "start_pos", location_start_pos, 0);
-  rb_define_method(RBS_Location, "end_pos", location_end_pos, 0);
+  rb_define_private_method(RBS_Location, "initialize", location_initialize2, 3);
+  rb_define_private_method(RBS_Location, "initialize_copy", location_initialize_copy2, 1);
+  rb_define_method(RBS_Location, "buffer", location_buffer2, 0);
+  rb_define_method(RBS_Location, "start_pos", location_start_pos2, 0);
+  rb_define_method(RBS_Location, "end_pos", location_end_pos2, 0);
   rb_define_method(RBS_Location, "_add_required_child", location_add_required_child, 3);
   rb_define_method(RBS_Location, "_add_optional_child", location_add_optional_child, 3);
   rb_define_method(RBS_Location, "_add_optional_no_child", location_add_optional_no_child, 1);
-  rb_define_method(RBS_Location, "_optional_keys", location_optional_keys, 0);
-  rb_define_method(RBS_Location, "_required_keys", location_required_keys, 0);
-  rb_define_method(RBS_Location, "[]", location_aref, 1);
+  rb_define_method(RBS_Location, "_optional_keys", location_optional_keys2, 0);
+  rb_define_method(RBS_Location, "_required_keys", location_required_keys2, 0);
+  rb_define_method(RBS_Location, "[]", location_aref2, 1);
 
   RBS_Location2 = rb_define_class_under(RBS, "Location2", RBS_Location);
   // rb_define_alloc_func(RBS_Location2, location_s_allocate2);

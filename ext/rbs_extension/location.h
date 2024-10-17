@@ -4,6 +4,7 @@
 #include "ruby.h"
 #include "lexer_helpers.h"
 #include "rbs_location_helpers.h"
+#include "rbs_location.h"
 
 /**
  * RBS::Location class
@@ -45,14 +46,14 @@ void rbs_loc_alloc_children(rbs_loc *loc, unsigned short cap);
  *
  * Allocate memory for children with rbs_loc_alloc_children before calling this function.
  * */
-void rbs_loc_add_required_child(rbs_loc *loc, ID name, range r);
+void rbs_loc_add_required_child(rbs_location_t *loc, ID name, range r);
 
 /**
  * Add an optional child range with given name.
  *
  * Allocate memory for children with rbs_loc_alloc_children before calling this function.
  * */
-void rbs_loc_add_optional_child(rbs_loc *loc, ID name, range r);
+void rbs_loc_add_optional_child(rbs_location_t *loc, ID name, range r);
 
 /**
  * Returns RBS::Location object with start/end positions.

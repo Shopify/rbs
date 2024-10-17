@@ -21,10 +21,17 @@ VALUE rbs_buffer_content_ruby_str(const rbs_buffer_t input) {
 }
 
 rbs_buffer_t rbs_buffer_copy_from_ruby_buffer(const VALUE input) {
-  return (rbs_buffer_t) {
-    .name = rbs_string_from_ruby_str(rb_funcall(input, rb_intern("name"), 0)),
-    .content = rbs_string_from_ruby_str(rb_funcall(input, rb_intern("content"), 0))
-  };
+  VALUE name = rb_funcall(input, rb_intern("name"), 0);
+  VALUE pathname_class = rb_const_get(rb_cObject, rb_intern("Pathname"));
+
+  VALUE name_string = rb_obj_is_kind_of(name, pathname_class)
+    ? rb_funcall(name, rb_intern("to_s"), 0)
+    : name;
+
+  return rbs_buffer_new(
+    rbs_string_from_ruby_str(name_string),
+    rbs_string_from_ruby_str(rb_funcall(input, rb_intern("content"), 0))
+  );
 }
 
 VALUE rbs_buffer_copy_into_ruby_buffer(const rbs_buffer_t input) {

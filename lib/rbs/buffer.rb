@@ -63,5 +63,13 @@ module RBS
     def inspect
       "#<RBS::Buffer:#{__id__} @name=#{name}, @content=#{content.bytesize} bytes, @lines=#{lines.size} lines,>"
     end
+
+    # This is necessary because each wrapping of `rbs_buffer_t` creates a distinct Ruby object.
+    # This was causing `RBS::Location#==` to fail because it was comparing these buffers' identity.
+    def ==(other)
+      other.is_a?(Buffer) &&
+        name == other.name &&
+        content == other.content
+    end
   end
 end
