@@ -294,8 +294,15 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
 }
 
 parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_pos, VALUE variables) {
+  VALUE name = rb_funcall(buffer, rb_intern("name"), 0);
+  VALUE pathname_class = rb_const_get(rb_cObject, rb_intern("Pathname"));
+
+  VALUE name_string = rb_obj_is_kind_of(name, pathname_class)
+    ? rb_funcall(name, rb_intern("to_s"), 0)
+    : name;
+
   const rbs_buffer_t rbs_buffer = rbs_buffer_new(
-    rbs_string_from_ruby_str(rb_funcall(buffer, rb_intern("name"), 0)),
+    rbs_string_from_ruby_str(name_string),
     rbs_string_from_ruby_str(rb_funcall(buffer, rb_intern("content"), 0))
   );
 
