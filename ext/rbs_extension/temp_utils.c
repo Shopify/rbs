@@ -36,13 +36,6 @@ VALUE rbs_buffer_copy_into_ruby_buffer(const rbs_buffer_t input) {
   return buffer;
 }
 
-// VALUE rbs_buffer_wrap_into_ruby_buffer(const rbs_buffer_t) {
-
-// }
-// rbs_buffer_t rbs_buffer_wrap_from_ruby_buffer(const VALUE) {
-
-// }
-
 #define RBS_LOC_CHILDREN_SIZE(cap) (sizeof(rbs_loc_children) + sizeof(rbs_loc_entry) * ((cap) - 1))
 
 VALUE rbs_location_to_ruby_loc(const rbs_location_t input) {
@@ -56,4 +49,8 @@ VALUE rbs_location_to_ruby_loc(const rbs_location_t input) {
   }
 
   return ruby_loc;
+}
+
+VALUE rbs_location_wrap_into_ruby_obj(rbs_location_t *input) {
+  return rb_data_typed_object_wrap(RBS_Location2, input, &location_type2);
 }

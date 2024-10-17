@@ -773,7 +773,7 @@ class RBS::TypeParsingTest < Test::Unit::TestCase
       assert_equal 1, type.args.size
       type.args[0].yield_self do |arg|
         assert_instance_of Types::Variable, arg
-        assert_instance_of RBS::Location, arg.location
+        assert_kind_of RBS::Location, arg.location
       end
     end
 
@@ -800,42 +800,42 @@ class RBS::TypeParsingTest < Test::Unit::TestCase
 
   def test_location_children
     Parser.parse_type("_Foo").yield_self do |type|
-      assert_instance_of RBS::Location, type.location
+      assert_kind_of RBS::Location, type.location
 
       assert_equal "_Foo", type.location[:name].source
       assert_nil type.location[:args]
     end
 
     Parser.parse_type("_Foo[untyped]").yield_self do |type|
-      assert_instance_of RBS::Location, type.location
+      assert_kind_of RBS::Location, type.location
 
       assert_equal "_Foo", type.location[:name].source
       assert_equal "[untyped]", type.location[:args].source
     end
 
     Parser.parse_type("Foo").yield_self do |type|
-      assert_instance_of RBS::Location, type.location
+      assert_kind_of RBS::Location, type.location
 
       assert_equal "Foo", type.location[:name].source
       assert_nil type.location[:args]
     end
 
     Parser.parse_type("Foo[untyped]").yield_self do |type|
-      assert_instance_of RBS::Location, type.location
+      assert_kind_of RBS::Location, type.location
 
       assert_equal "Foo", type.location[:name].source
       assert_equal "[untyped]", type.location[:args].source
     end
 
     Parser.parse_type("foo").yield_self do |type|
-      assert_instance_of RBS::Location, type.location
+      assert_kind_of RBS::Location, type.location
 
       assert_equal "foo", type.location[:name].source
       assert_nil type.location[:args]
     end
 
     Parser.parse_type("singleton(::Foo)").yield_self do |type|
-      assert_instance_of RBS::Location, type.location
+      assert_kind_of RBS::Location, type.location
 
       assert_equal "::Foo", type.location[:name].source
     end

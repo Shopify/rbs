@@ -9,6 +9,8 @@
  * RBS::Location class
  * */
 extern VALUE RBS_Location;
+extern VALUE RBS_Location2;
+extern const rb_data_type_t location_type2;
 
 typedef struct {
   VALUE buffer;

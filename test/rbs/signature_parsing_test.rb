@@ -1351,7 +1351,7 @@ module A
 end
     EOF
       decls[0].members[0].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "def", foo.location[:keyword].source
         assert_equal "foo", foo.location[:name].source
@@ -1360,7 +1360,7 @@ end
       end
 
       decls[0].members[1].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "def", foo.location[:keyword].source
         assert_equal "bar", foo.location[:name].source
@@ -1380,7 +1380,7 @@ module A
 end
     EOF
       decls[0].members[0].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "@foo", foo.location[:name].source
         assert_equal ":", foo.location[:colon].source
@@ -1388,7 +1388,7 @@ end
       end
 
       decls[0].members[1].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "@bar", foo.location[:name].source
         assert_equal ":", foo.location[:colon].source
@@ -1396,7 +1396,7 @@ end
       end
 
       decls[0].members[2].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "@@baz", foo.location[:name].source
         assert_equal ":", foo.location[:colon].source
@@ -1418,7 +1418,7 @@ end
     RBS
 
       decls[0].members[0].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_reader", foo.location[:keyword].source
         assert_equal "reader1", foo.location[:name].source
@@ -1429,7 +1429,7 @@ end
       end
 
       decls[0].members[1].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_reader", foo.location[:keyword].source
         assert_equal "reader2", foo.location[:name].source
@@ -1440,7 +1440,7 @@ end
       end
 
       decls[0].members[2].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_reader", foo.location[:keyword].source
         assert_equal "reader3", foo.location[:name].source
@@ -1451,7 +1451,7 @@ end
       end
 
       decls[0].members[3].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_reader", foo.location[:keyword].source
         assert_equal "reader4", foo.location[:name].source
@@ -1462,7 +1462,7 @@ end
       end
 
       decls[0].members[4].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_reader", foo.location[:keyword].source
         assert_equal "reader5", foo.location[:name].source
@@ -1473,7 +1473,7 @@ end
       end
 
       decls[0].members[5].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_reader", foo.location[:keyword].source
         assert_equal "reader6", foo.location[:name].source
@@ -1496,7 +1496,7 @@ end
     RBS
 
       decls[0].members[0].tap do |attr|
-        assert_instance_of Location, attr.location
+        assert_kind_of Location, attr.location
 
         assert_equal "attr_writer", attr.location[:keyword].source
         assert_equal "attr1", attr.location[:name].source
@@ -1507,7 +1507,7 @@ end
       end
 
       decls[0].members[1].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_writer", foo.location[:keyword].source
         assert_equal "attr2", foo.location[:name].source
@@ -1518,7 +1518,7 @@ end
       end
 
       decls[0].members[2].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_writer", foo.location[:keyword].source
         assert_equal "attr3", foo.location[:name].source
@@ -1529,7 +1529,7 @@ end
       end
 
       decls[0].members[3].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_writer", foo.location[:keyword].source
         assert_equal "attr4", foo.location[:name].source
@@ -1540,7 +1540,7 @@ end
       end
 
       decls[0].members[4].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_writer", foo.location[:keyword].source
         assert_equal "attr5", foo.location[:name].source
@@ -1551,7 +1551,7 @@ end
       end
 
       decls[0].members[5].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_writer", foo.location[:keyword].source
         assert_equal "attr6", foo.location[:name].source
@@ -1574,7 +1574,7 @@ end
     RBS
 
       decls[0].members[0].tap do |attr|
-        assert_instance_of Location, attr.location
+        assert_kind_of Location, attr.location
 
         assert_equal "attr_accessor", attr.location[:keyword].source
         assert_equal "attr1", attr.location[:name].source
@@ -1585,7 +1585,7 @@ end
       end
 
       decls[0].members[1].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_accessor", foo.location[:keyword].source
         assert_equal "attr2", foo.location[:name].source
@@ -1596,7 +1596,7 @@ end
       end
 
       decls[0].members[2].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_accessor", foo.location[:keyword].source
         assert_equal "attr3", foo.location[:name].source
@@ -1607,7 +1607,7 @@ end
       end
 
       decls[0].members[3].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_accessor", foo.location[:keyword].source
         assert_equal "attr4", foo.location[:name].source
@@ -1618,7 +1618,7 @@ end
       end
 
       decls[0].members[4].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_accessor", foo.location[:keyword].source
         assert_equal "attr5", foo.location[:name].source
@@ -1629,7 +1629,7 @@ end
       end
 
       decls[0].members[5].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "attr_accessor", foo.location[:keyword].source
         assert_equal "attr6", foo.location[:name].source
@@ -1650,7 +1650,7 @@ end
     RBS
 
       decls[0].members[0].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "alias", foo.location[:keyword].source
         assert_equal "foo", foo.location[:new_name].source
@@ -1660,7 +1660,7 @@ end
       end
 
       decls[0].members[1].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "alias", foo.location[:keyword].source
         assert_equal "foo", foo.location[:new_name].source
@@ -1685,7 +1685,7 @@ module A
 end
     EOF
       decls[0].members[0].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "include", foo.location[:keyword].source
         assert_equal "_Foo", foo.location[:name].source
@@ -1693,7 +1693,7 @@ end
       end
 
       decls[0].members[1].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "include", foo.location[:keyword].source
         assert_equal "_Bar", foo.location[:name].source
@@ -1701,7 +1701,7 @@ end
       end
 
       decls[0].members[2].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "extend", foo.location[:keyword].source
         assert_equal "Foo", foo.location[:name].source
@@ -1709,7 +1709,7 @@ end
       end
 
       decls[0].members[3].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "extend", foo.location[:keyword].source
         assert_equal "Bar", foo.location[:name].source
@@ -1717,7 +1717,7 @@ end
       end
 
       decls[0].members[4].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "prepend", foo.location[:keyword].source
         assert_equal "Foo", foo.location[:name].source
@@ -1725,7 +1725,7 @@ end
       end
 
       decls[0].members[5].tap do |foo|
-        assert_instance_of Location, foo.location
+        assert_kind_of Location, foo.location
 
         assert_equal "prepend", foo.location[:keyword].source
         assert_equal "Bar", foo.location[:name].source
@@ -1743,7 +1743,7 @@ interface _B[X, unchecked in Y]
 end
     EOF
       decls[0].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "interface", decl.location[:keyword].source
         assert_equal "_A", decl.location[:name].source
@@ -1752,7 +1752,7 @@ end
       end
 
       decls[1].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "interface", decl.location[:keyword].source
         assert_equal "_B", decl.location[:name].source
@@ -1760,7 +1760,7 @@ end
         assert_equal "[X, unchecked in Y]", decl.location[:type_params].source
 
         decl.type_params[0].tap do |param|
-          assert_instance_of Location, param.location
+          assert_kind_of Location, param.location
 
           assert_equal "X", param.location[:name].source
           assert_nil param.location[:variance]
@@ -1768,7 +1768,7 @@ end
         end
 
         decl.type_params[1].tap do |param|
-          assert_instance_of Location, param.location
+          assert_kind_of Location, param.location
 
           assert_equal "Y", param.location[:name].source
           assert_equal "in", param.location[:variance].source
@@ -1789,7 +1789,7 @@ end
 module C: BasicObject end
     EOF
       decls[0].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "module", decl.location[:keyword].source
         assert_equal "A", decl.location[:name].source
@@ -1800,7 +1800,7 @@ module C: BasicObject end
       end
 
       decls[1].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "module", decl.location[:keyword].source
         assert_equal "B", decl.location[:name].source
@@ -1811,7 +1811,7 @@ module C: BasicObject end
       end
 
       decls[2].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "module", decl.location[:keyword].source
         assert_equal "C", decl.location[:name].source
@@ -1835,7 +1835,7 @@ class C < Bar
 end
     EOF
       decls[0].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "class", decl.location[:keyword].source
         assert_equal "A", decl.location[:name].source
@@ -1845,7 +1845,7 @@ end
       end
 
       decls[1].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "class", decl.location[:keyword].source
         assert_equal "B", decl.location[:name].source
@@ -1860,7 +1860,7 @@ end
       end
 
       decls[2].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "class", decl.location[:keyword].source
         assert_equal "C", decl.location[:name].source
@@ -1883,21 +1883,21 @@ A::B : String
 $B: Integer
     EOF
       decls[0].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "X", decl.location[:name].source
         assert_equal ":", decl.location[:colon].source
       end
 
       decls[1].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "A::B", decl.location[:name].source
         assert_equal ":", decl.location[:colon].source
       end
 
       decls[2].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "$B", decl.location[:name].source
         assert_equal ":", decl.location[:colon].source
@@ -1910,7 +1910,7 @@ $B: Integer
 type foo = Integer
     EOF
       decls[0].tap do |decl|
-        assert_instance_of Location, decl.location
+        assert_kind_of Location, decl.location
 
         assert_equal "type", decl.location[:keyword].source
         assert_equal "foo", decl.location[:name].source

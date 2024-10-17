@@ -19,4 +19,6 @@ VALUE rbs_buffer_content_ruby_str(const rbs_buffer_t);
 
 VALUE rbs_location_to_ruby_loc(const rbs_location_t);
 
+VALUE rbs_location_wrap_into_ruby_obj(rbs_location_t *);
+
 #endif
