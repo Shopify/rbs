@@ -131,6 +131,8 @@ const rb_data_type_t location_type2 = {
 };
 
 static VALUE location_s_allocate(VALUE klass) {
+  printf("location_s_allocate was called\n");
+  exit(EXIT_FAILURE);
   rbs_loc *loc;
   VALUE obj = TypedData_Make_Struct(klass, rbs_loc, &location_type, loc);
 
@@ -246,6 +248,8 @@ static VALUE location_add_optional_no_child(VALUE self, VALUE name) {
 }
 
 VALUE rbs_new_location(VALUE buffer, range rg) {
+  printf("rbs_new_location was called\n");
+  exit(EXIT_FAILURE);
   return rbs_new_location_from_loc_range(buffer, rbs_new_loc_range(rg));
 }
 
@@ -383,6 +387,8 @@ static VALUE location_required_keys2(VALUE self) {
 }
 
 VALUE rbs_location_pp(VALUE buffer, const position *start_pos, const position *end_pos) {
+  printf("rbs_location_pp was called\n");
+  exit(EXIT_FAILURE);
   range rg = { *start_pos, *end_pos };
   rg.start = *start_pos;
   rg.end = *end_pos;

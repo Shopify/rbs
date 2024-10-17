@@ -74,11 +74,14 @@ static bool rbs_is_untyped_params(method_params *params) {
 //  * @return New RBS::Location object.
 //  * */
 static VALUE rbs_location_current_token(parserstate *state) {
-  return rbs_location_pp(
-    rbs_buffer_copy_into_ruby_buffer(state->buffer),
+  rbs_location_t *location = calloc(1, sizeof(rbs_location_t));
+  *location = rbs_location_pp2(
+    state->buffer,
     &state->current_token.range.start,
     &state->current_token.range.end
   );
+
+  return rbs_location_wrap_into_ruby_obj(location);
 }
 
 static VALUE parse_optional(parserstate *state);
@@ -2049,9 +2052,12 @@ VALUE parse_visibility_member(parserstate *state, VALUE annotations) {
     rbs_abort();
   }
 
+  rbs_location_t *location = calloc(1, sizeof(rbs_location_t));
+  *location = rbs_location_new_from_lexer_range(state->buffer, state->current_token.range);
+
   return rbs_ast_members_visibility(
     klass,
-    rbs_new_location(rbs_buffer_copy_into_ruby_buffer(state->buffer), state->current_token.range)
+    rbs_location_wrap_into_ruby_obj(location)
   );
 }
 
@@ -2980,9 +2986,10 @@ rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
   while (token.type != pEOF) {
     token = rbsparser_next_token(lexer);
     VALUE type = ID2SYM(rb_intern(token_type_str(token.type)));
-    rbs_location_t location_struct = rbs_location_new_from_lexer_range(buffer_struct, token.range);
+    rbs_location_t *location_struct = calloc(1, sizeof(rbs_location_t));
+    *location_struct = rbs_location_new_from_lexer_range(buffer_struct, token.range);
+    VALUE location = rbs_location_wrap_into_ruby_obj(location_struct);
 
-    VALUE location = rbs_location_to_ruby_loc(location_struct);
     VALUE pair = rb_ary_new3(2, type, location);
 
     rb_ary_push(results, pair);

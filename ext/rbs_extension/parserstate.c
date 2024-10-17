@@ -270,9 +270,12 @@ VALUE comment_to_ruby(comment *com, rbs_buffer_t buffer) {
     rb_str_cat_cstr(string, "\n");
   }
 
+  rbs_location_t *location = calloc(1, sizeof(rbs_location_t));
+  *location = rbs_location_pp2(buffer, &com->start, &com->end);
+
   return rbs_ast_comment(
     string,
-    rbs_location_pp(rbs_buffer_copy_into_ruby_buffer(buffer), &com->start, &com->end)
+    rbs_location_wrap_into_ruby_obj(location)
   );
 }
 
