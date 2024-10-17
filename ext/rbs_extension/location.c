@@ -25,54 +25,6 @@ rbs_loc_range rbs_new_loc_range(range rg) {
   return r;
 }
 
-static void check_children_max(unsigned short n) {
-  size_t max = sizeof(rbs_loc_entry_bitmap) * 8;
-  if (n > max) {
-    rb_raise(rb_eRuntimeError, "Too many children added to location: %d", n);
-  }
-}
-
-void rbs_loc_alloc_children(rbs_location_t *loc, unsigned short cap) {
-  check_children_max(cap);
-
-  size_t s = RBS_LOC_CHILDREN_SIZE(cap);
-  loc->children = malloc(s);
-
-  loc->children->len = 0;
-  loc->children->required_p = 0;
-  loc->children->cap = cap;
-}
-
-static void check_children_cap(rbs_location_t *loc) {
-  if (loc->children == NULL) {
-    rbs_location_alloc_children(loc, 1);
-  } else {
-    if (loc->children->len == loc->children->cap) {
-      check_children_max(loc->children->cap + 1);
-      size_t s = RBS_LOC_CHILDREN_SIZE(++loc->children->cap);
-      loc->children = realloc(loc->children, s);
-    }
-  }
-}
-
-void rbs_loc_add_required_child(rbs_location_t *loc, ID name, range r) {
-  check_children_cap(loc);
-
-  unsigned short i = loc->children->len++;
-  loc->children->entries[i].name = name;
-  loc->children->entries[i].rg = rbs_new_loc_range(r);
-
-  loc->children->required_p |= 1 << i;
-}
-
-void rbs_loc_add_optional_child(rbs_location_t *loc, ID name, range r) {
-  check_children_cap(loc);
-
-  unsigned short i = loc->children->len++;
-  loc->children->entries[i].name = name;
-  loc->children->entries[i].rg = rbs_new_loc_range(r);
-}
-
 // void rbs_loc_init(rbs_loc *loc, VALUE buffer, rbs_loc_range rg) {
 //   loc->buffer = buffer;
 //   loc->rg = rg;
@@ -188,21 +140,6 @@ static VALUE location_add_optional_no_child(VALUE self, VALUE name) {
   return Qnil;
 }
 
-VALUE rbs_new_location(VALUE buffer, range rg) {
-  printf("rbs_new_location was called\n");
-  exit(EXIT_FAILURE);
-  return rbs_new_location_from_loc_range(buffer, rbs_new_loc_range(rg));
-}
-
-// VALUE rbs_new_location_from_loc_range(VALUE buffer, rbs_loc_range rg) {
-//   rbs_loc *loc;
-//   VALUE obj = TypedData_Make_Struct(RBS_Location, rbs_loc, &location_type, loc);
-
-//   rbs_loc_init(loc, buffer, rg);
-
-//   return obj;
-// }
-
 static VALUE location_aref(VALUE self, VALUE name) {
   rbs_location_t *loc = rbs_check_location(self);
 
@@ -264,16 +201,6 @@ static VALUE location_required_keys(VALUE self) {
   }
 
   return keys;
-}
-
-VALUE rbs_location_pp(VALUE buffer, const position *start_pos, const position *end_pos) {
-  printf("rbs_location_pp was called\n");
-  exit(EXIT_FAILURE);
-  range rg = { *start_pos, *end_pos };
-  rg.start = *start_pos;
-  rg.end = *end_pos;
-
-  return rbs_new_location(buffer, rg);
 }
 
 void rbs__init_location(void) {
