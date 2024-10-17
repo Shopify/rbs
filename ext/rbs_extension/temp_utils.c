@@ -7,12 +7,15 @@
 VALUE rbs_string_to_ruby_str(rbs_string_t input) { // TODO: take this by pointer, so the `cached_ruby_string` is updated in the caller
   if (input.cached_ruby_string == Qnil) {
     input.cached_ruby_string = rb_str_new_static(input.start, rbs_string_len(input));
+    rb_gc_register_mark_object(input.cached_ruby_string);
   }
   return input.cached_ruby_string;
   // return rb_enc_str_new(input.start, rbs_string_len(input), rb_utf8_encoding());
 }
 
 rbs_string_t rbs_string_from_ruby_str(VALUE input) {
+  // Keep the GC from ever deleting this string, since we're taking a pointer to its buffer
+  rb_gc_register_mark_object(input);
   return (rbs_string_t) { .start = StringValueCStr(input), .end = RSTRING_END(input), .cached_ruby_string = input };
 }
 
