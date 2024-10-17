@@ -19,8 +19,8 @@ VALUE rbs_buffer_content_ruby_str(const rbs_buffer_t input) {
 
 rbs_buffer_t rbs_buffer_copy_from_ruby_buffer(const VALUE input) {
   return (rbs_buffer_t) {
-    .name = rbs_string_from_ruby_str(rb_hash_aref(input, ID2SYM(rb_intern("name")))),
-    .content = rbs_string_from_ruby_str(rb_hash_aref(input, ID2SYM(rb_intern("content")))),
+    .name = rbs_string_from_ruby_str(rb_funcall(input, rb_intern("name"), 0)),
+    .content = rbs_string_from_ruby_str(rb_funcall(input, rb_intern("content"), 0))
   };
 }
 
