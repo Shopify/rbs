@@ -46,5 +46,5 @@ VALUE rbs_buffer_copy_into_ruby_buffer(const rbs_buffer_t input) {
 #define RBS_LOC_CHILDREN_SIZE(cap) (sizeof(rbs_loc_children) + sizeof(rbs_loc_entry) * ((cap) - 1))
 
 VALUE rbs_location_wrap_into_ruby_obj(rbs_location_t *input) {
-  return rb_data_typed_object_wrap(RBS_Location2, input, &location_type2);
+  return rb_data_typed_object_wrap(RBS_Location, input, &location_type);
 }

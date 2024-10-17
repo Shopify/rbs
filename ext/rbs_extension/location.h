@@ -10,14 +10,7 @@
  * RBS::Location class
  * */
 extern VALUE RBS_Location;
-extern VALUE RBS_Location2;
-extern const rb_data_type_t location_type2;
-
-typedef struct {
-  VALUE buffer;
-  rbs_loc_range rg;
-  rbs_loc_children *children; // NULL when no children is allocated
-} rbs_loc;
+extern const rb_data_type_t location_type;
 
 /**
  * Returns new RBS::Location object, with given buffer and range.
@@ -32,14 +25,14 @@ VALUE rbs_new_location_from_loc_range(VALUE buffer, rbs_loc_range rg);
 /**
  * Return rbs_loc associated with the RBS::Location object.
  * */
-rbs_loc *rbs_check_location(VALUE location);
+rbs_location_t *rbs_check_location(VALUE location);
 
 /**
  * Allocate memory for child locations.
  *
  * Do not call twice for the same location.
  * */
-void rbs_loc_alloc_children(rbs_loc *loc, unsigned short cap);
+void rbs_loc_alloc_children(rbs_location_t *loc, unsigned short cap);
 
 /**
  * Add a required child range with given name.
