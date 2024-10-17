@@ -2,10 +2,12 @@
 #define RBS__RBS_STRING_H
 
 #include <stddef.h>
+#include "ruby.h"
 
 typedef struct {
   const char* start;
   const char* end;
+  VALUE cached_ruby_string;
 } rbs_string_t;
 
 extern const rbs_string_t RBS_STRING_NULL;

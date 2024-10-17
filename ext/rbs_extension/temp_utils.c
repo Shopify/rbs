@@ -4,13 +4,16 @@
 #include "location.h" // The Ruby-based RBS::Location class
 #include "ruby/encoding.h"
 
-VALUE rbs_string_to_ruby_str(const rbs_string_t input) {
+VALUE rbs_string_to_ruby_str(rbs_string_t input) { // TODO: take this by pointer, so the `cached_ruby_string` is updated in the caller
+  if (input.cached_ruby_string == Qnil) {
+    input.cached_ruby_string = rb_str_new_static(input.start, rbs_string_len(input));
+  }
+  return input.cached_ruby_string;
   // return rb_enc_str_new(input.start, rbs_string_len(input), rb_utf8_encoding());
-  return rb_str_new_static(input.start, rbs_string_len(input));
 }
 
-rbs_string_t rbs_string_from_ruby_str(const VALUE input) {
-  return rbs_string_new(RSTRING_PTR(input), RSTRING_END(input));
+rbs_string_t rbs_string_from_ruby_str(VALUE input) {
+  return (rbs_string_t) { .start = StringValueCStr(input), .end = RSTRING_END(input), .cached_ruby_string = input };
 }
 
 VALUE rbs_buffer_content_ruby_str(const rbs_buffer_t input) {
