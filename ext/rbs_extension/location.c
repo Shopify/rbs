@@ -33,7 +33,7 @@ static void check_children_max(unsigned short n) {
   }
 }
 
-void rbs_loc_alloc_children(rbs_loc *loc, unsigned short cap) {
+void rbs_loc_alloc_children(rbs_location_t *loc, unsigned short cap) {
   check_children_max(cap);
 
   size_t s = RBS_LOC_CHILDREN_SIZE(cap);
@@ -44,7 +44,7 @@ void rbs_loc_alloc_children(rbs_loc *loc, unsigned short cap) {
   loc->children->cap = cap;
 }
 
-static void check_children_cap(rbs_loc *loc) {
+static void check_children_cap(rbs_location_t *loc) {
   if (loc->children == NULL) {
     rbs_loc_alloc_children(loc, 1);
   } else {
@@ -56,7 +56,7 @@ static void check_children_cap(rbs_loc *loc) {
   }
 }
 
-void rbs_loc_add_required_child(rbs_loc *loc, ID name, range r) {
+void rbs_loc_add_required_child(rbs_location_t *loc, ID name, range r) {
   check_children_cap(loc);
 
   unsigned short i = loc->children->len++;
@@ -66,7 +66,7 @@ void rbs_loc_add_required_child(rbs_loc *loc, ID name, range r) {
   loc->children->required_p |= 1 << i;
 }
 
-void rbs_loc_add_optional_child(rbs_loc *loc, ID name, range r) {
+void rbs_loc_add_optional_child(rbs_location_t *loc, ID name, range r) {
   check_children_cap(loc);
 
   unsigned short i = loc->children->len++;
@@ -206,6 +206,8 @@ VALUE rbs_new_location(rbs_location_t location) {
   VALUE obj = TypedData_Make_Struct(RBS_Location, rbs_loc, &location_type, loc);
 
   rbs_loc_init(loc, rbs_buffer_to_ruby_buffer(location.buffer), location.rg);
+
+  loc->children = location.children;
 
   return obj;
 }

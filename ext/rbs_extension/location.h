@@ -60,21 +60,21 @@ rbs_loc *rbs_check_location(VALUE location);
  *
  * Do not call twice for the same location.
  * */
-void rbs_loc_alloc_children(rbs_loc *loc, unsigned short cap);
+void rbs_loc_alloc_children(rbs_location_t *loc, unsigned short cap);
 
 /**
  * Add a required child range with given name.
  *
  * Allocate memory for children with rbs_loc_alloc_children before calling this function.
  * */
-void rbs_loc_add_required_child(rbs_loc *loc, ID name, range r);
+void rbs_loc_add_required_child(rbs_location_t *loc, ID name, range r);
 
 /**
  * Add an optional child range with given name.
  *
  * Allocate memory for children with rbs_loc_alloc_children before calling this function.
  * */
-void rbs_loc_add_optional_child(rbs_loc *loc, ID name, range r);
+void rbs_loc_add_optional_child(rbs_location_t *loc, ID name, range r);
 
 /**
  * Returns RBS::Location object with start/end positions.
