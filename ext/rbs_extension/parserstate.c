@@ -272,7 +272,7 @@ VALUE comment_to_ruby(comment *com, rbs_buffer_t buffer) {
 
   return rbs_ast_comment(
     string,
-    rbs_location_pp(rbs_buffer_to_ruby_buffer(buffer), &com->start, &com->end)
+    rbs_location_pp(rbs_buffer_copy_into_ruby_buffer(buffer), &com->start, &com->end)
   );
 }
 
