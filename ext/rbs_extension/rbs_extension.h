@@ -4,9 +4,9 @@
 #include "ruby/re.h"
 #include "ruby/encoding.h"
 
+#include "rbs.h"
 #include "lexer.h"
 #include "parser.h"
-#include "constants.h"
 #include "ruby_objs.h"
 
 /**

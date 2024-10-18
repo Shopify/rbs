@@ -1,0 +1,34 @@
+#ifndef RBS__CONSTANTS_H
+#define RBS__CONSTANTS_H
+
+extern VALUE RBS;
+extern VALUE RBS_AST;
+extern VALUE RBS_AST_Declarations;
+extern VALUE RBS_AST_Directives;
+extern VALUE RBS_AST_Members;
+extern VALUE RBS_Types;
+extern VALUE RBS_Types_Bases;
+
+extern VALUE RBS_AST_TypeParam;
+
+extern VALUE RBS_AST_Members_AttrAccessor;
+extern VALUE RBS_AST_Members_AttrReader;
+extern VALUE RBS_AST_Members_AttrWriter;
+
+extern VALUE RBS_AST_Members_ClassInstanceVariable;
+extern VALUE RBS_AST_Members_ClassVariable;
+extern VALUE RBS_AST_Members_InstanceVariable;
+
+extern VALUE RBS_AST_Members_Extend;
+extern VALUE RBS_AST_Members_Include;
+extern VALUE RBS_AST_Members_Prepend;
+
+extern VALUE RBS_ParsingError;
+
+<%- nodes.each do |node| -%>
+extern VALUE <%= node.c_constant_name %>;
+<%- end -%>
+
+void rbs__init_constants();
+
+#endif

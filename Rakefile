@@ -43,10 +43,15 @@ task :confirm_annotation do
   sh "git diff --exit-code core stdlib"
 end
 
+file "include/rbs/constants.h" => ["config.yml", "templates/template.rb", "templates/include/rbs/constants.h.erb"] do
+  sh "ruby templates/template.rb include/rbs/constants.h"
+end
+
 file "src/ruby_objs.c" => ["config.yml", "templates/template.rb", "templates/src/ruby_objs.c.erb"] do
   sh "ruby templates/template.rb src/ruby_objs.c"
 end
 
+Rake::Task[:compile].prereqs.prepend "include/rbs/constants.h"
 Rake::Task[:compile].prereqs.prepend "ext/rbs_extension/lexer.c"
 Rake::Task[:compile].prereqs.prepend "src/ruby_objs.c"
 
@@ -95,7 +100,7 @@ task :stdlib_test => :compile do
   if ENV["RANDOMIZE_STDLIB_TEST_ORDER"] == "true"
     test_files.shuffle!
   end
-  
+
   sh "#{ruby} -Ilib #{bin}/test_runner.rb #{test_files.join(' ')}"
   # TODO: Ractor tests need to be run in a separate process
   sh "#{ruby} -Ilib #{bin}/test_runner.rb test/stdlib/Ractor_test.rb"

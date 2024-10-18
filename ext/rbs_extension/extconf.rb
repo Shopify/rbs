@@ -6,6 +6,7 @@ $srcs = Dir.glob("#{root_dir}/src/*.c") +
         Dir.glob("#{root_dir}/ext/rbs_extension/*.c")
 
 $INCFLAGS << " -I$(top_srcdir)" if $extmk
+$INCFLAGS << " -I$(srcdir)/../../include"
 
 $VPATH << "#{root_dir}/src"
 $VPATH << "#{root_dir}/ext/rbs_extension"
