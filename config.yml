@@ -1,0 +1,333 @@
+nodes:
+  - name: RBS::Namespace
+    fields:
+      - name: path
+        type: symbol[]
+      - name: absolute
+        type: bool
+  - name: RBS::TypeName
+    fields:
+      - name: namespace
+        type: namespace
+      - name: name
+        type: symbol
+  - name: RBS::MethodType
+    fields:
+      - name: type_params
+        type: type_param[]
+      - name: type
+        type: type
+      - name: block
+        type: block?
+      - name: location
+        type: location?
+  - name: RBS::Types::ClassInstance
+    fields:
+      - name: name
+        type: type_name
+      - name: args
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::Types::ClassSingleton
+    fields:
+      - name: name
+        type: type_name
+      - name: location
+        type: location?
+  - name: RBS::Types::Alias
+    fields:
+      - name: name
+        type: type_name
+      - name: args
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::Types::Interface
+    fields:
+      - name: name
+        type: type_name
+      - name: args
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::Types::Union
+    fields:
+      - name: types
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::Types::Intersection
+    fields:
+      - name: types
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::Types::Tuple
+    fields:
+      - name: types
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::Types::Optional
+    fields:
+      - name: type
+        type: type
+      - name: location
+        type: location?
+  - name: RBS::Types::Block
+    fields:
+      - name: type
+        type: type
+      - name: required
+        type: bool
+      - name: self_type
+        type: type
+  - name: RBS::Types::Function::Param
+    fields:
+      - name: type
+        type: type
+      - name: name
+        type: string
+      - name: location
+        type: location?
+  - name: RBS::Types::UntypedFunction
+    fields:
+      - name: return_type
+        type: type
+  - name: RBS::Types::Function
+    fields:
+      - name: required_positionals
+        type: function_param[]
+      - name: optional_positionals
+        type: function_param[]
+      - name: rest_positionals
+        type: function_param?
+      - name: trailing_positionals
+        type: function_param[]
+      - name: required_keywords
+        type: function_param[]
+      - name: optional_keywords
+        type: function_param[]
+      - name: rest_keywords
+        type: function_param?
+      - name: return_type
+        type: type
+  - name: RBS::Types::Proc
+    fields:
+      - name: type
+        type: function
+      - name: block
+        type: block
+      - name: location
+        type: location?
+      - name: self_type
+        type: type
+  - name: RBS::Types::Bases::Void
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Literal
+    fields:
+      - name: literal
+        type: string
+      - name: location
+        type: location?
+  - name: RBS::Types::Record
+    fields:
+      - name: all_fields
+        type: field[]
+      - name: location
+        type: location?
+  - name: RBS::Types::Variable
+    fields:
+      - name: name
+        type: string
+      - name: location
+        type: location?
+  - name: RBS::AST::Comment
+    fields:
+      - name: string
+        type: string
+      - name: location
+        type: location?
+  - name: RBS::AST::Annotation
+    fields:
+      - name: string
+        type: string
+      - name: location
+        type: location?
+  - name: RBS::AST::Declarations::Constant
+    fields:
+      - name: name
+        type: type_name
+      - name: type
+        type: type
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Declarations::Global
+    fields:
+      - name: name
+        type: type_name
+      - name: type
+        type: type
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Declarations::TypeAlias
+    fields:
+      - name: name
+        type: type_name
+      - name: type_params
+        type: type_param[]
+      - name: type
+        type: type
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Declarations::Interface
+    fields:
+      - name: name
+        type: type_name
+      - name: type_params
+        type: type_param[]
+      - name: members
+        type: member[]
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Declarations::Module::Self
+    fields:
+      - name: name
+        type: type_name
+      - name: args
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::AST::Declarations::Module
+    fields:
+      - name: name
+        type: type_name
+      - name: type_params
+        type: type_param[]
+      - name: self_types
+        type: type[]
+      - name: members
+        type: member[]
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Declarations::ClassAlias
+    fields:
+      - name: new_name
+        type: type_name
+      - name: old_name
+        type: type_name
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Declarations::ModuleAlias
+    fields:
+      - name: new_name
+        type: type_name
+      - name: old_name
+        type: type_name
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Members::MethodDefinition::Overload
+    fields:
+      - name: annotations
+        type: annotation[]
+      - name: method_type
+        type: method_type
+  - name: RBS::AST::Members::MethodDefinition
+    fields:
+      - name: name
+        type: symbol
+      - name: kind
+        type: symbol
+      - name: overloads
+        type: overload[]
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+      - name: overloading
+        type: bool
+      - name: visibility
+        type: symbol
+  - name: RBS::AST::Members::Alias
+    fields:
+      - name: new_name
+        type: symbol
+      - name: old_name
+        type: symbol
+      - name: kind
+        type: symbol
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Declarations::Class::Super
+    fields:
+      - name: name
+        type: symbol
+      - name: args
+        type: type[]
+      - name: location
+        type: location?
+  - name: RBS::AST::Declarations::Class
+    fields:
+      - name: name
+        type: symbol
+      - name: type_params
+        type: type_param[]
+      - name: super_class
+        type: symbol
+      - name: members
+        type: member[]
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Directives::Use
+    fields:
+      - name: clauses
+        type: clause[]
+      - name: location
+        type: location?
+  - name: RBS::AST::Directives::Use::SingleClause
+    fields:
+      - name: type_name
+        type: symbol
+      - name: new_name
+        type: symbol
+      - name: location
+        type: location?
+  - name: RBS::AST::Directives::Use::WildcardClause
+    fields:
+      - name: namespace
+        type: symbol
+      - name: location
+        type: location?
