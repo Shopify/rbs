@@ -10,17 +10,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_base_type(VALUE klass, VALUE location) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    klass,
-    1,
-    &args
-  );
-}
-
 VALUE rbs_ast_type_param(VALUE name, VALUE variance, bool unchecked, VALUE upper_bound, VALUE default_type, VALUE location) {
   VALUE args = rb_hash_new();
   rb_hash_aset(args, ID2SYM(rb_intern("name")), name);

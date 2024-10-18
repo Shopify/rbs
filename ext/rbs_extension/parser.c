@@ -963,25 +963,25 @@ static VALUE parse_simple(parserstate *state) {
     return type;
   }
   case kBOOL:
-    return rbs_base_type(RBS_Types_Bases_Bool, rbs_location_current_token(state));
+    return rbs_bases_bool(rbs_location_current_token(state));
   case kBOT:
-    return rbs_base_type(RBS_Types_Bases_Bottom, rbs_location_current_token(state));
+    return rbs_bases_bottom(rbs_location_current_token(state));
   case kCLASS:
-    return rbs_base_type(RBS_Types_Bases_Class, rbs_location_current_token(state));
+    return rbs_bases_class(rbs_location_current_token(state));
   case kINSTANCE:
-    return rbs_base_type(RBS_Types_Bases_Instance, rbs_location_current_token(state));
+    return rbs_bases_instance(rbs_location_current_token(state));
   case kNIL:
-    return rbs_base_type(RBS_Types_Bases_Nil, rbs_location_current_token(state));
+    return rbs_bases_nil(rbs_location_current_token(state));
   case kSELF:
-    return rbs_base_type(RBS_Types_Bases_Self, rbs_location_current_token(state));
+    return rbs_bases_self(rbs_location_current_token(state));
   case kTOP:
-    return rbs_base_type(RBS_Types_Bases_Top, rbs_location_current_token(state));
+    return rbs_bases_top(rbs_location_current_token(state));
   case kVOID:
-    return rbs_base_type(RBS_Types_Bases_Void, rbs_location_current_token(state));
+    return rbs_bases_void(rbs_location_current_token(state));
   case kUNTYPED:
-    return rbs_base_type(RBS_Types_Bases_Any, rbs_location_current_token(state));
+    return rbs_bases_any(rbs_location_current_token(state));
   case k__TODO__: {
-    VALUE type = rbs_base_type(RBS_Types_Bases_Any, rbs_location_current_token(state));
+    VALUE type = rbs_bases_any(rbs_location_current_token(state));
     rb_funcall(type, rb_intern("todo!"), 0);
     return type;
   }

@@ -223,17 +223,6 @@ VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type) {
   );
 }
 
-VALUE rbs_bases_void(VALUE location) {
-  VALUE kwargs = rb_hash_new();
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Void,
-    1,
-    &kwargs
-  );
-}
-
 VALUE rbs_literal(VALUE literal, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("literal")), literal);
@@ -542,6 +531,105 @@ VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location) {
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Directives_Use_WildcardClause,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_bool(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Bool,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_bottom(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Bottom,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_class(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Class,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_instance(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Instance,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_nil(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Nil,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_self(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Self,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_top(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Top,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_void(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Void,
+    1,
+    &kwargs
+  );
+}
+
+VALUE rbs_bases_any(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_Types_Bases_Any,
     1,
     &kwargs
   );

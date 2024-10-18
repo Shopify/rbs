@@ -123,10 +123,6 @@ nodes:
         type: location?
       - name: self_type
         type: type
-  - name: RBS::Types::Bases::Void
-    fields:
-      - name: location
-        type: location?
   - name: RBS::Types::Literal
     fields:
       - name: literal
@@ -337,5 +333,41 @@ nodes:
     fields:
       - name: namespace
         type: symbol
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Bool
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Bottom
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Class
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Instance
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Nil
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Self
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Top
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Void
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::Types::Bases::Any
+    fields:
       - name: location
         type: location?

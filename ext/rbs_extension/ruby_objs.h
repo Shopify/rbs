@@ -25,7 +25,15 @@ VALUE rbs_ast_members_mixin(VALUE klass, VALUE name, VALUE args, VALUE annotatio
 VALUE rbs_ast_members_variable(VALUE klass, VALUE name, VALUE type, VALUE location, VALUE comment);
 VALUE rbs_ast_members_public(VALUE location);
 VALUE rbs_ast_members_private(VALUE location);
-VALUE rbs_base_type(VALUE klass, VALUE location);
+VALUE rbs_bases_bool(VALUE location);
+VALUE rbs_bases_bottom(VALUE location);
+VALUE rbs_bases_class(VALUE location);
+VALUE rbs_bases_instance(VALUE location);
+VALUE rbs_bases_nil(VALUE location);
+VALUE rbs_bases_self(VALUE location);
+VALUE rbs_bases_top(VALUE location);
+VALUE rbs_bases_void(VALUE location);
+VALUE rbs_bases_any(VALUE location);
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type);
 VALUE rbs_class_instance(VALUE typename, VALUE type_args, VALUE location);
 VALUE rbs_class_singleton(VALUE typename, VALUE location);
