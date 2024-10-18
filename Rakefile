@@ -43,17 +43,13 @@ task :confirm_annotation do
   sh "git diff --exit-code core stdlib"
 end
 
-file "include/rbs/constants.h" => ["config.yml", "templates/template.rb", "templates/include/rbs/constants.h.erb"] do
+task :templates do
   sh "ruby templates/template.rb include/rbs/constants.h"
-end
-
-file "src/ruby_objs.c" => ["config.yml", "templates/template.rb", "templates/src/ruby_objs.c.erb"] do
   sh "ruby templates/template.rb src/ruby_objs.c"
 end
 
-Rake::Task[:compile].prereqs.prepend "include/rbs/constants.h"
-Rake::Task[:compile].prereqs.prepend "ext/rbs_extension/lexer.c"
-Rake::Task[:compile].prereqs.prepend "src/ruby_objs.c"
+task :compile => ["ext/rbs_extension/lexer.c"]
+Rake::Task[:compile].prereqs.prepend :templates
 
 task :test_doc do
   files = Dir.chdir(File.expand_path('..', __FILE__)) do
