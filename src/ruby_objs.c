@@ -28,6 +28,7 @@ VALUE rbs_namespace(VALUE path, VALUE absolute) {
     &kwargs
   );
 }
+
 VALUE rbs_type_name(VALUE namespace, VALUE name) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("namespace")), namespace);
@@ -39,6 +40,7 @@ VALUE rbs_type_name(VALUE namespace, VALUE name) {
     &kwargs
   );
 }
+
 VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("type_params")), type_params);
@@ -52,6 +54,7 @@ VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location
     &kwargs
   );
 }
+
 VALUE rbs_class_instance(VALUE name, VALUE args, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -64,6 +67,7 @@ VALUE rbs_class_instance(VALUE name, VALUE args, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_class_singleton(VALUE name, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -75,6 +79,7 @@ VALUE rbs_class_singleton(VALUE name, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_alias(VALUE name, VALUE args, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -87,6 +92,7 @@ VALUE rbs_alias(VALUE name, VALUE args, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_interface(VALUE name, VALUE args, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -99,6 +105,7 @@ VALUE rbs_interface(VALUE name, VALUE args, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_union(VALUE types, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("types")), types);
@@ -110,6 +117,7 @@ VALUE rbs_union(VALUE types, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_intersection(VALUE types, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("types")), types);
@@ -121,6 +129,7 @@ VALUE rbs_intersection(VALUE types, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_tuple(VALUE types, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("types")), types);
@@ -132,6 +141,7 @@ VALUE rbs_tuple(VALUE types, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_optional(VALUE type, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("type")), type);
@@ -143,6 +153,7 @@ VALUE rbs_optional(VALUE type, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("type")), type);
@@ -155,6 +166,7 @@ VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
     &kwargs
   );
 }
+
 VALUE rbs_function_param(VALUE type, VALUE name, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("type")), type);
@@ -167,6 +179,7 @@ VALUE rbs_function_param(VALUE type, VALUE name, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_untyped_function(VALUE return_type) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("return_type")), return_type);
@@ -177,6 +190,7 @@ VALUE rbs_untyped_function(VALUE return_type) {
     &kwargs
   );
 }
+
 VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("required_positionals")), required_positionals);
@@ -194,6 +208,7 @@ VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE
     &kwargs
   );
 }
+
 VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("type")), type);
@@ -207,6 +222,7 @@ VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type) {
     &kwargs
   );
 }
+
 VALUE rbs_bases_void(VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
@@ -217,6 +233,7 @@ VALUE rbs_bases_void(VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_literal(VALUE literal, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("literal")), literal);
@@ -228,6 +245,7 @@ VALUE rbs_literal(VALUE literal, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_record(VALUE all_fields, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("all_fields")), all_fields);
@@ -239,6 +257,7 @@ VALUE rbs_record(VALUE all_fields, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_variable(VALUE name, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -250,6 +269,7 @@ VALUE rbs_variable(VALUE name, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_comment(VALUE string, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("string")), string);
@@ -261,6 +281,7 @@ VALUE rbs_ast_comment(VALUE string, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_annotation(VALUE string, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("string")), string);
@@ -272,6 +293,7 @@ VALUE rbs_ast_annotation(VALUE string, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_constant(VALUE name, VALUE type, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -285,6 +307,7 @@ VALUE rbs_ast_decl_constant(VALUE name, VALUE type, VALUE location, VALUE commen
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_global(VALUE name, VALUE type, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -298,6 +321,7 @@ VALUE rbs_ast_decl_global(VALUE name, VALUE type, VALUE location, VALUE comment)
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_type_alias(VALUE name, VALUE type_params, VALUE type, VALUE annotations, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -313,6 +337,7 @@ VALUE rbs_ast_decl_type_alias(VALUE name, VALUE type_params, VALUE type, VALUE a
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_interface(VALUE name, VALUE type_params, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -328,6 +353,7 @@ VALUE rbs_ast_decl_interface(VALUE name, VALUE type_params, VALUE members, VALUE
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_module_self(VALUE name, VALUE args, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -340,6 +366,7 @@ VALUE rbs_ast_decl_module_self(VALUE name, VALUE args, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_module(VALUE name, VALUE type_params, VALUE self_types, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -356,6 +383,7 @@ VALUE rbs_ast_decl_module(VALUE name, VALUE type_params, VALUE self_types, VALUE
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_class_alias(VALUE new_name, VALUE old_name, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("new_name")), new_name);
@@ -369,6 +397,7 @@ VALUE rbs_ast_decl_class_alias(VALUE new_name, VALUE old_name, VALUE location, V
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_module_alias(VALUE new_name, VALUE old_name, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("new_name")), new_name);
@@ -382,6 +411,7 @@ VALUE rbs_ast_decl_module_alias(VALUE new_name, VALUE old_name, VALUE location, 
     &kwargs
   );
 }
+
 VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("annotations")), annotations);
@@ -393,6 +423,7 @@ VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method
     &kwargs
   );
 }
+
 VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads, VALUE annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -410,6 +441,7 @@ VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads,
     &kwargs
   );
 }
+
 VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("new_name")), new_name);
@@ -425,6 +457,7 @@ VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, VALUE an
     &kwargs
   );
 }
+
 VALUE rbs_ast_members_public(VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
@@ -435,6 +468,7 @@ VALUE rbs_ast_members_public(VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_members_private(VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
@@ -445,6 +479,7 @@ VALUE rbs_ast_members_private(VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -457,6 +492,7 @@ VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_decl_class(VALUE name, VALUE type_params, VALUE super_class, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
@@ -473,6 +509,7 @@ VALUE rbs_ast_decl_class(VALUE name, VALUE type_params, VALUE super_class, VALUE
     &kwargs
   );
 }
+
 VALUE rbs_ast_directives_use(VALUE clauses, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("clauses")), clauses);
@@ -484,6 +521,7 @@ VALUE rbs_ast_directives_use(VALUE clauses, VALUE location) {
     &kwargs
   );
 }
+
 VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("type_name")), type_name);
@@ -496,6 +534,7 @@ VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALU
     &kwargs
   );
 }
+
 VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("namespace")), namespace);
