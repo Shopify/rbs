@@ -425,6 +425,26 @@ VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, VALUE an
     &kwargs
   );
 }
+VALUE rbs_ast_members_public(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_AST_Members_Public,
+    1,
+    &kwargs
+  );
+}
+VALUE rbs_ast_members_private(VALUE location) {
+  VALUE kwargs = rb_hash_new();
+  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_AST_Members_Private,
+    1,
+    &kwargs
+  );
+}
 VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);

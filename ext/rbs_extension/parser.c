@@ -2020,24 +2020,17 @@ VALUE parse_visibility_member(parserstate *state, VALUE annotations) {
     );
   }
 
-  VALUE klass;
+  VALUE location = rbs_new_location(state->buffer, state->current_token.range);
 
   switch (state->current_token.type)
   {
   case kPUBLIC:
-    klass = RBS_AST_Members_Public;
-    break;
+    return rbs_ast_members_public(location);
   case kPRIVATE:
-    klass = RBS_AST_Members_Private;
-    break;
+    return rbs_ast_members_private(location);
   default:
     rbs_abort();
   }
-
-  return rbs_ast_members_visibility(
-    klass,
-    rbs_new_location(state->buffer, state->current_token.range)
-  );
 }
 
 /*

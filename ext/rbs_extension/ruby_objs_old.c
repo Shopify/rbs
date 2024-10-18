@@ -85,13 +85,3 @@ VALUE rbs_ast_members_attribute(VALUE klass, VALUE name, VALUE type, VALUE ivar_
   );
 }
 
-VALUE rbs_ast_members_visibility(VALUE klass, VALUE location) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    klass,
-    1,
-    &args
-  );
-}

@@ -287,6 +287,14 @@ nodes:
         type: location?
       - name: comment
         type: comment?
+  - name: RBS::AST::Members::Public
+    fields:
+      - name: location
+        type: location?
+  - name: RBS::AST::Members::Private
+    fields:
+      - name: location
+        type: location?
   - name: RBS::AST::Declarations::Class::Super
     fields:
       - name: name
