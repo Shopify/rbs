@@ -87,7 +87,7 @@ module RBS
       def locals
         config = YAML.load_file(File.expand_path("../config.yml", __dir__))
         {
-          nodes: config.fetch("nodes").map { |node| Type.new(node) }#.sort_by(&:full_name),
+          nodes: config.fetch("nodes").map { |node| Type.new(node) }.sort_by(&:full_name),
         }
       end
     end
