@@ -25,21 +25,6 @@ VALUE <%= node.c_function_name %>(<%= node.fields.map { |field| "#{field.c_type}
 }
 <%- end -%>
 
-VALUE rbs_ast_members_mixin(VALUE klass, VALUE name, VALUE module_args, VALUE annotations, VALUE location, VALUE comment) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(args, ID2SYM(rb_intern("args")), module_args);
-  rb_hash_aset(args, ID2SYM(rb_intern("annotations")), annotations);
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(args, ID2SYM(rb_intern("comment")), comment);
-
-  return CLASS_NEW_INSTANCE(
-    klass,
-    1,
-    &args
-  );
-}
-
 VALUE rbs_ast_members_attribute(VALUE klass, VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility) {
   VALUE args = rb_hash_new();
   rb_hash_aset(args, ID2SYM(rb_intern("name")), name);

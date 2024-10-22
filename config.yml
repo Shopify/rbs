@@ -413,3 +413,39 @@ nodes:
         type: location?
       - name: comment
         type: comment?
+  - name: RBS::AST::Members::Include
+    fields:
+      - name: name
+        type: symbol
+      - name: args
+        type: type[]
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Members::Extend
+    fields:
+      - name: name
+        type: symbol
+      - name: args
+        type: type[]
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Members::Prepend
+    fields:
+      - name: name
+        type: symbol
+      - name: args
+        type: type[]
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?

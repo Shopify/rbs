@@ -21,7 +21,9 @@ VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, VALUE an
 VALUE rbs_ast_members_attribute(VALUE klass, VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility);
 VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads, VALUE annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
 VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type);
-VALUE rbs_ast_members_mixin(VALUE klass, VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment);
+VALUE rbs_ast_members_include(VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment);
+VALUE rbs_ast_members_extend(VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment);
+VALUE rbs_ast_members_prepend(VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_class_instance_variable(VALUE name, VALUE type, VALUE location, VALUE comment);
 VALUE rbs_ast_members_class_variable(VALUE name, VALUE type, VALUE location, VALUE comment);
 VALUE rbs_ast_members_instance_variable(VALUE name, VALUE type, VALUE location, VALUE comment);
