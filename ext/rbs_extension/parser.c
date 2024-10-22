@@ -1926,6 +1926,7 @@ VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE anno
   range member_range;
   range name_range, colon_range;
   range kind_range = NULL_RANGE;
+  rbs_loc *loc;
 
   if (rb_array_len(annotations) > 0) {
     raise_syntax_error(
@@ -1939,7 +1940,6 @@ VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE anno
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
   VALUE comment = get_comment(state, comment_pos.line);
 
-  VALUE klass;
   VALUE location;
   VALUE name;
   VALUE type;
@@ -1947,8 +1947,6 @@ VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE anno
   switch (state->current_token.type)
   {
   case tAIDENT:
-    klass = RBS_AST_Members_InstanceVariable;
-
     name_range = state->current_token.range;
     name = ID2SYM(INTERN_TOKEN(state, state->current_token));
 
@@ -1958,11 +1956,16 @@ VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE anno
     type = parse_type(state);
     member_range.end = state->current_token.range.end;
 
-    break;
+    location = rbs_new_location(state->buffer, member_range);
+    loc = rbs_check_location(location);
+    rbs_loc_alloc_children(loc, 3);
+    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
+    rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
+    rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
+
+    return rbs_ast_members_instance_variable(name, type, location, comment);
 
   case tA2IDENT:
-    klass = RBS_AST_Members_ClassVariable;
-
     name_range = state->current_token.range;
     name = ID2SYM(INTERN_TOKEN(state, state->current_token));
 
@@ -1974,11 +1977,16 @@ VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE anno
     parser_pop_typevar_table(state);
     member_range.end = state->current_token.range.end;
 
-    break;
+    location = rbs_new_location(state->buffer, member_range);
+    loc = rbs_check_location(location);
+    rbs_loc_alloc_children(loc, 3);
+    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
+    rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
+    rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
+
+    return rbs_ast_members_class_variable(name, type, location, comment);
 
   case kSELF:
-    klass = RBS_AST_Members_ClassInstanceVariable;
-
     kind_range.start = state->current_token.range.start;
     kind_range.end = state->next_token.range.end;
 
@@ -1996,20 +2004,18 @@ VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE anno
     parser_pop_typevar_table(state);
     member_range.end = state->current_token.range.end;
 
-    break;
+    location = rbs_new_location(state->buffer, member_range);
+    loc = rbs_check_location(location);
+    rbs_loc_alloc_children(loc, 3);
+    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
+    rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
+    rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
+
+    return rbs_ast_members_class_instance_variable(name, type, location, comment);
 
   default:
     rbs_abort();
   }
-
-  location = rbs_new_location(state->buffer, member_range);
-  rbs_loc *loc = rbs_check_location(location);
-  rbs_loc_alloc_children(loc, 3);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
-  rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
-
-  return rbs_ast_members_variable(klass, name, type, location, comment);
 }
 
 /*

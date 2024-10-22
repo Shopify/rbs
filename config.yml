@@ -383,3 +383,33 @@ nodes:
         type: type
       - name: location
         type: location?
+  - name: RBS::AST::Members::ClassInstanceVariable
+    fields:
+      - name: name
+        type: symbol
+      - name: type
+        type: type
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Members::ClassVariable
+    fields:
+      - name: name
+        type: symbol
+      - name: type
+        type: type
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+  - name: RBS::AST::Members::InstanceVariable
+    fields:
+      - name: name
+        type: symbol
+      - name: type
+        type: type
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
