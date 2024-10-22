@@ -45,6 +45,7 @@ end
 
 task :templates do
   sh "ruby templates/template.rb include/rbs/constants.h"
+  sh "ruby templates/template.rb include/rbs/ruby_objs.h"
   sh "ruby templates/template.rb src/ruby_objs.c"
 end
 
