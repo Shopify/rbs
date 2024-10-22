@@ -21,6 +21,7 @@ module RBS
       attr_reader :name
       attr_reader :c_function_name
       attr_reader :c_constant_name
+      attr_reader :parent_c_constant_name
       attr_reader :fields
 
       def initialize(yaml)
@@ -35,6 +36,7 @@ module RBS
         end
         @c_constant_name = @full_name.gsub("::", "_")
         @fields = yaml["fields"].map { |field| Field.new(field) }
+        @parent_c_constant_name = @full_name.split("::")[0..-2].join("::").gsub("::", "_")
       end
     end
 
