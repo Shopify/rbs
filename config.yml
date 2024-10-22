@@ -371,3 +371,15 @@ nodes:
     fields:
       - name: location
         type: location?
+  - name: RBS::AST::TypeParam
+    fields:
+      - name: name
+        type: string
+      - name: variance
+        type: symbol
+      - name: upper_bound
+        type: type
+      - name: default_type
+        type: type
+      - name: location
+        type: location?

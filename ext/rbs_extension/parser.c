@@ -1219,7 +1219,12 @@ VALUE parse_type_params(parserstate *state, range *rg, bool module_type_params) 
       rbs_loc_add_optional_child(loc, rb_intern("upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, rb_intern("default"), default_type_range);
 
-      VALUE param = rbs_ast_type_param(name, variance, unchecked, upper_bound, default_type, location);
+      VALUE param = rbs_ast_type_param(name, variance, upper_bound, default_type, location);
+
+      if (unchecked) {
+        rb_funcall(param, rb_intern("unchecked!"), 0);
+      }
+
       melt_array(&params);
       rb_ary_push(params, param);
 
