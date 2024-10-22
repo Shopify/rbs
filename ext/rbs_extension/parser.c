@@ -2065,7 +2065,6 @@ VALUE parse_attribute_member(parserstate *state, position comment_pos, VALUE ann
   range kind_range = NULL_RANGE, ivar_range = NULL_RANGE, ivar_name_range = NULL_RANGE, visibility_range = NULL_RANGE;
 
   InstanceSingletonKind is_kind;
-  VALUE klass;
   VALUE kind;
   VALUE attr_name;
   VALUE ivar_name;
@@ -2097,21 +2096,8 @@ VALUE parse_attribute_member(parserstate *state, position comment_pos, VALUE ann
     break;
   }
 
+  enum TokenType attr_type = state->current_token.type;
   keyword_range = state->current_token.range;
-  switch (state->current_token.type)
-  {
-  case kATTRREADER:
-    klass = RBS_AST_Members_AttrReader;
-    break;
-  case kATTRWRITER:
-    klass = RBS_AST_Members_AttrWriter;
-    break;
-  case kATTRACCESSOR:
-    klass = RBS_AST_Members_AttrAccessor;
-    break;
-  default:
-    rbs_abort();
-  }
 
   is_kind = parse_instance_singleton_kind(state, false, &kind_range);
   if (is_kind == INSTANCE_KIND) {
@@ -2158,17 +2144,17 @@ VALUE parse_attribute_member(parserstate *state, position comment_pos, VALUE ann
   rbs_loc_add_optional_child(loc, rb_intern("ivar_name"), ivar_name_range);
   rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
 
-  return rbs_ast_members_attribute(
-    klass,
-    attr_name,
-    type,
-    ivar_name,
-    kind,
-    annotations,
-    location,
-    comment,
-    visibility
-  );
+  switch (attr_type)
+  {
+  case kATTRREADER:
+    return rbs_ast_members_attr_reader(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+  case kATTRWRITER:
+    return rbs_ast_members_attr_writer(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+  case kATTRACCESSOR:
+    return rbs_ast_members_attr_accessor(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+  default:
+    rbs_abort();
+  }
 }
 
 /*

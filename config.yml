@@ -449,3 +449,57 @@ nodes:
         type: location?
       - name: comment
         type: comment?
+  - name: RBS::AST::Members::AttrAccessor
+    fields:
+      - name: name
+        type: symbol
+      - name: type
+        type: type
+      - name: ivar_name
+        type: symbol
+      - name: kind
+        type: symbol
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+      - name: visibility
+        type: symbol
+  - name: RBS::AST::Members::AttrReader
+    fields:
+      - name: name
+        type: symbol
+      - name: type
+        type: type
+      - name: ivar_name
+        type: symbol
+      - name: kind
+        type: symbol
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+      - name: visibility
+        type: symbol
+  - name: RBS::AST::Members::AttrWriter
+    fields:
+      - name: name
+        type: symbol
+      - name: type
+        type: type
+      - name: ivar_name
+        type: symbol
+      - name: kind
+        type: symbol
+      - name: annotations
+        type: annotation[]
+      - name: location
+        type: location?
+      - name: comment
+        type: comment?
+      - name: visibility
+        type: symbol
