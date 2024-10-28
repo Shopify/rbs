@@ -1,14 +1,8 @@
 #include "rbs_extension.h"
 
-VALUE RBS_Parser;
-
-VALUE RBS;
-VALUE RBS_AST;
 VALUE RBS_AST_Comment;
 VALUE RBS_AST_Annotation;
 VALUE RBS_AST_TypeParam;
-
-VALUE RBS_AST_Declarations;
 
 VALUE RBS_AST_Declarations_TypeAlias;
 VALUE RBS_AST_Declarations_Constant;
@@ -21,12 +15,10 @@ VALUE RBS_AST_Declarations_Class_Super;
 VALUE RBS_AST_Declarations_ModuleAlias;
 VALUE RBS_AST_Declarations_ClassAlias;
 
-VALUE RBS_AST_Directives;
 VALUE RBS_AST_Directives_Use;
 VALUE RBS_AST_Directives_Use_SingleClause;
 VALUE RBS_AST_Directives_Use_WildcardClause;
 
-VALUE RBS_AST_Members;
 VALUE RBS_AST_Members_Alias;
 VALUE RBS_AST_Members_AttrAccessor;
 VALUE RBS_AST_Members_AttrReader;
@@ -55,7 +47,6 @@ VALUE RBS_Types_Bases_Nil;
 VALUE RBS_Types_Bases_Self;
 VALUE RBS_Types_Bases_Top;
 VALUE RBS_Types_Bases_Void;
-VALUE RBS_Types_Bases;
 VALUE RBS_Types_Block;
 VALUE RBS_Types_ClassInstance;
 VALUE RBS_Types_ClassSingleton;
@@ -71,23 +62,14 @@ VALUE RBS_Types_Record;
 VALUE RBS_Types_Tuple;
 VALUE RBS_Types_Union;
 VALUE RBS_Types_Variable;
-VALUE RBS_Types;
 VALUE RBS_MethodType;
-
-VALUE RBS_ParsingError;
 
 #define IMPORT_CONSTANT(var, parent, name) { var = rb_const_get(parent, rb_intern(name)); rb_gc_register_mark_object(var); }
 
 void rbs__init_constants(void) {
-  IMPORT_CONSTANT(RBS, rb_cObject, "RBS");
-  IMPORT_CONSTANT(RBS_ParsingError, RBS, "ParsingError");
-
-  IMPORT_CONSTANT(RBS_AST, RBS, "AST");
   IMPORT_CONSTANT(RBS_AST_Comment, RBS_AST, "Comment");
   IMPORT_CONSTANT(RBS_AST_Annotation, RBS_AST, "Annotation");
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
-
-  IMPORT_CONSTANT(RBS_AST_Declarations, RBS_AST, "Declarations");
 
   IMPORT_CONSTANT(RBS_AST_Declarations_TypeAlias, RBS_AST_Declarations, "TypeAlias");
   IMPORT_CONSTANT(RBS_AST_Declarations_Constant, RBS_AST_Declarations, "Constant");
@@ -100,12 +82,10 @@ void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_Declarations_ClassAlias, RBS_AST_Declarations, "ClassAlias");
   IMPORT_CONSTANT(RBS_AST_Declarations_ModuleAlias, RBS_AST_Declarations, "ModuleAlias");
 
-  IMPORT_CONSTANT(RBS_AST_Directives, RBS_AST, "Directives");
   IMPORT_CONSTANT(RBS_AST_Directives_Use, RBS_AST_Directives, "Use");
   IMPORT_CONSTANT(RBS_AST_Directives_Use_SingleClause, RBS_AST_Directives_Use, "SingleClause");
   IMPORT_CONSTANT(RBS_AST_Directives_Use_WildcardClause, RBS_AST_Directives_Use, "WildcardClause");
 
-  IMPORT_CONSTANT(RBS_AST_Members, RBS_AST, "Members");
   IMPORT_CONSTANT(RBS_AST_Members_Alias, RBS_AST_Members, "Alias");
   IMPORT_CONSTANT(RBS_AST_Members_AttrAccessor, RBS_AST_Members, "AttrAccessor");
   IMPORT_CONSTANT(RBS_AST_Members_AttrReader, RBS_AST_Members, "AttrReader");
@@ -123,9 +103,7 @@ void rbs__init_constants(void) {
 
   IMPORT_CONSTANT(RBS_Namespace, RBS, "Namespace");
   IMPORT_CONSTANT(RBS_TypeName, RBS, "TypeName");
-  IMPORT_CONSTANT(RBS_Types, RBS, "Types");
   IMPORT_CONSTANT(RBS_Types_Alias, RBS_Types, "Alias");
-  IMPORT_CONSTANT(RBS_Types_Bases, RBS_Types, "Bases");
   IMPORT_CONSTANT(RBS_Types_Bases_Any, RBS_Types_Bases, "Any");
   IMPORT_CONSTANT(RBS_Types_Bases_Bool, RBS_Types_Bases, "Bool");
   IMPORT_CONSTANT(RBS_Types_Bases_Bottom, RBS_Types_Bases, "Bottom");
