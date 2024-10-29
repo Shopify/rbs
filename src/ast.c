@@ -12,7 +12,10 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE ruby_value, VALUE string, VAL
     rbs_ast_annotation_t *instance = (rbs_ast_annotation_t *)calloc(1, sizeof(rbs_ast_annotation_t));
 
     *instance = (rbs_ast_annotation_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_ANNOTATION
+        },
         .string = string,
         .location = location,
     };
@@ -24,7 +27,10 @@ rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, VALUE loc
     rbs_ast_comment_t *instance = (rbs_ast_comment_t *)calloc(1, sizeof(rbs_ast_comment_t));
 
     *instance = (rbs_ast_comment_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_COMMENT
+        },
         .string = string,
         .location = location,
     };
@@ -36,7 +42,10 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(VALUE ruby_value, V
     rbs_ast_declarations_class_t *instance = (rbs_ast_declarations_class_t *)calloc(1, sizeof(rbs_ast_declarations_class_t));
 
     *instance = (rbs_ast_declarations_class_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CLASS
+        },
         .name = name,
         .type_params = type_params,
         .super_class = super_class,
@@ -53,7 +62,10 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(VALUE r
     rbs_ast_declarations_class_super_t *instance = (rbs_ast_declarations_class_super_t *)calloc(1, sizeof(rbs_ast_declarations_class_super_t));
 
     *instance = (rbs_ast_declarations_class_super_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CLASS_SUPER
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -66,7 +78,10 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(VALUE rub
     rbs_ast_declarations_classalias_t *instance = (rbs_ast_declarations_classalias_t *)calloc(1, sizeof(rbs_ast_declarations_classalias_t));
 
     *instance = (rbs_ast_declarations_classalias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CLASSALIAS
+        },
         .new_name = new_name,
         .old_name = old_name,
         .location = location,
@@ -80,7 +95,10 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(VALUE ruby_va
     rbs_ast_declarations_constant_t *instance = (rbs_ast_declarations_constant_t *)calloc(1, sizeof(rbs_ast_declarations_constant_t));
 
     *instance = (rbs_ast_declarations_constant_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CONSTANT
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -94,7 +112,10 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(VALUE ruby_value,
     rbs_ast_declarations_global_t *instance = (rbs_ast_declarations_global_t *)calloc(1, sizeof(rbs_ast_declarations_global_t));
 
     *instance = (rbs_ast_declarations_global_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_GLOBAL
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -108,7 +129,10 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(VALUE ruby_
     rbs_ast_declarations_interface_t *instance = (rbs_ast_declarations_interface_t *)calloc(1, sizeof(rbs_ast_declarations_interface_t));
 
     *instance = (rbs_ast_declarations_interface_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_INTERFACE
+        },
         .name = name,
         .type_params = type_params,
         .members = members,
@@ -124,7 +148,10 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(VALUE ruby_value,
     rbs_ast_declarations_module_t *instance = (rbs_ast_declarations_module_t *)calloc(1, sizeof(rbs_ast_declarations_module_t));
 
     *instance = (rbs_ast_declarations_module_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_MODULE
+        },
         .name = name,
         .type_params = type_params,
         .self_types = self_types,
@@ -141,7 +168,10 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(VALUE r
     rbs_ast_declarations_module_self_t *instance = (rbs_ast_declarations_module_self_t *)calloc(1, sizeof(rbs_ast_declarations_module_self_t));
 
     *instance = (rbs_ast_declarations_module_self_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_MODULE_SELF
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -154,7 +184,10 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(VALUE r
     rbs_ast_declarations_modulealias_t *instance = (rbs_ast_declarations_modulealias_t *)calloc(1, sizeof(rbs_ast_declarations_modulealias_t));
 
     *instance = (rbs_ast_declarations_modulealias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_MODULEALIAS
+        },
         .new_name = new_name,
         .old_name = old_name,
         .location = location,
@@ -168,7 +201,10 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(VALUE ruby_
     rbs_ast_declarations_typealias_t *instance = (rbs_ast_declarations_typealias_t *)calloc(1, sizeof(rbs_ast_declarations_typealias_t));
 
     *instance = (rbs_ast_declarations_typealias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_TYPEALIAS
+        },
         .name = name,
         .type_params = type_params,
         .type = type,
@@ -184,7 +220,10 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE ruby_value, VALUE cla
     rbs_ast_directives_use_t *instance = (rbs_ast_directives_use_t *)calloc(1, sizeof(rbs_ast_directives_use_t));
 
     *instance = (rbs_ast_directives_use_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DIRECTIVES_USE
+        },
         .clauses = clauses,
         .location = location,
     };
@@ -196,7 +235,10 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(V
     rbs_ast_directives_use_singleclause_t *instance = (rbs_ast_directives_use_singleclause_t *)calloc(1, sizeof(rbs_ast_directives_use_singleclause_t));
 
     *instance = (rbs_ast_directives_use_singleclause_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DIRECTIVES_USE_SINGLECLAUSE
+        },
         .type_name = type_name,
         .new_name = new_name,
         .location = location,
@@ -209,7 +251,10 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     rbs_ast_directives_use_wildcardclause_t *instance = (rbs_ast_directives_use_wildcardclause_t *)calloc(1, sizeof(rbs_ast_directives_use_wildcardclause_t));
 
     *instance = (rbs_ast_directives_use_wildcardclause_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE
+        },
         .namespace = namespace,
         .location = location,
     };
@@ -221,7 +266,10 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE ruby_value, VALUE new_n
     rbs_ast_members_alias_t *instance = (rbs_ast_members_alias_t *)calloc(1, sizeof(rbs_ast_members_alias_t));
 
     *instance = (rbs_ast_members_alias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ALIAS
+        },
         .new_name = new_name,
         .old_name = old_name,
         .kind = kind,
@@ -237,7 +285,10 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE ruby_valu
     rbs_ast_members_attraccessor_t *instance = (rbs_ast_members_attraccessor_t *)calloc(1, sizeof(rbs_ast_members_attraccessor_t));
 
     *instance = (rbs_ast_members_attraccessor_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ATTRACCESSOR
+        },
         .name = name,
         .type = type,
         .ivar_name = ivar_name,
@@ -255,7 +306,10 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE ruby_value, V
     rbs_ast_members_attrreader_t *instance = (rbs_ast_members_attrreader_t *)calloc(1, sizeof(rbs_ast_members_attrreader_t));
 
     *instance = (rbs_ast_members_attrreader_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ATTRREADER
+        },
         .name = name,
         .type = type,
         .ivar_name = ivar_name,
@@ -273,7 +327,10 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE ruby_value, V
     rbs_ast_members_attrwriter_t *instance = (rbs_ast_members_attrwriter_t *)calloc(1, sizeof(rbs_ast_members_attrwriter_t));
 
     *instance = (rbs_ast_members_attrwriter_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ATTRWRITER
+        },
         .name = name,
         .type = type,
         .ivar_name = ivar_name,
@@ -291,7 +348,10 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
     rbs_ast_members_classinstancevariable_t *instance = (rbs_ast_members_classinstancevariable_t *)calloc(1, sizeof(rbs_ast_members_classinstancevariable_t));
 
     *instance = (rbs_ast_members_classinstancevariable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -305,7 +365,10 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE ruby_va
     rbs_ast_members_classvariable_t *instance = (rbs_ast_members_classvariable_t *)calloc(1, sizeof(rbs_ast_members_classvariable_t));
 
     *instance = (rbs_ast_members_classvariable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_CLASSVARIABLE
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -319,7 +382,10 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE ruby_value, VALUE nam
     rbs_ast_members_extend_t *instance = (rbs_ast_members_extend_t *)calloc(1, sizeof(rbs_ast_members_extend_t));
 
     *instance = (rbs_ast_members_extend_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_EXTEND
+        },
         .name = name,
         .args = args,
         .annotations = annotations,
@@ -334,7 +400,10 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE ruby_value, VALUE n
     rbs_ast_members_include_t *instance = (rbs_ast_members_include_t *)calloc(1, sizeof(rbs_ast_members_include_t));
 
     *instance = (rbs_ast_members_include_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_INCLUDE
+        },
         .name = name,
         .args = args,
         .annotations = annotations,
@@ -349,7 +418,10 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE r
     rbs_ast_members_instancevariable_t *instance = (rbs_ast_members_instancevariable_t *)calloc(1, sizeof(rbs_ast_members_instancevariable_t));
 
     *instance = (rbs_ast_members_instancevariable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_INSTANCEVARIABLE
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -363,7 +435,10 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(VALUE r
     rbs_ast_members_methoddefinition_t *instance = (rbs_ast_members_methoddefinition_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_t));
 
     *instance = (rbs_ast_members_methoddefinition_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_METHODDEFINITION
+        },
         .name = name,
         .kind = kind,
         .overloads = overloads,
@@ -381,7 +456,10 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
     rbs_ast_members_methoddefinition_overload_t *instance = (rbs_ast_members_methoddefinition_overload_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_overload_t));
 
     *instance = (rbs_ast_members_methoddefinition_overload_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD
+        },
         .annotations = annotations,
         .method_type = method_type,
     };
@@ -393,7 +471,10 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE ruby_value, VALUE n
     rbs_ast_members_prepend_t *instance = (rbs_ast_members_prepend_t *)calloc(1, sizeof(rbs_ast_members_prepend_t));
 
     *instance = (rbs_ast_members_prepend_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_PREPEND
+        },
         .name = name,
         .args = args,
         .annotations = annotations,
@@ -408,7 +489,10 @@ rbs_ast_members_private_t *rbs_ast_members_private_new(VALUE ruby_value, VALUE l
     rbs_ast_members_private_t *instance = (rbs_ast_members_private_t *)calloc(1, sizeof(rbs_ast_members_private_t));
 
     *instance = (rbs_ast_members_private_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_PRIVATE
+        },
         .location = location,
     };
 
@@ -419,7 +503,10 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE ruby_value, VALUE loc
     rbs_ast_members_public_t *instance = (rbs_ast_members_public_t *)calloc(1, sizeof(rbs_ast_members_public_t));
 
     *instance = (rbs_ast_members_public_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_PUBLIC
+        },
         .location = location,
     };
 
@@ -430,7 +517,10 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE ruby_value, VALUE name, VALUE v
     rbs_ast_typeparam_t *instance = (rbs_ast_typeparam_t *)calloc(1, sizeof(rbs_ast_typeparam_t));
 
     *instance = (rbs_ast_typeparam_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_TYPEPARAM
+        },
         .name = name,
         .variance = variance,
         .upper_bound = upper_bound,
@@ -445,7 +535,10 @@ rbs_methodtype_t *rbs_methodtype_new(VALUE ruby_value, VALUE type_params, VALUE 
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
     *instance = (rbs_methodtype_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_METHODTYPE
+        },
         .type_params = type_params,
         .type = type,
         .block = block,
@@ -459,7 +552,10 @@ rbs_namespace_t *rbs_namespace_new(VALUE ruby_value, VALUE path, VALUE absolute)
     rbs_namespace_t *instance = (rbs_namespace_t *)calloc(1, sizeof(rbs_namespace_t));
 
     *instance = (rbs_namespace_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_NAMESPACE
+        },
         .path = path,
         .absolute = absolute,
     };
@@ -471,7 +567,10 @@ rbs_typename_t *rbs_typename_new(VALUE ruby_value, VALUE namespace, VALUE name) 
     rbs_typename_t *instance = (rbs_typename_t *)calloc(1, sizeof(rbs_typename_t));
 
     *instance = (rbs_typename_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPENAME
+        },
         .namespace = namespace,
         .name = name,
     };
@@ -483,7 +582,10 @@ rbs_types_alias_t *rbs_types_alias_new(VALUE ruby_value, VALUE name, VALUE args,
     rbs_types_alias_t *instance = (rbs_types_alias_t *)calloc(1, sizeof(rbs_types_alias_t));
 
     *instance = (rbs_types_alias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_ALIAS
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -496,7 +598,10 @@ rbs_types_bases_any_t *rbs_types_bases_any_new(VALUE ruby_value, VALUE location)
     rbs_types_bases_any_t *instance = (rbs_types_bases_any_t *)calloc(1, sizeof(rbs_types_bases_any_t));
 
     *instance = (rbs_types_bases_any_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_ANY
+        },
         .location = location,
     };
 
@@ -507,7 +612,10 @@ rbs_types_bases_bool_t *rbs_types_bases_bool_new(VALUE ruby_value, VALUE locatio
     rbs_types_bases_bool_t *instance = (rbs_types_bases_bool_t *)calloc(1, sizeof(rbs_types_bases_bool_t));
 
     *instance = (rbs_types_bases_bool_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_BOOL
+        },
         .location = location,
     };
 
@@ -518,7 +626,10 @@ rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(VALUE ruby_value, VALUE loc
     rbs_types_bases_bottom_t *instance = (rbs_types_bases_bottom_t *)calloc(1, sizeof(rbs_types_bases_bottom_t));
 
     *instance = (rbs_types_bases_bottom_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_BOTTOM
+        },
         .location = location,
     };
 
@@ -529,7 +640,10 @@ rbs_types_bases_class_t *rbs_types_bases_class_new(VALUE ruby_value, VALUE locat
     rbs_types_bases_class_t *instance = (rbs_types_bases_class_t *)calloc(1, sizeof(rbs_types_bases_class_t));
 
     *instance = (rbs_types_bases_class_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_CLASS
+        },
         .location = location,
     };
 
@@ -540,7 +654,10 @@ rbs_types_bases_instance_t *rbs_types_bases_instance_new(VALUE ruby_value, VALUE
     rbs_types_bases_instance_t *instance = (rbs_types_bases_instance_t *)calloc(1, sizeof(rbs_types_bases_instance_t));
 
     *instance = (rbs_types_bases_instance_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_INSTANCE
+        },
         .location = location,
     };
 
@@ -551,7 +668,10 @@ rbs_types_bases_nil_t *rbs_types_bases_nil_new(VALUE ruby_value, VALUE location)
     rbs_types_bases_nil_t *instance = (rbs_types_bases_nil_t *)calloc(1, sizeof(rbs_types_bases_nil_t));
 
     *instance = (rbs_types_bases_nil_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_NIL
+        },
         .location = location,
     };
 
@@ -562,7 +682,10 @@ rbs_types_bases_self_t *rbs_types_bases_self_new(VALUE ruby_value, VALUE locatio
     rbs_types_bases_self_t *instance = (rbs_types_bases_self_t *)calloc(1, sizeof(rbs_types_bases_self_t));
 
     *instance = (rbs_types_bases_self_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_SELF
+        },
         .location = location,
     };
 
@@ -573,7 +696,10 @@ rbs_types_bases_top_t *rbs_types_bases_top_new(VALUE ruby_value, VALUE location)
     rbs_types_bases_top_t *instance = (rbs_types_bases_top_t *)calloc(1, sizeof(rbs_types_bases_top_t));
 
     *instance = (rbs_types_bases_top_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_TOP
+        },
         .location = location,
     };
 
@@ -584,7 +710,10 @@ rbs_types_bases_void_t *rbs_types_bases_void_new(VALUE ruby_value, VALUE locatio
     rbs_types_bases_void_t *instance = (rbs_types_bases_void_t *)calloc(1, sizeof(rbs_types_bases_void_t));
 
     *instance = (rbs_types_bases_void_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_VOID
+        },
         .location = location,
     };
 
@@ -595,7 +724,10 @@ rbs_types_block_t *rbs_types_block_new(VALUE ruby_value, VALUE type, VALUE requi
     rbs_types_block_t *instance = (rbs_types_block_t *)calloc(1, sizeof(rbs_types_block_t));
 
     *instance = (rbs_types_block_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BLOCK
+        },
         .type = type,
         .required = required,
         .self_type = self_type,
@@ -608,7 +740,10 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(VALUE ruby_value, VALUE n
     rbs_types_classinstance_t *instance = (rbs_types_classinstance_t *)calloc(1, sizeof(rbs_types_classinstance_t));
 
     *instance = (rbs_types_classinstance_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_CLASSINSTANCE
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -621,7 +756,10 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(VALUE ruby_value, VALUE
     rbs_types_classsingleton_t *instance = (rbs_types_classsingleton_t *)calloc(1, sizeof(rbs_types_classsingleton_t));
 
     *instance = (rbs_types_classsingleton_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_CLASSSINGLETON
+        },
         .name = name,
         .location = location,
     };
@@ -633,7 +771,10 @@ rbs_types_function_t *rbs_types_function_new(VALUE ruby_value, VALUE required_po
     rbs_types_function_t *instance = (rbs_types_function_t *)calloc(1, sizeof(rbs_types_function_t));
 
     *instance = (rbs_types_function_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_FUNCTION
+        },
         .required_positionals = required_positionals,
         .optional_positionals = optional_positionals,
         .rest_positionals = rest_positionals,
@@ -651,7 +792,10 @@ rbs_types_function_param_t *rbs_types_function_param_new(VALUE ruby_value, VALUE
     rbs_types_function_param_t *instance = (rbs_types_function_param_t *)calloc(1, sizeof(rbs_types_function_param_t));
 
     *instance = (rbs_types_function_param_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_FUNCTION_PARAM
+        },
         .type = type,
         .name = name,
         .location = location,
@@ -664,7 +808,10 @@ rbs_types_interface_t *rbs_types_interface_new(VALUE ruby_value, VALUE name, VAL
     rbs_types_interface_t *instance = (rbs_types_interface_t *)calloc(1, sizeof(rbs_types_interface_t));
 
     *instance = (rbs_types_interface_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_INTERFACE
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -677,7 +824,10 @@ rbs_types_intersection_t *rbs_types_intersection_new(VALUE ruby_value, VALUE typ
     rbs_types_intersection_t *instance = (rbs_types_intersection_t *)calloc(1, sizeof(rbs_types_intersection_t));
 
     *instance = (rbs_types_intersection_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_INTERSECTION
+        },
         .types = types,
         .location = location,
     };
@@ -689,7 +839,10 @@ rbs_types_literal_t *rbs_types_literal_new(VALUE ruby_value, VALUE literal, VALU
     rbs_types_literal_t *instance = (rbs_types_literal_t *)calloc(1, sizeof(rbs_types_literal_t));
 
     *instance = (rbs_types_literal_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_LITERAL
+        },
         .literal = literal,
         .location = location,
     };
@@ -701,7 +854,10 @@ rbs_types_optional_t *rbs_types_optional_new(VALUE ruby_value, VALUE type, VALUE
     rbs_types_optional_t *instance = (rbs_types_optional_t *)calloc(1, sizeof(rbs_types_optional_t));
 
     *instance = (rbs_types_optional_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_OPTIONAL
+        },
         .type = type,
         .location = location,
     };
@@ -713,7 +869,10 @@ rbs_types_proc_t *rbs_types_proc_new(VALUE ruby_value, VALUE type, VALUE block, 
     rbs_types_proc_t *instance = (rbs_types_proc_t *)calloc(1, sizeof(rbs_types_proc_t));
 
     *instance = (rbs_types_proc_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_PROC
+        },
         .type = type,
         .block = block,
         .location = location,
@@ -727,7 +886,10 @@ rbs_types_record_t *rbs_types_record_new(VALUE ruby_value, VALUE all_fields, VAL
     rbs_types_record_t *instance = (rbs_types_record_t *)calloc(1, sizeof(rbs_types_record_t));
 
     *instance = (rbs_types_record_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_RECORD
+        },
         .all_fields = all_fields,
         .location = location,
     };
@@ -739,7 +901,10 @@ rbs_types_tuple_t *rbs_types_tuple_new(VALUE ruby_value, VALUE types, VALUE loca
     rbs_types_tuple_t *instance = (rbs_types_tuple_t *)calloc(1, sizeof(rbs_types_tuple_t));
 
     *instance = (rbs_types_tuple_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_TUPLE
+        },
         .types = types,
         .location = location,
     };
@@ -751,7 +916,10 @@ rbs_types_union_t *rbs_types_union_new(VALUE ruby_value, VALUE types, VALUE loca
     rbs_types_union_t *instance = (rbs_types_union_t *)calloc(1, sizeof(rbs_types_union_t));
 
     *instance = (rbs_types_union_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_UNION
+        },
         .types = types,
         .location = location,
     };
@@ -763,7 +931,10 @@ rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE ruby_value, VAL
     rbs_types_untypedfunction_t *instance = (rbs_types_untypedfunction_t *)calloc(1, sizeof(rbs_types_untypedfunction_t));
 
     *instance = (rbs_types_untypedfunction_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_UNTYPEDFUNCTION
+        },
         .return_type = return_type,
     };
 
@@ -774,7 +945,10 @@ rbs_types_variable_t *rbs_types_variable_new(VALUE ruby_value, VALUE name, VALUE
     rbs_types_variable_t *instance = (rbs_types_variable_t *)calloc(1, sizeof(rbs_types_variable_t));
 
     *instance = (rbs_types_variable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_VARIABLE
+        },
         .name = name,
         .location = location,
     };
@@ -782,6 +956,432 @@ rbs_types_variable_t *rbs_types_variable_new(VALUE ruby_value, VALUE name, VALUE
     return instance;
 }
 
+
+const char* get_class_name(VALUE o) {
+    VALUE klass = rb_class_of(o);      // Get the class of the object
+    VALUE klass_name = rb_class_name(klass);  // Get the name of the class
+    const char* name = StringValueCStr(klass_name);  // Convert to C string
+    return name;
+}
+
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
+    VALUE ruby_value = instance->cached_ruby_value;
+
+    if (ruby_value == Qnil || ruby_value == Qundef) {
+        fprintf(stderr, "cached_ruby_value is NULL\n");
+        exit(1);
+    }
+
+    const char *class_name = get_class_name(ruby_value);
+
+    switch (instance->type) {
+        case RBS_AST_ANNOTATION: {
+            if (strcmp(class_name, "RBS::AST::Annotation") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Annotation, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_COMMENT: {
+            if (strcmp(class_name, "RBS::AST::Comment") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Comment, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_CLASS: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Class") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Class, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_CLASS_SUPER: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Class::Super") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Class::Super, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_CLASSALIAS: {
+            if (strcmp(class_name, "RBS::AST::Declarations::ClassAlias") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::ClassAlias, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_CONSTANT: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Constant") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Constant, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_GLOBAL: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Global") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Global, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_INTERFACE: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Interface") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Interface, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_MODULE: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Module") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Module, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_MODULE_SELF: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Module::Self") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Module::Self, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_MODULEALIAS: {
+            if (strcmp(class_name, "RBS::AST::Declarations::ModuleAlias") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::ModuleAlias, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DECLARATIONS_TYPEALIAS: {
+            if (strcmp(class_name, "RBS::AST::Declarations::TypeAlias") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::TypeAlias, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DIRECTIVES_USE: {
+            if (strcmp(class_name, "RBS::AST::Directives::Use") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Directives::Use, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DIRECTIVES_USE_SINGLECLAUSE: {
+            if (strcmp(class_name, "RBS::AST::Directives::Use::SingleClause") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Directives::Use::SingleClause, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE: {
+            if (strcmp(class_name, "RBS::AST::Directives::Use::WildcardClause") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Directives::Use::WildcardClause, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_ALIAS: {
+            if (strcmp(class_name, "RBS::AST::Members::Alias") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::Alias, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_ATTRACCESSOR: {
+            if (strcmp(class_name, "RBS::AST::Members::AttrAccessor") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::AttrAccessor, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_ATTRREADER: {
+            if (strcmp(class_name, "RBS::AST::Members::AttrReader") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::AttrReader, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_ATTRWRITER: {
+            if (strcmp(class_name, "RBS::AST::Members::AttrWriter") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::AttrWriter, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE: {
+            if (strcmp(class_name, "RBS::AST::Members::ClassInstanceVariable") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::ClassInstanceVariable, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_CLASSVARIABLE: {
+            if (strcmp(class_name, "RBS::AST::Members::ClassVariable") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::ClassVariable, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_EXTEND: {
+            if (strcmp(class_name, "RBS::AST::Members::Extend") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::Extend, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_INCLUDE: {
+            if (strcmp(class_name, "RBS::AST::Members::Include") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::Include, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_INSTANCEVARIABLE: {
+            if (strcmp(class_name, "RBS::AST::Members::InstanceVariable") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::InstanceVariable, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_METHODDEFINITION: {
+            if (strcmp(class_name, "RBS::AST::Members::MethodDefinition") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::MethodDefinition, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD: {
+            if (strcmp(class_name, "RBS::AST::Members::MethodDefinition::Overload") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::MethodDefinition::Overload, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_PREPEND: {
+            if (strcmp(class_name, "RBS::AST::Members::Prepend") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::Prepend, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_PRIVATE: {
+            if (strcmp(class_name, "RBS::AST::Members::Private") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::Private, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_MEMBERS_PUBLIC: {
+            if (strcmp(class_name, "RBS::AST::Members::Public") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Members::Public, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_TYPEPARAM: {
+            if (strcmp(class_name, "RBS::AST::TypeParam") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::TypeParam, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_METHODTYPE: {
+            if (strcmp(class_name, "RBS::MethodType") != 0) {
+                fprintf(stderr, "Expected class name: RBS::MethodType, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_NAMESPACE: {
+            if (strcmp(class_name, "RBS::Namespace") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Namespace, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPENAME: {
+            if (strcmp(class_name, "RBS::TypeName") != 0) {
+                fprintf(stderr, "Expected class name: RBS::TypeName, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_ALIAS: {
+            if (strcmp(class_name, "RBS::Types::Alias") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Alias, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_ANY: {
+            if (strcmp(class_name, "RBS::Types::Bases::Any") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Any, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_BOOL: {
+            if (strcmp(class_name, "RBS::Types::Bases::Bool") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Bool, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_BOTTOM: {
+            if (strcmp(class_name, "RBS::Types::Bases::Bottom") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Bottom, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_CLASS: {
+            if (strcmp(class_name, "RBS::Types::Bases::Class") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Class, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_INSTANCE: {
+            if (strcmp(class_name, "RBS::Types::Bases::Instance") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Instance, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_NIL: {
+            if (strcmp(class_name, "RBS::Types::Bases::Nil") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Nil, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_SELF: {
+            if (strcmp(class_name, "RBS::Types::Bases::Self") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Self, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_TOP: {
+            if (strcmp(class_name, "RBS::Types::Bases::Top") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Top, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BASES_VOID: {
+            if (strcmp(class_name, "RBS::Types::Bases::Void") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Bases::Void, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_BLOCK: {
+            if (strcmp(class_name, "RBS::Types::Block") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Block, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_CLASSINSTANCE: {
+            if (strcmp(class_name, "RBS::Types::ClassInstance") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::ClassInstance, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_CLASSSINGLETON: {
+            if (strcmp(class_name, "RBS::Types::ClassSingleton") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::ClassSingleton, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_FUNCTION: {
+            if (strcmp(class_name, "RBS::Types::Function") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Function, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_FUNCTION_PARAM: {
+            if (strcmp(class_name, "RBS::Types::Function::Param") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Function::Param, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_INTERFACE: {
+            if (strcmp(class_name, "RBS::Types::Interface") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Interface, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_INTERSECTION: {
+            if (strcmp(class_name, "RBS::Types::Intersection") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Intersection, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_LITERAL: {
+            if (strcmp(class_name, "RBS::Types::Literal") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Literal, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_OPTIONAL: {
+            if (strcmp(class_name, "RBS::Types::Optional") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Optional, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_PROC: {
+            if (strcmp(class_name, "RBS::Types::Proc") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Proc, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_RECORD: {
+            if (strcmp(class_name, "RBS::Types::Record") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Record, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_TUPLE: {
+            if (strcmp(class_name, "RBS::Types::Tuple") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Tuple, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_UNION: {
+            if (strcmp(class_name, "RBS::Types::Union") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Union, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_UNTYPEDFUNCTION: {
+            if (strcmp(class_name, "RBS::Types::UntypedFunction") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::UntypedFunction, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_VARIABLE: {
+            if (strcmp(class_name, "RBS::Types::Variable") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::Variable, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+    }
+
     return instance->cached_ruby_value;
 }

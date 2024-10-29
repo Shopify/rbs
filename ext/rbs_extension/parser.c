@@ -1115,10 +1115,7 @@ static VALUE parse_simple(parserstate *state) {
     return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case pHAT: {
-    VALUE value = parse_proc_type(state);
-    VALUE loc = rb_funcall(value, rb_intern("location"), 0);
-    rbs_types_proc_t *node = rbs_types_proc_new(value, value, value, loc, value);
-    return rbs_struct_to_ruby_value((rbs_node_t *)node);
+    return parse_proc_type(state);
   }
   default:
     raise_syntax_error(
