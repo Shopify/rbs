@@ -282,20 +282,3 @@ VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location
     &args
   );
 }
-
-VALUE rbs_ast_type_param(VALUE name, VALUE variance, bool unchecked, VALUE upper_bound, VALUE default_type, VALUE location) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(args, ID2SYM(rb_intern("variance")), variance);
-  rb_hash_aset(args, ID2SYM(rb_intern("upper_bound")), upper_bound);
-  rb_hash_aset(args, ID2SYM(rb_intern("default_type")), default_type);
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-
-  VALUE type_param = CLASS_NEW_INSTANCE(RBS_AST_TypeParam, 1, &args);
-
-  if (unchecked) {
-    rb_funcall(type_param, rb_intern("unchecked!"), 0);
-  }
-
-  return type_param;
-}
