@@ -206,3 +206,106 @@ nodes:
     fields:
       - name: namespace
       - name: name
+  - name: RBS::Types::Alias
+    fields:
+      - name: name
+      - name: args
+      - name: location
+  - name: RBS::Types::Bases::Any
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Bool
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Bottom
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Class
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Instance
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Nil
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Self
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Top
+    fields:
+      - name: location
+  - name: RBS::Types::Bases::Void
+    fields:
+      - name: location
+  - name: RBS::Types::Block
+    fields:
+      - name: type
+      - name: required
+      - name: self_type
+  - name: RBS::Types::ClassInstance
+    fields:
+      - name: name
+      - name: args
+      - name: location
+  - name: RBS::Types::ClassSingleton
+    fields:
+      - name: name
+      - name: location
+  - name: RBS::Types::Function
+    fields:
+      - name: required_positionals
+      - name: optional_positionals
+      - name: rest_positionals
+      - name: trailing_positionals
+      - name: required_keywords
+      - name: optional_keywords
+      - name: rest_keywords
+      - name: return_type
+  - name: RBS::Types::Function::Param
+    fields:
+      - name: type
+      - name: name
+      - name: location
+  - name: RBS::Types::Interface
+    fields:
+      - name: name
+      - name: args
+      - name: location
+  - name: RBS::Types::Intersection
+    fields:
+      - name: types
+      - name: location
+  - name: RBS::Types::Literal
+    fields:
+      - name: literal
+      - name: location
+  - name: RBS::Types::Optional
+    fields:
+      - name: type
+      - name: location
+  - name: RBS::Types::Proc
+    fields:
+      - name: type
+      - name: block
+      - name: location
+      - name: self_type
+  - name: RBS::Types::Record
+    fields:
+      - name: all_fields
+      - name: location
+  - name: RBS::Types::Tuple
+    fields:
+      - name: types
+      - name: location
+  - name: RBS::Types::Union
+    fields:
+      - name: types
+      - name: location
+  - name: RBS::Types::UntypedFunction
+    fields:
+      - name: return_type
+  - name: RBS::Types::Variable
+    fields:
+      - name: name
+      - name: location
