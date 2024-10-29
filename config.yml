@@ -179,3 +179,9 @@ nodes:
       - name: annotations
       - name: location
       - name: comment
+  - name: RBS::AST::Members::Private
+    fields:
+      - name: location
+  - name: RBS::AST::Members::Public
+    fields:
+      - name: location

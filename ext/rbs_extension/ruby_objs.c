@@ -299,14 +299,3 @@ VALUE rbs_ast_type_param(VALUE name, VALUE variance, bool unchecked, VALUE upper
 
   return type_param;
 }
-
-VALUE rbs_ast_members_visibility(VALUE klass, VALUE location) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    klass,
-    1,
-    &args
-  );
-}

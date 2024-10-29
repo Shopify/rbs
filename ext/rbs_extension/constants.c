@@ -2,9 +2,6 @@
 
 VALUE RBS_AST_TypeParam;
 
-VALUE RBS_AST_Members_Private;
-VALUE RBS_AST_Members_Public;
-
 VALUE RBS_Namespace;
 VALUE RBS_TypeName;
 
@@ -39,9 +36,6 @@ VALUE RBS_MethodType;
 
 void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
-
-  IMPORT_CONSTANT(RBS_AST_Members_Private, RBS_AST_Members, "Private");
-  IMPORT_CONSTANT(RBS_AST_Members_Public, RBS_AST_Members, "Public");
 
   IMPORT_CONSTANT(RBS_Namespace, RBS, "Namespace");
   IMPORT_CONSTANT(RBS_TypeName, RBS, "TypeName");

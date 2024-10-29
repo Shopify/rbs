@@ -5,7 +5,6 @@
 
 VALUE rbs_alias(VALUE typename, VALUE args, VALUE location);
 VALUE rbs_ast_type_param(VALUE name, VALUE variance, bool unchecked, VALUE upper_bound, VALUE default_type, VALUE location);
-VALUE rbs_ast_members_visibility(VALUE klass, VALUE location);
 VALUE rbs_base_type(VALUE klass, VALUE location);
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type);
 VALUE rbs_class_instance(VALUE typename, VALUE type_args, VALUE location);
