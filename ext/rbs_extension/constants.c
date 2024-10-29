@@ -3,7 +3,6 @@
 VALUE RBS_AST_TypeParam;
 
 VALUE RBS_AST_Declarations_TypeAlias;
-VALUE RBS_AST_Declarations_Constant;
 VALUE RBS_AST_Declarations_Global;
 VALUE RBS_AST_Declarations_Interface;
 VALUE RBS_AST_Declarations_Module;
@@ -65,7 +64,6 @@ void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
 
   IMPORT_CONSTANT(RBS_AST_Declarations_TypeAlias, RBS_AST_Declarations, "TypeAlias");
-  IMPORT_CONSTANT(RBS_AST_Declarations_Constant, RBS_AST_Declarations, "Constant");
   IMPORT_CONSTANT(RBS_AST_Declarations_Global, RBS_AST_Declarations, "Global");
   IMPORT_CONSTANT(RBS_AST_Declarations_Interface, RBS_AST_Declarations, "Interface");
   IMPORT_CONSTANT(RBS_AST_Declarations_Module, RBS_AST_Declarations, "Module");
