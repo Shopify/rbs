@@ -1,7 +1,6 @@
 #ifndef RBS__CONSTANTS_H
 #define RBS__CONSTANTS_H
 
-extern VALUE RBS_AST_Comment;
 extern VALUE RBS_AST_TypeParam;
 
 extern VALUE RBS_AST_Declarations_TypeAlias;
