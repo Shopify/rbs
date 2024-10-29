@@ -61,3 +61,9 @@ nodes:
       - name: name
       - name: args
       - name: location
+  - name: RBS::AST::Declarations::ModuleAlias
+    fields:
+      - name: new_name
+      - name: old_name
+      - name: location
+      - name: comment
