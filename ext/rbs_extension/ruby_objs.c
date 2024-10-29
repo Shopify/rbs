@@ -21,18 +21,6 @@ VALUE rbs_base_type(VALUE klass, VALUE location) {
   );
 }
 
-VALUE rbs_type_name(VALUE namespace, VALUE name) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("namespace")), namespace);
-  rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_TypeName,
-    1,
-    &args
-  );
-}
-
 VALUE rbs_class_instance(VALUE typename, VALUE type_args, VALUE location) {
   VALUE args = rb_hash_new();
   rb_hash_aset(args, ID2SYM(rb_intern("name")), typename);
