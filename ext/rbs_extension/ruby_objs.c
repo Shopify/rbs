@@ -329,23 +329,6 @@ VALUE rbs_ast_decl_module_self(VALUE name, VALUE args, VALUE location) {
   );
 }
 
-VALUE rbs_ast_decl_module(VALUE name, VALUE type_params, VALUE self_types, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(args, ID2SYM(rb_intern("type_params")), type_params);
-  rb_hash_aset(args, ID2SYM(rb_intern("self_types")), self_types);
-  rb_hash_aset(args, ID2SYM(rb_intern("members")), members);
-  rb_hash_aset(args, ID2SYM(rb_intern("annotations")), annotations);
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(args, ID2SYM(rb_intern("comment")), comment);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Declarations_Module,
-    1,
-    &args
-  );
-}
-
 VALUE rbs_ast_decl_module_alias(VALUE new_name, VALUE old_name, VALUE location, VALUE comment) {
   VALUE args = rb_hash_new();
   rb_hash_aset(args, ID2SYM(rb_intern("new_name")), new_name);
