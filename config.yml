@@ -39,3 +39,11 @@ nodes:
       - name: type
       - name: location
       - name: comment
+  - name: RBS::AST::Declarations::Interface
+    fields:
+      - name: name
+      - name: type_params
+      - name: members
+      - name: annotations
+      - name: location
+      - name: comment
