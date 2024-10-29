@@ -6,7 +6,10 @@
     <%= node.c_type_name %> *instance = malloc(sizeof(<%= node.c_type_name %>));
 
     *instance = (<%= node.c_type_name %>) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = <%= node.c_type_enum_name %>
+        },
         <%- node.fields.each do |field| -%>
         .<%= field.name %> = <%= field.name %>,
         <%- end -%>
