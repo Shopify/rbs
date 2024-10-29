@@ -158,6 +158,20 @@ nodes:
       - name: type
       - name: location
       - name: comment
+  - name: RBS::AST::Members::MethodDefinition
+    fields:
+      - name: name
+      - name: kind
+      - name: overloads
+      - name: annotations
+      - name: location
+      - name: comment
+      - name: overloading
+      - name: visibility
+  - name: RBS::AST::Members::MethodDefinition::Overload
+    fields:
+      - name: annotations
+      - name: method_type
   - name: RBS::AST::Members::Prepend
     fields:
       - name: name
