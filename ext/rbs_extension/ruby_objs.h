@@ -5,8 +5,6 @@
 
 VALUE rbs_alias(VALUE typename, VALUE args, VALUE location);
 VALUE rbs_ast_type_param(VALUE name, VALUE variance, bool unchecked, VALUE upper_bound, VALUE default_type, VALUE location);
-VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads, VALUE annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
-VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type);
 VALUE rbs_ast_members_visibility(VALUE klass, VALUE location);
 VALUE rbs_base_type(VALUE klass, VALUE location);
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type);
