@@ -1,6 +1,5 @@
 #include "rbs_extension.h"
 
-VALUE RBS_Namespace;
 VALUE RBS_TypeName;
 
 VALUE RBS_Types_Alias;
@@ -32,7 +31,6 @@ VALUE RBS_Types_Variable;
 #define IMPORT_CONSTANT(var, parent, name) { var = rb_const_get(parent, rb_intern(name)); rb_gc_register_mark_object(var); }
 
 void rbs__init_constants(void) {
-  IMPORT_CONSTANT(RBS_Namespace, RBS, "Namespace");
   IMPORT_CONSTANT(RBS_TypeName, RBS, "TypeName");
   IMPORT_CONSTANT(RBS_Types_Alias, RBS_Types, "Alias");
   IMPORT_CONSTANT(RBS_Types_Bases_Any, RBS_Types_Bases, "Any");

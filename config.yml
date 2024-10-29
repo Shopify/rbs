@@ -198,3 +198,7 @@ nodes:
       - name: type
       - name: block
       - name: location
+  - name: RBS::Namespace
+    fields:
+      - name: path
+      - name: absolute

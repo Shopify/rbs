@@ -1,8 +1,6 @@
 #ifndef RBS__CONSTANTS_H
 #define RBS__CONSTANTS_H
 
-extern VALUE RBS_Namespace;
-
 extern VALUE RBS_TypeName;
 
 extern VALUE RBS_Types_Alias;
