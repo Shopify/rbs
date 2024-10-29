@@ -283,18 +283,6 @@ VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location
   );
 }
 
-VALUE rbs_ast_comment(VALUE string, VALUE location) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("string")), string);
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Comment,
-    1,
-    &args
-  );
-}
-
 VALUE rbs_ast_type_param(VALUE name, VALUE variance, bool unchecked, VALUE upper_bound, VALUE default_type, VALUE location) {
   VALUE args = rb_hash_new();
   rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
