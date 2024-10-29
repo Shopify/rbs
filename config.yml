@@ -185,3 +185,10 @@ nodes:
   - name: RBS::AST::Members::Public
     fields:
       - name: location
+  - name: RBS::AST::TypeParam
+    fields:
+      - name: name
+      - name: variance
+      - name: upper_bound
+      - name: default_type
+      - name: location
