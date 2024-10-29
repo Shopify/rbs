@@ -192,3 +192,9 @@ nodes:
       - name: upper_bound
       - name: default_type
       - name: location
+  - name: RBS::MethodType
+    fields:
+      - name: type_params
+      - name: type
+      - name: block
+      - name: location
