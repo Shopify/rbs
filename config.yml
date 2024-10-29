@@ -138,9 +138,30 @@ nodes:
       - name: type
       - name: location
       - name: comment
+  - name: RBS::AST::Members::Extend
+    fields:
+      - name: name
+      - name: args
+      - name: annotations
+      - name: location
+      - name: comment
+  - name: RBS::AST::Members::Include
+    fields:
+      - name: name
+      - name: args
+      - name: annotations
+      - name: location
+      - name: comment
   - name: RBS::AST::Members::InstanceVariable
     fields:
       - name: name
       - name: type
+      - name: location
+      - name: comment
+  - name: RBS::AST::Members::Prepend
+    fields:
+      - name: name
+      - name: args
+      - name: annotations
       - name: location
       - name: comment

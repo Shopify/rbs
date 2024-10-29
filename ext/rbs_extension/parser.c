@@ -1780,25 +1780,23 @@ VALUE parse_mixin_member(parserstate *state, bool from_interface, position comme
   range keyword_range;
   range args_range = NULL_RANGE;
   bool reset_typevar_scope;
+  enum TokenType type;
 
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
 
+  type = state->current_token.type;
   keyword_range = state->current_token.range;
 
-  VALUE klass = Qnil;
-  switch (state->current_token.type)
+  switch (type)
   {
   case kINCLUDE:
-    klass = RBS_AST_Members_Include;
     reset_typevar_scope = false;
     break;
   case kEXTEND:
-    klass = RBS_AST_Members_Extend;
     reset_typevar_scope = true;
     break;
   case kPREPEND:
-    klass = RBS_AST_Members_Prepend;
     reset_typevar_scope = false;
     break;
   default:
@@ -1836,14 +1834,18 @@ VALUE parse_mixin_member(parserstate *state, bool from_interface, position comme
   rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
   rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
 
-  return rbs_ast_members_mixin(
-    klass,
-    name,
-    args,
-    annotations,
-    location,
-    get_comment(state, comment_pos.line)
-  );
+  VALUE comment = get_comment(state, comment_pos.line);
+  switch (type)
+  {
+  case kINCLUDE:
+    return rbs_ast_members_include(name, args, annotations, location, comment);
+  case kEXTEND:
+    return rbs_ast_members_extend(name, args, annotations, location, comment);
+  case kPREPEND:
+    return rbs_ast_members_prepend(name, args, annotations, location, comment);
+  default:
+    rbs_abort();
+  }
 }
 
 /**
