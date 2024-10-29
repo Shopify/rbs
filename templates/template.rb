@@ -23,6 +23,7 @@ module RBS
       attr_reader :c_constant_name
       attr_reader :c_base_name
       attr_reader :c_struct_name
+      attr_reader :c_type_enum_name
       attr_reader :parent_c_constant_name
       attr_reader :fields
 
@@ -39,6 +40,7 @@ module RBS
         @c_constant_name = @full_name.gsub("::", "_")
         @c_base_name = @c_constant_name.downcase
         @c_struct_name = "#{@c_base_name}_t"
+        @c_type_enum_name = @c_base_name.upcase
         @fields = yaml["fields"].map { |field| Field.new(field) }
         @parent_c_constant_name = @full_name.split("::")[0..-2].join("::").gsub("::", "_")
       end
