@@ -67,3 +67,11 @@ nodes:
       - name: old_name
       - name: location
       - name: comment
+  - name: RBS::AST::Declarations::TypeAlias
+    fields:
+      - name: name
+      - name: type_params
+      - name: type
+      - name: annotations
+      - name: location
+      - name: comment
