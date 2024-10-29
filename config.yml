@@ -7,3 +7,12 @@ nodes:
     fields:
       - name: string
       - name: location
+  - name: RBS::AST::Declarations::Class
+    fields:
+      - name: name
+      - name: type_params
+      - name: super_class
+      - name: members
+      - name: annotations
+      - name: location
+      - name: comment

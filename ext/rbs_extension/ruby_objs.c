@@ -535,23 +535,6 @@ VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location) {
   );
 }
 
-VALUE rbs_ast_decl_class(VALUE name, VALUE type_params, VALUE super_class, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
-  VALUE kwargs = rb_hash_new();
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("type_params")), type_params);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("super_class")), super_class);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("members")), members);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("annotations")), annotations);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("comment")), comment);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Declarations_Class,
-    1,
-    &kwargs
-  );
-}
-
 VALUE rbs_ast_directives_use(VALUE clauses, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("clauses")), clauses);

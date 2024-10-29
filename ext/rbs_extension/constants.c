@@ -8,7 +8,6 @@ VALUE RBS_AST_Declarations_Global;
 VALUE RBS_AST_Declarations_Interface;
 VALUE RBS_AST_Declarations_Module;
 VALUE RBS_AST_Declarations_Module_Self;
-VALUE RBS_AST_Declarations_Class;
 VALUE RBS_AST_Declarations_Class_Super;
 VALUE RBS_AST_Declarations_ModuleAlias;
 VALUE RBS_AST_Declarations_ClassAlias;
@@ -73,7 +72,6 @@ void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_Declarations_Interface, RBS_AST_Declarations, "Interface");
   IMPORT_CONSTANT(RBS_AST_Declarations_Module, RBS_AST_Declarations, "Module");
   IMPORT_CONSTANT(RBS_AST_Declarations_Module_Self, RBS_AST_Declarations_Module, "Self");
-  IMPORT_CONSTANT(RBS_AST_Declarations_Class, RBS_AST_Declarations, "Class");
   IMPORT_CONSTANT(RBS_AST_Declarations_Class_Super, RBS_AST_Declarations_Class, "Super");
   IMPORT_CONSTANT(RBS_AST_Declarations_ClassAlias, RBS_AST_Declarations, "ClassAlias");
   IMPORT_CONSTANT(RBS_AST_Declarations_ModuleAlias, RBS_AST_Declarations, "ModuleAlias");
