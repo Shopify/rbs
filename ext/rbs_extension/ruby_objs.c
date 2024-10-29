@@ -330,20 +330,6 @@ VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads,
   );
 }
 
-VALUE rbs_ast_members_variable(VALUE klass, VALUE name, VALUE type, VALUE location, VALUE comment) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(args, ID2SYM(rb_intern("type")), type);
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(args, ID2SYM(rb_intern("comment")), comment);
-
-  return CLASS_NEW_INSTANCE(
-    klass,
-    1,
-    &args
-  );
-}
-
 VALUE rbs_ast_members_mixin(VALUE klass, VALUE name, VALUE module_args, VALUE annotations, VALUE location, VALUE comment) {
   VALUE args = rb_hash_new();
   rb_hash_aset(args, ID2SYM(rb_intern("name")), name);
