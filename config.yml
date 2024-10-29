@@ -75,3 +75,16 @@ nodes:
       - name: annotations
       - name: location
       - name: comment
+  - name: RBS::AST::Directives::Use
+    fields:
+      - name: clauses
+      - name: location
+  - name: RBS::AST::Directives::Use::SingleClause
+    fields:
+      - name: type_name
+      - name: new_name
+      - name: location
+  - name: RBS::AST::Directives::Use::WildcardClause
+    fields:
+      - name: namespace
+      - name: location

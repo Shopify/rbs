@@ -2,10 +2,6 @@
 
 VALUE RBS_AST_TypeParam;
 
-VALUE RBS_AST_Directives_Use;
-VALUE RBS_AST_Directives_Use_SingleClause;
-VALUE RBS_AST_Directives_Use_WildcardClause;
-
 VALUE RBS_AST_Members_Alias;
 VALUE RBS_AST_Members_AttrAccessor;
 VALUE RBS_AST_Members_AttrReader;
@@ -55,10 +51,6 @@ VALUE RBS_MethodType;
 
 void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
-
-  IMPORT_CONSTANT(RBS_AST_Directives_Use, RBS_AST_Directives, "Use");
-  IMPORT_CONSTANT(RBS_AST_Directives_Use_SingleClause, RBS_AST_Directives_Use, "SingleClause");
-  IMPORT_CONSTANT(RBS_AST_Directives_Use_WildcardClause, RBS_AST_Directives_Use, "WildcardClause");
 
   IMPORT_CONSTANT(RBS_AST_Members_Alias, RBS_AST_Members, "Alias");
   IMPORT_CONSTANT(RBS_AST_Members_AttrAccessor, RBS_AST_Members, "AttrAccessor");
