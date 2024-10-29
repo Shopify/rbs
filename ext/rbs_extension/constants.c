@@ -2,11 +2,8 @@
 
 VALUE RBS_AST_TypeParam;
 
-VALUE RBS_AST_Members_ClassInstanceVariable;
-VALUE RBS_AST_Members_ClassVariable;
 VALUE RBS_AST_Members_Extend;
 VALUE RBS_AST_Members_Include;
-VALUE RBS_AST_Members_InstanceVariable;
 VALUE RBS_AST_Members_MethodDefinition;
 VALUE RBS_AST_Members_MethodDefinition_Overload;
 VALUE RBS_AST_Members_Prepend;
@@ -48,11 +45,8 @@ VALUE RBS_MethodType;
 void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
 
-  IMPORT_CONSTANT(RBS_AST_Members_ClassInstanceVariable, RBS_AST_Members, "ClassInstanceVariable");
-  IMPORT_CONSTANT(RBS_AST_Members_ClassVariable, RBS_AST_Members, "ClassVariable");
   IMPORT_CONSTANT(RBS_AST_Members_Extend, RBS_AST_Members, "Extend");
   IMPORT_CONSTANT(RBS_AST_Members_Include, RBS_AST_Members, "Include");
-  IMPORT_CONSTANT(RBS_AST_Members_InstanceVariable, RBS_AST_Members, "InstanceVariable");
   IMPORT_CONSTANT(RBS_AST_Members_MethodDefinition, RBS_AST_Members, "MethodDefinition");
   IMPORT_CONSTANT(RBS_AST_Members_MethodDefinition_Overload, RBS_AST_Members_MethodDefinition, "Overload");
   IMPORT_CONSTANT(RBS_AST_Members_Prepend, RBS_AST_Members, "Prepend");

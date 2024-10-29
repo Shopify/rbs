@@ -126,3 +126,21 @@ nodes:
       - name: location
       - name: comment
       - name: visibility
+  - name: RBS::AST::Members::ClassInstanceVariable
+    fields:
+      - name: name
+      - name: type
+      - name: location
+      - name: comment
+  - name: RBS::AST::Members::ClassVariable
+    fields:
+      - name: name
+      - name: type
+      - name: location
+      - name: comment
+  - name: RBS::AST::Members::InstanceVariable
+    fields:
+      - name: name
+      - name: type
+      - name: location
+      - name: comment

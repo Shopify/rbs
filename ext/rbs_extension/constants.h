@@ -3,11 +3,8 @@
 
 extern VALUE RBS_AST_TypeParam;
 
-extern VALUE RBS_AST_Members_ClassInstanceVariable;
-extern VALUE RBS_AST_Members_ClassVariable;
 extern VALUE RBS_AST_Members_Extend;
 extern VALUE RBS_AST_Members_Include;
-extern VALUE RBS_AST_Members_InstanceVariable;
 extern VALUE RBS_AST_Members_MethodDefinition;
 extern VALUE RBS_AST_Members_MethodDefinition_Overload;
 extern VALUE RBS_AST_Members_Prepend;
