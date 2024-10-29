@@ -3,7 +3,6 @@
 VALUE RBS_AST_TypeParam;
 
 VALUE RBS_AST_Declarations_TypeAlias;
-VALUE RBS_AST_Declarations_ModuleAlias;
 
 VALUE RBS_AST_Directives_Use;
 VALUE RBS_AST_Directives_Use_SingleClause;
@@ -60,7 +59,6 @@ void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
 
   IMPORT_CONSTANT(RBS_AST_Declarations_TypeAlias, RBS_AST_Declarations, "TypeAlias");
-  IMPORT_CONSTANT(RBS_AST_Declarations_ModuleAlias, RBS_AST_Declarations, "ModuleAlias");
 
   IMPORT_CONSTANT(RBS_AST_Directives_Use, RBS_AST_Directives, "Use");
   IMPORT_CONSTANT(RBS_AST_Directives_Use_SingleClause, RBS_AST_Directives_Use, "SingleClause");
