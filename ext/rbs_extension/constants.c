@@ -28,7 +28,6 @@ VALUE RBS_Types_Record;
 VALUE RBS_Types_Tuple;
 VALUE RBS_Types_Union;
 VALUE RBS_Types_Variable;
-VALUE RBS_MethodType;
 
 #define IMPORT_CONSTANT(var, parent, name) { var = rb_const_get(parent, rb_intern(name)); rb_gc_register_mark_object(var); }
 
@@ -60,5 +59,4 @@ void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_Types_Tuple, RBS_Types, "Tuple");
   IMPORT_CONSTANT(RBS_Types_Union, RBS_Types, "Union");
   IMPORT_CONSTANT(RBS_Types_Variable, RBS_Types, "Variable");
-  IMPORT_CONSTANT(RBS_MethodType, RBS, "MethodType");
 }

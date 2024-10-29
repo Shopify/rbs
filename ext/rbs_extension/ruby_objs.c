@@ -268,17 +268,3 @@ VALUE rbs_variable(VALUE name, VALUE location) {
     &args
   );
 }
-
-VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("type_params")), type_params);
-  rb_hash_aset(args, ID2SYM(rb_intern("type")), type);
-  rb_hash_aset(args, ID2SYM(rb_intern("block")), block);
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_MethodType,
-    1,
-    &args
-  );
-}
