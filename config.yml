@@ -16,3 +16,8 @@ nodes:
       - name: annotations
       - name: location
       - name: comment
+  - name: RBS::AST::Declarations::Class::Super
+    fields:
+      - name: name
+      - name: args
+      - name: location

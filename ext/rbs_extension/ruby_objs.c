@@ -522,19 +522,6 @@ VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, VALUE an
   );
 }
 
-VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location) {
-  VALUE kwargs = rb_hash_new();
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("args")), args);
-  rb_hash_aset(kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Declarations_Class_Super,
-    1,
-    &kwargs
-  );
-}
-
 VALUE rbs_ast_directives_use(VALUE clauses, VALUE location) {
   VALUE kwargs = rb_hash_new();
   rb_hash_aset(kwargs, ID2SYM(rb_intern("clauses")), clauses);
