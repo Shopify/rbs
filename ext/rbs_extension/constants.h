@@ -4,7 +4,6 @@
 extern VALUE RBS_AST_TypeParam;
 
 extern VALUE RBS_AST_Declarations_TypeAlias;
-extern VALUE RBS_AST_Declarations_Constant;
 extern VALUE RBS_AST_Declarations_Global;
 extern VALUE RBS_AST_Declarations_Interface;
 extern VALUE RBS_AST_Declarations_Module_Self;
