@@ -88,3 +88,11 @@ nodes:
     fields:
       - name: namespace
       - name: location
+  - name: RBS::AST::Members::Alias
+    fields:
+      - name: new_name
+      - name: old_name
+      - name: kind
+      - name: annotations
+      - name: location
+      - name: comment

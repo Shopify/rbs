@@ -387,19 +387,3 @@ VALUE rbs_ast_members_visibility(VALUE klass, VALUE location) {
     &args
   );
 }
-
-VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment) {
-  VALUE args = rb_hash_new();
-  rb_hash_aset(args, ID2SYM(rb_intern("new_name")), new_name);
-  rb_hash_aset(args, ID2SYM(rb_intern("old_name")), old_name);
-  rb_hash_aset(args, ID2SYM(rb_intern("kind")), kind);
-  rb_hash_aset(args, ID2SYM(rb_intern("annotations")), annotations);
-  rb_hash_aset(args, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(args, ID2SYM(rb_intern("comment")), comment);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Members_Alias,
-    1,
-    &args
-  );
-}

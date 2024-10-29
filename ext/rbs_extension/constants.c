@@ -2,7 +2,6 @@
 
 VALUE RBS_AST_TypeParam;
 
-VALUE RBS_AST_Members_Alias;
 VALUE RBS_AST_Members_AttrAccessor;
 VALUE RBS_AST_Members_AttrReader;
 VALUE RBS_AST_Members_AttrWriter;
@@ -52,7 +51,6 @@ VALUE RBS_MethodType;
 void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
 
-  IMPORT_CONSTANT(RBS_AST_Members_Alias, RBS_AST_Members, "Alias");
   IMPORT_CONSTANT(RBS_AST_Members_AttrAccessor, RBS_AST_Members, "AttrAccessor");
   IMPORT_CONSTANT(RBS_AST_Members_AttrReader, RBS_AST_Members, "AttrReader");
   IMPORT_CONSTANT(RBS_AST_Members_AttrWriter, RBS_AST_Members, "AttrWriter");
