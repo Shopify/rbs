@@ -96,3 +96,33 @@ nodes:
       - name: annotations
       - name: location
       - name: comment
+  - name: RBS::AST::Members::AttrAccessor
+    fields:
+      - name: name
+      - name: type
+      - name: ivar_name
+      - name: kind
+      - name: annotations
+      - name: location
+      - name: comment
+      - name: visibility
+  - name: RBS::AST::Members::AttrReader
+    fields:
+      - name: name
+      - name: type
+      - name: ivar_name
+      - name: kind
+      - name: annotations
+      - name: location
+      - name: comment
+      - name: visibility
+  - name: RBS::AST::Members::AttrWriter
+    fields:
+      - name: name
+      - name: type
+      - name: ivar_name
+      - name: kind
+      - name: annotations
+      - name: location
+      - name: comment
+      - name: visibility

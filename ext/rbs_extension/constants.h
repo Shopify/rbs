@@ -3,9 +3,6 @@
 
 extern VALUE RBS_AST_TypeParam;
 
-extern VALUE RBS_AST_Members_AttrAccessor;
-extern VALUE RBS_AST_Members_AttrReader;
-extern VALUE RBS_AST_Members_AttrWriter;
 extern VALUE RBS_AST_Members_ClassInstanceVariable;
 extern VALUE RBS_AST_Members_ClassVariable;
 extern VALUE RBS_AST_Members_Extend;
