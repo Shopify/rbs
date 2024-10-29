@@ -33,3 +33,9 @@ nodes:
       - name: type
       - name: location
       - name: comment
+  - name: RBS::AST::Declarations::Global
+    fields:
+      - name: name
+      - name: type
+      - name: location
+      - name: comment
