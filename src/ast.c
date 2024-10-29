@@ -12,7 +12,10 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_allocator_t *allocator, VALUE r
     rbs_ast_annotation_t *instance = rbs_allocator_alloc(allocator, rbs_ast_annotation_t);
 
     *instance = (rbs_ast_annotation_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_ANNOTATION
+        },
         .string = string,
         .location = location,
     };
@@ -24,7 +27,10 @@ rbs_ast_comment_t *rbs_ast_comment_new(rbs_allocator_t *allocator, VALUE ruby_va
     rbs_ast_comment_t *instance = rbs_allocator_alloc(allocator, rbs_ast_comment_t);
 
     *instance = (rbs_ast_comment_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_COMMENT
+        },
         .string = string,
         .location = location,
     };
@@ -36,7 +42,10 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *al
     rbs_ast_declarations_class_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_class_t);
 
     *instance = (rbs_ast_declarations_class_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CLASS
+        },
         .name = name,
         .type_params = type_params,
         .super_class = super_class,
@@ -53,7 +62,10 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_all
     rbs_ast_declarations_class_super_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_class_super_t);
 
     *instance = (rbs_ast_declarations_class_super_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CLASS_SUPER
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -66,7 +78,10 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_alloc
     rbs_ast_declarations_classalias_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_classalias_t);
 
     *instance = (rbs_ast_declarations_classalias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CLASSALIAS
+        },
         .new_name = new_name,
         .old_name = old_name,
         .location = location,
@@ -80,7 +95,10 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_allocator
     rbs_ast_declarations_constant_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_constant_t);
 
     *instance = (rbs_ast_declarations_constant_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_CONSTANT
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -94,7 +112,10 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_allocator_t *
     rbs_ast_declarations_global_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_global_t);
 
     *instance = (rbs_ast_declarations_global_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_GLOBAL
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -108,7 +129,10 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_allocat
     rbs_ast_declarations_interface_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_interface_t);
 
     *instance = (rbs_ast_declarations_interface_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_INTERFACE
+        },
         .name = name,
         .type_params = type_params,
         .members = members,
@@ -124,7 +148,10 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_allocator_t *
     rbs_ast_declarations_module_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_module_t);
 
     *instance = (rbs_ast_declarations_module_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_MODULE
+        },
         .name = name,
         .type_params = type_params,
         .self_types = self_types,
@@ -141,7 +168,10 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_all
     rbs_ast_declarations_module_self_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_module_self_t);
 
     *instance = (rbs_ast_declarations_module_self_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_MODULE_SELF
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -154,7 +184,10 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_all
     rbs_ast_declarations_modulealias_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_modulealias_t);
 
     *instance = (rbs_ast_declarations_modulealias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_MODULEALIAS
+        },
         .new_name = new_name,
         .old_name = old_name,
         .location = location,
@@ -168,7 +201,10 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_allocat
     rbs_ast_declarations_typealias_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_typealias_t);
 
     *instance = (rbs_ast_declarations_typealias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_TYPEALIAS
+        },
         .name = name,
         .type_params = type_params,
         .type = type,
@@ -184,7 +220,10 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_allocator_t *allocator,
     rbs_ast_directives_use_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_use_t);
 
     *instance = (rbs_ast_directives_use_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DIRECTIVES_USE
+        },
         .clauses = clauses,
         .location = location,
     };
@@ -196,7 +235,10 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(r
     rbs_ast_directives_use_singleclause_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_use_singleclause_t);
 
     *instance = (rbs_ast_directives_use_singleclause_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DIRECTIVES_USE_SINGLECLAUSE
+        },
         .type_name = type_name,
         .new_name = new_name,
         .location = location,
@@ -209,7 +251,10 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     rbs_ast_directives_use_wildcardclause_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_use_wildcardclause_t);
 
     *instance = (rbs_ast_directives_use_wildcardclause_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE
+        },
         .namespace = namespace,
         .location = location,
     };
@@ -221,7 +266,10 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, V
     rbs_ast_members_alias_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_alias_t);
 
     *instance = (rbs_ast_members_alias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ALIAS
+        },
         .new_name = new_name,
         .old_name = old_name,
         .kind = kind,
@@ -237,7 +285,10 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t
     rbs_ast_members_attraccessor_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_attraccessor_t);
 
     *instance = (rbs_ast_members_attraccessor_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ATTRACCESSOR
+        },
         .name = name,
         .type = type,
         .ivar_name = ivar_name,
@@ -255,7 +306,10 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *al
     rbs_ast_members_attrreader_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_attrreader_t);
 
     *instance = (rbs_ast_members_attrreader_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ATTRREADER
+        },
         .name = name,
         .type = type,
         .ivar_name = ivar_name,
@@ -273,7 +327,10 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *al
     rbs_ast_members_attrwriter_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_attrwriter_t);
 
     *instance = (rbs_ast_members_attrwriter_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_ATTRWRITER
+        },
         .name = name,
         .type = type,
         .ivar_name = ivar_name,
@@ -291,7 +348,10 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
     rbs_ast_members_classinstancevariable_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_classinstancevariable_t);
 
     *instance = (rbs_ast_members_classinstancevariable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -305,7 +365,10 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator
     rbs_ast_members_classvariable_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_classvariable_t);
 
     *instance = (rbs_ast_members_classvariable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_CLASSVARIABLE
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -319,7 +382,10 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator,
     rbs_ast_members_extend_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_extend_t);
 
     *instance = (rbs_ast_members_extend_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_EXTEND
+        },
         .name = name,
         .args = args,
         .annotations = annotations,
@@ -334,7 +400,10 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_allocator_t *allocato
     rbs_ast_members_include_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_include_t);
 
     *instance = (rbs_ast_members_include_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_INCLUDE
+        },
         .name = name,
         .args = args,
         .annotations = annotations,
@@ -349,7 +418,10 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_all
     rbs_ast_members_instancevariable_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_instancevariable_t);
 
     *instance = (rbs_ast_members_instancevariable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_INSTANCEVARIABLE
+        },
         .name = name,
         .type = type,
         .location = location,
@@ -363,7 +435,10 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_all
     rbs_ast_members_methoddefinition_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_methoddefinition_t);
 
     *instance = (rbs_ast_members_methoddefinition_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_METHODDEFINITION
+        },
         .name = name,
         .kind = kind,
         .overloads = overloads,
@@ -381,7 +456,10 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
     rbs_ast_members_methoddefinition_overload_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_methoddefinition_overload_t);
 
     *instance = (rbs_ast_members_methoddefinition_overload_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD
+        },
         .annotations = annotations,
         .method_type = method_type,
     };
@@ -393,7 +471,10 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_allocator_t *allocato
     rbs_ast_members_prepend_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_prepend_t);
 
     *instance = (rbs_ast_members_prepend_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_PREPEND
+        },
         .name = name,
         .args = args,
         .annotations = annotations,
@@ -408,7 +489,10 @@ rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_allocator_t *allocato
     rbs_ast_members_private_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_private_t);
 
     *instance = (rbs_ast_members_private_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_PRIVATE
+        },
         .location = location,
     };
 
@@ -419,7 +503,10 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_allocator_t *allocator,
     rbs_ast_members_public_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_public_t);
 
     *instance = (rbs_ast_members_public_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_MEMBERS_PUBLIC
+        },
         .location = location,
     };
 
@@ -430,7 +517,10 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, VALUE rub
     rbs_ast_typeparam_t *instance = rbs_allocator_alloc(allocator, rbs_ast_typeparam_t);
 
     *instance = (rbs_ast_typeparam_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_TYPEPARAM
+        },
         .name = name,
         .variance = variance,
         .upper_bound = upper_bound,
@@ -446,7 +536,10 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_allocator_t *allocator, VALUE ruby_valu
     rbs_methodtype_t *instance = rbs_allocator_alloc(allocator, rbs_methodtype_t);
 
     *instance = (rbs_methodtype_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_METHODTYPE
+        },
         .type_params = type_params,
         .type = type,
         .block = block,
@@ -460,7 +553,10 @@ rbs_namespace_t *rbs_namespace_new(rbs_allocator_t *allocator, VALUE ruby_value,
     rbs_namespace_t *instance = rbs_allocator_alloc(allocator, rbs_namespace_t);
 
     *instance = (rbs_namespace_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_NAMESPACE
+        },
         .path = path,
         .absolute = absolute,
     };
@@ -472,7 +568,10 @@ rbs_typename_t *rbs_typename_new(rbs_allocator_t *allocator, VALUE ruby_value, V
     rbs_typename_t *instance = rbs_allocator_alloc(allocator, rbs_typename_t);
 
     *instance = (rbs_typename_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPENAME
+        },
         .namespace = namespace,
         .name = name,
     };
@@ -484,7 +583,10 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, VALUE ruby_va
     rbs_types_alias_t *instance = rbs_allocator_alloc(allocator, rbs_types_alias_t);
 
     *instance = (rbs_types_alias_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_ALIAS
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -497,7 +599,10 @@ rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_allocator_t *allocator, VALUE
     rbs_types_bases_any_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_any_t);
 
     *instance = (rbs_types_bases_any_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_ANY
+        },
         .todo = todo,
         .location = location,
     };
@@ -509,7 +614,10 @@ rbs_types_bases_bool_t *rbs_types_bases_bool_new(rbs_allocator_t *allocator, VAL
     rbs_types_bases_bool_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_bool_t);
 
     *instance = (rbs_types_bases_bool_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_BOOL
+        },
         .location = location,
     };
 
@@ -520,7 +628,10 @@ rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(rbs_allocator_t *allocator,
     rbs_types_bases_bottom_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_bottom_t);
 
     *instance = (rbs_types_bases_bottom_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_BOTTOM
+        },
         .location = location,
     };
 
@@ -531,7 +642,10 @@ rbs_types_bases_class_t *rbs_types_bases_class_new(rbs_allocator_t *allocator, V
     rbs_types_bases_class_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_class_t);
 
     *instance = (rbs_types_bases_class_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_CLASS
+        },
         .location = location,
     };
 
@@ -542,7 +656,10 @@ rbs_types_bases_instance_t *rbs_types_bases_instance_new(rbs_allocator_t *alloca
     rbs_types_bases_instance_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_instance_t);
 
     *instance = (rbs_types_bases_instance_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_INSTANCE
+        },
         .location = location,
     };
 
@@ -553,7 +670,10 @@ rbs_types_bases_nil_t *rbs_types_bases_nil_new(rbs_allocator_t *allocator, VALUE
     rbs_types_bases_nil_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_nil_t);
 
     *instance = (rbs_types_bases_nil_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_NIL
+        },
         .location = location,
     };
 
@@ -564,7 +684,10 @@ rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_allocator_t *allocator, VAL
     rbs_types_bases_self_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_self_t);
 
     *instance = (rbs_types_bases_self_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_SELF
+        },
         .location = location,
     };
 
@@ -575,7 +698,10 @@ rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_allocator_t *allocator, VALUE
     rbs_types_bases_top_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_top_t);
 
     *instance = (rbs_types_bases_top_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_TOP
+        },
         .location = location,
     };
 
@@ -586,7 +712,10 @@ rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_allocator_t *allocator, VAL
     rbs_types_bases_void_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_void_t);
 
     *instance = (rbs_types_bases_void_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BASES_VOID
+        },
         .location = location,
     };
 
@@ -597,7 +726,10 @@ rbs_types_block_t *rbs_types_block_new(rbs_allocator_t *allocator, VALUE ruby_va
     rbs_types_block_t *instance = rbs_allocator_alloc(allocator, rbs_types_block_t);
 
     *instance = (rbs_types_block_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_BLOCK
+        },
         .type = type,
         .required = required,
         .self_type = self_type,
@@ -610,7 +742,10 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_allocator_t *allocato
     rbs_types_classinstance_t *instance = rbs_allocator_alloc(allocator, rbs_types_classinstance_t);
 
     *instance = (rbs_types_classinstance_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_CLASSINSTANCE
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -623,7 +758,10 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_allocator_t *alloca
     rbs_types_classsingleton_t *instance = rbs_allocator_alloc(allocator, rbs_types_classsingleton_t);
 
     *instance = (rbs_types_classsingleton_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_CLASSSINGLETON
+        },
         .name = name,
         .location = location,
     };
@@ -635,7 +773,10 @@ rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE r
     rbs_types_function_t *instance = rbs_allocator_alloc(allocator, rbs_types_function_t);
 
     *instance = (rbs_types_function_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_FUNCTION
+        },
         .required_positionals = required_positionals,
         .optional_positionals = optional_positionals,
         .rest_positionals = rest_positionals,
@@ -653,7 +794,10 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *alloca
     rbs_types_function_param_t *instance = rbs_allocator_alloc(allocator, rbs_types_function_param_t);
 
     *instance = (rbs_types_function_param_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_FUNCTION_PARAM
+        },
         .type = type,
         .name = name,
         .location = location,
@@ -666,7 +810,10 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, VALUE
     rbs_types_interface_t *instance = rbs_allocator_alloc(allocator, rbs_types_interface_t);
 
     *instance = (rbs_types_interface_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_INTERFACE
+        },
         .name = name,
         .args = args,
         .location = location,
@@ -679,7 +826,10 @@ rbs_types_intersection_t *rbs_types_intersection_new(rbs_allocator_t *allocator,
     rbs_types_intersection_t *instance = rbs_allocator_alloc(allocator, rbs_types_intersection_t);
 
     *instance = (rbs_types_intersection_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_INTERSECTION
+        },
         .types = types,
         .location = location,
     };
@@ -691,7 +841,10 @@ rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, VALUE rub
     rbs_types_literal_t *instance = rbs_allocator_alloc(allocator, rbs_types_literal_t);
 
     *instance = (rbs_types_literal_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_LITERAL
+        },
         .literal = literal,
         .location = location,
     };
@@ -703,7 +856,10 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, VALUE r
     rbs_types_optional_t *instance = rbs_allocator_alloc(allocator, rbs_types_optional_t);
 
     *instance = (rbs_types_optional_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_OPTIONAL
+        },
         .type = type,
         .location = location,
     };
@@ -715,7 +871,10 @@ rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, VALUE ruby_valu
     rbs_types_proc_t *instance = rbs_allocator_alloc(allocator, rbs_types_proc_t);
 
     *instance = (rbs_types_proc_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_PROC
+        },
         .type = type,
         .block = block,
         .location = location,
@@ -729,7 +888,10 @@ rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, VALUE ruby_
     rbs_types_record_t *instance = rbs_allocator_alloc(allocator, rbs_types_record_t);
 
     *instance = (rbs_types_record_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_RECORD
+        },
         .all_fields = all_fields,
         .location = location,
     };
@@ -741,7 +903,10 @@ rbs_types_tuple_t *rbs_types_tuple_new(rbs_allocator_t *allocator, VALUE ruby_va
     rbs_types_tuple_t *instance = rbs_allocator_alloc(allocator, rbs_types_tuple_t);
 
     *instance = (rbs_types_tuple_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_TUPLE
+        },
         .types = types,
         .location = location,
     };
@@ -753,7 +918,10 @@ rbs_types_union_t *rbs_types_union_new(rbs_allocator_t *allocator, VALUE ruby_va
     rbs_types_union_t *instance = rbs_allocator_alloc(allocator, rbs_types_union_t);
 
     *instance = (rbs_types_union_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_UNION
+        },
         .types = types,
         .location = location,
     };
@@ -765,7 +933,10 @@ rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_allocator_t *allo
     rbs_types_untypedfunction_t *instance = rbs_allocator_alloc(allocator, rbs_types_untypedfunction_t);
 
     *instance = (rbs_types_untypedfunction_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_UNTYPEDFUNCTION
+        },
         .return_type = return_type,
     };
 
@@ -776,7 +947,10 @@ rbs_types_variable_t *rbs_types_variable_new(rbs_allocator_t *allocator, VALUE r
     rbs_types_variable_t *instance = rbs_allocator_alloc(allocator, rbs_types_variable_t);
 
     *instance = (rbs_types_variable_t) {
-        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_VARIABLE
+        },
         .name = name,
         .location = location,
     };

@@ -84,7 +84,8 @@ module RBS
       # e.g. `RBS_AST_Declarations`
       attr_reader :c_parent_constant_name #: String
 
-      attr_reader :c_base_name #: String
+      attr_reader :c_struct_name #: String
+      attr_reader :c_type_enum_name #: String
 
       attr_reader :constructor_params #: Array[RBS::Template::Field]
       attr_reader :fields #: Array[RBS::Template::Field]
@@ -100,6 +101,9 @@ module RBS
         @c_parent_constant_name = @ruby_full_name.split("::")[0..-2].join("::").gsub("::", "_")
         @c_base_name = @c_constant_name.downcase
         @c_type_name = @c_base_name + "_t"
+
+        @c_struct_name = "#{@c_base_name}_t"
+        @c_type_enum_name = @c_base_name.upcase
 
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
