@@ -47,3 +47,12 @@ nodes:
       - name: annotations
       - name: location
       - name: comment
+  - name: RBS::AST::Declarations::Module
+    fields:
+      - name: name
+      - name: type_params
+      - name: self_types
+      - name: members
+      - name: annotations
+      - name: location
+      - name: comment
