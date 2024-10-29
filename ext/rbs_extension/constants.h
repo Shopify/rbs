@@ -3,8 +3,6 @@
 
 extern VALUE RBS_AST_TypeParam;
 
-extern VALUE RBS_AST_Declarations_TypeAlias;
-
 extern VALUE RBS_AST_Directives_Use;
 extern VALUE RBS_AST_Directives_Use_SingleClause;
 extern VALUE RBS_AST_Directives_Use_WildcardClause;
