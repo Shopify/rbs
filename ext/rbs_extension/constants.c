@@ -1,7 +1,6 @@
 #include "rbs_extension.h"
 
 VALUE RBS_AST_Comment;
-VALUE RBS_AST_Annotation;
 VALUE RBS_AST_TypeParam;
 
 VALUE RBS_AST_Declarations_TypeAlias;
@@ -68,7 +67,6 @@ VALUE RBS_MethodType;
 
 void rbs__init_constants(void) {
   IMPORT_CONSTANT(RBS_AST_Comment, RBS_AST, "Comment");
-  IMPORT_CONSTANT(RBS_AST_Annotation, RBS_AST, "Annotation");
   IMPORT_CONSTANT(RBS_AST_TypeParam, RBS_AST, "TypeParam");
 
   IMPORT_CONSTANT(RBS_AST_Declarations_TypeAlias, RBS_AST_Declarations, "TypeAlias");
