@@ -44,8 +44,10 @@ task :confirm_annotation do
 end
 
 task :templates do
+  sh "ruby templates/template.rb include/rbs/ast.h"
   sh "ruby templates/template.rb include/rbs/constants.h"
   sh "ruby templates/template.rb include/rbs/ruby_objs.h"
+  sh "ruby templates/template.rb src/ast.c"
   sh "ruby templates/template.rb src/constants.c"
   sh "ruby templates/template.rb src/ruby_objs.c"
 end
@@ -98,7 +100,7 @@ task :stdlib_test => :compile do
   if ENV["RANDOMIZE_STDLIB_TEST_ORDER"] == "true"
     test_files.shuffle!
   end
-  
+
   sh "#{ruby} -Ilib #{bin}/test_runner.rb #{test_files.join(' ')}"
   # TODO: Ractor tests need to be run in a separate process
   sh "#{ruby} -Ilib #{bin}/test_runner.rb test/stdlib/Ractor_test.rb"
