@@ -20,8 +20,10 @@ lib/**/*.so
 lib/**/*.dll
 doc/
 
+include/rbs/ast.h
 include/rbs/constants.h
 include/rbs/ruby_objs.h
+src/ast.c
 src/constants.c
 src/ruby_objs.c
 
