@@ -267,7 +267,7 @@ static bool is_keyword_token(enum TokenType type) {
   function_param ::= {} <type>
                    | {} type <param>
 */
-static VALUE parse_function_param(parserstate *state) {
+static rbs_types_function_param_t *parse_function_param(parserstate *state) {
   range type_range;
   type_range.start = state->next_token.range.start;
   VALUE type = parse_type(state);
@@ -281,7 +281,8 @@ static VALUE parse_function_param(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, rb_intern("name"), NULL_RANGE);
 
-    return rbs_function_param(type, Qnil, location);
+    VALUE value = rbs_function_param(type, Qnil, location);
+    return rbs_types_function_param_new(value, type, Qnil, location);
   } else {
     range name_range = state->next_token.range;
 
@@ -306,7 +307,8 @@ static VALUE parse_function_param(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, rb_intern("name"), name_range);
 
-    return rbs_function_param(type, name, location);
+    VALUE value = rbs_function_param(type, name, location);
+    return rbs_types_function_param_new(value, type, name, location);
   }
 }
 
@@ -351,9 +353,9 @@ static void parse_keyword(parserstate *state, VALUE keywords, VALUE memo) {
   }
 
   parser_advance_assert(state, pCOLON);
-  VALUE param = parse_function_param(state);
+  rbs_types_function_param_t *param = parse_function_param(state);
 
-  rb_hash_aset(keywords, key, param);
+  rb_hash_aset(keywords, key, ((rbs_node_t *)param)->cached_ruby_value);
 
   return;
 }
@@ -422,8 +424,6 @@ static void parse_params(parserstate *state, method_params *params) {
   VALUE memo = rb_hash_new();
 
   while (true) {
-    VALUE param;
-
     switch (state->next_token.type) {
       case pQUESTION:
         goto PARSE_OPTIONAL_PARAMS;
@@ -439,9 +439,9 @@ static void parse_params(parserstate *state, method_params *params) {
           goto PARSE_KEYWORDS;
         }
 
-        param = parse_function_param(state);
+        rbs_types_function_param_t *param = parse_function_param(state);
         melt_array(&params->required_positionals);
-        rb_ary_push(params->required_positionals, param);
+        rb_ary_push(params->required_positionals, ((rbs_node_t *)param)->cached_ruby_value);
 
         break;
     }
@@ -453,8 +453,6 @@ static void parse_params(parserstate *state, method_params *params) {
 
 PARSE_OPTIONAL_PARAMS:
   while (true) {
-    VALUE param;
-
     switch (state->next_token.type) {
       case pQUESTION:
         parser_advance(state);
@@ -465,9 +463,9 @@ PARSE_OPTIONAL_PARAMS:
           goto PARSE_KEYWORDS;
         }
 
-        param = parse_function_param(state);
+        rbs_types_function_param_t *param = parse_function_param(state);
         melt_array(&params->optional_positionals);
-        rb_ary_push(params->optional_positionals, param);
+        rb_ary_push(params->optional_positionals, ((rbs_node_t *)param)->cached_ruby_value);
 
         break;
       default:
@@ -482,7 +480,8 @@ PARSE_OPTIONAL_PARAMS:
 PARSE_REST_PARAM:
   if (state->next_token.type == pSTAR) {
     parser_advance(state);
-    params->rest_positionals = parse_function_param(state);
+    rbs_types_function_param_t *param = parse_function_param(state);
+    params->rest_positionals = ((rbs_node_t *)param)->cached_ruby_value;
 
     if (!parser_advance_if(state, pCOMMA)) {
       goto EOP;
@@ -492,8 +491,6 @@ PARSE_REST_PARAM:
 
 PARSE_TRAILING_PARAMS:
   while (true) {
-    VALUE param;
-
     switch (state->next_token.type) {
       case pQUESTION:
         goto PARSE_KEYWORDS;
@@ -509,9 +506,9 @@ PARSE_TRAILING_PARAMS:
           goto PARSE_KEYWORDS;
         }
 
-        param = parse_function_param(state);
+        rbs_types_function_param_t *param = parse_function_param(state);
         melt_array(&params->trailing_positionals);
-        rb_ary_push(params->trailing_positionals, param);
+        rb_ary_push(params->trailing_positionals, ((rbs_node_t *)param)->cached_ruby_value);
 
         break;
     }
@@ -539,7 +536,8 @@ PARSE_KEYWORDS:
 
     case pSTAR2:
       parser_advance(state);
-      params->rest_keywords = parse_function_param(state);
+      rbs_types_function_param_t *param = parse_function_param(state);
+      params->rest_keywords = ((rbs_node_t *)param)->cached_ruby_value;
       break;
 
     case tUIDENT:
