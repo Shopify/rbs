@@ -9,7 +9,7 @@
  * */
 extern VALUE RBS_Parser;
 
-VALUE parse_type(parserstate *state);
+rbs_node_t *parse_type(parserstate *state);
 rbs_methodtype_t *parse_method_type(parserstate *state);
 VALUE parse_signature(parserstate *state);
 
