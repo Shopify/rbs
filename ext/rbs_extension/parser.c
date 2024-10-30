@@ -725,7 +725,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
 /*
   proc_type ::= {`^`} <function>
 */
-static VALUE parse_proc_type(parserstate *state) {
+static rbs_types_proc_t *parse_proc_type(parserstate *state) {
   position start = state->current_token.range.start;
   VALUE function = Qnil;
   VALUE block = Qnil;
@@ -733,8 +733,8 @@ static VALUE parse_proc_type(parserstate *state) {
   parse_function(state, &function, &block, &proc_self);
   position end = state->current_token.range.end;
   VALUE loc = rbs_location_pp(state->buffer, &start, &end);
-
-  return rbs_proc(function, block, loc, proc_self);
+  VALUE value = rbs_proc(function, block, loc, proc_self);
+  return rbs_types_proc_new(value, function, block, loc, proc_self);
 }
 
 static void check_key_duplication(parserstate *state, VALUE fields, VALUE key) {
@@ -1100,8 +1100,8 @@ static rbs_node_t *parse_simple(parserstate *state) {
     return (rbs_node_t *) rbs_types_record_new(value, fields, loc);
   }
   case pHAT: {
-    VALUE value = parse_proc_type(state);
-    return (rbs_node_t *) rbs_types_zzztmpnotimplemented_new(value);
+    rbs_types_proc_t *value = parse_proc_type(state);
+    return (rbs_node_t *) value;
   }
   default:
     raise_syntax_error(
