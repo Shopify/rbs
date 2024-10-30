@@ -16,6 +16,11 @@ const char* get_class_name(VALUE o) {
 }
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
+    if (instance == NULL) {
+        fprintf(stderr, "Tried to call rbs_struct_to_ruby_value(NULL)\n");
+        exit(1);
+    }
+
     VALUE ruby_value = instance->cached_ruby_value;
 
     if (ruby_value == Qnil || ruby_value == Qundef) {
