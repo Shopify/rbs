@@ -1467,7 +1467,7 @@ rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, position c
 /*
   annotation ::= {<tANNOTATION>}
 */
-VALUE parse_annotation(parserstate *state) {
+rbs_ast_annotation_t *parse_annotation(parserstate *state) {
   VALUE content = rb_funcall(state->buffer, rb_intern("content"), 0);
   rb_encoding *enc = rb_enc_get(content);
 
@@ -1516,7 +1516,8 @@ VALUE parse_annotation(parserstate *state) {
 
   VALUE location = rbs_location_current_token(state);
 
-  return rbs_ast_annotation(string, location);
+  VALUE value = rbs_ast_annotation(string, location);
+  return rbs_ast_annotation_new(value, string, location);
 }
 
 /*
@@ -1535,7 +1536,7 @@ void parse_annotations(parserstate *state, VALUE *annotations, position *annot_p
       }
 
       melt_array(annotations);
-      rb_ary_push(*annotations, parse_annotation(state));
+      rb_ary_push(*annotations, ((rbs_node_t *)parse_annotation(state))->cached_ruby_value);
     } else {
       break;
     }
