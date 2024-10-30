@@ -11,6 +11,10 @@
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE ruby_value, VALUE string, VALUE location) {
     rbs_ast_annotation_t *instance = (rbs_ast_annotation_t *)calloc(1, sizeof(rbs_ast_annotation_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(string);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_annotation_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -26,6 +30,10 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE ruby_value, VALUE string, VAL
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, VALUE location) {
     rbs_ast_comment_t *instance = (rbs_ast_comment_t *)calloc(1, sizeof(rbs_ast_comment_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(string);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_comment_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -40,6 +48,15 @@ rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, VALUE loc
 
 rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(VALUE ruby_value, VALUE name, VALUE type_params, VALUE super_class, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_class_t *instance = (rbs_ast_declarations_class_t *)calloc(1, sizeof(rbs_ast_declarations_class_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type_params);
+    rb_gc_register_mark_object(super_class);
+    rb_gc_register_mark_object(members);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_declarations_class_t) {
         .base = (rbs_node_t) {
@@ -61,6 +78,11 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(VALUE ruby_value, V
 rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(VALUE ruby_value, VALUE name, VALUE args, VALUE location) {
     rbs_ast_declarations_class_super_t *instance = (rbs_ast_declarations_class_super_t *)calloc(1, sizeof(rbs_ast_declarations_class_super_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_declarations_class_super_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -76,6 +98,12 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(VALUE r
 
 rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(VALUE ruby_value, VALUE new_name, VALUE old_name, VALUE location, VALUE comment) {
     rbs_ast_declarations_classalias_t *instance = (rbs_ast_declarations_classalias_t *)calloc(1, sizeof(rbs_ast_declarations_classalias_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(new_name);
+    rb_gc_register_mark_object(old_name);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_declarations_classalias_t) {
         .base = (rbs_node_t) {
@@ -94,6 +122,12 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(VALUE rub
 rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(VALUE ruby_value, VALUE name, VALUE type, VALUE location, VALUE comment) {
     rbs_ast_declarations_constant_t *instance = (rbs_ast_declarations_constant_t *)calloc(1, sizeof(rbs_ast_declarations_constant_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+
     *instance = (rbs_ast_declarations_constant_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -111,6 +145,12 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(VALUE ruby_va
 rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(VALUE ruby_value, VALUE name, VALUE type, VALUE location, VALUE comment) {
     rbs_ast_declarations_global_t *instance = (rbs_ast_declarations_global_t *)calloc(1, sizeof(rbs_ast_declarations_global_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+
     *instance = (rbs_ast_declarations_global_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -127,6 +167,14 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(VALUE ruby_value,
 
 rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(VALUE ruby_value, VALUE name, VALUE type_params, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_interface_t *instance = (rbs_ast_declarations_interface_t *)calloc(1, sizeof(rbs_ast_declarations_interface_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type_params);
+    rb_gc_register_mark_object(members);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_declarations_interface_t) {
         .base = (rbs_node_t) {
@@ -146,6 +194,15 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(VALUE ruby_
 
 rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(VALUE ruby_value, VALUE name, VALUE type_params, VALUE self_types, VALUE members, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_module_t *instance = (rbs_ast_declarations_module_t *)calloc(1, sizeof(rbs_ast_declarations_module_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type_params);
+    rb_gc_register_mark_object(self_types);
+    rb_gc_register_mark_object(members);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_declarations_module_t) {
         .base = (rbs_node_t) {
@@ -167,6 +224,11 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(VALUE ruby_value,
 rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(VALUE ruby_value, VALUE name, VALUE args, VALUE location) {
     rbs_ast_declarations_module_self_t *instance = (rbs_ast_declarations_module_self_t *)calloc(1, sizeof(rbs_ast_declarations_module_self_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_declarations_module_self_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -182,6 +244,12 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(VALUE r
 
 rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(VALUE ruby_value, VALUE new_name, VALUE old_name, VALUE location, VALUE comment) {
     rbs_ast_declarations_modulealias_t *instance = (rbs_ast_declarations_modulealias_t *)calloc(1, sizeof(rbs_ast_declarations_modulealias_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(new_name);
+    rb_gc_register_mark_object(old_name);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_declarations_modulealias_t) {
         .base = (rbs_node_t) {
@@ -199,6 +267,14 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(VALUE r
 
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(VALUE ruby_value, VALUE name, VALUE type_params, VALUE type, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_typealias_t *instance = (rbs_ast_declarations_typealias_t *)calloc(1, sizeof(rbs_ast_declarations_typealias_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type_params);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_declarations_typealias_t) {
         .base = (rbs_node_t) {
@@ -219,6 +295,10 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(VALUE ruby_
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE ruby_value, VALUE clauses, VALUE location) {
     rbs_ast_directives_use_t *instance = (rbs_ast_directives_use_t *)calloc(1, sizeof(rbs_ast_directives_use_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(clauses);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_directives_use_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -233,6 +313,11 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE ruby_value, VALUE cla
 
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, VALUE location) {
     rbs_ast_directives_use_singleclause_t *instance = (rbs_ast_directives_use_singleclause_t *)calloc(1, sizeof(rbs_ast_directives_use_singleclause_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(type_name);
+    rb_gc_register_mark_object(new_name);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_ast_directives_use_singleclause_t) {
         .base = (rbs_node_t) {
@@ -250,6 +335,10 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(V
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, VALUE namespace, VALUE location) {
     rbs_ast_directives_use_wildcardclause_t *instance = (rbs_ast_directives_use_wildcardclause_t *)calloc(1, sizeof(rbs_ast_directives_use_wildcardclause_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(namespace);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_directives_use_wildcardclause_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -264,6 +353,14 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
 
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE ruby_value, VALUE new_name, VALUE old_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_members_alias_t *instance = (rbs_ast_members_alias_t *)calloc(1, sizeof(rbs_ast_members_alias_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(new_name);
+    rb_gc_register_mark_object(old_name);
+    rb_gc_register_mark_object(kind);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_members_alias_t) {
         .base = (rbs_node_t) {
@@ -283,6 +380,16 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE ruby_value, VALUE new_n
 
 rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE ruby_value, VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attraccessor_t *instance = (rbs_ast_members_attraccessor_t *)calloc(1, sizeof(rbs_ast_members_attraccessor_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(ivar_name);
+    rb_gc_register_mark_object(kind);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(visibility);
 
     *instance = (rbs_ast_members_attraccessor_t) {
         .base = (rbs_node_t) {
@@ -305,6 +412,16 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE ruby_valu
 rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE ruby_value, VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attrreader_t *instance = (rbs_ast_members_attrreader_t *)calloc(1, sizeof(rbs_ast_members_attrreader_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(ivar_name);
+    rb_gc_register_mark_object(kind);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(visibility);
+
     *instance = (rbs_ast_members_attrreader_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -325,6 +442,16 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE ruby_value, V
 
 rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE ruby_value, VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attrwriter_t *instance = (rbs_ast_members_attrwriter_t *)calloc(1, sizeof(rbs_ast_members_attrwriter_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(ivar_name);
+    rb_gc_register_mark_object(kind);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(visibility);
 
     *instance = (rbs_ast_members_attrwriter_t) {
         .base = (rbs_node_t) {
@@ -347,6 +474,12 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE ruby_value, V
 rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(VALUE ruby_value, VALUE name, VALUE type, VALUE location, VALUE comment) {
     rbs_ast_members_classinstancevariable_t *instance = (rbs_ast_members_classinstancevariable_t *)calloc(1, sizeof(rbs_ast_members_classinstancevariable_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+
     *instance = (rbs_ast_members_classinstancevariable_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -364,6 +497,12 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
 rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE ruby_value, VALUE name, VALUE type, VALUE location, VALUE comment) {
     rbs_ast_members_classvariable_t *instance = (rbs_ast_members_classvariable_t *)calloc(1, sizeof(rbs_ast_members_classvariable_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+
     *instance = (rbs_ast_members_classvariable_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -380,6 +519,13 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE ruby_va
 
 rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE ruby_value, VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_members_extend_t *instance = (rbs_ast_members_extend_t *)calloc(1, sizeof(rbs_ast_members_extend_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_members_extend_t) {
         .base = (rbs_node_t) {
@@ -399,6 +545,13 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE ruby_value, VALUE nam
 rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE ruby_value, VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_members_include_t *instance = (rbs_ast_members_include_t *)calloc(1, sizeof(rbs_ast_members_include_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+
     *instance = (rbs_ast_members_include_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -417,6 +570,12 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE ruby_value, VALUE n
 rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE ruby_value, VALUE name, VALUE type, VALUE location, VALUE comment) {
     rbs_ast_members_instancevariable_t *instance = (rbs_ast_members_instancevariable_t *)calloc(1, sizeof(rbs_ast_members_instancevariable_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+
     *instance = (rbs_ast_members_instancevariable_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -433,6 +592,16 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE r
 
 rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(VALUE ruby_value, VALUE name, VALUE kind, VALUE overloads, VALUE annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
     rbs_ast_members_methoddefinition_t *instance = (rbs_ast_members_methoddefinition_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(kind);
+    rb_gc_register_mark_object(overloads);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(overloading);
+    rb_gc_register_mark_object(visibility);
 
     *instance = (rbs_ast_members_methoddefinition_t) {
         .base = (rbs_node_t) {
@@ -455,6 +624,10 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(VALUE r
 rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(VALUE ruby_value, VALUE annotations, VALUE method_type) {
     rbs_ast_members_methoddefinition_overload_t *instance = (rbs_ast_members_methoddefinition_overload_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_overload_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(method_type);
+
     *instance = (rbs_ast_members_methoddefinition_overload_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -469,6 +642,13 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
 
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE ruby_value, VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment) {
     rbs_ast_members_prepend_t *instance = (rbs_ast_members_prepend_t *)calloc(1, sizeof(rbs_ast_members_prepend_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(annotations);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(comment);
 
     *instance = (rbs_ast_members_prepend_t) {
         .base = (rbs_node_t) {
@@ -488,6 +668,9 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE ruby_value, VALUE n
 rbs_ast_members_private_t *rbs_ast_members_private_new(VALUE ruby_value, VALUE location) {
     rbs_ast_members_private_t *instance = (rbs_ast_members_private_t *)calloc(1, sizeof(rbs_ast_members_private_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_members_private_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -502,6 +685,9 @@ rbs_ast_members_private_t *rbs_ast_members_private_new(VALUE ruby_value, VALUE l
 rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE ruby_value, VALUE location) {
     rbs_ast_members_public_t *instance = (rbs_ast_members_public_t *)calloc(1, sizeof(rbs_ast_members_public_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_ast_members_public_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -515,6 +701,13 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE ruby_value, VALUE loc
 
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE ruby_value, VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE location) {
     rbs_ast_typeparam_t *instance = (rbs_ast_typeparam_t *)calloc(1, sizeof(rbs_ast_typeparam_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(variance);
+    rb_gc_register_mark_object(upper_bound);
+    rb_gc_register_mark_object(default_type);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_ast_typeparam_t) {
         .base = (rbs_node_t) {
@@ -534,6 +727,12 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE ruby_value, VALUE name, VALUE v
 rbs_methodtype_t *rbs_methodtype_new(VALUE ruby_value, VALUE type_params, VALUE type, VALUE block, VALUE location) {
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(type_params);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(block);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_methodtype_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -551,6 +750,10 @@ rbs_methodtype_t *rbs_methodtype_new(VALUE ruby_value, VALUE type_params, VALUE 
 rbs_namespace_t *rbs_namespace_new(VALUE ruby_value, VALUE path, VALUE absolute) {
     rbs_namespace_t *instance = (rbs_namespace_t *)calloc(1, sizeof(rbs_namespace_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(path);
+    rb_gc_register_mark_object(absolute);
+
     *instance = (rbs_namespace_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -566,6 +769,10 @@ rbs_namespace_t *rbs_namespace_new(VALUE ruby_value, VALUE path, VALUE absolute)
 rbs_typename_t *rbs_typename_new(VALUE ruby_value, VALUE namespace, VALUE name) {
     rbs_typename_t *instance = (rbs_typename_t *)calloc(1, sizeof(rbs_typename_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(namespace);
+    rb_gc_register_mark_object(name);
+
     *instance = (rbs_typename_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -580,6 +787,11 @@ rbs_typename_t *rbs_typename_new(VALUE ruby_value, VALUE namespace, VALUE name) 
 
 rbs_types_alias_t *rbs_types_alias_new(VALUE ruby_value, VALUE name, VALUE args, VALUE location) {
     rbs_types_alias_t *instance = (rbs_types_alias_t *)calloc(1, sizeof(rbs_types_alias_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_alias_t) {
         .base = (rbs_node_t) {
@@ -597,6 +809,9 @@ rbs_types_alias_t *rbs_types_alias_new(VALUE ruby_value, VALUE name, VALUE args,
 rbs_types_bases_any_t *rbs_types_bases_any_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_any_t *instance = (rbs_types_bases_any_t *)calloc(1, sizeof(rbs_types_bases_any_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_bases_any_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -610,6 +825,9 @@ rbs_types_bases_any_t *rbs_types_bases_any_new(VALUE ruby_value, VALUE location)
 
 rbs_types_bases_bool_t *rbs_types_bases_bool_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_bool_t *instance = (rbs_types_bases_bool_t *)calloc(1, sizeof(rbs_types_bases_bool_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_bases_bool_t) {
         .base = (rbs_node_t) {
@@ -625,6 +843,9 @@ rbs_types_bases_bool_t *rbs_types_bases_bool_new(VALUE ruby_value, VALUE locatio
 rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_bottom_t *instance = (rbs_types_bases_bottom_t *)calloc(1, sizeof(rbs_types_bases_bottom_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_bases_bottom_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -638,6 +859,9 @@ rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(VALUE ruby_value, VALUE loc
 
 rbs_types_bases_class_t *rbs_types_bases_class_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_class_t *instance = (rbs_types_bases_class_t *)calloc(1, sizeof(rbs_types_bases_class_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_bases_class_t) {
         .base = (rbs_node_t) {
@@ -653,6 +877,9 @@ rbs_types_bases_class_t *rbs_types_bases_class_new(VALUE ruby_value, VALUE locat
 rbs_types_bases_instance_t *rbs_types_bases_instance_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_instance_t *instance = (rbs_types_bases_instance_t *)calloc(1, sizeof(rbs_types_bases_instance_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_bases_instance_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -666,6 +893,9 @@ rbs_types_bases_instance_t *rbs_types_bases_instance_new(VALUE ruby_value, VALUE
 
 rbs_types_bases_nil_t *rbs_types_bases_nil_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_nil_t *instance = (rbs_types_bases_nil_t *)calloc(1, sizeof(rbs_types_bases_nil_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_bases_nil_t) {
         .base = (rbs_node_t) {
@@ -681,6 +911,9 @@ rbs_types_bases_nil_t *rbs_types_bases_nil_new(VALUE ruby_value, VALUE location)
 rbs_types_bases_self_t *rbs_types_bases_self_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_self_t *instance = (rbs_types_bases_self_t *)calloc(1, sizeof(rbs_types_bases_self_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_bases_self_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -694,6 +927,9 @@ rbs_types_bases_self_t *rbs_types_bases_self_new(VALUE ruby_value, VALUE locatio
 
 rbs_types_bases_top_t *rbs_types_bases_top_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_top_t *instance = (rbs_types_bases_top_t *)calloc(1, sizeof(rbs_types_bases_top_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_bases_top_t) {
         .base = (rbs_node_t) {
@@ -709,6 +945,9 @@ rbs_types_bases_top_t *rbs_types_bases_top_new(VALUE ruby_value, VALUE location)
 rbs_types_bases_void_t *rbs_types_bases_void_new(VALUE ruby_value, VALUE location) {
     rbs_types_bases_void_t *instance = (rbs_types_bases_void_t *)calloc(1, sizeof(rbs_types_bases_void_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_bases_void_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -722,6 +961,11 @@ rbs_types_bases_void_t *rbs_types_bases_void_new(VALUE ruby_value, VALUE locatio
 
 rbs_types_block_t *rbs_types_block_new(VALUE ruby_value, VALUE type, VALUE required, VALUE self_type) {
     rbs_types_block_t *instance = (rbs_types_block_t *)calloc(1, sizeof(rbs_types_block_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(required);
+    rb_gc_register_mark_object(self_type);
 
     *instance = (rbs_types_block_t) {
         .base = (rbs_node_t) {
@@ -739,6 +983,11 @@ rbs_types_block_t *rbs_types_block_new(VALUE ruby_value, VALUE type, VALUE requi
 rbs_types_classinstance_t *rbs_types_classinstance_new(VALUE ruby_value, VALUE name, VALUE args, VALUE location) {
     rbs_types_classinstance_t *instance = (rbs_types_classinstance_t *)calloc(1, sizeof(rbs_types_classinstance_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_classinstance_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -755,6 +1004,10 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(VALUE ruby_value, VALUE n
 rbs_types_classsingleton_t *rbs_types_classsingleton_new(VALUE ruby_value, VALUE name, VALUE location) {
     rbs_types_classsingleton_t *instance = (rbs_types_classsingleton_t *)calloc(1, sizeof(rbs_types_classsingleton_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_classsingleton_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -769,6 +1022,16 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(VALUE ruby_value, VALUE
 
 rbs_types_function_t *rbs_types_function_new(VALUE ruby_value, VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type) {
     rbs_types_function_t *instance = (rbs_types_function_t *)calloc(1, sizeof(rbs_types_function_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(required_positionals);
+    rb_gc_register_mark_object(optional_positionals);
+    rb_gc_register_mark_object(rest_positionals);
+    rb_gc_register_mark_object(trailing_positionals);
+    rb_gc_register_mark_object(required_keywords);
+    rb_gc_register_mark_object(optional_keywords);
+    rb_gc_register_mark_object(rest_keywords);
+    rb_gc_register_mark_object(return_type);
 
     *instance = (rbs_types_function_t) {
         .base = (rbs_node_t) {
@@ -791,6 +1054,11 @@ rbs_types_function_t *rbs_types_function_new(VALUE ruby_value, VALUE required_po
 rbs_types_function_param_t *rbs_types_function_param_new(VALUE ruby_value, VALUE type, VALUE name, VALUE location) {
     rbs_types_function_param_t *instance = (rbs_types_function_param_t *)calloc(1, sizeof(rbs_types_function_param_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_function_param_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -806,6 +1074,11 @@ rbs_types_function_param_t *rbs_types_function_param_new(VALUE ruby_value, VALUE
 
 rbs_types_interface_t *rbs_types_interface_new(VALUE ruby_value, VALUE name, VALUE args, VALUE location) {
     rbs_types_interface_t *instance = (rbs_types_interface_t *)calloc(1, sizeof(rbs_types_interface_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_interface_t) {
         .base = (rbs_node_t) {
@@ -823,6 +1096,10 @@ rbs_types_interface_t *rbs_types_interface_new(VALUE ruby_value, VALUE name, VAL
 rbs_types_intersection_t *rbs_types_intersection_new(VALUE ruby_value, VALUE types, VALUE location) {
     rbs_types_intersection_t *instance = (rbs_types_intersection_t *)calloc(1, sizeof(rbs_types_intersection_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(types);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_intersection_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -837,6 +1114,10 @@ rbs_types_intersection_t *rbs_types_intersection_new(VALUE ruby_value, VALUE typ
 
 rbs_types_literal_t *rbs_types_literal_new(VALUE ruby_value, VALUE literal, VALUE location) {
     rbs_types_literal_t *instance = (rbs_types_literal_t *)calloc(1, sizeof(rbs_types_literal_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(literal);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_literal_t) {
         .base = (rbs_node_t) {
@@ -853,6 +1134,10 @@ rbs_types_literal_t *rbs_types_literal_new(VALUE ruby_value, VALUE literal, VALU
 rbs_types_optional_t *rbs_types_optional_new(VALUE ruby_value, VALUE type, VALUE location) {
     rbs_types_optional_t *instance = (rbs_types_optional_t *)calloc(1, sizeof(rbs_types_optional_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_optional_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -867,6 +1152,12 @@ rbs_types_optional_t *rbs_types_optional_new(VALUE ruby_value, VALUE type, VALUE
 
 rbs_types_proc_t *rbs_types_proc_new(VALUE ruby_value, VALUE type, VALUE block, VALUE location, VALUE self_type) {
     rbs_types_proc_t *instance = (rbs_types_proc_t *)calloc(1, sizeof(rbs_types_proc_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(type);
+    rb_gc_register_mark_object(block);
+    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(self_type);
 
     *instance = (rbs_types_proc_t) {
         .base = (rbs_node_t) {
@@ -885,6 +1176,10 @@ rbs_types_proc_t *rbs_types_proc_new(VALUE ruby_value, VALUE type, VALUE block, 
 rbs_types_record_t *rbs_types_record_new(VALUE ruby_value, VALUE all_fields, VALUE location) {
     rbs_types_record_t *instance = (rbs_types_record_t *)calloc(1, sizeof(rbs_types_record_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(all_fields);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_record_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -899,6 +1194,10 @@ rbs_types_record_t *rbs_types_record_new(VALUE ruby_value, VALUE all_fields, VAL
 
 rbs_types_tuple_t *rbs_types_tuple_new(VALUE ruby_value, VALUE types, VALUE location) {
     rbs_types_tuple_t *instance = (rbs_types_tuple_t *)calloc(1, sizeof(rbs_types_tuple_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(types);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_tuple_t) {
         .base = (rbs_node_t) {
@@ -915,6 +1214,10 @@ rbs_types_tuple_t *rbs_types_tuple_new(VALUE ruby_value, VALUE types, VALUE loca
 rbs_types_union_t *rbs_types_union_new(VALUE ruby_value, VALUE types, VALUE location) {
     rbs_types_union_t *instance = (rbs_types_union_t *)calloc(1, sizeof(rbs_types_union_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(types);
+    rb_gc_register_mark_object(location);
+
     *instance = (rbs_types_union_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -930,6 +1233,9 @@ rbs_types_union_t *rbs_types_union_new(VALUE ruby_value, VALUE types, VALUE loca
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE ruby_value, VALUE return_type) {
     rbs_types_untypedfunction_t *instance = (rbs_types_untypedfunction_t *)calloc(1, sizeof(rbs_types_untypedfunction_t));
 
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(return_type);
+
     *instance = (rbs_types_untypedfunction_t) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
@@ -943,6 +1249,10 @@ rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE ruby_value, VAL
 
 rbs_types_variable_t *rbs_types_variable_new(VALUE ruby_value, VALUE name, VALUE location) {
     rbs_types_variable_t *instance = (rbs_types_variable_t *)calloc(1, sizeof(rbs_types_variable_t));
+
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_variable_t) {
         .base = (rbs_node_t) {
