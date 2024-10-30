@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 <%- nodes.each do |node| -%>
-<%= node.c_struct_name %> *<%= node.c_base_name %>_new(VALUE ruby_value, <%= node.fields.map { |field| "VALUE #{field.name}" }.join(", ") %>) {
+<%= node.c_struct_name %> *<%= node.c_base_name %>_new(VALUE ruby_value<%= node.fields.map { |field| ", VALUE #{field.name}" }.join %>) {
     <%= node.c_struct_name %> *instance = (<%= node.c_struct_name %> *)calloc(1, sizeof(<%= node.c_struct_name %>));
 
     rb_gc_register_mark_object(ruby_value);
@@ -36,6 +36,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
     if (instance == NULL) {
         fprintf(stderr, "Tried to call rbs_struct_to_ruby_value(NULL)\n");
         exit(1);
+    }
+
+    if (instance->type == RBS_TYPES_ZZZTMPNOTIMPLEMENTED) {
+        // Special case: skip assertions/translation below.
+        return instance->cached_ruby_value;
     }
 
     VALUE ruby_value = instance->cached_ruby_value;

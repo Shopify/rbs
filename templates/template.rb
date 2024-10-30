@@ -43,6 +43,13 @@ module RBS
         @c_type_enum_name = @c_base_name.upcase
         @fields = yaml["fields"].map { |field| Field.new(field) }
         @parent_c_constant_name = @full_name.split("::")[0..-2].join("::").gsub("::", "_")
+        @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
+      end
+
+      # Every templated type will have a C struct created for it.
+      # If this is true, then we will also create a Ruby class for it, otherwise we'll skip that.
+      def expose_to_ruby?
+        @expose_to_ruby
       end
     end
 
