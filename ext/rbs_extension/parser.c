@@ -2135,7 +2135,7 @@ rbs_node_t *parse_visibility_member(parserstate *state, VALUE annotations) {
              | `(` tAIDENT `)`    # Ivar name
              | `(` `)`            # No variable
 */
-VALUE parse_attribute_member(parserstate *state, position comment_pos, VALUE annotations) {
+rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, VALUE annotations) {
   range member_range;
   range keyword_range, name_range, colon_range;
   range kind_range = NULL_RANGE, ivar_range = NULL_RANGE, ivar_name_range = NULL_RANGE, visibility_range = NULL_RANGE;
@@ -2223,12 +2223,18 @@ VALUE parse_attribute_member(parserstate *state, position comment_pos, VALUE ann
 
   switch (attr_type)
   {
-  case kATTRREADER:
-    return rbs_ast_members_attr_reader(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
-  case kATTRWRITER:
-    return rbs_ast_members_attr_writer(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
-  case kATTRACCESSOR:
-    return rbs_ast_members_attr_accessor(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
+  case kATTRREADER: {
+    VALUE value = rbs_ast_members_attr_reader(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *)rbs_ast_members_attrreader_new(value, attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
+  }
+  case kATTRWRITER: {
+    VALUE value = rbs_ast_members_attr_writer(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *)rbs_ast_members_attrwriter_new(value, attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
+  }
+  case kATTRACCESSOR: {
+    VALUE value = rbs_ast_members_attr_accessor(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *)rbs_ast_members_attraccessor_new(value, attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
+  }
   default:
     rbs_abort();
   }
@@ -2423,7 +2429,7 @@ VALUE parse_module_members(parserstate *state) {
     case kATTRREADER:
     case kATTRWRITER:
     case kATTRACCESSOR:
-      member = parse_attribute_member(state, annot_pos, annotations);
+      member = parse_attribute_member(state, annot_pos, annotations)->cached_ruby_value;
       break;
 
     case kPUBLIC:
@@ -2437,7 +2443,7 @@ VALUE parse_module_members(parserstate *state) {
         case kATTRREADER:
         case kATTRWRITER:
         case kATTRACCESSOR:
-          member = parse_attribute_member(state, annot_pos, annotations);
+          member = parse_attribute_member(state, annot_pos, annotations)->cached_ruby_value;
           break;
         default:
           raise_syntax_error(state, state->next_token, "method or attribute definition is expected after visibility modifier");
