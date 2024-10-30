@@ -968,7 +968,9 @@ static VALUE parse_simple(parserstate *state) {
   case pLPAREN: {
     VALUE type = parse_type(state);
     parser_advance_assert(state, pRPAREN);
-    return type;
+
+    rbs_types_zzztmpnotimplemented_t *node = rbs_types_zzztmpnotimplemented_new(type);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kBOOL: {
     VALUE loc = rbs_location_current_token(state);
@@ -1089,7 +1091,9 @@ static VALUE parse_simple(parserstate *state) {
   case tULIDENT: // fallthrough
   case tLIDENT: // fallthrough
   case pCOLON2: {
-    return parse_instance_type(state, true);
+    VALUE value = parse_instance_type(state, true);
+    rbs_types_zzztmpnotimplemented_t *node = rbs_types_zzztmpnotimplemented_new(value);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kSINGLETON: {
     VALUE value = parse_singleton_type(state);
@@ -1129,7 +1133,9 @@ static VALUE parse_simple(parserstate *state) {
     return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case pHAT: {
-    return parse_proc_type(state);
+    VALUE value = parse_proc_type(state);
+    rbs_types_zzztmpnotimplemented_t *node = rbs_types_zzztmpnotimplemented_new(value);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   default:
     raise_syntax_error(
