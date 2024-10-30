@@ -2381,7 +2381,7 @@ void parse_module_self_types(parserstate *state, VALUE *array) {
   }
 }
 
-VALUE parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations);
+rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations);
 
 /*
   module_members ::= {} ...<module_member> kEND
@@ -2456,7 +2456,7 @@ VALUE parse_module_members(parserstate *state) {
       break;
 
     default:
-      member = parse_nested_decl(state, "module", annot_pos, annotations);
+      member = parse_nested_decl(state, "module", annot_pos, annotations)->cached_ruby_value;
       break;
     }
 
@@ -2703,30 +2703,30 @@ rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, VALUE ann
                 | {<module_decl>}
                 | {<class_decl>}
 */
-VALUE parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations) {
-  VALUE decl;
+rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations) {
+  rbs_node_t *decl;
 
   parser_push_typevar_table(state, true);
 
   switch (state->current_token.type) {
   case tUIDENT:
   case pCOLON2:
-    decl = ((rbs_node_t *)parse_const_decl(state))->cached_ruby_value;
+    decl = (rbs_node_t *) parse_const_decl(state);
     break;
   case tGIDENT:
-    decl = ((rbs_node_t *)parse_global_decl(state))->cached_ruby_value;
+    decl = (rbs_node_t *) parse_global_decl(state);
     break;
   case kTYPE:
-    decl = ((rbs_node_t *)parse_type_decl(state, annot_pos, annotations))->cached_ruby_value;
+    decl = (rbs_node_t *) parse_type_decl(state, annot_pos, annotations);
     break;
   case kINTERFACE:
-    decl = ((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations))->cached_ruby_value;
+    decl = (rbs_node_t *) parse_interface_decl(state, annot_pos, annotations);
     break;
   case kMODULE:
-    decl = ((rbs_node_t *)parse_module_decl(state, annot_pos, annotations))->cached_ruby_value;
+    decl = (rbs_node_t *) parse_module_decl(state, annot_pos, annotations);
     break;
   case kCLASS:
-    decl = ((rbs_node_t *)parse_class_decl(state, annot_pos, annotations))->cached_ruby_value;
+    decl = (rbs_node_t *) parse_class_decl(state, annot_pos, annotations);
     break;
   default:
     raise_syntax_error(
