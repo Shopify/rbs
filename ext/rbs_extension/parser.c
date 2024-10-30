@@ -932,7 +932,7 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
 /*
   singleton_type ::= {`singleton`} `(` type_name <`)`>
 */
-static VALUE parse_singleton_type(parserstate *state) {
+static rbs_types_classsingleton_t *parse_singleton_type(parserstate *state) {
   parser_assert(state, kSINGLETON);
 
   range type_range;
@@ -951,7 +951,8 @@ static VALUE parse_singleton_type(parserstate *state) {
   rbs_loc_alloc_children(loc, 1);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
 
-  return rbs_class_singleton(((rbs_node_t *)typename)->cached_ruby_value, location);
+  VALUE value = rbs_class_singleton(((rbs_node_t *)typename)->cached_ruby_value, location);
+  return rbs_types_classsingleton_new(&state->allocator, value, ((rbs_node_t *)typename)->cached_ruby_value, location);
 }
 
 /*
@@ -1080,9 +1081,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
     return parse_instance_type(state, true);
   }
   case kSINGLETON: {
-    VALUE value = parse_singleton_type(state);
-    VALUE loc = rb_funcall(value, rb_intern("location"), 0);
-    return (rbs_node_t *) rbs_types_classsingleton_new(&state->allocator, value, value, loc);
+    return (rbs_node_t *) parse_singleton_type(state);
   }
   case pLBRACKET: {
     range rg;
