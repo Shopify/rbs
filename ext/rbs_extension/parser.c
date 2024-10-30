@@ -1652,7 +1652,7 @@ static InstanceSingletonKind parse_instance_singleton_kind(parserstate *state, b
  * @param instance_only `true` to reject singleton method definition.
  * @param accept_overload `true` to accept overloading (...) definition.
  * */
-static VALUE parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, VALUE annotations) {
+static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, VALUE annotations) {
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
@@ -1791,7 +1791,7 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
   rbs_loc_add_optional_child(loc, INTERN("overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, INTERN("visibility"), visibility_range);
 
-  return rbs_ast_members_method_definition(
+  VALUE value = rbs_ast_members_method_definition(
     name,
     k,
     overloads,
@@ -1801,6 +1801,7 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
     overloading,
     visibility
   );
+  return rbs_ast_members_methoddefinition_new(value, name, k, overloads, annotations, location, comment, overloading, visibility);
 }
 
 /**
@@ -1832,7 +1833,7 @@ void class_instance_name(parserstate *state, TypeNameKind kind, VALUE *name, VAL
  *
  * @param from_interface `true` when the member is in an interface.
  * */
-static VALUE parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, VALUE annotations) {
+static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, VALUE annotations) {
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
@@ -1892,12 +1893,18 @@ static VALUE parse_mixin_member(parserstate *state, bool from_interface, positio
   VALUE comment = get_comment(state, comment_pos.line);
   switch (type)
   {
-  case kINCLUDE:
-    return rbs_ast_members_include(name, args, annotations, location, comment);
-  case kEXTEND:
-    return rbs_ast_members_extend(name, args, annotations, location, comment);
-  case kPREPEND:
-    return rbs_ast_members_prepend(name, args, annotations, location, comment);
+  case kINCLUDE: {
+    VALUE value = rbs_ast_members_include(name, args, annotations, location, comment);
+    return (rbs_node_t *)rbs_ast_members_include_new(value, name, args, annotations, location, comment);
+  }
+  case kEXTEND: {
+    VALUE value = rbs_ast_members_extend(name, args, annotations, location, comment);
+    return (rbs_node_t *)rbs_ast_members_extend_new(value, name, args, annotations, location, comment);
+  }
+  case kPREPEND: {
+    VALUE value = rbs_ast_members_prepend(name, args, annotations, location, comment);
+    return (rbs_node_t *)rbs_ast_members_prepend_new(value, name, args, annotations, location, comment);
+  }
   default:
     rbs_abort();
   }
@@ -2210,14 +2217,14 @@ static VALUE parse_interface_members(parserstate *state) {
     VALUE member;
     switch (state->current_token.type) {
     case kDEF: {
-      member = parse_member_def(state, true, true, annot_pos, annotations);
+      member = ((rbs_node_t *)parse_member_def(state, true, true, annot_pos, annotations))->cached_ruby_value;
       break;
     }
 
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND: {
-      member = parse_mixin_member(state, true, annot_pos, annotations);
+      member = parse_mixin_member(state, true, annot_pos, annotations)->cached_ruby_value;
       break;
     }
 
@@ -2358,14 +2365,14 @@ static VALUE parse_module_members(parserstate *state) {
     switch (state->current_token.type)
     {
     case kDEF: {
-      member = parse_member_def(state, false, true, annot_pos, annotations);
+      member = parse_member_def(state, false, true, annot_pos, annotations)->base.cached_ruby_value;
       break;
     }
 
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND: {
-      member = parse_mixin_member(state, false, annot_pos, annotations);
+      member = parse_mixin_member(state, false, annot_pos, annotations)->cached_ruby_value;
       break;
     }
 
@@ -2394,7 +2401,7 @@ static VALUE parse_module_members(parserstate *state) {
         switch (state->next_token.type)
         {
         case kDEF: {
-          member = parse_member_def(state, false, true, annot_pos, annotations);
+          member = parse_member_def(state, false, true, annot_pos, annotations)->base.cached_ruby_value;
           break;
         }
         case kATTRREADER:
