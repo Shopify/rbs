@@ -1130,7 +1130,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
   intersection ::= {} optional `&` ... '&' <optional>
                  | {} <optional>
 */
-static VALUE parse_intersection(parserstate *state) {
+static rbs_node_t *parse_intersection(parserstate *state) {
   range rg;
   rg.start = state->next_token.range.start;
   rbs_node_t *type = parse_optional(state);
@@ -1150,7 +1150,7 @@ static VALUE parse_intersection(parserstate *state) {
     type = (rbs_node_t *) rbs_types_intersection_new(value, intersection_types, location);
   }
 
-  return type->cached_ruby_value;
+  return type;
 }
 
 /*
@@ -1161,23 +1161,24 @@ VALUE parse_type(parserstate *state) {
   range rg;
   rg.start = state->next_token.range.start;
 
-  VALUE type = parse_intersection(state);
+  rbs_node_t *type = parse_intersection(state);
   VALUE union_types = rb_ary_new();
 
-  rb_ary_push(union_types, type);
+  rb_ary_push(union_types, type->cached_ruby_value);
   while (state->next_token.type == pBAR) {
     parser_advance(state);
-    rb_ary_push(union_types, parse_intersection(state));
+    rb_ary_push(union_types, parse_intersection(state)->cached_ruby_value);
   }
 
   rg.end = state->current_token.range.end;
 
   if (rb_array_len(union_types) > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
-    type = rbs_union(union_types, location);
+    VALUE value = rbs_union(union_types, location);
+    type = (rbs_node_t *) rbs_types_union_new(value, union_types, location);
   }
 
-  return type;
+  return type->cached_ruby_value;
 }
 
 /*
