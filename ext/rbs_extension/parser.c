@@ -1839,7 +1839,7 @@ void class_instance_name(parserstate *state, TypeNameKind kind, VALUE *name, VAL
  *
  * @param from_interface `true` when the member is in an interface.
  * */
-VALUE parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, VALUE annotations) {
+rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, VALUE annotations) {
   range member_range;
   range name_range;
   range keyword_range;
@@ -1902,12 +1902,18 @@ VALUE parse_mixin_member(parserstate *state, bool from_interface, position comme
   VALUE comment = get_comment(state, comment_pos.line);
   switch (type)
   {
-  case kINCLUDE:
-    return rbs_ast_members_include(name, args, annotations, location, comment);
-  case kEXTEND:
-    return rbs_ast_members_extend(name, args, annotations, location, comment);
-  case kPREPEND:
-    return rbs_ast_members_prepend(name, args, annotations, location, comment);
+  case kINCLUDE: {
+    VALUE value = rbs_ast_members_include(name, args, annotations, location, comment);
+    return (rbs_node_t *)rbs_ast_members_include_new(value, name, args, annotations, location, comment);
+  }
+  case kEXTEND: {
+    VALUE value = rbs_ast_members_extend(name, args, annotations, location, comment);
+    return (rbs_node_t *)rbs_ast_members_extend_new(value, name, args, annotations, location, comment);
+  }
+  case kPREPEND: {
+    VALUE value = rbs_ast_members_prepend(name, args, annotations, location, comment);
+    return (rbs_node_t *)rbs_ast_members_prepend_new(value, name, args, annotations, location, comment);
+  }
   default:
     rbs_abort();
   }
@@ -2246,7 +2252,7 @@ VALUE parse_interface_members(parserstate *state) {
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND:
-      member = parse_mixin_member(state, true, annot_pos, annotations);
+      member = ((rbs_node_t *)parse_mixin_member(state, true, annot_pos, annotations))->cached_ruby_value;
       break;
 
     case kALIAS:
@@ -2392,7 +2398,7 @@ VALUE parse_module_members(parserstate *state) {
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND:
-      member = parse_mixin_member(state, false, annot_pos, annotations);
+      member = ((rbs_node_t *)parse_mixin_member(state, false, annot_pos, annotations))->cached_ruby_value;
       break;
 
     case kALIAS:
