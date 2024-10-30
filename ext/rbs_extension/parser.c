@@ -2607,7 +2607,7 @@ VALUE parse_class_decl_super(parserstate *state, range *lt_range) {
 /*
   class_decl ::= {class_name} type_params class_decl_super class_members <`end`>
 */
-VALUE parse_class_decl0(parserstate *state, range keyword_range, VALUE name, range name_range, VALUE comment, VALUE annotations) {
+rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keyword_range, VALUE name, range name_range, VALUE comment, VALUE annotations) {
   range decl_range;
   range end_range;
   range type_params_range;
@@ -2643,7 +2643,7 @@ VALUE parse_class_decl0(parserstate *state, range keyword_range, VALUE name, ran
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
   rbs_loc_add_optional_child(loc, rb_intern("lt"), lt_range);
 
-  return rbs_ast_decl_class(
+  VALUE value = rbs_ast_decl_class(
     name,
     type_params,
     super,
@@ -2652,6 +2652,7 @@ VALUE parse_class_decl0(parserstate *state, range keyword_range, VALUE name, ran
     location,
     comment
   );
+  return rbs_ast_declarations_class_new(value, name, type_params, super, members, annotations, location, comment);
 }
 
 /*
@@ -2690,7 +2691,7 @@ VALUE parse_class_decl(parserstate *state, position comment_pos, VALUE annotatio
 
     return rbs_ast_decl_class_alias(((rbs_node_t *)class_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, location, comment);
   } else {
-    return parse_class_decl0(state, keyword_range, ((rbs_node_t *)class_name)->cached_ruby_value, class_name_range, comment, annotations);
+    return ((rbs_node_t *)parse_class_decl0(state, keyword_range, ((rbs_node_t *)class_name)->cached_ruby_value, class_name_range, comment, annotations))->cached_ruby_value;
   }
 }
 
