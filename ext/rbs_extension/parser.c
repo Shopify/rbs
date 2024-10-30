@@ -1658,7 +1658,7 @@ static InstanceSingletonKind parse_instance_singleton_kind(parserstate *state, b
  * @param instance_only `true` to reject singleton method definition.
  * @param accept_overload `true` to accept overloading (...) definition.
  * */
-static VALUE parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, VALUE annotations) {
+static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, VALUE annotations) {
   range member_range;
   range visibility_range;
   range keyword_range;
@@ -1797,7 +1797,7 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
   rbs_loc_add_optional_child(loc, rb_intern("overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
 
-  return rbs_ast_members_method_definition(
+  VALUE value = rbs_ast_members_method_definition(
     name,
     k,
     overloads,
@@ -1807,6 +1807,7 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
     overloading,
     visibility
   );
+  return rbs_ast_members_methoddefinition_new(value, name, k, overloads, annotations, location, comment, overloading, visibility);
 }
 
 /**
@@ -2239,7 +2240,7 @@ static VALUE parse_interface_members(parserstate *state) {
     VALUE member;
     switch (state->current_token.type) {
     case kDEF:
-      member = parse_member_def(state, true, true, annot_pos, annotations);
+      member = ((rbs_node_t *)parse_member_def(state, true, true, annot_pos, annotations))->cached_ruby_value;
       break;
 
     case kINCLUDE:
@@ -2385,7 +2386,7 @@ static VALUE parse_module_members(parserstate *state) {
     switch (state->current_token.type)
     {
     case kDEF:
-      member = parse_member_def(state, false, true, annot_pos, annotations);
+      member = ((rbs_node_t *)parse_member_def(state, false, true, annot_pos, annotations))->cached_ruby_value;
       break;
 
     case kINCLUDE:
@@ -2416,7 +2417,7 @@ static VALUE parse_module_members(parserstate *state) {
         switch (state->next_token.type)
         {
         case kDEF:
-          member = parse_member_def(state, false, true, annot_pos, annotations);
+          member = ((rbs_node_t *)parse_member_def(state, false, true, annot_pos, annotations))->cached_ruby_value;
           break;
         case kATTRREADER:
         case kATTRWRITER:
