@@ -1369,7 +1369,7 @@ static rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
 /*
   const_decl ::= {const_name} `:` <type>
 */
-static VALUE parse_const_decl(parserstate *state) {
+static rbs_ast_declarations_constant_t *parse_const_decl(parserstate *state) {
   range decl_range;
 
   decl_range.start = state->current_token.range.start;
@@ -1390,7 +1390,8 @@ static VALUE parse_const_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  return rbs_ast_decl_constant(((rbs_node_t *)typename)->cached_ruby_value, type->cached_ruby_value, location, comment);
+  VALUE value = rbs_ast_decl_constant(((rbs_node_t *)typename)->cached_ruby_value, type->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_constant_new(value, ((rbs_node_t *)typename)->cached_ruby_value, type->cached_ruby_value, location, comment);
 }
 
 /*
@@ -2633,7 +2634,7 @@ static VALUE parse_nested_decl(parserstate *state, const char *nested_in, positi
   switch (state->current_token.type) {
   case tUIDENT:
   case pCOLON2: {
-    decl = parse_const_decl(state);
+    decl = ((rbs_node_t *)parse_const_decl(state))->cached_ruby_value;
     break;
   }
   case tGIDENT: {
@@ -2679,7 +2680,7 @@ static VALUE parse_decl(parserstate *state) {
   switch (state->current_token.type) {
   case tUIDENT:
   case pCOLON2: {
-    return parse_const_decl(state);
+    return ((rbs_node_t *)parse_const_decl(state))->cached_ruby_value;
   }
   case tGIDENT: {
     return ((rbs_node_t *)parse_global_decl(state))->cached_ruby_value;
