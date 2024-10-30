@@ -1013,7 +1013,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
     VALUE value = rbs_bases_any(loc);
     rbs_types_bases_any_t *node = rbs_types_bases_any_new(value, loc);
     rb_funcall(value, rb_intern("todo!"), 0);
-    return rbs_struct_to_ruby_value((rbs_node_t *)node);
+    return (rbs_node_t *) node;
   }
   case tINTEGER: {
     VALUE loc = rbs_location_current_token(state);
@@ -1056,8 +1056,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
     if (parser_typevar_member(state, name)) {
       VALUE loc = rbs_location_current_token(state);
       VALUE value = rbs_variable(ID2SYM(name), loc);
-      rbs_types_variable_t *node = rbs_types_variable_new(value, ID2SYM(name), loc);
-      return rbs_struct_to_ruby_value((rbs_node_t *)node);
+      return (rbs_node_t *) rbs_types_variable_new(value, ID2SYM(name), loc);
     }
     // fallthrough for type name
   }
