@@ -2926,7 +2926,7 @@ void parse_use_clauses(parserstate *state, VALUE clauses) {
 /*
   use_directive ::= {} `use` <clauses>
  */
-VALUE parse_use_directive(parserstate *state) {
+rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
   if (state->next_token.type == kUSE) {
     parser_advance(state);
 
@@ -2943,9 +2943,10 @@ VALUE parse_use_directive(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
 
-    return rbs_ast_directives_use(clauses, location);
+    VALUE value = rbs_ast_directives_use(clauses, location);
+    return rbs_ast_directives_use_new(value, clauses, location);
   } else {
-    return Qnil;
+    return NULL;
   }
 }
 
@@ -2955,7 +2956,12 @@ VALUE parse_signature(parserstate *state) {
 
   while (state->next_token.type == kUSE) {
     melt_array(&dirs);
-    rb_ary_push(dirs, parse_use_directive(state));
+    rbs_ast_directives_use_t *use_node = parse_use_directive(state);
+    if (use_node == NULL) {
+      rb_ary_push(dirs, Qnil);
+    } else {
+      rb_ary_push(dirs, ((rbs_node_t *)use_node)->cached_ruby_value);
+    }
   }
 
   while (state->next_token.type != pEOF) {
