@@ -105,6 +105,8 @@ module RBS
         @c_struct_name = "#{@c_base_name}_t"
         @c_type_enum_name = @c_base_name.upcase
 
+        @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
+
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
         @constructor_params = [
@@ -119,6 +121,12 @@ module RBS
       # e.g. `rbs_ast_declarations_typealias_new`
       def c_constructor_function_name #: String
         "#{@c_base_name}_new"
+      end
+
+      # Every templated type will have a C struct created for it.
+      # If this is true, then we will also create a Ruby class for it, otherwise we'll skip that.
+      def expose_to_ruby?
+        @expose_to_ruby
       end
     end
 

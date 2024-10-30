@@ -707,6 +707,7 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, VALUE rub
     rb_gc_register_mark_object(variance);
     rb_gc_register_mark_object(upper_bound);
     rb_gc_register_mark_object(default_type);
+    rb_gc_register_mark_object(unchecked);
     rb_gc_register_mark_object(location);
 
     *instance = (rbs_ast_typeparam_t) {
@@ -811,6 +812,7 @@ rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_allocator_t *allocator, VALUE
     rbs_types_bases_any_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_any_t);
 
     rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(todo);
     rb_gc_register_mark_object(location);
 
     *instance = (rbs_types_bases_any_t) {
@@ -1263,6 +1265,21 @@ rbs_types_variable_t *rbs_types_variable_new(rbs_allocator_t *allocator, VALUE r
         },
         .name = name,
         .location = location,
+    };
+
+    return instance;
+}
+
+rbs_types_zzztmpnotimplemented_t *rbs_types_zzztmpnotimplemented_new(rbs_allocator_t *allocator, VALUE ruby_value) {
+    rbs_types_zzztmpnotimplemented_t *instance = rbs_allocator_alloc(allocator, rbs_types_zzztmpnotimplemented_t);
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_types_zzztmpnotimplemented_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_ZZZTMPNOTIMPLEMENTED
+        },
     };
 
     return instance;

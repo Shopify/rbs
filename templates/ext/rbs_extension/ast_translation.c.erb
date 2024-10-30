@@ -14,6 +14,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         exit(1);
     }
 
+    if (instance->type == RBS_TYPES_ZZZTMPNOTIMPLEMENTED) {
+        // Special case: skip assertions/translation below.
+        return instance->cached_ruby_value;
+    }
+
     VALUE ruby_value = instance->cached_ruby_value;
 
     if (ruby_value == Qnil || ruby_value == Qundef) {
