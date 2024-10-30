@@ -972,6 +972,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         exit(1);
     }
 
+    rb_gc_register_mark_object(ruby_value);
+
     const char *class_name = get_class_name(ruby_value);
 
     switch (instance->type) {
