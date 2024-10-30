@@ -1420,7 +1420,7 @@ rbs_ast_declarations_constant_t *parse_const_decl(parserstate *state) {
 /*
   type_decl ::= {kTYPE} alias_name `=` <type>
 */
-VALUE parse_type_decl(parserstate *state, position comment_pos, VALUE annotations) {
+rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, position comment_pos, VALUE annotations) {
   range decl_range;
   range keyword_range, name_range, params_range, eq_range;
 
@@ -1452,14 +1452,16 @@ VALUE parse_type_decl(parserstate *state, position comment_pos, VALUE annotation
 
   parser_pop_typevar_table(state);
 
-  return rbs_ast_decl_type_alias(
+  VALUE comment = get_comment(state, comment_pos.line);
+  VALUE value = rbs_ast_decl_type_alias(
     ((rbs_node_t *)typename)->cached_ruby_value,
     type_params,
     type->cached_ruby_value,
     annotations,
     location,
-    get_comment(state, comment_pos.line)
+    comment
   );
+  return rbs_ast_declarations_typealias_new(value, ((rbs_node_t *)typename)->cached_ruby_value, type_params, type->cached_ruby_value, annotations, location, comment);
 }
 
 /*
@@ -2686,7 +2688,7 @@ VALUE parse_nested_decl(parserstate *state, const char *nested_in, position anno
     decl = ((rbs_node_t *)parse_global_decl(state))->cached_ruby_value;
     break;
   case kTYPE:
-    decl = parse_type_decl(state, annot_pos, annotations);
+    decl = ((rbs_node_t *)parse_type_decl(state, annot_pos, annotations))->cached_ruby_value;
     break;
   case kINTERFACE:
     decl = parse_interface_decl(state, annot_pos, annotations);
@@ -2724,7 +2726,7 @@ VALUE parse_decl(parserstate *state) {
   case tGIDENT:
     return ((rbs_node_t *)parse_global_decl(state))->cached_ruby_value;
   case kTYPE:
-    return parse_type_decl(state, annot_pos, annotations);
+    return ((rbs_node_t *)parse_type_decl(state, annot_pos, annotations))->cached_ruby_value;
   case kINTERFACE:
     return parse_interface_decl(state, annot_pos, annotations);
   case kMODULE:
