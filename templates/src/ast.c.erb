@@ -5,6 +5,11 @@
 <%= node.c_type_name %> *<%= node.c_constructor_function_name %>(VALUE ruby_value, <%= node.fields.map { |field| "VALUE #{field.name}" }.join(", ") %>) {
     <%= node.c_type_name %> *instance = malloc(sizeof(<%= node.c_type_name %>));
 
+    rb_gc_register_mark_object(ruby_value);
+    <%- node.fields.each do |field| -%>
+    rb_gc_register_mark_object(<%= field.name %>);
+    <%- end -%>
+
     *instance = (<%= node.c_type_name %>) {
         .base = (rbs_node_t) {
             .cached_ruby_value = ruby_value,
