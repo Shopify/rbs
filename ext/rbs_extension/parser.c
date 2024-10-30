@@ -615,16 +615,16 @@ static void initialize_method_params(method_params *params){
   self_type_binding ::= {} <>
                       | {} `[` `self` `:` type <`]`>
 */
-static VALUE parse_self_type_binding(parserstate *state) {
+static rbs_node_t *parse_self_type_binding(parserstate *state) {
   if (state->next_token.type == pLBRACKET) {
     parser_advance(state);
     parser_advance_assert(state, kSELF);
     parser_advance_assert(state, pCOLON);
     rbs_node_t *type = parse_type(state);
     parser_advance_assert(state, pRBRACKET);
-    return type->cached_ruby_value;
+    return type;
   } else {
-    return Qnil;
+    return NULL;
   }
 }
 
@@ -654,7 +654,12 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
 
   // Passing NULL to function_self_type means the function itself doesn't accept self type binding. (== method type)
   if (function_self_type) {
-    *function_self_type = parse_self_type_binding(state);
+    rbs_node_t *self_type = parse_self_type_binding(state);
+    if (self_type == NULL) {
+      *function_self_type = Qnil;
+    } else {
+      *function_self_type = self_type->cached_ruby_value;
+    }
   }
 
   VALUE required = Qtrue;
@@ -675,7 +680,13 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       parser_advance_assert(state, pRPAREN);
     }
 
-    VALUE block_self_type = parse_self_type_binding(state);
+    rbs_node_t *self_type = parse_self_type_binding(state);
+    VALUE block_self_type;
+    if (self_type == NULL) {
+      block_self_type = Qnil;
+    } else {
+      block_self_type = self_type->cached_ruby_value;
+    }
 
     parser_advance_assert(state, pARROW);
     rbs_node_t *block_return_type = parse_optional(state);
