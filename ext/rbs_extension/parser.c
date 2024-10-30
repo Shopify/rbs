@@ -2659,7 +2659,7 @@ rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keywor
   class_decl ::= {`class`} class_name `=` <class_name>
                | {`class`} class_name <class_decl0>
 */
-VALUE parse_class_decl(parserstate *state, position comment_pos, VALUE annotations) {
+rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, VALUE annotations) {
   range keyword_range = state->current_token.range;
   range class_name_range;
 
@@ -2689,9 +2689,10 @@ VALUE parse_class_decl(parserstate *state, position comment_pos, VALUE annotatio
     rbs_loc_add_required_child(loc, rb_intern("eq"), eq_range);
     rbs_loc_add_optional_child(loc, rb_intern("old_name"), old_name_range);
 
-    return rbs_ast_decl_class_alias(((rbs_node_t *)class_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, location, comment);
+    VALUE value = rbs_ast_decl_class_alias(((rbs_node_t *)class_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, location, comment);
+    return (rbs_node_t *) rbs_ast_declarations_classalias_new(value, ((rbs_node_t *)class_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, location, comment);
   } else {
-    return ((rbs_node_t *)parse_class_decl0(state, keyword_range, ((rbs_node_t *)class_name)->cached_ruby_value, class_name_range, comment, annotations))->cached_ruby_value;
+    return (rbs_node_t *) parse_class_decl0(state, keyword_range, ((rbs_node_t *)class_name)->cached_ruby_value, class_name_range, comment, annotations);
   }
 }
 
@@ -2725,7 +2726,7 @@ VALUE parse_nested_decl(parserstate *state, const char *nested_in, position anno
     decl = ((rbs_node_t *)parse_module_decl(state, annot_pos, annotations))->cached_ruby_value;
     break;
   case kCLASS:
-    decl = parse_class_decl(state, annot_pos, annotations);
+    decl = ((rbs_node_t *)parse_class_decl(state, annot_pos, annotations))->cached_ruby_value;
     break;
   default:
     raise_syntax_error(
@@ -2760,7 +2761,7 @@ VALUE parse_decl(parserstate *state) {
   case kMODULE:
     return ((rbs_node_t *)parse_module_decl(state, annot_pos, annotations))->cached_ruby_value;
   case kCLASS:
-    return parse_class_decl(state, annot_pos, annotations);
+    return ((rbs_node_t *)parse_class_decl(state, annot_pos, annotations))->cached_ruby_value;
   default:
     raise_syntax_error(
       state,
