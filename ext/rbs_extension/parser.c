@@ -1349,7 +1349,7 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
 /*
   global_decl ::= {tGIDENT} `:` <type>
 */
-static VALUE parse_global_decl(parserstate *state) {
+static rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   range decl_range;
   range name_range, colon_range;
 
@@ -1378,7 +1378,8 @@ static VALUE parse_global_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  return rbs_ast_decl_global(typename, type->cached_ruby_value, location, comment);
+  VALUE value = rbs_ast_decl_global(typename, type->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_global_new(value, typename, type->cached_ruby_value, location, comment);
 }
 
 /*
@@ -2681,7 +2682,7 @@ static VALUE parse_nested_decl(parserstate *state, const char *nested_in, positi
     decl = parse_const_decl(state);
     break;
   case tGIDENT:
-    decl = parse_global_decl(state);
+    decl = ((rbs_node_t *)parse_global_decl(state))->cached_ruby_value;
     break;
   case kTYPE:
     decl = parse_type_decl(state, annot_pos, annotations);
@@ -2720,7 +2721,7 @@ static VALUE parse_decl(parserstate *state) {
   case pCOLON2:
     return parse_const_decl(state);
   case tGIDENT:
-    return parse_global_decl(state);
+    return ((rbs_node_t *)parse_global_decl(state))->cached_ruby_value;
   case kTYPE:
     return parse_type_decl(state, annot_pos, annotations);
   case kINTERFACE:
