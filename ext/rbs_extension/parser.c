@@ -2970,7 +2970,7 @@ parse_method_type_try(VALUE a) {
     parser_advance_assert(arg->parser, pEOF);
   }
 
-  return rbs_ast_new((rbs_node_t *)method_type);
+  return rbs_struct_to_ruby_value((rbs_node_t *)method_type);
 }
 
 static VALUE
@@ -3022,10 +3022,6 @@ rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
   free(lexer);
 
   return results;
-}
-
-VALUE rbs_ast_new(rbs_node_t *node) {
-  return node->cached_ruby_value;
 }
 
 void rbs__init_parser(void) {
