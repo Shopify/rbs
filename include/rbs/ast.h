@@ -69,6 +69,7 @@ enum rbs_node_type {
     RBS_TYPES_UNION = 56,
     RBS_TYPES_UNTYPEDFUNCTION = 57,
     RBS_TYPES_VARIABLE = 58,
+    RBS_TYPES_ZZZTMPNOTIMPLEMENTED = 59,
 };
 
 typedef struct rbs_node {
@@ -560,6 +561,11 @@ typedef struct {
     VALUE location;
 } rbs_types_variable_t;
 
+typedef struct {
+    rbs_node_t base;
+
+} rbs_types_zzztmpnotimplemented_t;
+
 
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE ruby_value, VALUE string, VALUE location);
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, VALUE location);
@@ -619,6 +625,7 @@ rbs_types_tuple_t *rbs_types_tuple_new(VALUE ruby_value, VALUE types, VALUE loca
 rbs_types_union_t *rbs_types_union_new(VALUE ruby_value, VALUE types, VALUE location);
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE ruby_value, VALUE return_type);
 rbs_types_variable_t *rbs_types_variable_new(VALUE ruby_value, VALUE name, VALUE location);
+rbs_types_zzztmpnotimplemented_t *rbs_types_zzztmpnotimplemented_new(VALUE ruby_value);
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance);
 
