@@ -956,6 +956,19 @@ rbs_types_variable_t *rbs_types_variable_new(VALUE ruby_value, VALUE name, VALUE
     return instance;
 }
 
+rbs_types_zzztmpnotimplemented_t *rbs_types_zzztmpnotimplemented_new(VALUE ruby_value) {
+    rbs_types_zzztmpnotimplemented_t *instance = (rbs_types_zzztmpnotimplemented_t *)calloc(1, sizeof(rbs_types_zzztmpnotimplemented_t));
+
+    *instance = (rbs_types_zzztmpnotimplemented_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_ZZZTMPNOTIMPLEMENTED
+        },
+    };
+
+    return instance;
+}
+
 
 const char* get_class_name(VALUE o) {
     VALUE klass = rb_class_of(o);      // Get the class of the object
@@ -965,6 +978,16 @@ const char* get_class_name(VALUE o) {
 }
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
+    if (instance == NULL) {
+        fprintf(stderr, "Tried to call rbs_struct_to_ruby_value(NULL)\n");
+        exit(1);
+    }
+
+    if (instance->type == RBS_TYPES_ZZZTMPNOTIMPLEMENTED) {
+        // Special case: skip assertions/translation below.
+        return instance->cached_ruby_value;
+    }
+
     VALUE ruby_value = instance->cached_ruby_value;
 
     if (ruby_value == Qnil || ruby_value == Qundef) {
@@ -1379,6 +1402,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         case RBS_TYPES_VARIABLE: {
             if (strcmp(class_name, "RBS::Types::Variable") != 0) {
                 fprintf(stderr, "Expected class name: RBS::Types::Variable, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_TYPES_ZZZTMPNOTIMPLEMENTED: {
+            if (strcmp(class_name, "RBS::Types::ZzzTmpNotImplemented") != 0) {
+                fprintf(stderr, "Expected class name: RBS::Types::ZzzTmpNotImplemented, got %s\n", class_name);
                 exit(1);
             }
             break;
