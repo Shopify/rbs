@@ -2566,7 +2566,7 @@ static rbs_node_t *parse_module_decl(parserstate *state, position comment_pos, V
   class_decl_super ::= {} `<` <class_instance_name>
                      | {<>}
 */
-static VALUE parse_class_decl_super(parserstate *state, range *lt_range) {
+static rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *state, range *lt_range) {
   if (parser_advance_if(state, pLT)) {
     *lt_range = state->current_token.range;
 
@@ -2586,10 +2586,11 @@ static VALUE parse_class_decl_super(parserstate *state, range *lt_range) {
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    return rbs_ast_decl_class_super(name, args, location);
+    VALUE value = rbs_ast_decl_class_super(name, args, location);
+    return rbs_ast_declarations_class_super_new(value, name, args, location);
   } else {
     *lt_range = NULL_RANGE;
-    return Qnil;
+    return NULL;
   }
 }
 
@@ -2606,10 +2607,10 @@ static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range
   VALUE type_params = parse_type_params(state, &type_params_range, true);
 
   range lt_range;
-  VALUE super = parse_class_decl_super(state, &lt_range);
+  rbs_ast_declarations_class_super_t *super_node = parse_class_decl_super(state, &lt_range);
+  VALUE super = (super_node == NULL) ? Qnil : ((rbs_node_t *)super_node)->cached_ruby_value;
 
   VALUE members = parse_module_members(state);
-
   parser_advance_assert(state, kEND);
 
   range end_range = state->current_token.range;
