@@ -1924,7 +1924,7 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
  *
  * @param[in] instance_only `true` to reject `self.` alias.
  * */
-static VALUE parse_alias_member(parserstate *state, bool instance_only, position comment_pos, VALUE annotations) {
+static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool instance_only, position comment_pos, VALUE annotations) {
   range member_range;
   member_range.start = state->current_token.range.start;
   range keyword_range = state->current_token.range;
@@ -1967,7 +1967,7 @@ static VALUE parse_alias_member(parserstate *state, bool instance_only, position
   rbs_loc_add_optional_child(loc, INTERN("new_kind"), new_kind_range);
   rbs_loc_add_optional_child(loc, INTERN("old_kind"), old_kind_range);
 
-  return rbs_ast_members_alias(
+  VALUE value = rbs_ast_members_alias(
     new_name,
     old_name,
     kind,
@@ -1975,6 +1975,7 @@ static VALUE parse_alias_member(parserstate *state, bool instance_only, position
     location,
     comment
   );
+  return rbs_ast_members_alias_new(value, new_name, old_name, kind, annotations, location, comment);
 }
 
 /*
@@ -2235,7 +2236,7 @@ static VALUE parse_interface_members(parserstate *state) {
     }
 
     case kALIAS: {
-      member = parse_alias_member(state, true, annot_pos, annotations);
+      member = ((rbs_node_t *)parse_alias_member(state, true, annot_pos, annotations))->cached_ruby_value;
       break;
     }
 
@@ -2383,7 +2384,7 @@ static VALUE parse_module_members(parserstate *state) {
     }
 
     case kALIAS: {
-      member = parse_alias_member(state, false, annot_pos, annotations);
+      member = ((rbs_node_t *)parse_alias_member(state, false, annot_pos, annotations))->cached_ruby_value;
       break;
     }
 
