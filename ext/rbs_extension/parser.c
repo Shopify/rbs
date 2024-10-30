@@ -225,7 +225,7 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
 static void parse_type_list(parserstate *state, enum TokenType eol, VALUE *types) {
   while (true) {
     melt_array(types);
-    rb_ary_push(*types, parse_type(state));
+    rb_ary_push(*types, parse_type(state)->cached_ruby_value);
 
     if (state->next_token.type == pCOMMA) {
       parser_advance(state);
@@ -270,7 +270,7 @@ static bool is_keyword_token(enum TokenType type) {
 static rbs_types_function_param_t *parse_function_param(parserstate *state) {
   range type_range;
   type_range.start = state->next_token.range.start;
-  VALUE type = parse_type(state);
+  rbs_node_t *type = parse_type(state);
   type_range.end = state->current_token.range.end;
 
   if (state->next_token.type == pCOMMA || state->next_token.type == pRPAREN) {
@@ -281,8 +281,8 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, rb_intern("name"), NULL_RANGE);
 
-    VALUE value = rbs_function_param(type, Qnil, location);
-    return rbs_types_function_param_new(value, type, Qnil, location);
+    VALUE value = rbs_function_param(type->cached_ruby_value, Qnil, location);
+    return rbs_types_function_param_new(value, type->cached_ruby_value, Qnil, location);
   } else {
     range name_range = state->next_token.range;
 
@@ -307,8 +307,8 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, rb_intern("name"), name_range);
 
-    VALUE value = rbs_function_param(type, name, location);
-    return rbs_types_function_param_new(value, type, name, location);
+    VALUE value = rbs_function_param(type->cached_ruby_value, name, location);
+    return rbs_types_function_param_new(value, type->cached_ruby_value, name, location);
   }
 }
 
@@ -620,9 +620,9 @@ static VALUE parse_self_type_binding(parserstate *state) {
     parser_advance(state);
     parser_advance_assert(state, kSELF);
     parser_advance_assert(state, pCOLON);
-    VALUE type = parse_type(state);
+    rbs_node_t *type = parse_type(state);
     parser_advance_assert(state, pRBRACKET);
-    return type;
+    return type->cached_ruby_value;
   } else {
     return Qnil;
   }
@@ -763,7 +763,7 @@ static VALUE parse_record_attributes(parserstate *state) {
   }
 
   while (true) {
-    VALUE key, type,
+    VALUE key,
           value = rb_ary_new(),
           required = Qtrue;
 
@@ -802,8 +802,8 @@ static VALUE parse_record_attributes(parserstate *state) {
       check_key_duplication(state, fields, key);
       parser_advance_assert(state, pFATARROW);
     }
-    type = parse_type(state);
-    rb_ary_push(value, type);
+    rbs_node_t *type = parse_type(state);
+    rb_ary_push(value, type->cached_ruby_value);
     rb_ary_push(value, required);
     rb_hash_aset(fields, key, value);
 
@@ -960,10 +960,9 @@ static rbs_node_t *parse_simple(parserstate *state) {
 
   switch (state->current_token.type) {
   case pLPAREN: {
-    VALUE type = parse_type(state);
+    rbs_node_t *type = parse_type(state);
     parser_advance_assert(state, pRPAREN);
-
-    return (rbs_node_t *) rbs_types_zzztmpnotimplemented_new(type);
+    return type;
   }
   case kBOOL: {
     VALUE loc = rbs_location_current_token(state);
@@ -1142,7 +1141,7 @@ static rbs_node_t *parse_intersection(parserstate *state) {
   union ::= {} intersection '|' ... '|' <intersection>
           | {} <intersection>
 */
-VALUE parse_type(parserstate *state) {
+rbs_node_t *parse_type(parserstate *state) {
   range rg;
   rg.start = state->next_token.range.start;
 
@@ -1163,7 +1162,7 @@ VALUE parse_type(parserstate *state) {
     type = (rbs_node_t *) rbs_types_union_new(value, union_types, location);
   }
 
-  return type->cached_ruby_value;
+  return type;
 }
 
 /*
@@ -1231,7 +1230,7 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
       if (state->next_token.type == pLT) {
         parser_advance(state);
         upper_bound_range.start = state->current_token.range.start;
-        upper_bound = parse_type(state);
+        upper_bound = parse_type(state)->cached_ruby_value;
         upper_bound_range.end = state->current_token.range.end;
       }
 
@@ -1241,7 +1240,7 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
           parser_advance(state);
 
           default_type_range.start = state->current_token.range.start;
-          default_type = parse_type(state);
+          default_type = parse_type(state)->cached_ruby_value;
           default_type_range.end = state->current_token.range.end;
 
           required_param_allowed = false;
@@ -1354,7 +1353,7 @@ static VALUE parse_global_decl(parserstate *state) {
   parser_advance_assert(state, pCOLON);
   range colon_range = state->current_token.range;
 
-  VALUE type = parse_type(state);
+  rbs_node_t *type = parse_type(state);
   decl_range.end = state->current_token.range.end;
 
   VALUE location = rbs_new_location(state->buffer, decl_range);
@@ -1363,7 +1362,7 @@ static VALUE parse_global_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  return rbs_ast_decl_global(typename, type, location, comment);
+  return rbs_ast_decl_global(typename, type->cached_ruby_value, location, comment);
 }
 
 /*
@@ -1381,7 +1380,7 @@ static VALUE parse_const_decl(parserstate *state) {
   parser_advance_assert(state, pCOLON);
   range colon_range = state->current_token.range;
 
-  VALUE type = parse_type(state);
+  rbs_node_t *type = parse_type(state);
   decl_range.end = state->current_token.range.end;
 
   VALUE location = rbs_new_location(state->buffer, decl_range);
@@ -1390,7 +1389,7 @@ static VALUE parse_const_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  return rbs_ast_decl_constant(((rbs_node_t *)typename)->cached_ruby_value, type, location, comment);
+  return rbs_ast_decl_constant(((rbs_node_t *)typename)->cached_ruby_value, type->cached_ruby_value, location, comment);
 }
 
 /*
@@ -1416,7 +1415,7 @@ static VALUE parse_type_decl(parserstate *state, position comment_pos, VALUE ann
   parser_advance_assert(state, pEQ);
   range eq_range = state->current_token.range;
 
-  VALUE type = parse_type(state);
+  rbs_node_t *type = parse_type(state);
   decl_range.end = state->current_token.range.end;
 
   VALUE location = rbs_new_location(state->buffer, decl_range);
@@ -1432,7 +1431,7 @@ static VALUE parse_type_decl(parserstate *state, position comment_pos, VALUE ann
   return rbs_ast_decl_type_alias(
     ((rbs_node_t *)typename)->cached_ruby_value,
     type_params,
-    type,
+    type->cached_ruby_value,
     annotations,
     location,
     get_comment(state, comment_pos.line)
@@ -1974,7 +1973,7 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     parser_advance_assert(state, pCOLON);
     range colon_range = state->current_token.range;
 
-    VALUE type = parse_type(state);
+    rbs_node_t *type = parse_type(state);
     member_range.end = state->current_token.range.end;
 
     VALUE location = rbs_new_location(state->buffer, member_range);
@@ -1984,7 +1983,7 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
     rbs_loc_add_optional_child(loc, rb_intern("kind"), NULL_RANGE);
 
-    return rbs_ast_members_instance_variable(name, type, location, comment);
+    return rbs_ast_members_instance_variable(name, type->cached_ruby_value, location, comment);
   }
   case tA2IDENT: {
     range name_range = state->current_token.range;
@@ -1994,7 +1993,7 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     range colon_range = state->current_token.range;
 
     parser_push_typevar_table(state, true);
-    VALUE type = parse_type(state);
+    rbs_node_t *type = parse_type(state);
     parser_pop_typevar_table(state);
     member_range.end = state->current_token.range.end;
 
@@ -2005,9 +2004,9 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
     rbs_loc_add_optional_child(loc, rb_intern("kind"), NULL_RANGE);
 
-    return rbs_ast_members_class_variable(name, type, location, comment);
+    return rbs_ast_members_class_variable(name, type->cached_ruby_value, location, comment);
   }
-  case kSELF: {
+  case kSELF:{
     range kind_range = {
       .start = state->current_token.range.start,
       .end = state->next_token.range.end
@@ -2023,7 +2022,7 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     range colon_range = state->current_token.range;
 
     parser_push_typevar_table(state, true);
-    VALUE type = parse_type(state);
+    rbs_node_t *type = parse_type(state);
     parser_pop_typevar_table(state);
     member_range.end = state->current_token.range.end;
 
@@ -2034,7 +2033,7 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
-    return rbs_ast_members_class_instance_variable(name, type, location, comment);
+    return rbs_ast_members_class_instance_variable(name, type->cached_ruby_value, location, comment);
   }
   default:
     rbs_abort();
@@ -2143,7 +2142,7 @@ static VALUE parse_attribute_member(parserstate *state, position comment_pos, VA
   range colon_range = state->current_token.range;
 
   parser_push_typevar_table(state, is_kind == SINGLETON_KIND);
-  VALUE type = parse_type(state);
+  rbs_node_t *type = parse_type(state);
   parser_pop_typevar_table(state);
   member_range.end = state->current_token.range.end;
 
@@ -2161,11 +2160,11 @@ static VALUE parse_attribute_member(parserstate *state, position comment_pos, VA
   switch (attr_type)
   {
   case kATTRREADER:
-    return rbs_ast_members_attr_reader(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return rbs_ast_members_attr_reader(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRWRITER:
-    return rbs_ast_members_attr_writer(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return rbs_ast_members_attr_writer(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRACCESSOR:
-    return rbs_ast_members_attr_accessor(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return rbs_ast_members_attr_accessor(attr_name, type->cached_ruby_value, ivar_name, kind, annotations, location, comment, visibility);
   default:
     rbs_abort();
   }
@@ -2899,13 +2898,13 @@ parse_type_try(VALUE a) {
     return Qnil;
   }
 
-  VALUE type = parse_type(arg->parser);
+  rbs_node_t *type = parse_type(arg->parser);
 
   if (RB_TEST(arg->require_eof)) {
     parser_advance_assert(arg->parser, pEOF);
   }
 
-  return type;
+  return type->cached_ruby_value;
 }
 
 static VALUE
