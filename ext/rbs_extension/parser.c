@@ -202,7 +202,7 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
 
     VALUE name = ID2SYM(INTERN_TOKEN(state, state->current_token));
     VALUE value = rbs_type_name(namespace, name);
-    return rbs_typename_new(value, namespace, name);
+    return rbs_typename_new(&state->allocator, value, namespace, name);
   }
 
   error: {
@@ -292,7 +292,7 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     rbs_loc_add_optional_child(loc, INTERN("name"), NULL_RANGE);
 
     VALUE value = rbs_function_param(type, Qnil, location);
-    return rbs_types_function_param_new(value, type, Qnil, location);
+    return rbs_types_function_param_new(&state->allocator, value, type, Qnil, location);
   } else {
     range name_range = state->next_token.range;
 
@@ -318,7 +318,7 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     rbs_loc_add_optional_child(loc, INTERN("name"), name_range);
 
     VALUE value = rbs_function_param(type, name, location);
-    return rbs_types_function_param_new(value, type, name, location);
+    return rbs_types_function_param_new(&state->allocator, value, type, name, location);
   }
 }
 
@@ -603,7 +603,7 @@ static rbs_node_t *parse_optional(parserstate *state) {
     rg.end = state->current_token.range.end;
     VALUE location = rbs_new_location(state->buffer, rg);
     VALUE value = rbs_optional(type->cached_ruby_value, location);
-    return (rbs_node_t *)rbs_types_optional_new(value, type->cached_ruby_value, location);
+    return (rbs_node_t *)rbs_types_optional_new(&state->allocator, value, type->cached_ruby_value, location);
   } else {
     return type;
   }
@@ -733,7 +733,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
 /*
   proc_type ::= {`^`} <function>
 */
-static VALUE parse_proc_type(parserstate *state) {
+static rbs_types_proc_t *parse_proc_type(parserstate *state) {
   position start = state->current_token.range.start;
   VALUE function = Qnil;
   VALUE block = Qnil;
@@ -741,8 +741,8 @@ static VALUE parse_proc_type(parserstate *state) {
   parse_function(state, &function, &block, &proc_self);
   position end = state->current_token.range.end;
   VALUE loc = rbs_location_pp(state->buffer, &start, &end);
-
-  return rbs_proc(function, block, loc, proc_self);
+  VALUE value = rbs_proc(function, block, loc, proc_self);
+  return rbs_types_proc_new(&state->allocator, value, function, block, loc, proc_self);
 }
 
 static void check_key_duplication(parserstate *state, VALUE fields, VALUE key) {
@@ -1111,8 +1111,8 @@ static rbs_node_t *parse_simple(parserstate *state) {
     return (rbs_node_t *) rbs_types_record_new(&state->allocator, value, fields, loc);
   }
   case pHAT: {
-    VALUE value = parse_proc_type(state);
-    return (rbs_node_t *) rbs_types_zzztmpnotimplemented_new(&state->allocator, value);
+    rbs_types_proc_t *value = parse_proc_type(state);
+    return (rbs_node_t *) value;
   }
   default:
     raise_syntax_error(
@@ -1144,7 +1144,7 @@ static VALUE parse_intersection(parserstate *state) {
   if (rb_array_len(intersection_types) > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
     VALUE value = rbs_intersection(intersection_types, location);
-    type = (rbs_node_t *) rbs_types_intersection_new(value, intersection_types, location);
+    type = (rbs_node_t *) rbs_types_intersection_new(&state->allocator, value, intersection_types, location);
   }
 
   return type->cached_ruby_value;
@@ -1349,7 +1349,7 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
     block,
     location
   );
-  return rbs_methodtype_new(value, type_params, function, block, location);
+  return rbs_methodtype_new(&state->allocator, value, type_params, function, block, location);
 }
 
 /*
