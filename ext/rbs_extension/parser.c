@@ -862,7 +862,7 @@ static VALUE parse_symbol(parserstate *state) {
  type_args ::= {} <> /empty/
              | {} `[` type_list <`]`>
  */
-static VALUE parse_instance_type(parserstate *state, bool parse_alias) {
+static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
     TypeNameKind expected_kind = INTERFACE_NAME | CLASS_NAME;
     if (parse_alias) {
       expected_kind |= ALIAS_NAME;
@@ -906,13 +906,16 @@ static VALUE parse_instance_type(parserstate *state, bool parse_alias) {
     rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
 
     if (kind == CLASS_NAME) {
-      return rbs_class_instance(((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      VALUE value = rbs_class_instance(((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      return (rbs_node_t *) rbs_types_classinstance_new(value, ((rbs_node_t *)typename)->cached_ruby_value, types, location);
     } else if (kind == INTERFACE_NAME) {
-      return rbs_interface(((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      VALUE value = rbs_interface(((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      return (rbs_node_t *) rbs_types_interface_new(value, ((rbs_node_t *)typename)->cached_ruby_value, types, location);
     } else if (kind == ALIAS_NAME) {
-      return rbs_alias(((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      VALUE value = rbs_alias(((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      return (rbs_node_t *) rbs_types_alias_new(value, ((rbs_node_t *)typename)->cached_ruby_value, types, location);
     } else {
-      return Qnil;
+      return NULL;
     }
 }
 
@@ -1061,8 +1064,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
   case tULIDENT: // fallthrough
   case tLIDENT: // fallthrough
   case pCOLON2: {
-    VALUE value = parse_instance_type(state, true);
-    return (rbs_node_t *) rbs_types_zzztmpnotimplemented_new(value);
+    return parse_instance_type(state, true);
   }
   case kSINGLETON: {
     VALUE value = parse_singleton_type(state);
