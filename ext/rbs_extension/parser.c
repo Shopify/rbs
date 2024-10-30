@@ -2741,7 +2741,7 @@ static rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, 
   return decl;
 }
 
-static VALUE parse_decl(parserstate *state) {
+static rbs_node_t *parse_decl(parserstate *state) {
   VALUE annotations = EMPTY_ARRAY;
   position annot_pos = NullPosition;
 
@@ -2751,17 +2751,17 @@ static VALUE parse_decl(parserstate *state) {
   switch (state->current_token.type) {
   case tUIDENT:
   case pCOLON2:
-    return ((rbs_node_t *)parse_const_decl(state))->cached_ruby_value;
+    return (rbs_node_t *) parse_const_decl(state);
   case tGIDENT:
-    return ((rbs_node_t *)parse_global_decl(state))->cached_ruby_value;
+    return (rbs_node_t *) parse_global_decl(state);
   case kTYPE:
-    return ((rbs_node_t *)parse_type_decl(state, annot_pos, annotations))->cached_ruby_value;
+    return (rbs_node_t *) parse_type_decl(state, annot_pos, annotations);
   case kINTERFACE:
-    return ((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations))->cached_ruby_value;
+    return (rbs_node_t *) parse_interface_decl(state, annot_pos, annotations);
   case kMODULE:
-    return ((rbs_node_t *)parse_module_decl(state, annot_pos, annotations))->cached_ruby_value;
+    return (rbs_node_t *) parse_module_decl(state, annot_pos, annotations);
   case kCLASS:
-    return ((rbs_node_t *)parse_class_decl(state, annot_pos, annotations))->cached_ruby_value;
+    return (rbs_node_t *) parse_class_decl(state, annot_pos, annotations);
   default:
     raise_syntax_error(
       state,
@@ -2940,7 +2940,7 @@ VALUE parse_signature(parserstate *state) {
 
   while (state->next_token.type != pEOF) {
     melt_array(&decls);
-    rb_ary_push(decls, parse_decl(state));
+    rb_ary_push(decls, parse_decl(state)->cached_ruby_value);
   }
 
   VALUE ret = rb_ary_new();
