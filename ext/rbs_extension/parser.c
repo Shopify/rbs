@@ -2292,7 +2292,7 @@ VALUE parse_interface_members(parserstate *state) {
 /*
   interface_decl ::= {`interface`} interface_name module_type_params interface_members <kEND>
 */
-VALUE parse_interface_decl(parserstate *state, position comment_pos, VALUE annotations) {
+rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state, position comment_pos, VALUE annotations) {
   range member_range;
   range name_range, keyword_range, end_range;
   range type_params_range = NULL_RANGE;
@@ -2323,14 +2323,16 @@ VALUE parse_interface_decl(parserstate *state, position comment_pos, VALUE annot
   rbs_loc_add_required_child(loc, rb_intern("end"), end_range);
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
 
-  return rbs_ast_decl_interface(
+  VALUE comment = get_comment(state, comment_pos.line);
+  VALUE value = rbs_ast_decl_interface(
     ((rbs_node_t *)name)->cached_ruby_value,
     params,
     members,
     annotations,
     location,
-    get_comment(state, comment_pos.line)
+    comment
   );
+  return rbs_ast_declarations_interface_new(value, ((rbs_node_t *)name)->cached_ruby_value, params, members, annotations, location, comment);
 }
 
 /*
@@ -2714,7 +2716,7 @@ VALUE parse_nested_decl(parserstate *state, const char *nested_in, position anno
     decl = ((rbs_node_t *)parse_type_decl(state, annot_pos, annotations))->cached_ruby_value;
     break;
   case kINTERFACE:
-    decl = parse_interface_decl(state, annot_pos, annotations);
+    decl = ((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations))->cached_ruby_value;
     break;
   case kMODULE:
     decl = parse_module_decl(state, annot_pos, annotations);
@@ -2751,7 +2753,7 @@ VALUE parse_decl(parserstate *state) {
   case kTYPE:
     return ((rbs_node_t *)parse_type_decl(state, annot_pos, annotations))->cached_ruby_value;
   case kINTERFACE:
-    return parse_interface_decl(state, annot_pos, annotations);
+    return ((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations))->cached_ruby_value;
   case kMODULE:
     return parse_module_decl(state, annot_pos, annotations);
   case kCLASS:
