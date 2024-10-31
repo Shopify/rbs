@@ -110,10 +110,8 @@ module RBS
 
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
-        @constructor_params = [
-          Field.new(name: "allocator",  c_type: "rbs_allocator_t *"),
-          Field.new(name: "ruby_value", c_type: "VALUE"),
-        ]
+        @constructor_params = [Field.new(name: "allocator",  c_type: "rbs_allocator_t *")]
+        @constructor_params << Field.new(name: "ruby_value", c_type: "VALUE") unless builds_ruby_object_internally?
         @constructor_params.concat @fields
         @constructor_params.freeze
       end
