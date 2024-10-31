@@ -1283,14 +1283,15 @@ VALUE parse_type_params(parserstate *state, range *rg, bool module_type_params) 
       rbs_loc_add_optional_child(loc, rb_intern("upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, rb_intern("default"), default_type_range);
 
-      VALUE param = rbs_ast_type_param(name, variance, upper_bound, default_type, location);
+      VALUE value = rbs_ast_type_param(name, variance, upper_bound, default_type, location);
+      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(value, name, variance, upper_bound, default_type, location);
 
       if (unchecked) {
-        rb_funcall(param, rb_intern("unchecked!"), 0);
+        rb_funcall(((rbs_node_t *) param)->cached_ruby_value, rb_intern("unchecked!"), 0);
       }
 
       melt_array(&params);
-      rb_ary_push(params, param);
+      rb_ary_push(params, ((rbs_node_t *) param)->cached_ruby_value);
 
       if (state->next_token.type == pCOMMA) {
         parser_advance(state);
