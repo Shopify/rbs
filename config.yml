@@ -291,6 +291,7 @@ nodes:
       - name: type
       - name: location
   - name: RBS::Types::Proc
+    builds_ruby_object_internally: true
     fields:
       - name: type
       - name: block
