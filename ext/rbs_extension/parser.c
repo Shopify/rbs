@@ -1527,7 +1527,7 @@ static rbs_ast_annotation_t *parse_annotation(parserstate *state) {
   annotations ::= {} annotation ... <annotation>
                 | {<>}
 */
-static void parse_annotations(parserstate *state, VALUE *annotations, position *annot_pos) {
+static void parse_annotations(parserstate *state, rbs_node_list_t *annotations, position *annot_pos) {
   *annot_pos = NullPosition;
 
   while (true) {
@@ -1538,8 +1538,7 @@ static void parse_annotations(parserstate *state, VALUE *annotations, position *
         *annot_pos = state->current_token.range.start;
       }
 
-      melt_array(annotations);
-      rb_ary_push(*annotations, ((rbs_node_t *)parse_annotation(state))->cached_ruby_value);
+      rbs_node_list_append(annotations, (rbs_node_t *)parse_annotation(state));
     } else {
       break;
     }
@@ -1725,11 +1724,11 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
   range overloading_range = NULL_RANGE;
   bool loop = true;
   while (loop) {
-    VALUE annotations = EMPTY_ARRAY;
+    rbs_node_list_t *annotations = rbs_node_list_new();
     position overload_annot_pos = NullPosition;
 
     if (state->next_token.type == tANNOTATION) {
-      parse_annotations(state, &annotations, &overload_annot_pos);
+      parse_annotations(state, annotations, &overload_annot_pos);
     }
 
     switch (state->next_token.type) {
@@ -1740,7 +1739,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
     case pQUESTION:
       {
         rbs_methodtype_t *method_type = parse_method_type(state);
-        rb_ary_push(overloads, rbs_ast_members_method_definition_overload(annotations, ((rbs_node_t *)method_type)->cached_ruby_value));
+        rb_ary_push(overloads, rbs_ast_members_method_definition_overload(annotations->cached_ruby_value, ((rbs_node_t *)method_type)->cached_ruby_value));
         member_range.end = state->current_token.range.end;
         break;
       }
@@ -2232,29 +2231,29 @@ static rbs_node_list_t *parse_interface_members(parserstate *state) {
   rbs_node_list_t *members = rbs_node_list_new();
 
   while (state->next_token.type != kEND) {
-    VALUE annotations = EMPTY_ARRAY;
+    rbs_node_list_t *annotations = rbs_node_list_new();
     position annot_pos = NullPosition;
 
-    parse_annotations(state, &annotations, &annot_pos);
+    parse_annotations(state, annotations, &annot_pos);
 
     parser_advance(state);
 
     rbs_node_t *member;
     switch (state->current_token.type) {
     case kDEF: {
-      member = (rbs_node_t *) parse_member_def(state, true, true, annot_pos, annotations);
+      member = (rbs_node_t *) parse_member_def(state, true, true, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND: {
-      member = (rbs_node_t *) parse_mixin_member(state, true, annot_pos, annotations);
+      member = (rbs_node_t *) parse_mixin_member(state, true, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
     case kALIAS: {
-      member = (rbs_node_t *) parse_alias_member(state, true, annot_pos, annotations);
+      member = (rbs_node_t *) parse_alias_member(state, true, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
@@ -2381,9 +2380,10 @@ static rbs_node_list_t *parse_module_members(parserstate *state) {
   rbs_node_list_t *members = rbs_node_list_new();
 
   while (state->next_token.type != kEND) {
-    VALUE annotations = EMPTY_ARRAY;
+    rbs_node_list_t *annotations = rbs_node_list_new();
+
     position annot_pos = NullPosition;
-    parse_annotations(state, &annotations, &annot_pos);
+    parse_annotations(state, annotations, &annot_pos);
 
     parser_advance(state);
 
@@ -2391,33 +2391,33 @@ static rbs_node_list_t *parse_module_members(parserstate *state) {
     switch (state->current_token.type)
     {
     case kDEF: {
-      member = (rbs_node_t *) parse_member_def(state, false, true, annot_pos, annotations);
+      member = (rbs_node_t *) parse_member_def(state, false, true, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND: {
-      member = (rbs_node_t *) parse_mixin_member(state, false, annot_pos, annotations);
+      member = (rbs_node_t *) parse_mixin_member(state, false, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
     case kALIAS: {
-      member = (rbs_node_t *) parse_alias_member(state, false, annot_pos, annotations);
+      member = (rbs_node_t *) parse_alias_member(state, false, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
     case tAIDENT:
     case tA2IDENT:
     case kSELF: {
-      member = parse_variable_member(state, annot_pos, annotations);
+      member = parse_variable_member(state, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
     case kATTRREADER:
     case kATTRWRITER:
     case kATTRACCESSOR: {
-      member = parse_attribute_member(state, annot_pos, annotations);
+      member = parse_attribute_member(state, annot_pos, annotations->cached_ruby_value);
       break;
     }
 
@@ -2427,25 +2427,25 @@ static rbs_node_list_t *parse_module_members(parserstate *state) {
         switch (state->next_token.type)
         {
         case kDEF: {
-          member = (rbs_node_t *) parse_member_def(state, false, true, annot_pos, annotations);
+          member = (rbs_node_t *) parse_member_def(state, false, true, annot_pos, annotations->cached_ruby_value);
           break;
         }
         case kATTRREADER:
         case kATTRWRITER:
         case kATTRACCESSOR: {
-          member = parse_attribute_member(state, annot_pos, annotations);
+          member = parse_attribute_member(state, annot_pos, annotations->cached_ruby_value);
           break;
         }
         default:
           raise_syntax_error(state, state->next_token, "method or attribute definition is expected after visibility modifier");
         }
       } else {
-        member = parse_visibility_member(state, annotations);
+        member = parse_visibility_member(state, annotations->cached_ruby_value);
       }
       break;
 
     default:
-      member = parse_nested_decl(state, "module", annot_pos, annotations);
+      member = parse_nested_decl(state, "module", annot_pos, annotations->cached_ruby_value);
       break;
     }
 
@@ -2726,10 +2726,10 @@ static rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, 
 }
 
 static rbs_node_t *parse_decl(parserstate *state) {
-  VALUE annotations = EMPTY_ARRAY;
+  rbs_node_list_t *annotations = rbs_node_list_new();
   position annot_pos = NullPosition;
 
-  parse_annotations(state, &annotations, &annot_pos);
+  parse_annotations(state, annotations, &annot_pos);
 
   parser_advance(state);
   switch (state->current_token.type) {
@@ -2741,16 +2741,16 @@ static rbs_node_t *parse_decl(parserstate *state) {
     return (rbs_node_t *) parse_global_decl(state);
   }
   case kTYPE: {
-    return (rbs_node_t *) parse_type_decl(state, annot_pos, annotations);
+    return (rbs_node_t *) parse_type_decl(state, annot_pos, annotations->cached_ruby_value);
   }
   case kINTERFACE: {
-    return (rbs_node_t *) parse_interface_decl(state, annot_pos, annotations);
+    return (rbs_node_t *) parse_interface_decl(state, annot_pos, annotations->cached_ruby_value);
   }
   case kMODULE: {
-    return (rbs_node_t *) parse_module_decl(state, annot_pos, annotations);
+    return (rbs_node_t *) parse_module_decl(state, annot_pos, annotations->cached_ruby_value);
   }
   case kCLASS: {
-    return (rbs_node_t *) parse_class_decl(state, annot_pos, annotations);
+    return (rbs_node_t *) parse_class_decl(state, annot_pos, annotations->cached_ruby_value);
   }
   default:
     raise_syntax_error(
