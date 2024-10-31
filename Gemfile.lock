@@ -13,7 +13,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     abbrev (0.1.2)
-    activesupport (7.2.1)
+    activesupport (7.2.1.2)
       base64
       bigdecimal
       concurrent-ruby (~> 1.0, >= 1.3.1)
@@ -119,7 +119,7 @@ GEM
     ruby-progressbar (1.13.0)
     securerandom (0.3.1)
     stackprof (0.2.26)
-    steep (1.8.0)
+    steep (1.8.3)
       activesupport (>= 5.1)
       concurrent-ruby (>= 1.1.10)
       csv (>= 3.0.9)
