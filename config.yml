@@ -266,6 +266,7 @@ nodes:
       - name: rest_keywords
       - name: return_type
   - name: RBS::Types::Function::Param
+    builds_ruby_object_internally: true
     fields:
       - name: type
       - name: name
