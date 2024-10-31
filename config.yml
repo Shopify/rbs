@@ -286,6 +286,7 @@ nodes:
       - name: literal
       - name: location
   - name: RBS::Types::Optional
+    builds_ruby_object_internally: true
     fields:
       - name: type
       - name: location

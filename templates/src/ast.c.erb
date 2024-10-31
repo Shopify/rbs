@@ -65,6 +65,8 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_type_name(namespace, name);
     <%- elsif node.c_base_name == "rbs_types_function_param" -%>
     VALUE ruby_value = rbs_function_param(type, name, location);
+    <%- elsif node.c_base_name == "rbs_types_optional" -%>
+    VALUE ruby_value = rbs_optional(type, location);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
