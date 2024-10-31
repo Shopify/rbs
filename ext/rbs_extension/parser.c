@@ -2258,8 +2258,8 @@ rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, VAL
                      | mixin_member   (interface only)
                      | alias_member   (instance only)
 */
-VALUE parse_interface_members(parserstate *state) {
-  VALUE members = EMPTY_ARRAY;
+rbs_node_list_t *parse_interface_members(parserstate *state) {
+  rbs_node_list_t *members = rbs_node_list_new();
 
   while (state->next_token.type != kEND) {
     VALUE annotations = EMPTY_ARRAY;
@@ -2269,20 +2269,20 @@ VALUE parse_interface_members(parserstate *state) {
 
     parser_advance(state);
 
-    VALUE member;
+    rbs_node_t *member;
     switch (state->current_token.type) {
     case kDEF:
-      member = ((rbs_node_t *)parse_member_def(state, true, true, annot_pos, annotations))->cached_ruby_value;
+      member = (rbs_node_t *) parse_member_def(state, true, true, annot_pos, annotations);
       break;
 
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND:
-      member = ((rbs_node_t *)parse_mixin_member(state, true, annot_pos, annotations))->cached_ruby_value;
+      member = (rbs_node_t *) parse_mixin_member(state, true, annot_pos, annotations);
       break;
 
     case kALIAS:
-      member = ((rbs_node_t *)parse_alias_member(state, true, annot_pos, annotations))->cached_ruby_value;
+      member = (rbs_node_t *) parse_alias_member(state, true, annot_pos, annotations);
       break;
 
     default:
@@ -2293,8 +2293,7 @@ VALUE parse_interface_members(parserstate *state) {
       );
     }
 
-    melt_array(&members);
-    rb_ary_push(members, member);
+    rbs_node_list_append(members, member);
   }
 
   return members;
@@ -2318,7 +2317,7 @@ rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state, posit
 
   rbs_typename_t *name = parse_type_name(state, INTERFACE_NAME, &name_range);
   rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
-  VALUE members = parse_interface_members(state);
+  rbs_node_list_t *members = parse_interface_members(state);
 
   parser_advance_assert(state, kEND);
   end_range = state->current_token.range;
@@ -2338,12 +2337,12 @@ rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state, posit
   VALUE value = rbs_ast_decl_interface(
     ((rbs_node_t *)name)->cached_ruby_value,
     type_params->cached_ruby_value,
-    members,
+    members->cached_ruby_value,
     annotations,
     location,
     comment
   );
-  return rbs_ast_declarations_interface_new(value, ((rbs_node_t *)name)->cached_ruby_value, type_params->cached_ruby_value, members, annotations, location, comment);
+  return rbs_ast_declarations_interface_new(value, ((rbs_node_t *)name)->cached_ruby_value, type_params->cached_ruby_value, members->cached_ruby_value, annotations, location, comment);
 }
 
 /*
