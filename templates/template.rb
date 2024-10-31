@@ -18,6 +18,10 @@ module RBS
       def self.from_hash(hash)
         new(name: hash["name"], c_type: hash.fetch("c_type", "VALUE"))
       end
+
+      def ruby_object?
+        @c_type == "VALUE"
+      end
     end
 
     class Type

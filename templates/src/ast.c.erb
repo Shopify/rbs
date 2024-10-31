@@ -47,7 +47,7 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
     <%= node.c_struct_name %> *instance = (<%= node.c_struct_name %> *)calloc(1, sizeof(<%= node.c_struct_name %>));
 
     rb_gc_register_mark_object(ruby_value);
-    <%- node.fields.each do |field| -%>
+    <%- node.fields.filter(&:ruby_object?).each do |field| -%>
     rb_gc_register_mark_object(<%= field.name %>);
     <%- end -%>
 
