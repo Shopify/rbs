@@ -42,12 +42,15 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
     rb_ary_push(list->cached_ruby_value, node->cached_ruby_value);
 }
 
-<%- nodes.each do |node| -%>
-<%= node.c_struct_name %> *<%= node.c_base_name %>_new(VALUE ruby_value<%= node.fields.map { |field| ", VALUE #{field.name}" }.join %>) {
+<%-
+nodes.each do |node|
+
+parameters = node.constructor_parameters
+-%>
+<%= node.c_struct_name %> *<%= node.c_base_name %>_new(<%= parameters.map { |field| "VALUE #{field.name}" }.join(", ") %>) {
     <%= node.c_struct_name %> *instance = (<%= node.c_struct_name %> *)calloc(1, sizeof(<%= node.c_struct_name %>));
 
-    rb_gc_register_mark_object(ruby_value);
-    <%- node.fields.filter(&:ruby_object?).each do |field| -%>
+    <%-parameters.filter(&:ruby_object?).each do |field| -%>
     rb_gc_register_mark_object(<%= field.name %>);
     <%- end -%>
 
