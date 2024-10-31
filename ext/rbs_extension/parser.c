@@ -2405,11 +2405,11 @@ rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, positio
                   | `public`
                   | `private`
 */
-VALUE parse_module_members(parserstate *state) {
-  VALUE members = EMPTY_ARRAY;
+rbs_node_list_t *parse_module_members(parserstate *state) {
+  rbs_node_list_t *members = rbs_node_list_new();
 
   while (state->next_token.type != kEND) {
-    VALUE member;
+    rbs_node_t *member;
     VALUE annotations = EMPTY_ARRAY;
     position annot_pos = NullPosition;
 
@@ -2420,29 +2420,29 @@ VALUE parse_module_members(parserstate *state) {
     switch (state->current_token.type)
     {
     case kDEF:
-      member = ((rbs_node_t *)parse_member_def(state, false, true, annot_pos, annotations))->cached_ruby_value;
+      member = (rbs_node_t *) parse_member_def(state, false, true, annot_pos, annotations);
       break;
 
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND:
-      member = ((rbs_node_t *)parse_mixin_member(state, false, annot_pos, annotations))->cached_ruby_value;
+      member = (rbs_node_t *) parse_mixin_member(state, false, annot_pos, annotations);
       break;
 
     case kALIAS:
-      member = ((rbs_node_t *)parse_alias_member(state, false, annot_pos, annotations))->cached_ruby_value;
+      member = (rbs_node_t *) parse_alias_member(state, false, annot_pos, annotations);
       break;
 
     case tAIDENT:
     case tA2IDENT:
     case kSELF:
-      member = parse_variable_member(state, annot_pos, annotations)->cached_ruby_value;
+      member = parse_variable_member(state, annot_pos, annotations);
       break;
 
     case kATTRREADER:
     case kATTRWRITER:
     case kATTRACCESSOR:
-      member = parse_attribute_member(state, annot_pos, annotations)->cached_ruby_value;
+      member = parse_attribute_member(state, annot_pos, annotations);
       break;
 
     case kPUBLIC:
@@ -2451,28 +2451,27 @@ VALUE parse_module_members(parserstate *state) {
         switch (state->next_token.type)
         {
         case kDEF:
-          member = ((rbs_node_t *)parse_member_def(state, false, true, annot_pos, annotations))->cached_ruby_value;
+          member = (rbs_node_t *) parse_member_def(state, false, true, annot_pos, annotations);
           break;
         case kATTRREADER:
         case kATTRWRITER:
         case kATTRACCESSOR:
-          member = parse_attribute_member(state, annot_pos, annotations)->cached_ruby_value;
+          member = parse_attribute_member(state, annot_pos, annotations);
           break;
         default:
           raise_syntax_error(state, state->next_token, "method or attribute definition is expected after visibility modifier");
         }
       } else {
-        member = parse_visibility_member(state, annotations)->cached_ruby_value;
+        member = parse_visibility_member(state, annotations);
       }
       break;
 
     default:
-      member = parse_nested_decl(state, "module", annot_pos, annotations)->cached_ruby_value;
+      member = parse_nested_decl(state, "module", annot_pos, annotations);
       break;
     }
 
-    melt_array(&members);
-    rb_ary_push(members, member);
+    rbs_node_list_append(members, member);
   }
 
   return members;
@@ -2507,7 +2506,7 @@ rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyw
     self_types_range = NULL_RANGE;
   }
 
-  VALUE members = parse_module_members(state);
+  rbs_node_list_t *members = parse_module_members(state);
 
   parser_advance_assert(state, kEND);
   end_range = state->current_token.range;
@@ -2529,12 +2528,12 @@ rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyw
     module_name,
     type_params->cached_ruby_value,
     self_types,
-    members,
+    members->cached_ruby_value,
     annotations,
     location,
     comment
   );
-  return rbs_ast_declarations_module_new(value, module_name, type_params->cached_ruby_value, self_types, members, annotations, location, comment);
+  return rbs_ast_declarations_module_new(value, module_name, type_params->cached_ruby_value, self_types, members->cached_ruby_value, annotations, location, comment);
 }
 
 /*
@@ -2627,7 +2626,7 @@ rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keywor
 
   rbs_node_list_t *type_params;
   VALUE super;
-  VALUE members;
+  rbs_node_list_t *members;
   VALUE location;
 
   rbs_loc *loc;
@@ -2666,12 +2665,12 @@ rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keywor
     name,
     type_params->cached_ruby_value,
     super,
-    members,
+    members->cached_ruby_value,
     annotations,
     location,
     comment
   );
-  return rbs_ast_declarations_class_new(value, name, type_params->cached_ruby_value, super, members, annotations, location, comment);
+  return rbs_ast_declarations_class_new(value, name, type_params->cached_ruby_value, super, members->cached_ruby_value, annotations, location, comment);
 }
 
 /*
