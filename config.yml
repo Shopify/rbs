@@ -214,30 +214,39 @@ nodes:
       - name: args
       - name: location
   - name: RBS::Types::Bases::Any
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Bool
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Bottom
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Class
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Instance
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Nil
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Self
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Top
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Void
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::Types::Block

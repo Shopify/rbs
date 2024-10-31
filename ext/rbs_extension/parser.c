@@ -970,54 +970,44 @@ static rbs_node_t *parse_simple(parserstate *state) {
   }
   case kBOOL: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_bool(loc);
-    return (rbs_node_t *) rbs_types_bases_bool_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_bool_new(loc);
   }
   case kBOT: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_bottom(loc);
-    return (rbs_node_t *) rbs_types_bases_bottom_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_bottom_new(loc);
   }
   case kCLASS: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_class(loc);
-    return (rbs_node_t *) rbs_types_bases_class_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_class_new(loc);
   }
   case kINSTANCE: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_instance(loc);
-    return (rbs_node_t *) rbs_types_bases_instance_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_instance_new(loc);
   }
   case kNIL: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_nil(loc);
-    return (rbs_node_t *) rbs_types_bases_nil_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_nil_new(loc);
   }
   case kSELF: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_self(loc);
-    return (rbs_node_t *) rbs_types_bases_self_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_self_new(loc);
   }
   case kTOP: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_top(loc);
-    return (rbs_node_t *) rbs_types_bases_top_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_top_new(loc);
   }
   case kVOID: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_void(loc);
-    return (rbs_node_t *) rbs_types_bases_void_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_void_new(loc);
   }
   case kUNTYPED: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_any(loc);
-    return (rbs_node_t *) rbs_types_bases_any_new(value, loc);
+    return (rbs_node_t *) rbs_types_bases_any_new(loc);
   }
   case k__TODO__: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_bases_any(loc);
-    rbs_types_bases_any_t *node = rbs_types_bases_any_new(value, loc);
-    rb_funcall(value, rb_intern("todo!"), 0);
+    rbs_types_bases_any_t *node = rbs_types_bases_any_new(loc);
+    rb_funcall(node->base.cached_ruby_value, rb_intern("todo!"), 0);
     return (rbs_node_t *) node;
   }
   case tINTEGER: {

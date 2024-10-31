@@ -71,6 +71,24 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_proc(type, block, location, self_type);
     <%- elsif node.c_base_name == "rbs_types_classsingleton" -%>
     VALUE ruby_value = rbs_class_singleton(name, location);
+    <%- elsif node.c_base_name == "rbs_types_bases_bool"-%>
+    VALUE ruby_value = rbs_bases_bool(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_bottom"-%>
+    VALUE ruby_value = rbs_bases_bottom(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_class"-%>
+    VALUE ruby_value = rbs_bases_class(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_instance"-%>
+    VALUE ruby_value = rbs_bases_instance(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_nil"-%>
+    VALUE ruby_value = rbs_bases_nil(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_self"-%>
+    VALUE ruby_value = rbs_bases_self(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_top"-%>
+    VALUE ruby_value = rbs_bases_top(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_void"-%>
+    VALUE ruby_value = rbs_bases_void(location);
+    <%- elsif node.c_base_name == "rbs_types_bases_any"-%>
+    VALUE ruby_value = rbs_bases_any(location);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
