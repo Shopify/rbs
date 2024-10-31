@@ -8,6 +8,47 @@
 #include "rbs/ast.h"
 #include <stdlib.h>
 
+rbs_node_list_t* rbs_node_list_new(void) {
+    rbs_node_list_t *list = (rbs_node_list_t *)malloc(sizeof(rbs_node_list_t));
+    list->head = NULL;
+    list->tail = NULL;
+    list->length = 0;
+    list->cached_ruby_value = rb_ary_new();
+
+    rb_gc_register_mark_object(list->cached_ruby_value);
+
+    return list;
+}
+
+void rbs_node_list_free(rbs_node_list_t *list) {
+    rbs_node_list_node_t *current = list->head;
+    while (current != NULL) {
+        rbs_node_list_node_t *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(list);
+}
+
+void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
+    rb_gc_register_mark_object(node->cached_ruby_value);
+
+    rbs_node_list_node_t *new_node = (rbs_node_list_node_t *)malloc(sizeof(rbs_node_list_node_t));
+    new_node->node = node;
+    new_node->next = NULL;
+
+    if (list->tail == NULL) {
+        list->head = new_node;
+        list->tail = new_node;
+    } else {
+        list->tail->next = new_node;
+        list->tail = new_node;
+    }
+    list->length++;
+
+    rb_ary_push(list->cached_ruby_value, node->cached_ruby_value);
+}
+
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE ruby_value, VALUE string, VALUE location) {
     rbs_ast_annotation_t *instance = (rbs_ast_annotation_t *)calloc(1, sizeof(rbs_ast_annotation_t));
 
