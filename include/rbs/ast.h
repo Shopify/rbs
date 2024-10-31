@@ -77,6 +77,24 @@ typedef struct rbs_node {
     enum rbs_node_type type;
 } rbs_node_t;
 
+typedef struct rbs_node_list_node {
+    rbs_node_t *node;
+    struct rbs_node_list_node *next;
+} rbs_node_list_node_t;
+
+typedef struct rbs_node_list {
+    rbs_node_list_node_t *head;
+    rbs_node_list_node_t *tail;
+    size_t length;
+    VALUE cached_ruby_value;
+} rbs_node_list_t;
+
+rbs_node_list_t* rbs_node_list_new(void);
+
+void rbs_node_list_free(rbs_node_list_t *list);
+
+void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
+
 typedef struct {
     rbs_node_t base;
 
