@@ -1187,8 +1187,8 @@ rbs_node_t *parse_type(parserstate *state) {
 
   type_param ::= tUIDENT upper_bound? default_type?                           (module_type_params == false)
 */
-static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_params) {
-  VALUE params = EMPTY_ARRAY;
+static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_type_params) {
+  rbs_node_list_t *params = rbs_node_list_new();
 
   bool required_param_allowed = true;
 
@@ -1290,8 +1290,7 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
         rb_funcall(((rbs_node_t *) param)->cached_ruby_value, rb_intern("unchecked!"), 0);
       }
 
-      melt_array(&params);
-      rb_ary_push(params, ((rbs_node_t *) param)->cached_ruby_value);
+      rbs_node_list_append(params, (rbs_node_t *) param);
 
       if (state->next_token.type == pCOMMA) {
         parser_advance(state);
@@ -1312,7 +1311,7 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
     RBS_AST_TypeParam,
     rb_intern("resolve_variables"),
     1,
-    params
+    params->cached_ruby_value
   );
 
   return params;
@@ -1332,7 +1331,7 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
 
   rg.start = state->next_token.range.start;
 
-  VALUE type_params = parse_type_params(state, &params_range, false);
+  rbs_node_list_t *type_params = parse_type_params(state, &params_range, false);
 
   type_range.start = state->next_token.range.start;
 
@@ -1350,12 +1349,12 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), params_range);
 
   VALUE value = rbs_method_type(
-    type_params,
+    type_params->cached_ruby_value,
     function,
     block,
     location
   );
-  return rbs_methodtype_new(value, type_params, function, block, location);
+  return rbs_methodtype_new(value, type_params->cached_ruby_value, function, block, location);
 }
 
 /*
@@ -1446,7 +1445,7 @@ static rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, pos
   parser_advance(state);
   rbs_typename_t *typename = parse_type_name(state, ALIAS_NAME, &name_range);
 
-  VALUE type_params = parse_type_params(state, &params_range, true);
+  rbs_node_list_t *type_params = parse_type_params(state, &params_range, true);
 
   parser_advance_assert(state, pEQ);
   eq_range = state->current_token.range;
@@ -1467,13 +1466,13 @@ static rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, pos
   VALUE comment = get_comment(state, comment_pos.line);
   VALUE value = rbs_ast_decl_type_alias(
     ((rbs_node_t *)typename)->cached_ruby_value,
-    type_params,
+    type_params->cached_ruby_value,
     type->cached_ruby_value,
     annotations,
     location,
     comment
   );
-  return rbs_ast_declarations_typealias_new(value, ((rbs_node_t *)typename)->cached_ruby_value, type_params, type->cached_ruby_value, annotations, location, comment);
+  return rbs_ast_declarations_typealias_new(value, ((rbs_node_t *)typename)->cached_ruby_value, type_params->cached_ruby_value, type->cached_ruby_value, annotations, location, comment);
 }
 
 /*
@@ -2318,7 +2317,7 @@ static rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state
   parser_advance(state);
 
   rbs_typename_t *name = parse_type_name(state, INTERFACE_NAME, &name_range);
-  VALUE params = parse_type_params(state, &type_params_range, true);
+  rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
   VALUE members = parse_interface_members(state);
 
   parser_advance_assert(state, kEND);
@@ -2338,13 +2337,13 @@ static rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state
   VALUE comment = get_comment(state, comment_pos.line);
   VALUE value = rbs_ast_decl_interface(
     ((rbs_node_t *)name)->cached_ruby_value,
-    params,
+    type_params->cached_ruby_value,
     members,
     annotations,
     location,
     comment
   );
-  return rbs_ast_declarations_interface_new(value, ((rbs_node_t *)name)->cached_ruby_value, params, members, annotations, location, comment);
+  return rbs_ast_declarations_interface_new(value, ((rbs_node_t *)name)->cached_ruby_value, type_params->cached_ruby_value, members, annotations, location, comment);
 }
 
 /*
@@ -2494,7 +2493,7 @@ static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, ran
 
   decl_range.start = keyword_range.start;
 
-  VALUE type_params = parse_type_params(state, &type_params_range, true);
+  rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
   VALUE self_types = EMPTY_ARRAY;
 
   if (state->next_token.type == pCOLON) {
@@ -2528,14 +2527,14 @@ static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, ran
 
   VALUE value = rbs_ast_decl_module(
     module_name,
-    type_params,
+    type_params->cached_ruby_value,
     self_types,
     members,
     annotations,
     location,
     comment
   );
-  return rbs_ast_declarations_module_new(value, module_name, type_params, self_types, members, annotations, location, comment);
+  return rbs_ast_declarations_module_new(value, module_name, type_params->cached_ruby_value, self_types, members, annotations, location, comment);
 }
 
 /*
@@ -2626,7 +2625,7 @@ static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range
   range type_params_range;
   range lt_range;
 
-  VALUE type_params;
+  rbs_node_list_t *type_params;
   VALUE super;
   VALUE members;
   VALUE location;
@@ -2665,14 +2664,14 @@ static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range
 
   VALUE value = rbs_ast_decl_class(
     name,
-    type_params,
+    type_params->cached_ruby_value,
     super,
     members,
     annotations,
     location,
     comment
   );
-  return rbs_ast_declarations_class_new(value, name, type_params, super, members, annotations, location, comment);
+  return rbs_ast_declarations_class_new(value, name, type_params->cached_ruby_value, super, members, annotations, location, comment);
 }
 
 /*
