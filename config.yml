@@ -203,6 +203,7 @@ nodes:
       - name: path
       - name: absolute
   - name: RBS::TypeName
+    builds_ruby_object_internally: true
     fields:
       - name: namespace
       - name: name

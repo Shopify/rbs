@@ -57,14 +57,15 @@ parameters = node.constructor_parameters
 
     <%- if node.c_base_name == "rbs_types_classinstance" -%>
     VALUE ruby_value = rbs_class_instance(name, args, location);
-    rb_gc_register_mark_object(ruby_value);
     <%- elsif node.c_base_name == "rbs_types_interface" -%>
     VALUE ruby_value = rbs_interface(name, args, location);
-    rb_gc_register_mark_object(ruby_value);
     <%- elsif node.c_base_name == "rbs_types_alias" -%>
     VALUE ruby_value = rbs_alias(name, args, location);
-    rb_gc_register_mark_object(ruby_value);
+    <%- elsif node.c_base_name == "rbs_typename" -%>
+    VALUE ruby_value = rbs_type_name(namespace, name);
     <%- end -%>
+
+    rb_gc_register_mark_object(ruby_value);
 
     *instance = (<%= node.c_struct_name %>) {
         .base = (rbs_node_t) {

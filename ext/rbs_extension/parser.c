@@ -191,8 +191,7 @@ rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg
     }
 
     VALUE name = ID2SYM(INTERN_TOKEN(state, state->current_token));
-    VALUE value = rbs_type_name(namespace, name);
-    return rbs_typename_new(value, namespace, name);
+    return rbs_typename_new(namespace, name);
   }
 
   error: {
