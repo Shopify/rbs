@@ -10,9 +10,13 @@ module RBS
       attr_reader :name
       attr_reader :c_type
 
-      def initialize(yaml)
-        @name = yaml["name"]
-        @c_type = "VALUE"
+      def initialize(name:, c_type:)
+        @name = name
+        @c_type = c_type
+      end
+
+      def self.from_hash(hash)
+        new(name: hash["name"], c_type: hash.fetch("c_type", "VALUE"))
       end
     end
 
@@ -41,7 +45,7 @@ module RBS
         @c_base_name = @c_constant_name.downcase
         @c_struct_name = "#{@c_base_name}_t"
         @c_type_enum_name = @c_base_name.upcase
-        @fields = yaml["fields"].map { |field| Field.new(field) }
+        @fields = yaml["fields"].map { |field| Field.from_hash(field) }
         @parent_c_constant_name = @full_name.split("::")[0..-2].join("::").gsub("::", "_")
         @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
       end
