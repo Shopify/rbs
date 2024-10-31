@@ -1,4 +1,5 @@
 #include "rbs/ast.h"
+#include "rbs/ruby_objs.h"
 #include <stdlib.h>
 
 rbs_node_list_t* rbs_node_list_new(void) {
@@ -52,6 +53,17 @@ parameters = node.constructor_parameters
 
     <%-parameters.filter(&:ruby_object?).each do |field| -%>
     rb_gc_register_mark_object(<%= field.name %>);
+    <%- end -%>
+
+    <%- if node.c_base_name == "rbs_types_classinstance" -%>
+    VALUE ruby_value = rbs_class_instance(name, args, location);
+    rb_gc_register_mark_object(ruby_value);
+    <%- elsif node.c_base_name == "rbs_types_interface" -%>
+    VALUE ruby_value = rbs_interface(name, args, location);
+    rb_gc_register_mark_object(ruby_value);
+    <%- elsif node.c_base_name == "rbs_types_alias" -%>
+    VALUE ruby_value = rbs_alias(name, args, location);
+    rb_gc_register_mark_object(ruby_value);
     <%- end -%>
 
     *instance = (<%= node.c_struct_name %>) {

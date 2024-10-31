@@ -918,14 +918,11 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
     rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
 
     if (kind == CLASS_NAME) {
-      VALUE value = rbs_class_instance(((rbs_node_t *)typename)->cached_ruby_value, types, location);
-      return (rbs_node_t *) rbs_types_classinstance_new(value, ((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      return (rbs_node_t *) rbs_types_classinstance_new(typename->base.cached_ruby_value, types, location);
     } else if (kind == INTERFACE_NAME) {
-      VALUE value = rbs_interface(((rbs_node_t *)typename)->cached_ruby_value, types, location);
-      return (rbs_node_t *) rbs_types_interface_new(value, ((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      return (rbs_node_t *) rbs_types_interface_new(typename->base.cached_ruby_value, types, location);
     } else if (kind == ALIAS_NAME) {
-      VALUE value = rbs_alias(((rbs_node_t *)typename)->cached_ruby_value, types, location);
-      return (rbs_node_t *) rbs_types_alias_new(value, ((rbs_node_t *)typename)->cached_ruby_value, types, location);
+      return (rbs_node_t *) rbs_types_alias_new(typename->base.cached_ruby_value, types, location);
     } else {
       return NULL;
     }

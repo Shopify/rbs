@@ -207,6 +207,7 @@ nodes:
       - name: namespace
       - name: name
   - name: RBS::Types::Alias
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -244,6 +245,7 @@ nodes:
       - name: required
       - name: self_type
   - name: RBS::Types::ClassInstance
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -268,6 +270,7 @@ nodes:
       - name: name
       - name: location
   - name: RBS::Types::Interface
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
