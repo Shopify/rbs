@@ -69,6 +69,8 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_optional(type, location);
     <%- elsif node.c_base_name == "rbs_types_proc" -%>
     VALUE ruby_value = rbs_proc(type, block, location, self_type);
+    <%- elsif node.c_base_name == "rbs_types_classsingleton" -%>
+    VALUE ruby_value = rbs_class_singleton(name, location);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

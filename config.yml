@@ -252,6 +252,7 @@ nodes:
       - name: args
       - name: location
   - name: RBS::Types::ClassSingleton
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: location
