@@ -67,6 +67,7 @@ nodes:
       - name: args
       - name: location
   - name: RBS::AST::Declarations::ModuleAlias
+    builds_ruby_object_internally: true
     fields:
       - name: new_name
       - name: old_name
