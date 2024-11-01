@@ -52,14 +52,6 @@ typedef struct {
   VALUE rest_keywords;
 } method_params;
 
-static VALUE EMPTY_ARRAY;
-
-static inline void melt_array(VALUE *array) {
-  if (*array == EMPTY_ARRAY) {
-    *array = rb_ary_new();
-  }
-}
-
 static bool rbs_is_untyped_params(method_params *params) {
   return params->required_positionals == NULL;
 }
@@ -2790,28 +2782,30 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
   }
 }
 
-VALUE parse_signature(parserstate *state) {
-  VALUE dirs = EMPTY_ARRAY;
-  VALUE decls = EMPTY_ARRAY;
+rbs_node_list_t *parse_signature(parserstate *state) {
+  rbs_node_list_t *dir_nodes = rbs_node_list_new();
+  rbs_ast_directives_nodes_t *dirs = rbs_ast_directives_nodes_new(dir_nodes->cached_ruby_value, dir_nodes->cached_ruby_value);
+
+  rbs_node_list_t *decl_nodes = rbs_node_list_new();
+  rbs_ast_declarations_nodes_t *decls = rbs_ast_declarations_nodes_new(decl_nodes->cached_ruby_value, decl_nodes->cached_ruby_value);
 
   while (state->next_token.type == kUSE) {
-    melt_array(&dirs);
     rbs_ast_directives_use_t *use_node = parse_use_directive(state);
     if (use_node == NULL) {
-      rb_ary_push(dirs, Qnil);
+      rbs_node_list_append(dir_nodes, NULL);
     } else {
-      rb_ary_push(dirs, ((rbs_node_t *)use_node)->cached_ruby_value);
+      rbs_node_list_append(dir_nodes, (rbs_node_t *)use_node);
     }
   }
 
   while (state->next_token.type != pEOF) {
-    melt_array(&decls);
-    rb_ary_push(decls, parse_decl(state)->cached_ruby_value);
+    rbs_node_t *decl = parse_decl(state);
+    rbs_node_list_append(decl_nodes, decl);
   }
 
-  VALUE ret = rb_ary_new();
-  rb_ary_push(ret, dirs);
-  rb_ary_push(ret, decls);
+  rbs_node_list_t *ret = rbs_node_list_new();
+  rbs_node_list_append(ret, (rbs_node_t *)dirs);
+  rbs_node_list_append(ret, (rbs_node_t *)decls);
   return ret;
 }
 
@@ -2891,7 +2885,7 @@ rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end
 static VALUE
 parse_signature_try(VALUE a) {
   parserstate *parser = (parserstate *)a;
-  return parse_signature(parser);
+  return parse_signature(parser)->cached_ruby_value;
 }
 
 static VALUE
@@ -2930,7 +2924,6 @@ void rbs__init_parser(void) {
   rb_gc_register_mark_object(RBS_Parser);
   VALUE empty_array = rb_obj_freeze(rb_ary_new());
   rb_gc_register_mark_object(empty_array);
-  EMPTY_ARRAY = empty_array;
 
   rb_define_singleton_method(RBS_Parser, "_parse_type", rbsparser_parse_type, 5);
   rb_define_singleton_method(RBS_Parser, "_parse_method_type", rbsparser_parse_method_type, 5);
