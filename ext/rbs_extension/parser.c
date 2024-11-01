@@ -2686,7 +2686,7 @@ static rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
                | {} namespace tUIDENT `as` <tUIDENT>
                | {} namespace <tSTAR>
 */
-static void parse_use_clauses(parserstate *state, VALUE clauses) {
+static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
   while (true) {
     range namespace_range = NULL_RANGE;
     rbs_namespace_t *namespace = parse_namespace(state, &namespace_range);
@@ -2732,7 +2732,9 @@ static void parse_use_clauses(parserstate *state, VALUE clauses) {
         rbs_loc_add_optional_child(loc, INTERN("keyword"), keyword_range);
         rbs_loc_add_optional_child(loc, INTERN("new_name"), new_name_range);
 
-        rb_ary_push(clauses, rbs_ast_directives_use_single_clause(type_name, new_name, location));
+        VALUE clause_value = rbs_ast_directives_use_single_clause(type_name, new_name, location);
+        rbs_ast_directives_use_singleclause_t *clause = rbs_ast_directives_use_singleclause_new(&state->allocator, clause_value, type_name, new_name, location);
+        rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;
       }
@@ -2750,7 +2752,9 @@ static void parse_use_clauses(parserstate *state, VALUE clauses) {
         rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
         rbs_loc_add_required_child(loc, INTERN("star"), star_range);
 
-        rb_ary_push(clauses, rbs_ast_directives_use_wildcard_clause(((rbs_node_t *)namespace)->cached_ruby_value, location));
+        VALUE clause_value = rbs_ast_directives_use_wildcard_clause(((rbs_node_t *)namespace)->cached_ruby_value, location);
+        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(&state->allocator, clause_value, ((rbs_node_t *)namespace)->cached_ruby_value, location);
+        rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;
       }
@@ -2781,7 +2785,7 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
 
     range keyword_range = state->current_token.range;
 
-    VALUE clauses = rb_ary_new();
+    rbs_node_list_t *clauses = rbs_node_list_new();
     parse_use_clauses(state, clauses);
 
     range directive_range = keyword_range;
@@ -2792,7 +2796,7 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
 
-    return rbs_ast_directives_use_new(&state->allocator, clauses, location);
+    return rbs_ast_directives_use_new(&state->allocator, clauses->cached_ruby_value, location);
   } else {
     return NULL;
   }
