@@ -49,17 +49,17 @@ nodes.each do |node|
 
 parameters = node.constructor_parameters
 -%>
-<%= node.c_struct_name %> *<%= node.c_base_name %>_new(<%= parameters.map { |field| "VALUE #{field.name}" }.join(", ") %>) {
+<%= node.c_struct_name %> *<%= node.c_base_name %>_new(<%= parameters.map { |field| "#{field.c_type} #{field.name}" }.join(", ") %>) {
     <%= node.c_struct_name %> *instance = (<%= node.c_struct_name %> *)calloc(1, sizeof(<%= node.c_struct_name %>));
 
     // Disable GC for all these Ruby objects.
     <%- parameters.each do |parameter| -%>
-    rb_gc_register_mark_object(<%= parameter.name %>);
+    rb_gc_register_mark_object(<%= parameter.cached_ruby_value_expr %>);
     <%- end -%>
 
     <%- if node.builds_ruby_object_internally? -%>
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = <%= node.c_function_name %>(<%= parameters.map(&:name).join(", ") %>);
+    VALUE ruby_value = <%= node.c_function_name %>(<%= parameters.map(&:cached_ruby_value_expr).join(", ") %>);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
@@ -70,7 +70,7 @@ parameters = node.constructor_parameters
             .type = <%= node.c_type_enum_name %>
         },
         <%- node.fields.each do |field| -%>
-        .<%= field.name %> = <%= field.name %>,
+        .<%= field.name %> = <%= field.cached_ruby_value_expr %>,
         <%- end -%>
     };
 
