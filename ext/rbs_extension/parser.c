@@ -2094,7 +2094,7 @@ static rbs_node_t *parse_variable_member(parserstate *state, position comment_po
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
     value = rbs_ast_members_class_instance_variable(name, type->cached_ruby_value, location, comment);
-    return (rbs_node_t *)rbs_ast_members_classvariable_new(value, name, type->cached_ruby_value, location, comment);
+    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(value, name, type->cached_ruby_value, location, comment);
 
   default:
     rbs_abort();
