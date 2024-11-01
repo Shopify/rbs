@@ -1075,8 +1075,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
     parser_advance_assert(state, pRBRACE);
     position end = state->current_token.range.end;
     VALUE loc = rbs_location_pp(state->buffer, &start, &end);
-    VALUE value = rbs_record(fields, loc);
-    return (rbs_node_t *) rbs_types_record_new(value, fields, loc);
+    return (rbs_node_t *) rbs_types_record_new(fields, loc);
   }
   case pHAT: {
     rbs_types_proc_t *value = parse_proc_type(state);

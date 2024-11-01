@@ -309,6 +309,7 @@ nodes:
       - name: location
       - name: self_type
   - name: RBS::Types::Record
+    builds_ruby_object_internally: true
     fields:
       - name: all_fields
       - name: location
