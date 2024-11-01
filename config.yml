@@ -288,6 +288,7 @@ nodes:
       - name: args
       - name: location
   - name: RBS::Types::Intersection
+    builds_ruby_object_internally: true
     fields:
       - name: types
       - name: location

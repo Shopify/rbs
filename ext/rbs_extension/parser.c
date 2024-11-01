@@ -1111,8 +1111,7 @@ static rbs_node_t *parse_intersection(parserstate *state) {
 
   if (rb_array_len(intersection_types) > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
-    VALUE value = rbs_intersection(intersection_types, location);
-    type = (rbs_node_t *) rbs_types_intersection_new(value, intersection_types, location);
+    type = (rbs_node_t *) rbs_types_intersection_new(intersection_types, location);
   }
 
   return type;
