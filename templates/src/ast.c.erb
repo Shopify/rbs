@@ -50,7 +50,7 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
 
     <%- if node.builds_ruby_object_internally? -%>
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = <%= node.c_function_name %>(<%= node.fields.map(&:name).join(", ") %>);
+    VALUE ruby_value = <%= node.c_function_name %>(<%= node.fields.map(&:cached_ruby_value_expr).join(", ") %>);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
@@ -61,7 +61,7 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
             .type = <%= node.c_type_enum_name %>
         },
         <%- node.fields.each do |field| -%>
-        .<%= field.name %> = <%= field.name %>,
+        .<%= field.name %> = <%= field.cached_ruby_value_expr %>,
         <%- end -%>
     };
 
