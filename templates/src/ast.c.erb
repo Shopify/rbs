@@ -154,7 +154,8 @@ parameters = node.constructor_parameters
     <%- elsif node.c_base_name == "rbs_ast_members_classvariable"-%>
     VALUE ruby_value = rbs_ast_members_class_variable(name, type, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_members_classinstancevariable"-%>
-    VALUE ruby_value = rbs_ast_members_class_instance_variable(name, type, location, comment);
+    VALUE ruby_type = type->cached_ruby_value;
+    VALUE ruby_value = rbs_ast_members_class_instance_variable(name, ruby_type, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_members_alias"-%>
     VALUE ruby_annotations = annotations->cached_ruby_value;
     VALUE ruby_value = rbs_ast_members_alias(new_name, old_name, kind, ruby_annotations, location, comment);
