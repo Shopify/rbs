@@ -187,7 +187,9 @@ parameters = node.constructor_parameters
     VALUE ruby_annotations = annotations->cached_ruby_value;
     VALUE ruby_value = rbs_ast_decl_module(name, ruby_type_params, self_types, ruby_members, ruby_annotations, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_declarations_modulealias"-%>
-    VALUE ruby_value = rbs_ast_decl_module_alias(new_name, old_name, location, comment);
+    VALUE ruby_new_name = new_name->base.cached_ruby_value;
+    VALUE ruby_old_name = old_name->base.cached_ruby_value;
+    VALUE ruby_value = rbs_ast_decl_module_alias(ruby_new_name, ruby_old_name, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_declarations_class_super"-%>
     VALUE ruby_value = rbs_ast_decl_class_super(name, args, location);
     <%- elsif node.c_base_name == "rbs_ast_declarations_class"-%>
