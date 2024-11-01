@@ -53,10 +53,10 @@
   /* nop */
 
 typedef struct {
-  VALUE required_positionals;
-  VALUE optional_positionals;
+  rbs_node_list_t *required_positionals;
+  rbs_node_list_t *optional_positionals;
   VALUE rest_positionals;
-  VALUE trailing_positionals;
+  rbs_node_list_t *trailing_positionals;
   VALUE required_keywords;
   VALUE optional_keywords;
   VALUE rest_keywords;
@@ -71,7 +71,7 @@ static inline void melt_array(VALUE *array) {
 }
 
 static bool rbs_is_untyped_params(method_params *params) {
-  return NIL_P(params->required_positionals);
+  return params->required_positionals == NULL;
 }
 
 // /**
@@ -420,7 +420,7 @@ static bool is_keyword(parserstate *state) {
 */
 static void parse_params(parserstate *state, method_params *params) {
   if (state->next_token.type == pQUESTION && state->next_token2.type == pRPAREN) {
-    params->required_positionals = Qnil;
+    params->required_positionals = NULL;
     parser_advance(state);
     return;
   }
@@ -447,8 +447,7 @@ static void parse_params(parserstate *state, method_params *params) {
         }
 
         rbs_types_function_param_t *param = parse_function_param(state);
-        melt_array(&params->required_positionals);
-        rb_ary_push(params->required_positionals, ((rbs_node_t *)param)->cached_ruby_value);
+        rbs_node_list_append(params->required_positionals, (rbs_node_t *)param);
 
         break;
     }
@@ -471,8 +470,7 @@ PARSE_OPTIONAL_PARAMS:
         }
 
         rbs_types_function_param_t *param = parse_function_param(state);
-        melt_array(&params->optional_positionals);
-        rb_ary_push(params->optional_positionals, ((rbs_node_t *)param)->cached_ruby_value);
+        rbs_node_list_append(params->optional_positionals, (rbs_node_t *)param);
 
         break;
       default:
@@ -514,8 +512,7 @@ PARSE_TRAILING_PARAMS:
         }
 
         rbs_types_function_param_t *param = parse_function_param(state);
-        melt_array(&params->trailing_positionals);
-        rb_ary_push(params->trailing_positionals, ((rbs_node_t *)param)->cached_ruby_value);
+        rbs_node_list_append(params->trailing_positionals, (rbs_node_t *)param);
 
         break;
     }
@@ -607,10 +604,10 @@ static rbs_node_t *parse_optional(parserstate *state) {
 
 static void initialize_method_params(method_params *params){
   *params = (method_params) {
-    .required_positionals = EMPTY_ARRAY,
-    .optional_positionals = EMPTY_ARRAY,
+    .required_positionals = rbs_node_list_new(),
+    .optional_positionals = rbs_node_list_new(),
     .rest_positionals = Qnil,
-    .trailing_positionals = EMPTY_ARRAY,
+    .trailing_positionals = rbs_node_list_new(),
     .required_keywords = rb_hash_new(),
     .optional_keywords = rb_hash_new(),
     .rest_keywords = Qnil,
@@ -702,10 +699,10 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       block_function = rbs_untyped_function(block_return_type->cached_ruby_value);
     } else {
       block_function = rbs_function(
-        block_params.required_positionals,
-        block_params.optional_positionals,
+        block_params.required_positionals->cached_ruby_value,
+        block_params.optional_positionals->cached_ruby_value,
         block_params.rest_positionals,
-        block_params.trailing_positionals,
+        block_params.trailing_positionals->cached_ruby_value,
         block_params.required_keywords,
         block_params.optional_keywords,
         block_params.rest_keywords,
@@ -725,10 +722,10 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
     *function = rbs_untyped_function(type->cached_ruby_value);
   } else {
     *function = rbs_function(
-      params.required_positionals,
-      params.optional_positionals,
+      params.required_positionals->cached_ruby_value,
+      params.optional_positionals->cached_ruby_value,
       params.rest_positionals,
-      params.trailing_positionals,
+      params.trailing_positionals->cached_ruby_value,
       params.required_keywords,
       params.optional_keywords,
       params.rest_keywords,
