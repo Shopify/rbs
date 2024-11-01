@@ -1381,7 +1381,7 @@ rbs_ast_declarations_constant_t *parse_const_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  return rbs_ast_declarations_constant_new(typename->base.cached_ruby_value, type->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_constant_new(typename, type, location, comment);
 }
 
 /*
