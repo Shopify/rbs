@@ -842,21 +842,23 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, VALUE location) {
   int offset_bytes = rb_enc_codelen(':', enc);
   int bytes = token_bytes(state->current_token) - offset_bytes;
 
-  VALUE literal;
+  rbs_ast_symbol_t *literal;
 
   switch (state->current_token.type)
   {
   case tSYMBOL: {
     char *buffer = peek_token(state->lexstate, state->current_token);
-    literal = ID2SYM(rb_intern3(buffer+offset_bytes, bytes, enc));
+    literal = rbs_ast_symbol_new(ID2SYM(rb_intern3(buffer+offset_bytes, bytes, enc)));
     break;
   }
   case tDQSYMBOL:
   case tSQSYMBOL: {
-    literal = rb_funcall(
-      rbs_unquote_string(state, state->current_token.range, offset_bytes),
-      rb_intern("to_sym"),
-      0
+    literal = rbs_ast_symbol_new(
+      rb_funcall(
+        rbs_unquote_string(state, state->current_token.range, offset_bytes),
+        rb_intern("to_sym"),
+        0
+      )
     );
     break;
   }
@@ -864,7 +866,7 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, VALUE location) {
     rbs_abort();
   }
 
-  return rbs_types_literal_new(literal, location);
+  return rbs_types_literal_new(((rbs_node_t *)literal)->cached_ruby_value, location);
 }
 
 /*
