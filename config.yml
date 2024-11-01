@@ -194,6 +194,7 @@ nodes:
       - name: default_type
       - name: location
   - name: RBS::MethodType
+    builds_ruby_object_internally: true
     fields:
       - name: type_params
       - name: type

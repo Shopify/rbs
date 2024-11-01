@@ -1312,13 +1312,7 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("type"), type_range);
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), params_range);
 
-  VALUE value = rbs_method_type(
-    type_params->cached_ruby_value,
-    function,
-    block,
-    location
-  );
-  return rbs_methodtype_new(value, type_params->cached_ruby_value, function, block, location);
+  return rbs_methodtype_new(type_params->cached_ruby_value, function, block, location);
 }
 
 /*
