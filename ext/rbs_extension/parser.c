@@ -2251,7 +2251,7 @@ rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state, posit
   module_self_type ::= <module_name>
                      | module_name `[` type_list <`]`>
 */
-void parse_module_self_types(parserstate *state, VALUE *array) {
+void parse_module_self_types(parserstate *state, rbs_node_list_t *array) {
   while (true) {
     range self_range;
     range name_range;
@@ -2279,9 +2279,9 @@ void parse_module_self_types(parserstate *state, VALUE *array) {
     rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
     rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
 
-    VALUE self_type = rbs_ast_decl_module_self(((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
-    melt_array(array);
-    rb_ary_push(*array, self_type);
+    VALUE value = rbs_ast_decl_module_self(((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
+    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(value, ((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
+    rbs_node_list_append(array, (rbs_node_t *)self_type);
 
     if (state->next_token.type == pCOMMA) {
       parser_advance(state);
@@ -2392,13 +2392,13 @@ rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyw
   decl_range.start = keyword_range.start;
 
   rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
-  VALUE self_types = EMPTY_ARRAY;
+  rbs_node_list_t *self_types = rbs_node_list_new();
 
   if (state->next_token.type == pCOLON) {
     parser_advance(state);
     colon_range = state->current_token.range;
     self_types_range.start = state->next_token.range.start;
-    parse_module_self_types(state, &self_types);
+    parse_module_self_types(state, self_types);
     self_types_range.end = state->current_token.range.end;
   } else {
     colon_range = NULL_RANGE;
@@ -2423,7 +2423,7 @@ rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyw
 
   parser_pop_typevar_table(state);
 
-  return rbs_ast_declarations_module_new(module_name, type_params, self_types, members, annotations, location, comment);
+  return rbs_ast_declarations_module_new(module_name, type_params, self_types->cached_ruby_value, members, annotations, location, comment);
 }
 
 /*
