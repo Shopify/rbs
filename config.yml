@@ -224,6 +224,7 @@ nodes:
       - name: block
       - name: location
   - name: RBS::Namespace
+    builds_ruby_object_internally: true
     fields:
       - name: path
       - name: absolute
