@@ -105,7 +105,7 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *al
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_class(name, type_params->cached_ruby_value, super_class, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_class(name, type_params, super_class, members, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -162,7 +162,7 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_alloc
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_class_alias(new_name->base.cached_ruby_value, old_name->base.cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_class_alias(new_name, old_name, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -190,7 +190,7 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_allocator
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_constant(name->base.cached_ruby_value, type->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_constant(name, type, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -218,7 +218,7 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_allocator_t *
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_global(name, type->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_global(name, type, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -248,7 +248,7 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_allocat
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_interface(name->base.cached_ruby_value, type_params->cached_ruby_value, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_interface(name, type_params, members, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -281,7 +281,7 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_allocator_t *
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_module(name, type_params->cached_ruby_value, self_types, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_module(name, type_params, self_types, members, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -336,7 +336,7 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_all
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_module_alias(new_name->base.cached_ruby_value, old_name->base.cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_module_alias(new_name, old_name, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -366,7 +366,7 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_allocat
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_type_alias(name->base.cached_ruby_value, type_params->cached_ruby_value, type->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_decl_type_alias(name, type_params, type, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -468,7 +468,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, V
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_alias(new_name, old_name, kind, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_members_alias(new_name, old_name, kind, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -502,7 +502,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t
     rb_gc_register_mark_object(visibility);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_attr_accessor(name, type->cached_ruby_value, ivar_name, kind, annotations->cached_ruby_value, location, comment, visibility);
+    VALUE ruby_value = rbs_ast_members_attr_accessor(name, type, ivar_name, kind, annotations, location, comment, visibility);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -538,7 +538,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *al
     rb_gc_register_mark_object(visibility);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_attr_reader(name, type->cached_ruby_value, ivar_name, kind, annotations->cached_ruby_value, location, comment, visibility);
+    VALUE ruby_value = rbs_ast_members_attr_reader(name, type, ivar_name, kind, annotations, location, comment, visibility);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -574,7 +574,7 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *al
     rb_gc_register_mark_object(visibility);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_attr_writer(name, type->cached_ruby_value, ivar_name, kind, annotations->cached_ruby_value, location, comment, visibility);
+    VALUE ruby_value = rbs_ast_members_attr_writer(name, type, ivar_name, kind, annotations, location, comment, visibility);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -606,7 +606,7 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_class_instance_variable(name, type->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_members_class_instance_variable(name, type, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -634,7 +634,7 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_class_variable(name, type->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_members_class_variable(name, type, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -663,7 +663,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator,
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_extend(name, args, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_members_extend(name, args, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -693,7 +693,7 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_allocator_t *allocato
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_include(name, args, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_members_include(name, args, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -722,7 +722,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_all
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_instance_variable(name, type->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_members_instance_variable(name, type, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -754,7 +754,7 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_all
     rb_gc_register_mark_object(visibility);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_method_definition(name, kind, overloads, annotations->cached_ruby_value, location, comment, overloading, visibility);
+    VALUE ruby_value = rbs_ast_members_method_definition(name, kind, overloads, annotations, location, comment, overloading, visibility);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -809,7 +809,7 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_allocator_t *allocato
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_prepend(name, args, annotations->cached_ruby_value, location, comment);
+    VALUE ruby_value = rbs_ast_members_prepend(name, args, annotations, location, comment);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -914,7 +914,7 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_allocator_t *allocator, rbs_node_list_t
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_method_type(type_params->cached_ruby_value, type, block, location);
+    VALUE ruby_value = rbs_method_type(type_params, type, block, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -989,7 +989,7 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_alias(name->base.cached_ruby_value, args, location);
+    VALUE ruby_value = rbs_alias(name, args, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1239,7 +1239,7 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_allocator_t *allocato
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_class_instance(name->base.cached_ruby_value, args, location);
+    VALUE ruby_value = rbs_class_instance(name, args, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1264,7 +1264,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_allocator_t *alloca
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_class_singleton(name->base.cached_ruby_value, location);
+    VALUE ruby_value = rbs_class_singleton(name, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1323,7 +1323,7 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *alloca
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_function_param(type->cached_ruby_value, name, location);
+    VALUE ruby_value = rbs_function_param(type, name, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1349,7 +1349,7 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, rbs_t
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_interface(name->base.cached_ruby_value, args, location);
+    VALUE ruby_value = rbs_interface(name, args, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1422,7 +1422,7 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_nod
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_optional(type->cached_ruby_value, location);
+    VALUE ruby_value = rbs_optional(type, location);
 
     rb_gc_register_mark_object(ruby_value);
 

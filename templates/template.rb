@@ -25,8 +25,8 @@ module RBS
           "#{@c_type} #{c_name}"
         when "rbs_string"
           "rbs_string_t #{c_name}"
-        when ->(c_type) { c_type.include?("_t") }
-          "#{c_type}#{c_name}"
+        when ->(c_type) { c_type.end_with?("_t *") }
+          "#{@c_type}#{c_name}"
         else
           "#{@c_type}_t *#{c_name}"
         end
