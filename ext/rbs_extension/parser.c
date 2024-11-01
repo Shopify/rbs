@@ -155,7 +155,6 @@ void parser_advance_no_gap(parserstate *state) {
 */
 static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
   VALUE absolute = Qfalse;
-  VALUE path = EMPTY_ARRAY;
 
   if (rg) {
     rg->start = state->current_token.range.start;
@@ -166,20 +165,23 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
     parser_advance_no_gap(state);
   }
 
+  rbs_node_list_t *path = rbs_node_list_new();
+
   while (
     state->current_token.type == tUIDENT
     && state->next_token.type == pCOLON2
     && state->current_token.range.end.byte_pos == state->next_token.range.start.byte_pos
     && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos
   ) {
-    melt_array(&path);
-    rb_ary_push(path, ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value);
+    rbs_node_list_append(path, (rbs_node_t *)symbol);
 
     parser_advance(state);
     parser_advance(state);
   }
 
-  VALUE namespace = rbs_namespace(path, absolute);
+  VALUE namespace = rbs_namespace(path->cached_ruby_value, absolute);
 
   switch (state->current_token.type) {
     case tLIDENT:
