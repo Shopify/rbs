@@ -174,7 +174,7 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
     && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos
   ) {
     VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
-    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value);
+    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(&state->allocator, symbol_value);
     rbs_node_list_append(path, (rbs_node_t *)symbol);
 
     parser_advance(state);
@@ -2660,12 +2660,13 @@ static rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
     parser_advance(state);
   }
 
-  VALUE path = EMPTY_ARRAY;
+  rbs_node_list_t *path = rbs_node_list_new();
 
   while (true) {
     if (state->next_token.type == tUIDENT && state->next_token2.type == pCOLON2) {
-      melt_array(&path);
-      rb_ary_push(path, ID2SYM(INTERN_TOKEN(state, state->next_token)));
+      VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->next_token));
+      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(&state->allocator, symbol_value);
+      rbs_node_list_append(path, (rbs_node_t *)symbol);
       if (null_position_p(rg->start)) {
         rg->start = state->next_token.range.start;
       }
@@ -2677,7 +2678,7 @@ static rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
     }
   }
 
-  return rbs_namespace_new(&state->allocator, path, is_absolute ? Qtrue : Qfalse);
+  return rbs_namespace_new(&state->allocator, path->cached_ruby_value, is_absolute ? Qtrue : Qfalse);
 }
 
 /*
