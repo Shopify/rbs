@@ -244,6 +244,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: location
+  - name: RBS::AST::Symbol
   - name: RBS::AST::TypeParam
     builds_ruby_object_internally: true
     fields:
