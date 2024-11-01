@@ -120,7 +120,11 @@ parameters = node.constructor_parameters
     VALUE ruby_type = type->cached_ruby_value;
     VALUE ruby_value = rbs_ast_decl_constant(ruby_name, ruby_type, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_declarations_typealias"-%>
-    VALUE ruby_value = rbs_ast_decl_type_alias(name, type_params, type, annotations, location, comment);
+    VALUE ruby_name = name->base.cached_ruby_value;
+    VALUE ruby_type_params = type_params->cached_ruby_value;
+    VALUE ruby_type = type->cached_ruby_value;
+    VALUE ruby_annotations = annotations->cached_ruby_value;
+    VALUE ruby_value = rbs_ast_decl_type_alias(ruby_name, ruby_type_params, ruby_type, ruby_annotations, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_annotation"-%>
     VALUE ruby_value = rbs_ast_annotation(string, location);
     <%- elsif node.c_base_name == "rbs_ast_members_methoddefinition"-%>
