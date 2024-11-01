@@ -1,5 +1,6 @@
 nodes:
   - name: RBS::AST::Annotation
+    builds_ruby_object_internally: true
     fields:
       - name: string
       - name: location
