@@ -33,11 +33,11 @@ rbs_node_list_t* rbs_node_list_new(rbs_allocator_t *);
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
 <%- nodes.each do |node| -%>
-typedef struct {
+typedef struct <%= node.c_base_name %> {
     rbs_node_t base;
 
     <%- node.fields.each do |field| -%>
-    VALUE <%= field.name %>;
+    <%= field.stored_field_decl %>;
     <%- end -%>
 } <%= node.c_type_name %>;
 

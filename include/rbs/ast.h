@@ -97,33 +97,33 @@ rbs_node_list_t* rbs_node_list_new(rbs_allocator_t *);
 
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
-typedef struct {
+typedef struct rbs_ast_annotation {
     rbs_node_t base;
 
     VALUE string;
     VALUE location;
 } rbs_ast_annotation_t;
 
-typedef struct {
+typedef struct rbs_ast_comment {
     rbs_node_t base;
 
     VALUE string;
     VALUE location;
 } rbs_ast_comment_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_class {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type_params;
+    struct rbs_node_list *type_params;
     VALUE super_class;
-    VALUE members;
-    VALUE annotations;
+    struct rbs_node_list *members;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_class_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_class_super {
     rbs_node_t base;
 
     VALUE name;
@@ -131,57 +131,57 @@ typedef struct {
     VALUE location;
 } rbs_ast_declarations_class_super_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_classalias {
     rbs_node_t base;
 
-    VALUE new_name;
-    VALUE old_name;
+    struct rbs_typename *new_name;
+    struct rbs_typename *old_name;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_classalias_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_constant {
     rbs_node_t base;
 
-    VALUE name;
-    VALUE type;
+    struct rbs_typename *name;
+    struct rbs_node *type;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_constant_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_global {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type;
+    struct rbs_node *type;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_global_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_interface {
     rbs_node_t base;
 
-    VALUE name;
-    VALUE type_params;
-    VALUE members;
-    VALUE annotations;
+    struct rbs_typename *name;
+    struct rbs_node_list *type_params;
+    struct rbs_node_list *members;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_interface_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_module {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type_params;
+    struct rbs_node_list *type_params;
     VALUE self_types;
-    VALUE members;
-    VALUE annotations;
+    struct rbs_node_list *members;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_module_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_module_self {
     rbs_node_t base;
 
     VALUE name;
@@ -189,46 +189,46 @@ typedef struct {
     VALUE location;
 } rbs_ast_declarations_module_self_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_modulealias {
     rbs_node_t base;
 
-    VALUE new_name;
-    VALUE old_name;
+    struct rbs_typename *new_name;
+    struct rbs_typename *old_name;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_modulealias_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_nodes {
     rbs_node_t base;
 
     VALUE declarations;
 } rbs_ast_declarations_nodes_t;
 
-typedef struct {
+typedef struct rbs_ast_declarations_typealias {
     rbs_node_t base;
 
-    VALUE name;
-    VALUE type_params;
-    VALUE type;
-    VALUE annotations;
+    struct rbs_typename *name;
+    struct rbs_node_list *type_params;
+    struct rbs_node *type;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_typealias_t;
 
-typedef struct {
+typedef struct rbs_ast_directives_nodes {
     rbs_node_t base;
 
     VALUE directives;
 } rbs_ast_directives_nodes_t;
 
-typedef struct {
+typedef struct rbs_ast_directives_use {
     rbs_node_t base;
 
     VALUE clauses;
     VALUE location;
 } rbs_ast_directives_use_t;
 
-typedef struct {
+typedef struct rbs_ast_directives_use_singleclause {
     rbs_node_t base;
 
     VALUE type_name;
@@ -236,158 +236,158 @@ typedef struct {
     VALUE location;
 } rbs_ast_directives_use_singleclause_t;
 
-typedef struct {
+typedef struct rbs_ast_directives_use_wildcardclause {
     rbs_node_t base;
 
     VALUE namespace;
     VALUE location;
 } rbs_ast_directives_use_wildcardclause_t;
 
-typedef struct {
+typedef struct rbs_ast_members_alias {
     rbs_node_t base;
 
     VALUE new_name;
     VALUE old_name;
     VALUE kind;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_members_alias_t;
 
-typedef struct {
+typedef struct rbs_ast_members_attraccessor {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type;
+    struct rbs_node *type;
     VALUE ivar_name;
     VALUE kind;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
     VALUE visibility;
 } rbs_ast_members_attraccessor_t;
 
-typedef struct {
+typedef struct rbs_ast_members_attrreader {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type;
+    struct rbs_node *type;
     VALUE ivar_name;
     VALUE kind;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
     VALUE visibility;
 } rbs_ast_members_attrreader_t;
 
-typedef struct {
+typedef struct rbs_ast_members_attrwriter {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type;
+    struct rbs_node *type;
     VALUE ivar_name;
     VALUE kind;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
     VALUE visibility;
 } rbs_ast_members_attrwriter_t;
 
-typedef struct {
+typedef struct rbs_ast_members_classinstancevariable {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type;
+    struct rbs_node *type;
     VALUE location;
     VALUE comment;
 } rbs_ast_members_classinstancevariable_t;
 
-typedef struct {
+typedef struct rbs_ast_members_classvariable {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type;
+    struct rbs_node *type;
     VALUE location;
     VALUE comment;
 } rbs_ast_members_classvariable_t;
 
-typedef struct {
+typedef struct rbs_ast_members_extend {
     rbs_node_t base;
 
     VALUE name;
     VALUE args;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_members_extend_t;
 
-typedef struct {
+typedef struct rbs_ast_members_include {
     rbs_node_t base;
 
     VALUE name;
     VALUE args;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_members_include_t;
 
-typedef struct {
+typedef struct rbs_ast_members_instancevariable {
     rbs_node_t base;
 
     VALUE name;
-    VALUE type;
+    struct rbs_node *type;
     VALUE location;
     VALUE comment;
 } rbs_ast_members_instancevariable_t;
 
-typedef struct {
+typedef struct rbs_ast_members_methoddefinition {
     rbs_node_t base;
 
     VALUE name;
     VALUE kind;
     VALUE overloads;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
     VALUE overloading;
     VALUE visibility;
 } rbs_ast_members_methoddefinition_t;
 
-typedef struct {
+typedef struct rbs_ast_members_methoddefinition_overload {
     rbs_node_t base;
 
     VALUE annotations;
     VALUE method_type;
 } rbs_ast_members_methoddefinition_overload_t;
 
-typedef struct {
+typedef struct rbs_ast_members_prepend {
     rbs_node_t base;
 
     VALUE name;
     VALUE args;
-    VALUE annotations;
+    struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
 } rbs_ast_members_prepend_t;
 
-typedef struct {
+typedef struct rbs_ast_members_private {
     rbs_node_t base;
 
     VALUE location;
 } rbs_ast_members_private_t;
 
-typedef struct {
+typedef struct rbs_ast_members_public {
     rbs_node_t base;
 
     VALUE location;
 } rbs_ast_members_public_t;
 
-typedef struct {
+typedef struct rbs_ast_symbol {
     rbs_node_t base;
 
 } rbs_ast_symbol_t;
 
-typedef struct {
+typedef struct rbs_ast_typeparam {
     rbs_node_t base;
 
     VALUE name;
@@ -398,93 +398,93 @@ typedef struct {
     VALUE location;
 } rbs_ast_typeparam_t;
 
-typedef struct {
+typedef struct rbs_methodtype {
     rbs_node_t base;
 
-    VALUE type_params;
+    struct rbs_node_list *type_params;
     VALUE type;
     VALUE block;
     VALUE location;
 } rbs_methodtype_t;
 
-typedef struct {
+typedef struct rbs_namespace {
     rbs_node_t base;
 
     VALUE path;
     VALUE absolute;
 } rbs_namespace_t;
 
-typedef struct {
+typedef struct rbs_typename {
     rbs_node_t base;
 
     VALUE namespace;
     VALUE name;
 } rbs_typename_t;
 
-typedef struct {
+typedef struct rbs_types_alias {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     VALUE args;
     VALUE location;
 } rbs_types_alias_t;
 
-typedef struct {
+typedef struct rbs_types_bases_any {
     rbs_node_t base;
 
     VALUE todo;
     VALUE location;
 } rbs_types_bases_any_t;
 
-typedef struct {
+typedef struct rbs_types_bases_bool {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_bool_t;
 
-typedef struct {
+typedef struct rbs_types_bases_bottom {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_bottom_t;
 
-typedef struct {
+typedef struct rbs_types_bases_class {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_class_t;
 
-typedef struct {
+typedef struct rbs_types_bases_instance {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_instance_t;
 
-typedef struct {
+typedef struct rbs_types_bases_nil {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_nil_t;
 
-typedef struct {
+typedef struct rbs_types_bases_self {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_self_t;
 
-typedef struct {
+typedef struct rbs_types_bases_top {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_top_t;
 
-typedef struct {
+typedef struct rbs_types_bases_void {
     rbs_node_t base;
 
     VALUE location;
 } rbs_types_bases_void_t;
 
-typedef struct {
+typedef struct rbs_types_block {
     rbs_node_t base;
 
     VALUE type;
@@ -492,22 +492,22 @@ typedef struct {
     VALUE self_type;
 } rbs_types_block_t;
 
-typedef struct {
+typedef struct rbs_types_classinstance {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     VALUE args;
     VALUE location;
 } rbs_types_classinstance_t;
 
-typedef struct {
+typedef struct rbs_types_classsingleton {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     VALUE location;
 } rbs_types_classsingleton_t;
 
-typedef struct {
+typedef struct rbs_types_function {
     rbs_node_t base;
 
     VALUE required_positionals;
@@ -520,44 +520,44 @@ typedef struct {
     VALUE return_type;
 } rbs_types_function_t;
 
-typedef struct {
+typedef struct rbs_types_function_param {
     rbs_node_t base;
 
-    VALUE type;
+    struct rbs_node *type;
     VALUE name;
     VALUE location;
 } rbs_types_function_param_t;
 
-typedef struct {
+typedef struct rbs_types_interface {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     VALUE args;
     VALUE location;
 } rbs_types_interface_t;
 
-typedef struct {
+typedef struct rbs_types_intersection {
     rbs_node_t base;
 
     VALUE types;
     VALUE location;
 } rbs_types_intersection_t;
 
-typedef struct {
+typedef struct rbs_types_literal {
     rbs_node_t base;
 
     VALUE literal;
     VALUE location;
 } rbs_types_literal_t;
 
-typedef struct {
+typedef struct rbs_types_optional {
     rbs_node_t base;
 
-    VALUE type;
+    struct rbs_node *type;
     VALUE location;
 } rbs_types_optional_t;
 
-typedef struct {
+typedef struct rbs_types_proc {
     rbs_node_t base;
 
     VALUE type;
@@ -566,34 +566,34 @@ typedef struct {
     VALUE self_type;
 } rbs_types_proc_t;
 
-typedef struct {
+typedef struct rbs_types_record {
     rbs_node_t base;
 
     VALUE all_fields;
     VALUE location;
 } rbs_types_record_t;
 
-typedef struct {
+typedef struct rbs_types_tuple {
     rbs_node_t base;
 
     VALUE types;
     VALUE location;
 } rbs_types_tuple_t;
 
-typedef struct {
+typedef struct rbs_types_union {
     rbs_node_t base;
 
     VALUE types;
     VALUE location;
 } rbs_types_union_t;
 
-typedef struct {
+typedef struct rbs_types_untypedfunction {
     rbs_node_t base;
 
     VALUE return_type;
 } rbs_types_untypedfunction_t;
 
-typedef struct {
+typedef struct rbs_types_variable {
     rbs_node_t base;
 
     VALUE name;
