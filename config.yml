@@ -163,6 +163,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::MethodDefinition
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: kind

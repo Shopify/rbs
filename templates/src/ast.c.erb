@@ -113,6 +113,17 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_decl_type_alias(name, type_params, type, annotations, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_annotation"-%>
     VALUE ruby_value = rbs_ast_annotation(string, location);
+    <%- elsif node.c_base_name == "rbs_ast_members_methoddefinition"-%>
+    VALUE ruby_value = rbs_ast_members_method_definition(
+        name,
+        kind,
+        overloads,
+        annotations,
+        location,
+        comment,
+        overloading,
+        visibility
+    );
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

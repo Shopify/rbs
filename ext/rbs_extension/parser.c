@@ -1753,17 +1753,7 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
   rbs_loc_add_optional_child(loc, rb_intern("overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
 
-  VALUE value = rbs_ast_members_method_definition(
-    name,
-    k,
-    overloads,
-    annotations->cached_ruby_value,
-    location,
-    comment,
-    overloading,
-    visibility
-  );
-  return rbs_ast_members_methoddefinition_new(value, name, k, overloads, annotations->cached_ruby_value, location, comment, overloading, visibility);
+  return rbs_ast_members_methoddefinition_new(name, k, overloads, annotations->cached_ruby_value, location, comment, overloading, visibility);
 }
 
 /**
