@@ -1941,14 +1941,14 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
   VALUE comment = get_comment(state, comment_pos.line);
 
   VALUE location;
-  VALUE name;
+  rbs_ast_symbol_t *name;
   rbs_node_t *type;
 
   switch (state->current_token.type)
   {
   case tAIDENT:
     name_range = state->current_token.range;
-    name = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
     parser_advance_assert(state, pCOLON);
     colon_range = state->current_token.range;
@@ -1963,11 +1963,11 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
-    return (rbs_node_t *)rbs_ast_members_instancevariable_new(name, type, location, comment);
+    return (rbs_node_t *)rbs_ast_members_instancevariable_new(((rbs_node_t *)name)->cached_ruby_value, type, location, comment);
 
   case tA2IDENT:
     name_range = state->current_token.range;
-    name = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
     parser_advance_assert(state, pCOLON);
     colon_range = state->current_token.range;
@@ -1984,7 +1984,7 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
-    return (rbs_node_t *) rbs_ast_members_classvariable_new(name, type, location, comment);
+    return (rbs_node_t *) rbs_ast_members_classvariable_new(((rbs_node_t *)name)->cached_ruby_value, type, location, comment);
 
   case kSELF:
     kind_range.start = state->current_token.range.start;
@@ -1994,7 +1994,7 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     parser_advance_assert(state, tAIDENT);
 
     name_range = state->current_token.range;
-    name = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
     parser_advance_assert(state, pCOLON);
     colon_range = state->current_token.range;
@@ -2011,7 +2011,7 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
-    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(name, type, location, comment);
+    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(((rbs_node_t *)name)->cached_ruby_value, type, location, comment);
 
   default:
     rbs_abort();
