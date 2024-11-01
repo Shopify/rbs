@@ -1915,7 +1915,7 @@ rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool instance_on
   rbs_loc_add_optional_child(loc, rb_intern("new_kind"), new_kind_range);
   rbs_loc_add_optional_child(loc, rb_intern("old_kind"), old_kind_range);
 
-  return rbs_ast_members_alias_new(new_name, old_name, kind, annotations->cached_ruby_value, location, comment);
+  return rbs_ast_members_alias_new(new_name, old_name, kind, annotations, location, comment);
 }
 
 /*

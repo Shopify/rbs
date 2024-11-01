@@ -113,6 +113,7 @@ nodes:
       - name: old_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::AttrAccessor
