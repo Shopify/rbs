@@ -70,6 +70,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::TypeAlias
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type_params

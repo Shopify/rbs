@@ -1420,15 +1420,7 @@ rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, position c
   parser_pop_typevar_table(state);
 
   VALUE comment = get_comment(state, comment_pos.line);
-  VALUE value = rbs_ast_decl_type_alias(
-    ((rbs_node_t *)typename)->cached_ruby_value,
-    type_params->cached_ruby_value,
-    type->cached_ruby_value,
-    annotations->cached_ruby_value,
-    location,
-    comment
-  );
-  return rbs_ast_declarations_typealias_new(value, ((rbs_node_t *)typename)->cached_ruby_value, type_params->cached_ruby_value, type->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_typealias_new(typename->base.cached_ruby_value, type_params->cached_ruby_value, type->cached_ruby_value, annotations->cached_ruby_value, location, comment);
 }
 
 /*
