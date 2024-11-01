@@ -2587,7 +2587,7 @@ rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, rbs_node_
     rbs_loc_add_optional_child(loc, rb_intern("old_name"), old_name_range);
 
 
-    return (rbs_node_t *) rbs_ast_declarations_classalias_new(class_name->base.cached_ruby_value, old_name->base.cached_ruby_value, location, comment);
+    return (rbs_node_t *) rbs_ast_declarations_classalias_new(class_name, old_name, location, comment);
   } else {
     return (rbs_node_t *) parse_class_decl0(state, keyword_range, class_name->base.cached_ruby_value, class_name_range, comment, annotations);
   }

@@ -31,7 +31,9 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: new_name
+        c_type: rbs_typename_t *
       - name: old_name
+        c_type: rbs_typename_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Constant
