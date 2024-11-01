@@ -1347,7 +1347,7 @@ rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  return rbs_ast_declarations_global_new(typename, type->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_global_new(typename, type, location, comment);
 }
 
 /*

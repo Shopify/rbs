@@ -43,6 +43,7 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Interface
