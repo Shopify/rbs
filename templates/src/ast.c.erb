@@ -44,8 +44,8 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
     <%= node.c_type_name %> *instance = rbs_allocator_alloc(allocator, <%= node.c_type_name %>);
 
     // Disable GC for all these Ruby objects.
-    <%- node.fields.each do |parameter| -%>
-    rb_gc_register_mark_object(<%= parameter.name %>);
+    <%- node.fields.each do |field| -%>
+    rb_gc_register_mark_object(<%= field.cached_ruby_value_expr %>);
     <%- end -%>
 
     <%- if node.builds_ruby_object_internally? -%>
