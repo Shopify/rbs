@@ -150,6 +150,8 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_members_attr_accessor(name, type, ivar_name, kind, annotations, location, comment, visibility);
     <%- elsif node.c_base_name == "rbs_ast_declarations_interface"-%>
     VALUE ruby_value = rbs_ast_decl_interface(name, type_params, members, annotations, location, comment);
+    <%- elsif node.c_base_name == "rbs_ast_declarations_module"-%>
+    VALUE ruby_value = rbs_ast_decl_module(name, type_params, self_types, members, annotations, location, comment);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

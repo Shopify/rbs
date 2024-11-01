@@ -2423,16 +2423,7 @@ rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyw
 
   parser_pop_typevar_table(state);
 
-  VALUE value = rbs_ast_decl_module(
-    module_name,
-    type_params->cached_ruby_value,
-    self_types,
-    members->cached_ruby_value,
-    annotations->cached_ruby_value,
-    location,
-    comment
-  );
-  return rbs_ast_declarations_module_new(value, module_name, type_params->cached_ruby_value, self_types, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_module_new(module_name, type_params->cached_ruby_value, self_types, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
 }
 
 /*

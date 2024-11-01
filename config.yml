@@ -52,6 +52,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type_params
