@@ -231,10 +231,10 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
   type_list ::= {} type `,` ... <`,`> eol
               | {} type `,` ... `,` <type> eol
 */
-static void parse_type_list(parserstate *state, enum TokenType eol, VALUE *types) {
+static void parse_type_list(parserstate *state, enum TokenType eol, rbs_node_list_t *types) {
   while (true) {
-    melt_array(types);
-    rb_ary_push(*types, parse_type(state)->cached_ruby_value);
+    rbs_node_t *type = parse_type(state);
+    rbs_node_list_append(types, type);
 
     if (state->next_token.type == pCOMMA) {
       parser_advance(state);
@@ -883,7 +883,7 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
 
     range name_range;
     rbs_typename_t *typename = parse_type_name(state, expected_kind, &name_range);
-    VALUE types = EMPTY_ARRAY;
+    rbs_node_list_t *types = rbs_node_list_new();
 
     TypeNameKind kind;
     if (state->current_token.type == tUIDENT) {
@@ -900,7 +900,7 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
     if (state->next_token.type == pLBRACKET) {
       parser_advance(state);
       args_range.start = state->current_token.range.start;
-      parse_type_list(state, pRBRACKET, &types);
+      parse_type_list(state, pRBRACKET, types);
       parser_advance_assert(state, pRBRACKET);
       args_range.end = state->current_token.range.end;
     } else {
@@ -919,11 +919,11 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
     if (kind == CLASS_NAME) {
-      return (rbs_node_t *) rbs_types_classinstance_new(&state->allocator, typename, types, location);
+      return (rbs_node_t *) rbs_types_classinstance_new(&state->allocator, typename, types->cached_ruby_value, location);
     } else if (kind == INTERFACE_NAME) {
-      return (rbs_node_t *) rbs_types_interface_new(&state->allocator, typename, types, location);
+      return (rbs_node_t *) rbs_types_interface_new(&state->allocator, typename, types->cached_ruby_value, location);
     } else if (kind == ALIAS_NAME) {
-      return (rbs_node_t *) rbs_types_alias_new(&state->allocator, typename, types, location);
+      return (rbs_node_t *) rbs_types_alias_new(&state->allocator, typename, types->cached_ruby_value, location);
     } else {
       return NULL;
     }
@@ -1066,15 +1066,15 @@ static rbs_node_t *parse_simple(parserstate *state) {
   case pLBRACKET: {
     range rg;
     rg.start = state->current_token.range.start;
-    VALUE types = EMPTY_ARRAY;
+    rbs_node_list_t *types = rbs_node_list_new();
     if (state->next_token.type != pRBRACKET) {
-      parse_type_list(state, pRBRACKET, &types);
+      parse_type_list(state, pRBRACKET, types);
     }
     parser_advance_assert(state, pRBRACKET);
     rg.end = state->current_token.range.end;
 
     VALUE location = rbs_new_location(state->buffer, rg);
-    return (rbs_node_t *) rbs_types_tuple_new(&state->allocator, types, location);
+    return (rbs_node_t *) rbs_types_tuple_new(&state->allocator, types->cached_ruby_value, location);
   }
   case pAREF_OPR: {
     VALUE loc = rbs_location_current_token(state);
@@ -1756,7 +1756,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
  *
  * @param kind
  * */
-void class_instance_name(parserstate *state, TypeNameKind kind, VALUE *name, VALUE *args, range *name_range, range *args_range) {
+void class_instance_name(parserstate *state, TypeNameKind kind, VALUE *name, rbs_node_list_t *args, range *name_range, range *args_range) {
   parser_advance(state);
 
   *name = ((rbs_node_t *)parse_type_name(state, kind, name_range))->cached_ruby_value;
@@ -1816,13 +1816,13 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
   parser_push_typevar_table(state, reset_typevar_scope);
 
   VALUE name;
-  VALUE args = EMPTY_ARRAY;
+  rbs_node_list_t *args = rbs_node_list_new();
   range name_range;
   range args_range = NULL_RANGE;
   class_instance_name(
     state,
     from_interface ? INTERFACE_NAME : (INTERFACE_NAME | CLASS_NAME),
-    &name, &args, &name_range, &args_range
+    &name, args, &name_range, &args_range
   );
 
   parser_pop_typevar_table(state);
@@ -1840,11 +1840,11 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
   switch (type)
   {
   case kINCLUDE:
-    return (rbs_node_t *) rbs_ast_members_include_new(&state->allocator, name, args, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_include_new(&state->allocator, name, args->cached_ruby_value, annotations, location, comment);
   case kEXTEND:
-    return (rbs_node_t *) rbs_ast_members_extend_new(&state->allocator, name, args, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_extend_new(&state->allocator, name, args->cached_ruby_value, annotations, location, comment);
   case kPREPEND:
-    return (rbs_node_t *) rbs_ast_members_prepend_new(&state->allocator, name, args, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_prepend_new(&state->allocator, name, args->cached_ruby_value, annotations, location, comment);
   default:
     rbs_abort();
   }
@@ -2237,12 +2237,12 @@ static void parse_module_self_types(parserstate *state, VALUE *array) {
     rbs_typename_t *module_name = parse_type_name(state, CLASS_NAME | INTERFACE_NAME, &name_range);
     self_range.end = name_range.end;
 
-    VALUE args = EMPTY_ARRAY;
+    rbs_node_list_t *args = rbs_node_list_new();
     range args_range = NULL_RANGE;
     if (state->next_token.type == pLBRACKET) {
       parser_advance(state);
       args_range.start = state->current_token.range.start;
-      parse_type_list(state, pRBRACKET, &args);
+      parse_type_list(state, pRBRACKET, args);
       parser_advance(state);
       self_range.end = args_range.end = state->current_token.range.end;
     }
@@ -2253,7 +2253,7 @@ static void parse_module_self_types(parserstate *state, VALUE *array) {
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    VALUE self_type = rbs_ast_decl_module_self(((rbs_node_t *)module_name)->cached_ruby_value, args, location);
+    VALUE self_type = rbs_ast_decl_module_self(((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
     melt_array(array);
     rb_ary_push(*array, self_type);
 
@@ -2459,9 +2459,9 @@ static rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *s
     super_range.start = state->next_token.range.start;
 
     VALUE name;
-    VALUE args = EMPTY_ARRAY;
+    rbs_node_list_t *args = rbs_node_list_new();
     range name_range, args_range;
-    class_instance_name(state, CLASS_NAME, &name, &args, &name_range, &args_range);
+    class_instance_name(state, CLASS_NAME, &name, args, &name_range, &args_range);
 
     super_range.end = state->current_token.range.end;
 
@@ -2471,7 +2471,7 @@ static rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *s
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    return rbs_ast_declarations_class_super_new(&state->allocator, name, args, location);
+    return rbs_ast_declarations_class_super_new(&state->allocator, name, args->cached_ruby_value, location);
   } else {
     *lt_range = NULL_RANGE;
     return NULL;
