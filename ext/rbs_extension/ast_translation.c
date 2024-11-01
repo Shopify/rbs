@@ -108,9 +108,23 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
             break;
         }
+        case RBS_AST_DECLARATIONS_NODES: {
+            if (strcmp(class_name, "RBS::AST::Declarations::Nodes") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Nodes, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
         case RBS_AST_DECLARATIONS_TYPEALIAS: {
             if (strcmp(class_name, "RBS::AST::Declarations::TypeAlias") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::Declarations::TypeAlias, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_DIRECTIVES_NODES: {
+            if (strcmp(class_name, "RBS::AST::Directives::Nodes") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Directives::Nodes, got %s\n", class_name);
                 exit(1);
             }
             break;
