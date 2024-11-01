@@ -168,6 +168,7 @@ nodes:
       - name: name
       - name: args
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::Include
@@ -176,6 +177,7 @@ nodes:
       - name: name
       - name: args
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::InstanceVariable
@@ -207,6 +209,7 @@ nodes:
       - name: name
       - name: args
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::Private
