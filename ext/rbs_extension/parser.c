@@ -828,7 +828,7 @@ VALUE parse_record_attributes(parserstate *state) {
 /*
   symbol ::= {<tSYMBOL>}
 */
-static VALUE parse_symbol(parserstate *state) {
+static rbs_types_literal_t *parse_symbol(parserstate *state, VALUE location) {
   VALUE string = state->lexstate->string;
   rb_encoding *enc = rb_enc_get(string);
 
@@ -857,10 +857,7 @@ static VALUE parse_symbol(parserstate *state) {
     rbs_abort();
   }
 
-  return rbs_literal(
-    literal,
-    rbs_location_current_token(state)
-  );
+  return rbs_types_literal_new(literal, location);
 }
 
 /*
@@ -1017,34 +1014,27 @@ static rbs_node_t *parse_simple(parserstate *state) {
       rb_intern("to_i"),
       0
     );
-    VALUE value = rbs_literal(literal, loc);
-    return (rbs_node_t *) rbs_types_literal_new(value, literal, loc);
+    return (rbs_node_t *) rbs_types_literal_new(literal, loc);
   }
   case kTRUE: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE literal = Qtrue;
-    VALUE value = rbs_literal(literal, loc);
-    return (rbs_node_t *) rbs_types_literal_new(value, literal, loc);
+    return (rbs_node_t *) rbs_types_literal_new(Qtrue, loc);
   }
   case kFALSE: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE literal = Qfalse;
-    VALUE value = rbs_literal(literal, loc);
-    return (rbs_node_t *) rbs_types_literal_new(value, literal, loc);
+    return (rbs_node_t *) rbs_types_literal_new(Qfalse, loc);
   }
   case tSQSTRING:
   case tDQSTRING: {
     VALUE loc = rbs_location_current_token(state);
     VALUE literal = rbs_unquote_string(state, state->current_token.range, 0);
-    VALUE value = rbs_literal(literal, loc);
-    return (rbs_node_t *) rbs_types_literal_new(value, literal, loc);
+    return (rbs_node_t *) rbs_types_literal_new(literal, loc);
   }
   case tSYMBOL:
   case tSQSYMBOL:
   case tDQSYMBOL: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = parse_symbol(state);
-    return (rbs_node_t *) rbs_types_literal_new(value, value, loc);
+    return (rbs_node_t *) parse_symbol(state, loc);
   }
   case tUIDENT: {
     ID name = INTERN_TOKEN(state, state->current_token);
