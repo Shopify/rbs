@@ -2737,7 +2737,8 @@ void parse_use_clauses(parserstate *state, VALUE clauses) {
         }
         clause_range = type_name_range;
 
-        VALUE type_name = rbs_type_name(((rbs_node_t *)namespace)->cached_ruby_value, ID2SYM(INTERN_TOKEN(state, state->current_token)));
+        rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+        VALUE type_name = rbs_type_name(((rbs_node_t *)namespace)->cached_ruby_value, ((rbs_node_t *)symbol)->cached_ruby_value);
 
         range keyword_range = NULL_RANGE;
         range new_name_range = NULL_RANGE;
