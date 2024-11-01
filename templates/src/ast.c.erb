@@ -56,11 +56,14 @@ parameters = node.constructor_parameters
     <%- end -%>
 
     <%- if node.c_base_name == "rbs_types_classinstance" -%>
-    VALUE ruby_value = rbs_class_instance(name, args, location);
+    VALUE ruby_name = name->base.cached_ruby_value;
+    VALUE ruby_value = rbs_class_instance(ruby_name, args, location);
     <%- elsif node.c_base_name == "rbs_types_interface" -%>
-    VALUE ruby_value = rbs_interface(name, args, location);
+    VALUE ruby_name = name->base.cached_ruby_value;
+    VALUE ruby_value = rbs_interface(ruby_name, args, location);
     <%- elsif node.c_base_name == "rbs_types_alias" -%>
-    VALUE ruby_value = rbs_alias(name, args, location);
+    VALUE ruby_name = name->base.cached_ruby_value;
+    VALUE ruby_value = rbs_alias(ruby_name, args, location);
     <%- elsif node.c_base_name == "rbs_typename" -%>
     VALUE ruby_value = rbs_type_name(namespace, name);
     <%- elsif node.c_base_name == "rbs_types_function_param" -%>
