@@ -1949,7 +1949,6 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
   VALUE comment = get_comment(state, comment_pos.line);
 
-  VALUE value;
   VALUE location;
   VALUE name;
   rbs_node_t *type;
@@ -2021,8 +2020,7 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
-    value = rbs_ast_members_class_instance_variable(name, type->cached_ruby_value, location, comment);
-    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(value, name, type->cached_ruby_value, location, comment);
+    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(name, type->cached_ruby_value, location, comment);
 
   default:
     rbs_abort();

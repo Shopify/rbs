@@ -134,6 +134,8 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_members_instance_variable(name, type, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_members_classvariable"-%>
     VALUE ruby_value = rbs_ast_members_class_variable(name, type, location, comment);
+    <%- elsif node.c_base_name == "rbs_ast_members_classinstancevariable"-%>
+    VALUE ruby_value = rbs_ast_members_class_instance_variable(name, type, location, comment);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

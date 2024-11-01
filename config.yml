@@ -131,6 +131,7 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::ClassInstanceVariable
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type
