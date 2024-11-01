@@ -192,6 +192,7 @@ nodes:
       - name: kind
       - name: overloads
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: overloading

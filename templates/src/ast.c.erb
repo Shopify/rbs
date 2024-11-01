@@ -128,11 +128,12 @@ parameters = node.constructor_parameters
     <%- elsif node.c_base_name == "rbs_ast_annotation"-%>
     VALUE ruby_value = rbs_ast_annotation(string, location);
     <%- elsif node.c_base_name == "rbs_ast_members_methoddefinition"-%>
+    VALUE ruby_annotations = annotations->cached_ruby_value;
     VALUE ruby_value = rbs_ast_members_method_definition(
         name,
         kind,
         overloads,
-        annotations,
+        ruby_annotations,
         location,
         comment,
         overloading,
