@@ -9,6 +9,7 @@ nodes:
       - name: string
       - name: location
   - name: RBS::AST::Declarations::Class
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type_params

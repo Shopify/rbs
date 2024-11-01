@@ -2549,16 +2549,7 @@ rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keywor
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
   rbs_loc_add_optional_child(loc, rb_intern("lt"), lt_range);
 
-  VALUE value = rbs_ast_decl_class(
-    name,
-    type_params->cached_ruby_value,
-    super,
-    members->cached_ruby_value,
-    annotations->cached_ruby_value,
-    location,
-    comment
-  );
-  return rbs_ast_declarations_class_new(value, name, type_params->cached_ruby_value, super, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_class_new(name, type_params->cached_ruby_value, super, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
 }
 
 /*
