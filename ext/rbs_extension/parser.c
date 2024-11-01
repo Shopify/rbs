@@ -336,11 +336,11 @@ static ID intern_token_start_end(parserstate *state, token start_token, token en
 static rbs_ast_symbol_t *parse_keyword_key(parserstate *state) {
   parser_advance(state);
   if (state->next_token.type == pQUESTION) {
-    rbs_ast_symbol_t *key = rbs_ast_symbol_new(ID2SYM(intern_token_start_end(state, state->current_token, state->next_token)));
+    rbs_ast_symbol_t *key = rbs_ast_symbol_new(&state->allocator, ID2SYM(intern_token_start_end(state, state->current_token, state->next_token)));
     parser_advance(state);
     return key;
   } else {
-    return rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    return rbs_ast_symbol_new(&state->allocator, ID2SYM(INTERN_TOKEN(state, state->current_token)));
   }
 }
 
@@ -803,7 +803,7 @@ static VALUE parse_record_attributes(parserstate *state) {
       case tINTEGER:
       case kTRUE:
       case kFALSE: {
-        key = rbs_ast_symbol_new(rb_funcall(rbs_struct_to_ruby_value(parse_simple(state)), rb_intern("literal"), 0));
+        key = rbs_ast_symbol_new(&state->allocator, rb_funcall(rbs_struct_to_ruby_value(parse_simple(state)), rb_intern("literal"), 0));
         break;
       }
       default:
@@ -842,21 +842,24 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, VALUE location) {
   int offset_bytes = rb_enc_codelen(':', enc);
   int bytes = token_bytes(state->current_token) - offset_bytes;
 
-  VALUE literal;
+  rbs_ast_symbol_t *literal;
 
   switch (state->current_token.type)
   {
   case tSYMBOL: {
     char *buffer = peek_token(state->lexstate, state->current_token);
-    literal = ID2SYM(rb_intern3(buffer+offset_bytes, bytes, enc));
+    literal = rbs_ast_symbol_new(&state->allocator, ID2SYM(rb_intern3(buffer+offset_bytes, bytes, enc)));
     break;
   }
   case tDQSYMBOL:
   case tSQSYMBOL: {
-    literal = rb_funcall(
-      rbs_unquote_string(state, state->current_token.range, offset_bytes),
-      rb_intern("to_sym"),
-      0
+    literal = rbs_ast_symbol_new(
+      &state->allocator,
+      rb_funcall(
+        rbs_unquote_string(state, state->current_token.range, offset_bytes),
+        rb_intern("to_sym"),
+        0
+      )
     );
     break;
   }
@@ -864,7 +867,7 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, VALUE location) {
     rbs_abort();
   }
 
-  return rbs_types_literal_new(&state->allocator, literal, location);
+  return rbs_types_literal_new(&state->allocator, ((rbs_node_t *)literal)->cached_ruby_value, location);
 }
 
 /*
