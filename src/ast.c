@@ -1591,22 +1591,3 @@ rbs_types_variable_t *rbs_types_variable_new(VALUE name, VALUE location) {
     return instance;
 }
 
-rbs_types_zzztmpnotimplemented_t *rbs_types_zzztmpnotimplemented_new(VALUE ruby_value) {
-    rbs_types_zzztmpnotimplemented_t *instance = malloc(sizeof(rbs_types_zzztmpnotimplemented_t));
-
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(ruby_value);
-
-
-    rb_gc_register_mark_object(ruby_value);
-
-    *instance = (rbs_types_zzztmpnotimplemented_t) {
-        .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
-            .type = RBS_TYPES_ZZZTMPNOTIMPLEMENTED
-        },
-    };
-
-    return instance;
-}
-
