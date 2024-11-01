@@ -1162,9 +1162,9 @@ rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_ty
     rg->start = state->current_token.range.start;
 
     while (true) {
-      VALUE name;
+      rbs_ast_symbol_t *name;
       bool unchecked = false;
-      VALUE variance = ID2SYM(rb_intern("invariant"));
+      rbs_ast_symbol_t *variance = rbs_ast_symbol_new(ID2SYM(rb_intern("invariant")));
       VALUE upper_bound = Qnil;
       VALUE default_type = Qnil;
 
@@ -1187,10 +1187,10 @@ rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_ty
         if (state->next_token.type == kIN || state->next_token.type == kOUT) {
           switch (state->next_token.type) {
           case kIN:
-            variance = ID2SYM(rb_intern("contravariant"));
+            variance = rbs_ast_symbol_new(ID2SYM(rb_intern("contravariant")));
             break;
           case kOUT:
-            variance = ID2SYM(rb_intern("covariant"));
+            variance = rbs_ast_symbol_new(ID2SYM(rb_intern("covariant")));
             break;
           default:
             rbs_abort();
@@ -1205,7 +1205,7 @@ rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_ty
       name_range = state->current_token.range;
 
       ID id = INTERN_TOKEN(state, state->current_token);
-      name = ID2SYM(id);
+      name = rbs_ast_symbol_new(ID2SYM(id));
 
       parser_insert_typevar(state, id);
 
@@ -1247,7 +1247,7 @@ rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_ty
       rbs_loc_add_optional_child(loc, rb_intern("upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, rb_intern("default"), default_type_range);
 
-      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(name, variance, upper_bound, default_type, location);
+      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(((rbs_node_t *)name)->cached_ruby_value, ((rbs_node_t *)variance)->cached_ruby_value, upper_bound, default_type, location);
 
       if (unchecked) {
         rb_funcall(((rbs_node_t *) param)->cached_ruby_value, rb_intern("unchecked!"), 0);
