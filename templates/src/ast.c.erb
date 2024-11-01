@@ -59,7 +59,7 @@ parameters = node.constructor_parameters
 
     <%- if node.builds_ruby_object_internally? -%>
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = <%= node.c_function_name %>(<%= parameters.map(&:cached_ruby_value_expr).join(", ") %>);
+    VALUE ruby_value = <%= node.c_function_name %>(<%= parameters.map(&:name).join(", ") %>);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
