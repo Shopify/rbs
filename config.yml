@@ -121,9 +121,11 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: ivar_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: visibility
@@ -132,9 +134,11 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: ivar_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: visibility
@@ -143,9 +147,11 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: ivar_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: visibility

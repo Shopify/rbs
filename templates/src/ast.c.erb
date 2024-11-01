@@ -164,11 +164,17 @@ parameters = node.constructor_parameters
     <%- elsif node.c_base_name == "rbs_ast_members_private"-%>
     VALUE ruby_value = rbs_ast_members_private(location);
     <%- elsif node.c_base_name == "rbs_ast_members_attrreader"-%>
-    VALUE ruby_value = rbs_ast_members_attr_reader(name, type, ivar_name, kind, annotations, location, comment, visibility);
+    VALUE ruby_type = type->cached_ruby_value;
+    VALUE ruby_annotations = annotations->cached_ruby_value;
+    VALUE ruby_value = rbs_ast_members_attr_reader(name, ruby_type, ivar_name, kind, ruby_annotations, location, comment, visibility);
     <%- elsif node.c_base_name == "rbs_ast_members_attrwriter"-%>
-    VALUE ruby_value = rbs_ast_members_attr_writer(name, type, ivar_name, kind, annotations, location, comment, visibility);
+    VALUE ruby_type = type->cached_ruby_value;
+    VALUE ruby_annotations = annotations->cached_ruby_value;
+    VALUE ruby_value = rbs_ast_members_attr_writer(name, ruby_type, ivar_name, kind, ruby_annotations, location, comment, visibility);
     <%- elsif node.c_base_name == "rbs_ast_members_attraccessor"-%>
-    VALUE ruby_value = rbs_ast_members_attr_accessor(name, type, ivar_name, kind, annotations, location, comment, visibility);
+    VALUE ruby_type = type->cached_ruby_value;
+    VALUE ruby_annotations = annotations->cached_ruby_value;
+    VALUE ruby_value = rbs_ast_members_attr_accessor(name, ruby_type, ivar_name, kind, ruby_annotations, location, comment, visibility);
     <%- elsif node.c_base_name == "rbs_ast_declarations_interface"-%>
     VALUE ruby_value = rbs_ast_decl_interface(name, type_params, members, annotations, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_declarations_module"-%>
