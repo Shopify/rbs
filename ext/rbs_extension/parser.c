@@ -321,16 +321,16 @@ static ID intern_token_start_end(parserstate *state, token start_token, token en
   keyword_key ::= {} <keyword> `:`
                 | {} keyword <`?`> `:`
 */
-static VALUE parse_keyword_key(parserstate *state) {
-  VALUE key;
+static rbs_ast_symbol_t *parse_keyword_key(parserstate *state) {
+  rbs_ast_symbol_t *key;
 
   parser_advance(state);
 
   if (state->next_token.type == pQUESTION) {
-    key = ID2SYM(intern_token_start_end(state, state->current_token, state->next_token));
+    key = rbs_ast_symbol_new(ID2SYM(intern_token_start_end(state, state->current_token, state->next_token)));
     parser_advance(state);
   } else {
-    key = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    key = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
   }
 
   return key;
@@ -340,24 +340,22 @@ static VALUE parse_keyword_key(parserstate *state) {
   keyword ::= {} keyword `:` <function_param>
 */
 static void parse_keyword(parserstate *state, VALUE keywords, VALUE memo) {
-  VALUE key;
+  rbs_ast_symbol_t *key = parse_keyword_key(state);
 
-  key = parse_keyword_key(state);
-
-  if (!NIL_P(rb_hash_aref(memo, key))) {
+  if (!NIL_P(rb_hash_aref(memo, ((rbs_node_t *)key)->cached_ruby_value))) {
     raise_syntax_error(
       state,
       state->current_token,
       "duplicated keyword argument"
     );
   } else {
-    rb_hash_aset(memo, key, Qtrue);
+    rb_hash_aset(memo, ((rbs_node_t *)key)->cached_ruby_value, Qtrue);
   }
 
   parser_advance_assert(state, pCOLON);
   rbs_types_function_param_t *param = parse_function_param(state);
 
-  rb_hash_aset(keywords, key, ((rbs_node_t *)param)->cached_ruby_value);
+  rb_hash_aset(keywords, ((rbs_node_t *)key)->cached_ruby_value, ((rbs_node_t *)param)->cached_ruby_value);
 
   return;
 }
@@ -769,9 +767,9 @@ static VALUE parse_record_attributes(parserstate *state) {
   }
 
   while (true) {
-    VALUE key,
-          value = rb_ary_new(),
-          required = Qtrue;
+    rbs_ast_symbol_t *key;
+    VALUE value = rb_ary_new();
+    VALUE required = Qtrue;
 
     if (state->next_token.type == pQUESTION) {
       // { ?foo: type } syntax
@@ -782,7 +780,7 @@ static VALUE parse_record_attributes(parserstate *state) {
     if (is_keyword(state)) {
       // { foo: type } syntax
       key = parse_keyword_key(state);
-      check_key_duplication(state, fields, key);
+      check_key_duplication(state, fields, ((rbs_node_t *)key)->cached_ruby_value);
       parser_advance_assert(state, pCOLON);
     } else {
       // { key => type } syntax
@@ -795,7 +793,7 @@ static VALUE parse_record_attributes(parserstate *state) {
       case tINTEGER:
       case kTRUE:
       case kFALSE:
-        key = rb_funcall(rbs_struct_to_ruby_value(parse_simple(state)), rb_intern("literal"), 0);
+        key = rbs_ast_symbol_new(rb_funcall(rbs_struct_to_ruby_value(parse_simple(state)), rb_intern("literal"), 0));
         break;
       default:
         raise_syntax_error(
@@ -804,13 +802,13 @@ static VALUE parse_record_attributes(parserstate *state) {
           "unexpected record key token"
         );
       }
-      check_key_duplication(state, fields, key);
+      check_key_duplication(state, fields, ((rbs_node_t *)key)->cached_ruby_value);
       parser_advance_assert(state, pFATARROW);
     }
     rbs_node_t *type = parse_type(state);
     rb_ary_push(value, type->cached_ruby_value);
     rb_ary_push(value, required);
-    rb_hash_aset(fields, key, value);
+    rb_hash_aset(fields, ((rbs_node_t *)key)->cached_ruby_value, value);
 
     if (parser_advance_if(state, pCOMMA)) {
       if (state->next_token.type == pRBRACE) {
