@@ -98,7 +98,7 @@ rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, VALUE loc
     return instance;
 }
 
-rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(VALUE name, rbs_node_list_t * type_params, VALUE super_class, rbs_node_list_t * members, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(VALUE name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_class_t *instance = (rbs_ast_declarations_class_t *)calloc(1, sizeof(rbs_ast_declarations_class_t));
 
     // Disable GC for all these Ruby objects.
@@ -121,10 +121,10 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(VALUE name, rbs_nod
             .type = RBS_AST_DECLARATIONS_CLASS
         },
         .name = name,
-        .type_params = type_params->cached_ruby_value,
+        .type_params = type_params,
         .super_class = super_class,
-        .members = members->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .members = members,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -158,7 +158,7 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(VALUE n
     return instance;
 }
 
-rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t * new_name, rbs_typename_t * old_name, VALUE location, VALUE comment) {
+rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment) {
     rbs_ast_declarations_classalias_t *instance = (rbs_ast_declarations_classalias_t *)calloc(1, sizeof(rbs_ast_declarations_classalias_t));
 
     // Disable GC for all these Ruby objects.
@@ -177,8 +177,8 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typen
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CLASSALIAS
         },
-        .new_name = new_name->base.cached_ruby_value,
-        .old_name = old_name->base.cached_ruby_value,
+        .new_name = new_name,
+        .old_name = old_name,
         .location = location,
         .comment = comment,
     };
@@ -186,7 +186,7 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typen
     return instance;
 }
 
-rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t * name, rbs_node_t * type, VALUE location, VALUE comment) {
+rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_declarations_constant_t *instance = (rbs_ast_declarations_constant_t *)calloc(1, sizeof(rbs_ast_declarations_constant_t));
 
     // Disable GC for all these Ruby objects.
@@ -205,8 +205,8 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CONSTANT
         },
-        .name = name->base.cached_ruby_value,
-        .type = type->cached_ruby_value,
+        .name = name,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -214,7 +214,7 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_
     return instance;
 }
 
-rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_declarations_global_t *instance = (rbs_ast_declarations_global_t *)calloc(1, sizeof(rbs_ast_declarations_global_t));
 
     // Disable GC for all these Ruby objects.
@@ -234,7 +234,7 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(VALUE name, rbs_n
             .type = RBS_AST_DECLARATIONS_GLOBAL
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -242,7 +242,7 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(VALUE name, rbs_n
     return instance;
 }
 
-rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typename_t * name, rbs_node_list_t * type_params, rbs_node_list_t * members, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_interface_t *instance = (rbs_ast_declarations_interface_t *)calloc(1, sizeof(rbs_ast_declarations_interface_t));
 
     // Disable GC for all these Ruby objects.
@@ -263,10 +263,10 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_INTERFACE
         },
-        .name = name->base.cached_ruby_value,
-        .type_params = type_params->cached_ruby_value,
-        .members = members->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .name = name,
+        .type_params = type_params,
+        .members = members,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -274,7 +274,7 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
     return instance;
 }
 
-rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(VALUE name, rbs_node_list_t * type_params, VALUE self_types, rbs_node_list_t * members, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(VALUE name, rbs_node_list_t *type_params, VALUE self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_module_t *instance = (rbs_ast_declarations_module_t *)calloc(1, sizeof(rbs_ast_declarations_module_t));
 
     // Disable GC for all these Ruby objects.
@@ -297,10 +297,10 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(VALUE name, rbs_n
             .type = RBS_AST_DECLARATIONS_MODULE
         },
         .name = name,
-        .type_params = type_params->cached_ruby_value,
+        .type_params = type_params,
         .self_types = self_types,
-        .members = members->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .members = members,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -333,7 +333,7 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(VALUE r
     return instance;
 }
 
-rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t * new_name, rbs_typename_t * old_name, VALUE location, VALUE comment) {
+rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment) {
     rbs_ast_declarations_modulealias_t *instance = (rbs_ast_declarations_modulealias_t *)calloc(1, sizeof(rbs_ast_declarations_modulealias_t));
 
     // Disable GC for all these Ruby objects.
@@ -352,8 +352,8 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typ
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_MODULEALIAS
         },
-        .new_name = new_name->base.cached_ruby_value,
-        .old_name = old_name->base.cached_ruby_value,
+        .new_name = new_name,
+        .old_name = old_name,
         .location = location,
         .comment = comment,
     };
@@ -382,7 +382,7 @@ rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, V
     return instance;
 }
 
-rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t * name, rbs_node_list_t * type_params, rbs_node_t * type, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_typealias_t *instance = (rbs_ast_declarations_typealias_t *)calloc(1, sizeof(rbs_ast_declarations_typealias_t));
 
     // Disable GC for all these Ruby objects.
@@ -403,10 +403,10 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typenam
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_TYPEALIAS
         },
-        .name = name->base.cached_ruby_value,
-        .type_params = type_params->cached_ruby_value,
-        .type = type->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .name = name,
+        .type_params = type_params,
+        .type = type,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -507,7 +507,7 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     return instance;
 }
 
-rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE new_name, VALUE old_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE new_name, VALUE old_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_alias_t *instance = (rbs_ast_members_alias_t *)calloc(1, sizeof(rbs_ast_members_alias_t));
 
     // Disable GC for all these Ruby objects.
@@ -531,7 +531,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE new_name, VALUE old_nam
         .new_name = new_name,
         .old_name = old_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -539,7 +539,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE new_name, VALUE old_nam
     return instance;
 }
 
-rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE name, rbs_node_t * type, VALUE ivar_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE visibility) {
+rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attraccessor_t *instance = (rbs_ast_members_attraccessor_t *)calloc(1, sizeof(rbs_ast_members_attraccessor_t));
 
     // Disable GC for all these Ruby objects.
@@ -563,10 +563,10 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE name, rbs
             .type = RBS_AST_MEMBERS_ATTRACCESSOR
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .ivar_name = ivar_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .visibility = visibility,
@@ -575,7 +575,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE name, rbs
     return instance;
 }
 
-rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE name, rbs_node_t * type, VALUE ivar_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE visibility) {
+rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attrreader_t *instance = (rbs_ast_members_attrreader_t *)calloc(1, sizeof(rbs_ast_members_attrreader_t));
 
     // Disable GC for all these Ruby objects.
@@ -599,10 +599,10 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE name, rbs_nod
             .type = RBS_AST_MEMBERS_ATTRREADER
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .ivar_name = ivar_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .visibility = visibility,
@@ -611,7 +611,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE name, rbs_nod
     return instance;
 }
 
-rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE name, rbs_node_t * type, VALUE ivar_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE visibility) {
+rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attrwriter_t *instance = (rbs_ast_members_attrwriter_t *)calloc(1, sizeof(rbs_ast_members_attrwriter_t));
 
     // Disable GC for all these Ruby objects.
@@ -635,10 +635,10 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE name, rbs_nod
             .type = RBS_AST_MEMBERS_ATTRWRITER
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .ivar_name = ivar_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .visibility = visibility,
@@ -647,7 +647,7 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE name, rbs_nod
     return instance;
 }
 
-rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_members_classinstancevariable_t *instance = (rbs_ast_members_classinstancevariable_t *)calloc(1, sizeof(rbs_ast_members_classinstancevariable_t));
 
     // Disable GC for all these Ruby objects.
@@ -667,7 +667,7 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
             .type = RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -675,7 +675,7 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
     return instance;
 }
 
-rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_members_classvariable_t *instance = (rbs_ast_members_classvariable_t *)calloc(1, sizeof(rbs_ast_members_classvariable_t));
 
     // Disable GC for all these Ruby objects.
@@ -695,7 +695,7 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE name, r
             .type = RBS_AST_MEMBERS_CLASSVARIABLE
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -703,7 +703,7 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE name, r
     return instance;
 }
 
-rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, VALUE args, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_extend_t *instance = (rbs_ast_members_extend_t *)calloc(1, sizeof(rbs_ast_members_extend_t));
 
     // Disable GC for all these Ruby objects.
@@ -725,7 +725,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, VALUE args, rbs
         },
         .name = name,
         .args = args,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -733,7 +733,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, VALUE args, rbs
     return instance;
 }
 
-rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, VALUE args, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_include_t *instance = (rbs_ast_members_include_t *)calloc(1, sizeof(rbs_ast_members_include_t));
 
     // Disable GC for all these Ruby objects.
@@ -755,7 +755,7 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, VALUE args, r
         },
         .name = name,
         .args = args,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -763,7 +763,7 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, VALUE args, r
     return instance;
 }
 
-rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_members_instancevariable_t *instance = (rbs_ast_members_instancevariable_t *)calloc(1, sizeof(rbs_ast_members_instancevariable_t));
 
     // Disable GC for all these Ruby objects.
@@ -783,7 +783,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE n
             .type = RBS_AST_MEMBERS_INSTANCEVARIABLE
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -791,7 +791,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE n
     return instance;
 }
 
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(VALUE name, VALUE kind, VALUE overloads, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(VALUE name, VALUE kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
     rbs_ast_members_methoddefinition_t *instance = (rbs_ast_members_methoddefinition_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_t));
 
     // Disable GC for all these Ruby objects.
@@ -817,7 +817,7 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(VALUE n
         .name = name,
         .kind = kind,
         .overloads = overloads,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .overloading = overloading,
@@ -850,7 +850,7 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
     return instance;
 }
 
-rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, VALUE args, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_prepend_t *instance = (rbs_ast_members_prepend_t *)calloc(1, sizeof(rbs_ast_members_prepend_t));
 
     // Disable GC for all these Ruby objects.
@@ -872,7 +872,7 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, VALUE args, r
         },
         .name = name,
         .args = args,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -973,7 +973,7 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE name, VALUE variance, VALUE upp
     return instance;
 }
 
-rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t * type_params, VALUE type, VALUE block, VALUE location) {
+rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, VALUE block, VALUE location) {
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
     // Disable GC for all these Ruby objects.
@@ -992,7 +992,7 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t * type_params, VALUE type, 
             .cached_ruby_value = ruby_value,
             .type = RBS_METHODTYPE
         },
-        .type_params = type_params->cached_ruby_value,
+        .type_params = type_params,
         .type = type,
         .block = block,
         .location = location,
@@ -1049,7 +1049,7 @@ rbs_typename_t *rbs_typename_new(VALUE namespace, VALUE name) {
     return instance;
 }
 
-rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t * name, VALUE args, VALUE location) {
+rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, VALUE args, VALUE location) {
     rbs_types_alias_t *instance = (rbs_types_alias_t *)calloc(1, sizeof(rbs_types_alias_t));
 
     // Disable GC for all these Ruby objects.
@@ -1067,7 +1067,7 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t * name, VALUE args, VALUE 
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_ALIAS
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .args = args,
         .location = location,
     };
@@ -1298,7 +1298,7 @@ rbs_types_block_t *rbs_types_block_new(VALUE ruby_value, VALUE type, VALUE requi
     return instance;
 }
 
-rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t * name, VALUE args, VALUE location) {
+rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, VALUE args, VALUE location) {
     rbs_types_classinstance_t *instance = (rbs_types_classinstance_t *)calloc(1, sizeof(rbs_types_classinstance_t));
 
     // Disable GC for all these Ruby objects.
@@ -1316,7 +1316,7 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t * name, VA
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_CLASSINSTANCE
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .args = args,
         .location = location,
     };
@@ -1324,7 +1324,7 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t * name, VA
     return instance;
 }
 
-rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t * name, VALUE location) {
+rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t *name, VALUE location) {
     rbs_types_classsingleton_t *instance = (rbs_types_classsingleton_t *)calloc(1, sizeof(rbs_types_classsingleton_t));
 
     // Disable GC for all these Ruby objects.
@@ -1341,7 +1341,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t * name, 
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_CLASSSINGLETON
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .location = location,
     };
 
@@ -1383,7 +1383,7 @@ rbs_types_function_t *rbs_types_function_new(VALUE ruby_value, VALUE required_po
     return instance;
 }
 
-rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t * type, VALUE name, VALUE location) {
+rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, VALUE name, VALUE location) {
     rbs_types_function_param_t *instance = (rbs_types_function_param_t *)calloc(1, sizeof(rbs_types_function_param_t));
 
     // Disable GC for all these Ruby objects.
@@ -1401,7 +1401,7 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t * type, VALU
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_FUNCTION_PARAM
         },
-        .type = type->cached_ruby_value,
+        .type = type,
         .name = name,
         .location = location,
     };
@@ -1409,7 +1409,7 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t * type, VALU
     return instance;
 }
 
-rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t * name, VALUE args, VALUE location) {
+rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, VALUE args, VALUE location) {
     rbs_types_interface_t *instance = (rbs_types_interface_t *)calloc(1, sizeof(rbs_types_interface_t));
 
     // Disable GC for all these Ruby objects.
@@ -1427,7 +1427,7 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t * name, VALUE args
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_INTERFACE
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .args = args,
         .location = location,
     };
@@ -1483,7 +1483,7 @@ rbs_types_literal_t *rbs_types_literal_new(VALUE literal, VALUE location) {
     return instance;
 }
 
-rbs_types_optional_t *rbs_types_optional_new(rbs_node_t * type, VALUE location) {
+rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, VALUE location) {
     rbs_types_optional_t *instance = (rbs_types_optional_t *)calloc(1, sizeof(rbs_types_optional_t));
 
     // Disable GC for all these Ruby objects.
@@ -1500,7 +1500,7 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_node_t * type, VALUE location) 
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_OPTIONAL
         },
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
     };
 

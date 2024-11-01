@@ -24,10 +24,26 @@ module RBS
         case @c_type
         when "VALUE"
           @name
-        when "rbs_node_t *", "rbs_node_list_t *"
+        when "rbs_node", "rbs_node_list"
           "#{@name}->cached_ruby_value"
         else
           "#{@name}->base.cached_ruby_value"
+        end
+      end
+
+      def parameter_decl
+        if @c_type == "VALUE"
+          "#{@c_type} #{@name}"
+        else
+          "#{@c_type}_t *#{@name}"
+        end
+      end
+
+      def stored_field_decl
+        if @c_type == "VALUE"
+          "VALUE #{@name}"
+        else
+          "struct #{@c_type} *#{@name}"
         end
       end
 
@@ -45,7 +61,11 @@ module RBS
       # e.g. `TypeAlias`
       attr_reader :ruby_class_name #: String
 
-      # The name of the auto-generated C struct for this type,
+      # The base name of the auto-generated C struct for this type.
+      # e.g. `rbs_ast_declarations_typealias`
+      attr_reader :c_base_name #: String
+
+      # The name of the typedef of the auto-generated C struct for this type,
       # e.g. `rbs_ast_declarations_typealias_t`
       attr_reader :c_type_name #: String
 
