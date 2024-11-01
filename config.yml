@@ -52,9 +52,13 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: type_params
+        c_type: rbs_node_list_t *
       - name: members
+        c_type: rbs_node_list_t *
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module

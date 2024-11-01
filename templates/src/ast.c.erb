@@ -176,7 +176,11 @@ parameters = node.constructor_parameters
     VALUE ruby_annotations = annotations->cached_ruby_value;
     VALUE ruby_value = rbs_ast_members_attr_accessor(name, ruby_type, ivar_name, kind, ruby_annotations, location, comment, visibility);
     <%- elsif node.c_base_name == "rbs_ast_declarations_interface"-%>
-    VALUE ruby_value = rbs_ast_decl_interface(name, type_params, members, annotations, location, comment);
+    VALUE ruby_name = name->base.cached_ruby_value;
+    VALUE ruby_type_params = type_params->cached_ruby_value;
+    VALUE ruby_members = members->cached_ruby_value;
+    VALUE ruby_annotations = annotations->cached_ruby_value;
+    VALUE ruby_value = rbs_ast_decl_interface(ruby_name, ruby_type_params, ruby_members, ruby_annotations, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_declarations_module"-%>
     VALUE ruby_value = rbs_ast_decl_module(name, type_params, self_types, members, annotations, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_declarations_modulealias"-%>
