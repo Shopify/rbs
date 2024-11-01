@@ -13,9 +13,12 @@ nodes:
     fields:
       - name: name
       - name: type_params
+        c_type: rbs_node_list_t *
       - name: super_class
       - name: members
+        c_type: rbs_node_list_t *
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Class::Super
