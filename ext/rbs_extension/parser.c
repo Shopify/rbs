@@ -2682,12 +2682,13 @@ rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
     parser_advance(state);
   }
 
-  VALUE path = EMPTY_ARRAY;
+  rbs_node_list_t *path = rbs_node_list_new();
 
   while (true) {
     if (state->next_token.type == tUIDENT && state->next_token2.type == pCOLON2) {
-      melt_array(&path);
-      rb_ary_push(path, ID2SYM(INTERN_TOKEN(state, state->next_token)));
+      VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->next_token));
+      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value);
+      rbs_node_list_append(path, (rbs_node_t *)symbol);
       if (null_position_p(rg->start)) {
         rg->start = state->next_token.range.start;
       }
@@ -2699,7 +2700,7 @@ rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
     }
   }
 
-  return rbs_namespace_new(path, is_absolute ? Qtrue : Qfalse);
+  return rbs_namespace_new(path->cached_ruby_value, is_absolute ? Qtrue : Qfalse);
 }
 
 /*
