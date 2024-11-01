@@ -1347,8 +1347,7 @@ rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  VALUE value = rbs_ast_decl_global(typename, type->cached_ruby_value, location, comment);
-  return rbs_ast_declarations_global_new(value, typename, type->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_global_new(typename, type->cached_ruby_value, location, comment);
 }
 
 /*
@@ -1382,8 +1381,7 @@ rbs_ast_declarations_constant_t *parse_const_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  VALUE value = rbs_ast_decl_constant(((rbs_node_t *)typename)->cached_ruby_value, type->cached_ruby_value, location, comment);
-  return rbs_ast_declarations_constant_new(value, ((rbs_node_t *)typename)->cached_ruby_value, type->cached_ruby_value, location, comment);
+  return rbs_ast_declarations_constant_new(typename->base.cached_ruby_value, type->cached_ruby_value, location, comment);
 }
 
 /*

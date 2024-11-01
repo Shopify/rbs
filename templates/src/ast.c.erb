@@ -105,6 +105,10 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_type_param(name, variance, upper_bound, default_type, location);
     <%- elsif node.c_base_name == "rbs_methodtype"-%>
     VALUE ruby_value = rbs_method_type(type_params, type, block, location);
+    <%- elsif node.c_base_name == "rbs_ast_declarations_global"-%>
+    VALUE ruby_value = rbs_ast_decl_global(name, type, location, comment);
+    <%- elsif node.c_base_name == "rbs_ast_declarations_constant"-%>
+    VALUE ruby_value = rbs_ast_decl_constant(name, type, location, comment);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

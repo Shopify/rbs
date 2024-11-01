@@ -28,12 +28,14 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Constant
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Global
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type
