@@ -110,7 +110,8 @@ parameters = node.constructor_parameters
     <%- elsif node.c_base_name == "rbs_ast_typeparam"-%>
     VALUE ruby_value = rbs_ast_type_param(name, variance, upper_bound, default_type, location);
     <%- elsif node.c_base_name == "rbs_methodtype"-%>
-    VALUE ruby_value = rbs_method_type(type_params, type, block, location);
+    VALUE ruby_type_params = type_params->cached_ruby_value;
+    VALUE ruby_value = rbs_method_type(ruby_type_params, type, block, location);
     <%- elsif node.c_base_name == "rbs_ast_declarations_global"-%>
     VALUE ruby_value = rbs_ast_decl_global(name, type, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_declarations_constant"-%>
