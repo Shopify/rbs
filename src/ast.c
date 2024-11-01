@@ -882,6 +882,25 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE location) {
     return instance;
 }
 
+rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value) {
+    rbs_ast_symbol_t *instance = (rbs_ast_symbol_t *)calloc(1, sizeof(rbs_ast_symbol_t));
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(ruby_value);
+
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_ast_symbol_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_SYMBOL
+        },
+    };
+
+    return instance;
+}
+
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE location) {
     rbs_ast_typeparam_t *instance = (rbs_ast_typeparam_t *)calloc(1, sizeof(rbs_ast_typeparam_t));
 
@@ -1814,6 +1833,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         case RBS_AST_MEMBERS_PUBLIC: {
             if (strcmp(class_name, "RBS::AST::Members::Public") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::Members::Public, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
+        case RBS_AST_SYMBOL: {
+            if (strcmp(class_name, "RBS::AST::Symbol") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Symbol, got %s\n", class_name);
                 exit(1);
             }
             break;
