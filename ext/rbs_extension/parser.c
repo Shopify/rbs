@@ -2241,15 +2241,8 @@ rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state, posit
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
 
   VALUE comment = get_comment(state, comment_pos.line);
-  VALUE value = rbs_ast_decl_interface(
-    ((rbs_node_t *)name)->cached_ruby_value,
-    type_params->cached_ruby_value,
-    members->cached_ruby_value,
-    annotations->cached_ruby_value,
-    location,
-    comment
-  );
-  return rbs_ast_declarations_interface_new(value, ((rbs_node_t *)name)->cached_ruby_value, type_params->cached_ruby_value, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
+
+  return rbs_ast_declarations_interface_new(name->base.cached_ruby_value, type_params->cached_ruby_value, members->cached_ruby_value, annotations->cached_ruby_value, location, comment);
 }
 
 /*
