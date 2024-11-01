@@ -10,9 +10,13 @@ module RBS
       attr_reader :name
       attr_reader :c_type
 
-      def initialize(yaml)
-        @name = yaml["name"]
+      def initialize(name:)
+        @name = name
         @c_type = "VALUE"
+      end
+
+      def self.from_hash(hash)
+        new(name: hash["name"])
       end
     end
 
@@ -41,15 +45,30 @@ module RBS
         @c_base_name = @c_constant_name.downcase
         @c_struct_name = "#{@c_base_name}_t"
         @c_type_enum_name = @c_base_name.upcase
-        @fields = yaml["fields"].map { |field| Field.new(field) }
+        @fields = yaml["fields"].map { |field| Field.from_hash(field) }.freeze
         @parent_c_constant_name = @full_name.split("::")[0..-2].join("::").gsub("::", "_")
         @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
+        @builds_ruby_object_internally = yaml.fetch("builds_ruby_object_internally", false)
       end
 
       # Every templated type will have a C struct created for it.
       # If this is true, then we will also create a Ruby class for it, otherwise we'll skip that.
       def expose_to_ruby?
         @expose_to_ruby
+      end
+
+      # When true, this object is expected to build its own Ruby VALUE object inside its `*_new()` function.
+      # When false, the `*_new()` function will take a Ruby VALUE as its first argument.
+      def builds_ruby_object_internally?
+        @builds_ruby_object_internally
+      end
+
+      def constructor_parameters
+        if builds_ruby_object_internally?
+          @fields
+        else
+          [Field.new(name: "ruby_value")] + @fields
+        end
       end
     end
 
