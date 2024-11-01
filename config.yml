@@ -293,6 +293,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: location
   - name: RBS::Types::Function
     fields:

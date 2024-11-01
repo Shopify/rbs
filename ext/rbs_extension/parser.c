@@ -943,7 +943,7 @@ static rbs_types_classsingleton_t *parse_singleton_type(parserstate *state) {
   rbs_loc_alloc_children(loc, 1);
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
 
-  return rbs_types_classsingleton_new(typename->base.cached_ruby_value, location);
+  return rbs_types_classsingleton_new(typename, location);
 }
 
 /*

@@ -75,7 +75,8 @@ parameters = node.constructor_parameters
     <%- elsif node.c_base_name == "rbs_types_proc" -%>
     VALUE ruby_value = rbs_proc(type, block, location, self_type);
     <%- elsif node.c_base_name == "rbs_types_classsingleton" -%>
-    VALUE ruby_value = rbs_class_singleton(name, location);
+    VALUE ruby_name = name->base.cached_ruby_value;
+    VALUE ruby_value = rbs_class_singleton(ruby_name, location);
     <%- elsif node.c_base_name == "rbs_types_bases_bool"-%>
     VALUE ruby_value = rbs_bases_bool(location);
     <%- elsif node.c_base_name == "rbs_types_bases_bottom"-%>
