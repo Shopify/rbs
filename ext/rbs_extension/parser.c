@@ -1502,7 +1502,7 @@ static void parse_annotations(parserstate *state, rbs_node_list_t *annotations, 
   method_name ::= {} <IDENT | keyword>
                 | {} (IDENT | keyword)~<`?`>
 */
-static VALUE parse_method_name(parserstate *state, range *range) {
+static rbs_ast_symbol_t *parse_method_name(parserstate *state, range *range) {
   parser_advance(state);
 
   switch (state->current_token.type)
@@ -1523,19 +1523,19 @@ static VALUE parse_method_name(parserstate *state, range *range) {
         rb_enc_get(state->lexstate->string)
       );
 
-      return ID2SYM(id);
+      return rbs_ast_symbol_new(ID2SYM(id));
     } else {
       *range = state->current_token.range;
-      return ID2SYM(INTERN_TOKEN(state, state->current_token));
+      return rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
     }
 
   case tBANGIDENT:
   case tEQIDENT:
     *range = state->current_token.range;
-    return ID2SYM(INTERN_TOKEN(state, state->current_token));
+    return rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
   case tQIDENT:
-    return rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0));
+    return rbs_ast_symbol_new(rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0)));
 
   case pBAR:
   case pHAT:
@@ -1546,7 +1546,7 @@ static VALUE parse_method_name(parserstate *state, range *range) {
   case pAREF_OPR:
   case tOPERATOR:
     *range = state->current_token.range;
-    return ID2SYM(INTERN_TOKEN(state, state->current_token));
+    return rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
   default:
     raise_syntax_error(
@@ -1657,11 +1657,11 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
     kind = parse_instance_singleton_kind(state, NIL_P(visibility), &kind_range);
   }
 
-  VALUE name = parse_method_name(state, &name_range);
+  rbs_ast_symbol_t *name = parse_method_name(state, &name_range);
   VALUE overloads = rb_ary_new();
   VALUE overloading = Qfalse;
 
-  if (state->next_token.type == pDOT && RB_SYM2ID(name) == rb_intern("self?")) {
+  if (state->next_token.type == pDOT && RB_SYM2ID(((rbs_node_t *)name)->cached_ruby_value) == rb_intern("self?")) {
     raise_syntax_error(
       state,
       state->next_token,
@@ -1728,16 +1728,16 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
 
   parser_pop_typevar_table(state);
 
-  VALUE k;
+  rbs_ast_symbol_t *k;
   switch (kind) {
   case INSTANCE_KIND:
-    k = ID2SYM(rb_intern("instance"));
+    k = rbs_ast_symbol_new(ID2SYM(rb_intern("instance")));
     break;
   case SINGLETON_KIND:
-    k = ID2SYM(rb_intern("singleton"));
+    k = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton")));
     break;
   case INSTANCE_SINGLETON_KIND:
-    k = ID2SYM(rb_intern("singleton_instance"));
+    k = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton_instance")));
     break;
   default:
     rbs_abort();
@@ -1752,7 +1752,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
   rbs_loc_add_optional_child(loc, rb_intern("overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
 
-  return rbs_ast_members_methoddefinition_new(name, k, overloads, annotations, location, comment, overloading, visibility);
+  return rbs_ast_members_methoddefinition_new(((rbs_node_t *)name)->cached_ruby_value, ((rbs_node_t *)k)->cached_ruby_value, overloads, annotations, location, comment, overloading, visibility);
 }
 
 /**
@@ -1877,12 +1877,12 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
   VALUE comment = get_comment(state, comment_pos.line);
 
-  VALUE new_name;
-  VALUE old_name;
-  VALUE kind;
+  rbs_ast_symbol_t *new_name;
+  rbs_ast_symbol_t *old_name;
+  rbs_ast_symbol_t *kind;
 
   if (!instance_only && state->next_token.type == kSELF) {
-    kind = ID2SYM(rb_intern("singleton"));
+    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton")));
 
     new_kind_range.start = state->next_token.range.start;
     new_kind_range.end = state->next_token2.range.end;
@@ -1896,7 +1896,7 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
     parser_advance_assert(state, pDOT);
     old_name = parse_method_name(state, &old_name_range);
   } else {
-    kind = ID2SYM(rb_intern("instance"));
+    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("instance")));
     new_name = parse_method_name(state, &new_name_range);
     old_name = parse_method_name(state, &old_name_range);
 
@@ -1914,7 +1914,7 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
   rbs_loc_add_optional_child(loc, rb_intern("new_kind"), new_kind_range);
   rbs_loc_add_optional_child(loc, rb_intern("old_kind"), old_kind_range);
 
-  return rbs_ast_members_alias_new(new_name, old_name, kind, annotations, location, comment);
+  return rbs_ast_members_alias_new(((rbs_node_t *)new_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, ((rbs_node_t *)kind)->cached_ruby_value, annotations, location, comment);
 }
 
 /*
@@ -2065,7 +2065,7 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
 
   InstanceSingletonKind is_kind;
   VALUE kind;
-  VALUE attr_name;
+  rbs_ast_symbol_t *attr_name;
   VALUE ivar_name;
   rbs_node_t *type;
   VALUE comment;
@@ -2147,11 +2147,11 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   switch (attr_type)
   {
   case kATTRREADER:
-    return (rbs_node_t *) rbs_ast_members_attrreader_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attrreader_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRWRITER:
-    return (rbs_node_t *) rbs_ast_members_attrwriter_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attrwriter_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRACCESSOR:
-    return (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attraccessor_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility);
   default:
     rbs_abort();
   }
