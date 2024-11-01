@@ -162,6 +162,8 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_decl_class_alias(new_name, old_name, location, comment);
     <%- elsif node.c_base_name == "rbs_namespace"-%>
     VALUE ruby_value = rbs_namespace(path, absolute);
+    <%- elsif node.c_base_name == "rbs_ast_directives_use"-%>
+    VALUE ruby_value = rbs_ast_directives_use(clauses, location);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

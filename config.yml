@@ -86,6 +86,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Directives::Use
+    builds_ruby_object_internally: true
     fields:
       - name: clauses
       - name: location
