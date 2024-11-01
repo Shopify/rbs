@@ -67,7 +67,8 @@ parameters = node.constructor_parameters
     VALUE ruby_type = type->cached_ruby_value;
     VALUE ruby_value = rbs_function_param(ruby_type, name, location);
     <%- elsif node.c_base_name == "rbs_types_optional" -%>
-    VALUE ruby_value = rbs_optional(type, location);
+    VALUE ruby_type = type->cached_ruby_value;
+    VALUE ruby_value = rbs_optional(ruby_type, location);
     <%- elsif node.c_base_name == "rbs_types_proc" -%>
     VALUE ruby_value = rbs_proc(type, block, location, self_type);
     <%- elsif node.c_base_name == "rbs_types_classsingleton" -%>

@@ -593,7 +593,7 @@ static rbs_node_t *parse_optional(parserstate *state) {
     parser_advance(state);
     rg.end = state->current_token.range.end;
     VALUE location = rbs_new_location(state->buffer, rg);
-    return (rbs_node_t *)rbs_types_optional_new(type->cached_ruby_value, location);
+    return (rbs_node_t *) rbs_types_optional_new(type, location);
   } else {
     return type;
   }
