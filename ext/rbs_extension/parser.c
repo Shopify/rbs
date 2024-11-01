@@ -1321,7 +1321,7 @@ rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   range decl_range;
   range name_range, colon_range;
 
-  VALUE typename;
+  rbs_ast_symbol_t *typename;
   rbs_node_t *type;
   VALUE location;
   VALUE comment;
@@ -1332,7 +1332,7 @@ rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   comment = get_comment(state, decl_range.start.line);
 
   name_range = state->current_token.range;
-  typename = ID2SYM(INTERN_TOKEN(state, state->current_token));
+  typename = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
   parser_advance_assert(state, pCOLON);
   colon_range = state->current_token.range;
@@ -1346,7 +1346,7 @@ rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
   rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
 
-  return rbs_ast_declarations_global_new(typename, type, location, comment);
+  return rbs_ast_declarations_global_new(((rbs_node_t *)typename)->cached_ruby_value, type, location, comment);
 }
 
 /*
