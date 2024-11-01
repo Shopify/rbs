@@ -124,6 +124,12 @@ parameters = node.constructor_parameters
         overloading,
         visibility
     );
+    <%- elsif node.c_base_name == "rbs_ast_members_include"-%>
+    VALUE ruby_value = rbs_ast_members_include(name, args, annotations, location, comment);
+    <%- elsif node.c_base_name == "rbs_ast_members_extend"-%>
+    VALUE ruby_value = rbs_ast_members_extend(name, args, annotations, location, comment);
+    <%- elsif node.c_base_name == "rbs_ast_members_prepend"-%>
+    VALUE ruby_value = rbs_ast_members_prepend(name, args, annotations, location, comment);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

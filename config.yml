@@ -143,6 +143,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Extend
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -150,6 +151,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Include
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -178,6 +180,7 @@ nodes:
       - name: annotations
       - name: method_type
   - name: RBS::AST::Members::Prepend
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
