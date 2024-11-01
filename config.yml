@@ -13,9 +13,12 @@ nodes:
     fields:
       - name: name
       - name: type_params
+        c_type: rbs_node_list_t *
       - name: super_class
       - name: members
+        c_type: rbs_node_list_t *
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Class::Super
@@ -28,14 +31,18 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: new_name
+        c_type: rbs_typename_t *
       - name: old_name
+        c_type: rbs_typename_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Constant
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: type
+        c_type: rbs_node_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Global
@@ -43,15 +50,20 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Interface
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: type_params
+        c_type: rbs_node_list_t *
       - name: members
+        c_type: rbs_node_list_t *
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module
@@ -59,9 +71,12 @@ nodes:
     fields:
       - name: name
       - name: type_params
+        c_type: rbs_node_list_t *
       - name: self_types
       - name: members
+        c_type: rbs_node_list_t *
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module::Self
@@ -73,16 +88,22 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: new_name
+        c_type: rbs_typename_t *
       - name: old_name
+        c_type: rbs_typename_t *
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::TypeAlias
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: type_params
+        c_type: rbs_node_list_t *
       - name: type
+        c_type: rbs_node_t *
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Directives::Use
@@ -106,6 +127,7 @@ nodes:
       - name: old_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::AttrAccessor
@@ -113,9 +135,11 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: ivar_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: visibility
@@ -124,9 +148,11 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: ivar_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: visibility
@@ -135,9 +161,11 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: ivar_name
       - name: kind
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: visibility
@@ -146,6 +174,7 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::ClassVariable
@@ -153,6 +182,7 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::Extend
@@ -161,6 +191,7 @@ nodes:
       - name: name
       - name: args
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::Include
@@ -169,6 +200,7 @@ nodes:
       - name: name
       - name: args
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::InstanceVariable
@@ -176,6 +208,7 @@ nodes:
     fields:
       - name: name
       - name: type
+        c_type: rbs_node_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::MethodDefinition
@@ -185,6 +218,7 @@ nodes:
       - name: kind
       - name: overloads
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
       - name: overloading
@@ -199,6 +233,7 @@ nodes:
       - name: name
       - name: args
       - name: annotations
+        c_type: rbs_node_list_t *
       - name: location
       - name: comment
   - name: RBS::AST::Members::Private
@@ -222,6 +257,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: type_params
+        c_type: rbs_node_list_t *
       - name: type
       - name: block
       - name: location
@@ -239,6 +275,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: args
       - name: location
   - name: RBS::Types::Bases::Any
@@ -287,12 +324,14 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: args
       - name: location
   - name: RBS::Types::ClassSingleton
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: location
   - name: RBS::Types::Function
     fields:
@@ -308,12 +347,14 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: type
+        c_type: rbs_node_t *
       - name: name
       - name: location
   - name: RBS::Types::Interface
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename_t *
       - name: args
       - name: location
   - name: RBS::Types::Intersection
@@ -330,6 +371,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: type
+        c_type: rbs_node_t *
       - name: location
   - name: RBS::Types::Proc
     builds_ruby_object_internally: true
