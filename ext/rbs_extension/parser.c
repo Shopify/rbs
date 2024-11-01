@@ -2070,7 +2070,7 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   rbs_node_t *type;
   VALUE comment;
   VALUE location;
-  VALUE visibility;
+  rbs_ast_symbol_t *visibility;
   rbs_loc *loc;
   enum TokenType attr_type;
 
@@ -2081,17 +2081,17 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   switch (state->current_token.type)
   {
   case kPRIVATE:
-    visibility = ID2SYM(rb_intern("private"));
+    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("private")));
     visibility_range = state->current_token.range;
     parser_advance(state);
     break;
   case kPUBLIC:
-    visibility = ID2SYM(rb_intern("public"));
+    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("public")));
     visibility_range = state->current_token.range;
     parser_advance(state);
     break;
   default:
-    visibility = Qnil;
+    visibility = NULL;
     visibility_range = NULL_RANGE;
     break;
   }
@@ -2144,14 +2144,16 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   rbs_loc_add_optional_child(loc, rb_intern("ivar_name"), ivar_name_range);
   rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
 
+  VALUE visibility_value = visibility ? ((rbs_node_t *)visibility)->cached_ruby_value : Qnil;
+
   switch (attr_type)
   {
   case kATTRREADER:
-    return (rbs_node_t *) rbs_ast_members_attrreader_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attrreader_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility_value);
   case kATTRWRITER:
-    return (rbs_node_t *) rbs_ast_members_attrwriter_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attrwriter_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility_value);
   case kATTRACCESSOR:
-    return (rbs_node_t *) rbs_ast_members_attraccessor_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attraccessor_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility_value);
   default:
     rbs_abort();
   }
