@@ -115,10 +115,10 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *al
             .type = RBS_AST_DECLARATIONS_CLASS
         },
         .name = name,
-        .type_params = type_params->cached_ruby_value,
+        .type_params = type_params,
         .super_class = super_class,
-        .members = members->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .members = members,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -171,8 +171,8 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_alloc
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CLASSALIAS
         },
-        .new_name = new_name->base.cached_ruby_value,
-        .old_name = old_name->base.cached_ruby_value,
+        .new_name = new_name,
+        .old_name = old_name,
         .location = location,
         .comment = comment,
     };
@@ -199,8 +199,8 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_allocator
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CONSTANT
         },
-        .name = name->base.cached_ruby_value,
-        .type = type->cached_ruby_value,
+        .name = name,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -228,7 +228,7 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_allocator_t *
             .type = RBS_AST_DECLARATIONS_GLOBAL
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -257,10 +257,10 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_allocat
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_INTERFACE
         },
-        .name = name->base.cached_ruby_value,
-        .type_params = type_params->cached_ruby_value,
-        .members = members->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .name = name,
+        .type_params = type_params,
+        .members = members,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -291,10 +291,10 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_allocator_t *
             .type = RBS_AST_DECLARATIONS_MODULE
         },
         .name = name,
-        .type_params = type_params->cached_ruby_value,
+        .type_params = type_params,
         .self_types = self_types,
-        .members = members->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .members = members,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -345,8 +345,8 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_all
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_MODULEALIAS
         },
-        .new_name = new_name->base.cached_ruby_value,
-        .old_name = old_name->base.cached_ruby_value,
+        .new_name = new_name,
+        .old_name = old_name,
         .location = location,
         .comment = comment,
     };
@@ -395,10 +395,10 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_allocat
             .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_TYPEALIAS
         },
-        .name = name->base.cached_ruby_value,
-        .type_params = type_params->cached_ruby_value,
-        .type = type->cached_ruby_value,
-        .annotations = annotations->cached_ruby_value,
+        .name = name,
+        .type_params = type_params,
+        .type = type,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -520,7 +520,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, V
         .new_name = new_name,
         .old_name = old_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -552,10 +552,10 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t
             .type = RBS_AST_MEMBERS_ATTRACCESSOR
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .ivar_name = ivar_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .visibility = visibility,
@@ -588,10 +588,10 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *al
             .type = RBS_AST_MEMBERS_ATTRREADER
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .ivar_name = ivar_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .visibility = visibility,
@@ -624,10 +624,10 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *al
             .type = RBS_AST_MEMBERS_ATTRWRITER
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .ivar_name = ivar_name,
         .kind = kind,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .visibility = visibility,
@@ -656,7 +656,7 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
             .type = RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -684,7 +684,7 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator
             .type = RBS_AST_MEMBERS_CLASSVARIABLE
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -714,7 +714,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator,
         },
         .name = name,
         .args = args,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -744,7 +744,7 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_allocator_t *allocato
         },
         .name = name,
         .args = args,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -772,7 +772,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_all
             .type = RBS_AST_MEMBERS_INSTANCEVARIABLE
         },
         .name = name,
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
         .comment = comment,
     };
@@ -806,7 +806,7 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_all
         .name = name,
         .kind = kind,
         .overloads = overloads,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
         .overloading = overloading,
@@ -860,7 +860,7 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_allocator_t *allocato
         },
         .name = name,
         .args = args,
-        .annotations = annotations->cached_ruby_value,
+        .annotations = annotations,
         .location = location,
         .comment = comment,
     };
@@ -981,7 +981,7 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_allocator_t *allocator, rbs_node_list_t
             .cached_ruby_value = ruby_value,
             .type = RBS_METHODTYPE
         },
-        .type_params = type_params->cached_ruby_value,
+        .type_params = type_params,
         .type = type,
         .block = block,
         .location = location,
@@ -1056,7 +1056,7 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_ALIAS
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .args = args,
         .location = location,
     };
@@ -1306,7 +1306,7 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_allocator_t *allocato
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_CLASSINSTANCE
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .args = args,
         .location = location,
     };
@@ -1331,7 +1331,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_allocator_t *alloca
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_CLASSSINGLETON
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .location = location,
     };
 
@@ -1390,7 +1390,7 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *alloca
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_FUNCTION_PARAM
         },
-        .type = type->cached_ruby_value,
+        .type = type,
         .name = name,
         .location = location,
     };
@@ -1416,7 +1416,7 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, rbs_t
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_INTERFACE
         },
-        .name = name->base.cached_ruby_value,
+        .name = name,
         .args = args,
         .location = location,
     };
@@ -1489,7 +1489,7 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_nod
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_OPTIONAL
         },
-        .type = type->cached_ruby_value,
+        .type = type,
         .location = location,
     };
 
