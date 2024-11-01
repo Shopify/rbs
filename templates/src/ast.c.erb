@@ -49,7 +49,7 @@ nodes.each do |node|
 
 parameters = node.constructor_parameters
 -%>
-<%= node.c_struct_name %> *<%= node.c_base_name %>_new(<%= parameters.map { |field| "#{field.c_type} #{field.name}" }.join(", ") %>) {
+<%= node.c_struct_name %> *<%= node.c_base_name %>_new(<%= parameters.map(&:parameter_decl).join(", ") %>) {
     <%= node.c_struct_name %> *instance = (<%= node.c_struct_name %> *)calloc(1, sizeof(<%= node.c_struct_name %>));
 
     // Disable GC for all these Ruby objects.
@@ -70,7 +70,7 @@ parameters = node.constructor_parameters
             .type = <%= node.c_type_enum_name %>
         },
         <%- node.fields.each do |field| -%>
-        .<%= field.name %> = <%= field.cached_ruby_value_expr %>,
+        .<%= field.name %> = <%= field.name %>,
         <%- end -%>
     };
 
