@@ -18,6 +18,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Class::Super
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
