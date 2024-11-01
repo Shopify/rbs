@@ -281,7 +281,7 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, rb_intern("name"), NULL_RANGE);
 
-    return rbs_types_function_param_new(type->cached_ruby_value, Qnil, location);
+    return rbs_types_function_param_new(type, Qnil, location);
   } else {
     range name_range = state->next_token.range;
     range param_range;
@@ -304,7 +304,7 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, rb_intern("name"), name_range);
 
-    return rbs_types_function_param_new(type->cached_ruby_value, name, location);
+    return rbs_types_function_param_new(type, name, location);
   }
 }
 

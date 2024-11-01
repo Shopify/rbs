@@ -64,7 +64,8 @@ parameters = node.constructor_parameters
     <%- elsif node.c_base_name == "rbs_typename" -%>
     VALUE ruby_value = rbs_type_name(namespace, name);
     <%- elsif node.c_base_name == "rbs_types_function_param" -%>
-    VALUE ruby_value = rbs_function_param(type, name, location);
+    VALUE ruby_type = type->cached_ruby_value;
+    VALUE ruby_value = rbs_function_param(ruby_type, name, location);
     <%- elsif node.c_base_name == "rbs_types_optional" -%>
     VALUE ruby_value = rbs_optional(type, location);
     <%- elsif node.c_base_name == "rbs_types_proc" -%>
@@ -174,7 +175,7 @@ parameters = node.constructor_parameters
             .type = <%= node.c_type_enum_name %>
         },
         <%- node.fields.each do |field| -%>
-        .<%= field.name %> = <%= field.name %>,
+        .<%= field.name %> = <%= field.ruby_object? ? field.name : "ruby_#{field.name}" %>,
         <%- end -%>
     };
 

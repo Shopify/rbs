@@ -306,6 +306,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: type
+        c_type: rbs_node_t *
       - name: name
       - name: location
   - name: RBS::Types::Interface
