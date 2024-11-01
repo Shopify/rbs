@@ -1,5 +1,7 @@
 #include "rbs/ast.h"
+
 #include <stdlib.h>
+#include "rbs/ruby_objs.h"
 
 rbs_node_list_t* rbs_node_list_new(void) {
     rbs_node_list_t *list = (rbs_node_list_t *)malloc(sizeof(rbs_node_list_t));
@@ -42,14 +44,25 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
     rb_ary_push(list->cached_ruby_value, node->cached_ruby_value);
 }
 
-<%- nodes.each do |node| -%>
-<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(VALUE ruby_value<%= node.fields.map { |field| ", VALUE #{field.name}" }.join %>) {
+<%-
+nodes.each do |node|
+
+parameters = node.constructor_parameters
+-%>
+<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= parameters.map { |field| "VALUE #{field.name}" }.join(", ") %>) {
     <%= node.c_type_name %> *instance = malloc(sizeof(<%= node.c_type_name %>));
 
-    rb_gc_register_mark_object(ruby_value);
-    <%- node.fields.each do |field| -%>
-    rb_gc_register_mark_object(<%= field.name %>);
+    // Disable GC for all these Ruby objects.
+    <%- parameters.each do |parameter| -%>
+    rb_gc_register_mark_object(<%= parameter.name %>);
     <%- end -%>
+
+    <%- if node.builds_ruby_object_internally? -%>
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = <%= node.c_function_name %>(<%= parameters.map(&:name).join(", ") %>);
+    <%- end -%>
+
+    rb_gc_register_mark_object(ruby_value);
 
     *instance = (<%= node.c_type_name %>) {
         .base = (rbs_node_t) {
