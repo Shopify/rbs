@@ -137,6 +137,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::ClassVariable
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type
