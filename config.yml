@@ -320,6 +320,7 @@ nodes:
       - name: types
       - name: location
   - name: RBS::Types::Union
+    builds_ruby_object_internally: true
     fields:
       - name: types
       - name: location

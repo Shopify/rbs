@@ -1138,8 +1138,7 @@ rbs_node_t *parse_type(parserstate *state) {
 
   if (rb_array_len(union_types) > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
-    VALUE value = rbs_union(union_types, location);
-    type = (rbs_node_t *) rbs_types_union_new(value, union_types, location);
+    type = (rbs_node_t *) rbs_types_union_new(union_types, location);
   }
 
   return type;

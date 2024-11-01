@@ -98,7 +98,9 @@ parameters = node.constructor_parameters
     <%- elsif node.c_base_name == "rbs_types_record"-%>
     VALUE ruby_value = rbs_record(all_fields, location);
     <%- elsif node.c_base_name == "rbs_types_intersection"-%>
-    VALUE ruby_value= rbs_intersection(types, location);
+    VALUE ruby_value = rbs_intersection(types, location);
+    <%- elsif node.c_base_name == "rbs_types_union"-%>
+    VALUE ruby_value = rbs_union(types, location);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
