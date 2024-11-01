@@ -882,6 +882,25 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE location) {
     return instance;
 }
 
+rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value) {
+    rbs_ast_symbol_t *instance = malloc(sizeof(rbs_ast_symbol_t));
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(ruby_value);
+
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_ast_symbol_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_SYMBOL
+        },
+    };
+
+    return instance;
+}
+
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE location) {
     rbs_ast_typeparam_t *instance = malloc(sizeof(rbs_ast_typeparam_t));
 

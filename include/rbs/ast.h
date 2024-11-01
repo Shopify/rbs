@@ -40,35 +40,36 @@ enum rbs_node_type {
     RBS_AST_MEMBERS_PREPEND = 27,
     RBS_AST_MEMBERS_PRIVATE = 28,
     RBS_AST_MEMBERS_PUBLIC = 29,
-    RBS_AST_TYPEPARAM = 30,
-    RBS_METHODTYPE = 31,
-    RBS_NAMESPACE = 32,
-    RBS_TYPENAME = 33,
-    RBS_TYPES_ALIAS = 34,
-    RBS_TYPES_BASES_ANY = 35,
-    RBS_TYPES_BASES_BOOL = 36,
-    RBS_TYPES_BASES_BOTTOM = 37,
-    RBS_TYPES_BASES_CLASS = 38,
-    RBS_TYPES_BASES_INSTANCE = 39,
-    RBS_TYPES_BASES_NIL = 40,
-    RBS_TYPES_BASES_SELF = 41,
-    RBS_TYPES_BASES_TOP = 42,
-    RBS_TYPES_BASES_VOID = 43,
-    RBS_TYPES_BLOCK = 44,
-    RBS_TYPES_CLASSINSTANCE = 45,
-    RBS_TYPES_CLASSSINGLETON = 46,
-    RBS_TYPES_FUNCTION = 47,
-    RBS_TYPES_FUNCTION_PARAM = 48,
-    RBS_TYPES_INTERFACE = 49,
-    RBS_TYPES_INTERSECTION = 50,
-    RBS_TYPES_LITERAL = 51,
-    RBS_TYPES_OPTIONAL = 52,
-    RBS_TYPES_PROC = 53,
-    RBS_TYPES_RECORD = 54,
-    RBS_TYPES_TUPLE = 55,
-    RBS_TYPES_UNION = 56,
-    RBS_TYPES_UNTYPEDFUNCTION = 57,
-    RBS_TYPES_VARIABLE = 58,
+    RBS_AST_SYMBOL = 30,
+    RBS_AST_TYPEPARAM = 31,
+    RBS_METHODTYPE = 32,
+    RBS_NAMESPACE = 33,
+    RBS_TYPENAME = 34,
+    RBS_TYPES_ALIAS = 35,
+    RBS_TYPES_BASES_ANY = 36,
+    RBS_TYPES_BASES_BOOL = 37,
+    RBS_TYPES_BASES_BOTTOM = 38,
+    RBS_TYPES_BASES_CLASS = 39,
+    RBS_TYPES_BASES_INSTANCE = 40,
+    RBS_TYPES_BASES_NIL = 41,
+    RBS_TYPES_BASES_SELF = 42,
+    RBS_TYPES_BASES_TOP = 43,
+    RBS_TYPES_BASES_VOID = 44,
+    RBS_TYPES_BLOCK = 45,
+    RBS_TYPES_CLASSINSTANCE = 46,
+    RBS_TYPES_CLASSSINGLETON = 47,
+    RBS_TYPES_FUNCTION = 48,
+    RBS_TYPES_FUNCTION_PARAM = 49,
+    RBS_TYPES_INTERFACE = 50,
+    RBS_TYPES_INTERSECTION = 51,
+    RBS_TYPES_LITERAL = 52,
+    RBS_TYPES_OPTIONAL = 53,
+    RBS_TYPES_PROC = 54,
+    RBS_TYPES_RECORD = 55,
+    RBS_TYPES_TUPLE = 56,
+    RBS_TYPES_UNION = 57,
+    RBS_TYPES_UNTYPEDFUNCTION = 58,
+    RBS_TYPES_VARIABLE = 59,
 };
 
 typedef struct rbs_node {
@@ -370,6 +371,11 @@ typedef struct {
 typedef struct {
     rbs_node_t base;
 
+} rbs_ast_symbol_t;
+
+typedef struct {
+    rbs_node_t base;
+
     VALUE name;
     VALUE variance;
     VALUE upper_bound;
@@ -608,6 +614,7 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, VALUE args, rbs_node_list_t * annotations, VALUE location, VALUE comment);
 rbs_ast_members_private_t *rbs_ast_members_private_new(VALUE location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE location);
+rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value);
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE location);
 rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t * type_params, VALUE type, VALUE block, VALUE location);
 rbs_namespace_t *rbs_namespace_new(VALUE path, VALUE absolute);
