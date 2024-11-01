@@ -1175,16 +1175,16 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
     rg->start = state->current_token.range.start;
 
     while (true) {
-      VALUE unchecked = Qfalse;
-      VALUE variance = ID2SYM(rb_intern("invariant"));
+      bool unchecked = false;
+      rbs_ast_symbol_t *variance = rbs_ast_symbol_new(&state->allocator, ID2SYM(rb_intern("invariant")));
       VALUE upper_bound = Qnil;
       VALUE default_type = Qnil;
 
       range param_range;
       param_range.start = state->next_token.range.start;
 
-      range variance_range = NULL_RANGE;
       range unchecked_range = NULL_RANGE;
+      range variance_range = NULL_RANGE;
       if (module_type_params) {
         if (state->next_token.type == kUNCHECKED) {
           unchecked = Qtrue;
@@ -1195,10 +1195,10 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
         if (state->next_token.type == kIN || state->next_token.type == kOUT) {
           switch (state->next_token.type) {
           case kIN:
-            variance = ID2SYM(rb_intern("contravariant"));
+            variance = rbs_ast_symbol_new(&state->allocator, ID2SYM(rb_intern("contravariant")));
             break;
           case kOUT:
-            variance = ID2SYM(rb_intern("covariant"));
+            variance = rbs_ast_symbol_new(&state->allocator, ID2SYM(rb_intern("covariant")));
             break;
           default:
             rbs_abort();
@@ -1218,7 +1218,8 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
         token_bytes(state->current_token)
       );
 
-      VALUE name = ID2SYM(INTERN_TOKEN(state, state->current_token));
+      VALUE name_sym = ID2SYM(INTERN_TOKEN(state, state->current_token));
+      rbs_ast_symbol_t *name = rbs_ast_symbol_new(&state->allocator, name_sym);
 
       parser_insert_typevar(state, id);
 
@@ -1262,7 +1263,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
       rbs_loc_add_optional_child(loc, INTERN("upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, INTERN("default"), default_type_range);
 
-      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(&state->allocator, name, variance, upper_bound, default_type, unchecked, location);
+      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(&state->allocator, ((rbs_node_t *)name)->cached_ruby_value, ((rbs_node_t *)variance)->cached_ruby_value, upper_bound, default_type, unchecked, location);
 
       rbs_node_list_append(params, (rbs_node_t *) param);
 
@@ -1333,7 +1334,7 @@ static rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
 
   VALUE comment = get_comment(state, decl_range.start.line);
   range name_range = state->current_token.range;
-  VALUE typename = ID2SYM(INTERN_TOKEN(state, state->current_token));
+  rbs_ast_symbol_t *typename = rbs_ast_symbol_new(&state->allocator, ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
   parser_advance_assert(state, pCOLON);
   range colon_range = state->current_token.range;
@@ -1347,7 +1348,7 @@ static rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
   rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
 
-  return rbs_ast_declarations_global_new(&state->allocator, typename, type, location, comment);
+  return rbs_ast_declarations_global_new(&state->allocator, ((rbs_node_t *)typename)->cached_ruby_value, type, location, comment);
 }
 
 /*
