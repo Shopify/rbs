@@ -93,6 +93,10 @@ nodes:
         c_type: rbs_typename_t *
       - name: location
       - name: comment
+  - name: RBS::AST::Declarations::Nodes
+    expose_to_ruby: false
+    fields:
+      - name: declarations
   - name: RBS::AST::Declarations::TypeAlias
     builds_ruby_object_internally: true
     fields:
@@ -106,6 +110,10 @@ nodes:
         c_type: rbs_node_list_t *
       - name: location
       - name: comment
+  - name: RBS::AST::Directives::Nodes
+    expose_to_ruby: false
+    fields:
+      - name: directives
   - name: RBS::AST::Directives::Use
     builds_ruby_object_internally: true
     fields:
