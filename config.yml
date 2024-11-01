@@ -324,6 +324,7 @@ nodes:
     fields:
       - name: return_type
   - name: RBS::Types::Variable
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: location

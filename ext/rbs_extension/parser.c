@@ -1040,8 +1040,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
     ID name = INTERN_TOKEN(state, state->current_token);
     if (parser_typevar_member(state, name)) {
       VALUE loc = rbs_location_current_token(state);
-      VALUE value = rbs_variable(ID2SYM(name), loc);
-      return (rbs_node_t *) rbs_types_variable_new(value, ID2SYM(name), loc);
+      return (rbs_node_t *) rbs_types_variable_new(ID2SYM(name), loc);
     }
     // fallthrough for type name
   }
