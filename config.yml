@@ -102,6 +102,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::AttrAccessor
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type
@@ -112,6 +113,7 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrReader
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type
@@ -122,6 +124,7 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrWriter
+    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: type

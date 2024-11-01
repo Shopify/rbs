@@ -142,6 +142,12 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_members_public(location);
     <%- elsif node.c_base_name == "rbs_ast_members_private"-%>
     VALUE ruby_value = rbs_ast_members_private(location);
+    <%- elsif node.c_base_name == "rbs_ast_members_attrreader"-%>
+    VALUE ruby_value = rbs_ast_members_attr_reader(name, type, ivar_name, kind, annotations, location, comment, visibility);
+    <%- elsif node.c_base_name == "rbs_ast_members_attrwriter"-%>
+    VALUE ruby_value = rbs_ast_members_attr_writer(name, type, ivar_name, kind, annotations, location, comment, visibility);
+    <%- elsif node.c_base_name == "rbs_ast_members_attraccessor"-%>
+    VALUE ruby_value = rbs_ast_members_attr_accessor(name, type, ivar_name, kind, annotations, location, comment, visibility);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
