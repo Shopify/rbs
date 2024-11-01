@@ -2586,10 +2586,10 @@ rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, rbs_node_
     rbs_loc_add_required_child(loc, rb_intern("eq"), eq_range);
     rbs_loc_add_optional_child(loc, rb_intern("old_name"), old_name_range);
 
-    VALUE value = rbs_ast_decl_class_alias(((rbs_node_t *)class_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, location, comment);
-    return (rbs_node_t *) rbs_ast_declarations_classalias_new(value, ((rbs_node_t *)class_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, location, comment);
+
+    return (rbs_node_t *) rbs_ast_declarations_classalias_new(class_name->base.cached_ruby_value, old_name->base.cached_ruby_value, location, comment);
   } else {
-    return (rbs_node_t *) parse_class_decl0(state, keyword_range, ((rbs_node_t *)class_name)->cached_ruby_value, class_name_range, comment, annotations);
+    return (rbs_node_t *) parse_class_decl0(state, keyword_range, class_name->base.cached_ruby_value, class_name_range, comment, annotations);
   }
 }
 

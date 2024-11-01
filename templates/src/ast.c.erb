@@ -158,6 +158,8 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_decl_class_super(name, args, location);
     <%- elsif node.c_base_name == "rbs_ast_declarations_class"-%>
     VALUE ruby_value = rbs_ast_decl_class(name, type_params, super_class, members, annotations, location, comment);
+    <%- elsif node.c_base_name == "rbs_ast_declarations_classalias"-%>
+    VALUE ruby_value = rbs_ast_decl_class_alias(new_name, old_name, location, comment);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
