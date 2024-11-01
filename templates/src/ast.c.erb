@@ -93,6 +93,8 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_literal(literal, location);
     <%- elsif node.c_base_name == "rbs_types_variable"-%>
     VALUE ruby_value = rbs_variable(name, location);
+    <%- elsif node.c_base_name == "rbs_types_tuple"-%>
+    VALUE ruby_value = rbs_tuple(types, location);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

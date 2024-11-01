@@ -313,6 +313,7 @@ nodes:
       - name: all_fields
       - name: location
   - name: RBS::Types::Tuple
+    builds_ruby_object_internally: true
     fields:
       - name: types
       - name: location

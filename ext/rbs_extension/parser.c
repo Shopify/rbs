@@ -1063,13 +1063,11 @@ static rbs_node_t *parse_simple(parserstate *state) {
     rg.end = state->current_token.range.end;
 
     VALUE location = rbs_new_location(state->buffer, rg);
-    VALUE value = rbs_tuple(types, location);
-    return (rbs_node_t *) rbs_types_tuple_new(value, types, location);
+    return (rbs_node_t *) rbs_types_tuple_new(types, location);
   }
   case pAREF_OPR: {
     VALUE loc = rbs_location_current_token(state);
-    VALUE value = rbs_tuple(EMPTY_ARRAY, loc);
-    return (rbs_node_t *) rbs_types_tuple_new(value, EMPTY_ARRAY, loc);
+    return (rbs_node_t *) rbs_types_tuple_new(EMPTY_ARRAY, loc);
   }
   case pLBRACE: {
     position start = state->current_token.range.start;
