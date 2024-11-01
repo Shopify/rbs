@@ -54,6 +54,18 @@ module RBS
           @c_type.include?("_types_")
       end
 
+      # Returns a C expression that evaluates to the Ruby VALUE object for this field.
+      def cached_ruby_value_expr
+        case @c_type
+        when "VALUE"
+          @name
+        when "rbs_node_t *", "rbs_node_list_t *"
+          "#{@name}->cached_ruby_value"
+        else
+          "#{@name}->base.cached_ruby_value"
+        end
+      end
+
       def needs_to_be_freed?
         !["VALUE", "bool"].include?(@c_type)
       end
