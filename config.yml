@@ -192,9 +192,11 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Private
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::AST::Members::Public
+    builds_ruby_object_internally: true
     fields:
       - name: location
   - name: RBS::AST::TypeParam

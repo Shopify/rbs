@@ -138,6 +138,10 @@ parameters = node.constructor_parameters
     VALUE ruby_value = rbs_ast_members_class_instance_variable(name, type, location, comment);
     <%- elsif node.c_base_name == "rbs_ast_members_alias"-%>
     VALUE ruby_value = rbs_ast_members_alias(new_name, old_name, kind, annotations, location, comment);
+    <%- elsif node.c_base_name == "rbs_ast_members_public"-%>
+    VALUE ruby_value = rbs_ast_members_public(location);
+    <%- elsif node.c_base_name == "rbs_ast_members_private"-%>
+    VALUE ruby_value = rbs_ast_members_private(location);
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);

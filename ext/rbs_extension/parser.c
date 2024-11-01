@@ -2036,14 +2036,10 @@ rbs_node_t *parse_visibility_member(parserstate *state, rbs_node_list_t *annotat
 
   switch (state->current_token.type)
   {
-  case kPUBLIC: {
-    VALUE value = rbs_ast_members_public(location);
-    return (rbs_node_t *)rbs_ast_members_public_new(value, location);
-  }
-  case kPRIVATE: {
-    VALUE value = rbs_ast_members_private(location);
-    return (rbs_node_t *)rbs_ast_members_private_new(value, location);
-  }
+  case kPUBLIC:
+    return (rbs_node_t *) rbs_ast_members_public_new(location);
+  case kPRIVATE:
+    return (rbs_node_t *) rbs_ast_members_private_new(location);
   default:
     rbs_abort();
   }
