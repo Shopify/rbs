@@ -361,6 +361,27 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typ
     return instance;
 }
 
+rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, VALUE declarations) {
+    rbs_ast_declarations_nodes_t *instance = malloc(sizeof(rbs_ast_declarations_nodes_t));
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(declarations);
+
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_ast_declarations_nodes_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DECLARATIONS_NODES
+        },
+        .declarations = declarations,
+    };
+
+    return instance;
+}
+
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t * name, rbs_node_list_t * type_params, rbs_node_t * type, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_typealias_t *instance = malloc(sizeof(rbs_ast_declarations_typealias_t));
 
@@ -388,6 +409,27 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typenam
         .annotations = annotations->cached_ruby_value,
         .location = location,
         .comment = comment,
+    };
+
+    return instance;
+}
+
+rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, VALUE directives) {
+    rbs_ast_directives_nodes_t *instance = malloc(sizeof(rbs_ast_directives_nodes_t));
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(directives);
+
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_ast_directives_nodes_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_DIRECTIVES_NODES
+        },
+        .directives = directives,
     };
 
     return instance;

@@ -22,54 +22,56 @@ enum rbs_node_type {
     RBS_AST_DECLARATIONS_MODULE = 9,
     RBS_AST_DECLARATIONS_MODULE_SELF = 10,
     RBS_AST_DECLARATIONS_MODULEALIAS = 11,
-    RBS_AST_DECLARATIONS_TYPEALIAS = 12,
-    RBS_AST_DIRECTIVES_USE = 13,
-    RBS_AST_DIRECTIVES_USE_SINGLECLAUSE = 14,
-    RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE = 15,
-    RBS_AST_MEMBERS_ALIAS = 16,
-    RBS_AST_MEMBERS_ATTRACCESSOR = 17,
-    RBS_AST_MEMBERS_ATTRREADER = 18,
-    RBS_AST_MEMBERS_ATTRWRITER = 19,
-    RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE = 20,
-    RBS_AST_MEMBERS_CLASSVARIABLE = 21,
-    RBS_AST_MEMBERS_EXTEND = 22,
-    RBS_AST_MEMBERS_INCLUDE = 23,
-    RBS_AST_MEMBERS_INSTANCEVARIABLE = 24,
-    RBS_AST_MEMBERS_METHODDEFINITION = 25,
-    RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD = 26,
-    RBS_AST_MEMBERS_PREPEND = 27,
-    RBS_AST_MEMBERS_PRIVATE = 28,
-    RBS_AST_MEMBERS_PUBLIC = 29,
-    RBS_AST_SYMBOL = 30,
-    RBS_AST_TYPEPARAM = 31,
-    RBS_METHODTYPE = 32,
-    RBS_NAMESPACE = 33,
-    RBS_TYPENAME = 34,
-    RBS_TYPES_ALIAS = 35,
-    RBS_TYPES_BASES_ANY = 36,
-    RBS_TYPES_BASES_BOOL = 37,
-    RBS_TYPES_BASES_BOTTOM = 38,
-    RBS_TYPES_BASES_CLASS = 39,
-    RBS_TYPES_BASES_INSTANCE = 40,
-    RBS_TYPES_BASES_NIL = 41,
-    RBS_TYPES_BASES_SELF = 42,
-    RBS_TYPES_BASES_TOP = 43,
-    RBS_TYPES_BASES_VOID = 44,
-    RBS_TYPES_BLOCK = 45,
-    RBS_TYPES_CLASSINSTANCE = 46,
-    RBS_TYPES_CLASSSINGLETON = 47,
-    RBS_TYPES_FUNCTION = 48,
-    RBS_TYPES_FUNCTION_PARAM = 49,
-    RBS_TYPES_INTERFACE = 50,
-    RBS_TYPES_INTERSECTION = 51,
-    RBS_TYPES_LITERAL = 52,
-    RBS_TYPES_OPTIONAL = 53,
-    RBS_TYPES_PROC = 54,
-    RBS_TYPES_RECORD = 55,
-    RBS_TYPES_TUPLE = 56,
-    RBS_TYPES_UNION = 57,
-    RBS_TYPES_UNTYPEDFUNCTION = 58,
-    RBS_TYPES_VARIABLE = 59,
+    RBS_AST_DECLARATIONS_NODES = 12,
+    RBS_AST_DECLARATIONS_TYPEALIAS = 13,
+    RBS_AST_DIRECTIVES_NODES = 14,
+    RBS_AST_DIRECTIVES_USE = 15,
+    RBS_AST_DIRECTIVES_USE_SINGLECLAUSE = 16,
+    RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE = 17,
+    RBS_AST_MEMBERS_ALIAS = 18,
+    RBS_AST_MEMBERS_ATTRACCESSOR = 19,
+    RBS_AST_MEMBERS_ATTRREADER = 20,
+    RBS_AST_MEMBERS_ATTRWRITER = 21,
+    RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE = 22,
+    RBS_AST_MEMBERS_CLASSVARIABLE = 23,
+    RBS_AST_MEMBERS_EXTEND = 24,
+    RBS_AST_MEMBERS_INCLUDE = 25,
+    RBS_AST_MEMBERS_INSTANCEVARIABLE = 26,
+    RBS_AST_MEMBERS_METHODDEFINITION = 27,
+    RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD = 28,
+    RBS_AST_MEMBERS_PREPEND = 29,
+    RBS_AST_MEMBERS_PRIVATE = 30,
+    RBS_AST_MEMBERS_PUBLIC = 31,
+    RBS_AST_SYMBOL = 32,
+    RBS_AST_TYPEPARAM = 33,
+    RBS_METHODTYPE = 34,
+    RBS_NAMESPACE = 35,
+    RBS_TYPENAME = 36,
+    RBS_TYPES_ALIAS = 37,
+    RBS_TYPES_BASES_ANY = 38,
+    RBS_TYPES_BASES_BOOL = 39,
+    RBS_TYPES_BASES_BOTTOM = 40,
+    RBS_TYPES_BASES_CLASS = 41,
+    RBS_TYPES_BASES_INSTANCE = 42,
+    RBS_TYPES_BASES_NIL = 43,
+    RBS_TYPES_BASES_SELF = 44,
+    RBS_TYPES_BASES_TOP = 45,
+    RBS_TYPES_BASES_VOID = 46,
+    RBS_TYPES_BLOCK = 47,
+    RBS_TYPES_CLASSINSTANCE = 48,
+    RBS_TYPES_CLASSSINGLETON = 49,
+    RBS_TYPES_FUNCTION = 50,
+    RBS_TYPES_FUNCTION_PARAM = 51,
+    RBS_TYPES_INTERFACE = 52,
+    RBS_TYPES_INTERSECTION = 53,
+    RBS_TYPES_LITERAL = 54,
+    RBS_TYPES_OPTIONAL = 55,
+    RBS_TYPES_PROC = 56,
+    RBS_TYPES_RECORD = 57,
+    RBS_TYPES_TUPLE = 58,
+    RBS_TYPES_UNION = 59,
+    RBS_TYPES_UNTYPEDFUNCTION = 60,
+    RBS_TYPES_VARIABLE = 61,
 };
 
 typedef struct rbs_node {
@@ -199,6 +201,12 @@ typedef struct {
 typedef struct {
     rbs_node_t base;
 
+    VALUE declarations;
+} rbs_ast_declarations_nodes_t;
+
+typedef struct {
+    rbs_node_t base;
+
     VALUE name;
     VALUE type_params;
     VALUE type;
@@ -206,6 +214,12 @@ typedef struct {
     VALUE location;
     VALUE comment;
 } rbs_ast_declarations_typealias_t;
+
+typedef struct {
+    rbs_node_t base;
+
+    VALUE directives;
+} rbs_ast_directives_nodes_t;
 
 typedef struct {
     rbs_node_t base;
@@ -596,7 +610,9 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
 rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(VALUE name, rbs_node_list_t * type_params, VALUE self_types, rbs_node_list_t * members, rbs_node_list_t * annotations, VALUE location, VALUE comment);
 rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(VALUE ruby_value, VALUE name, VALUE args, VALUE location);
 rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t * new_name, rbs_typename_t * old_name, VALUE location, VALUE comment);
+rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, VALUE declarations);
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t * name, rbs_node_list_t * type_params, rbs_node_t * type, rbs_node_list_t * annotations, VALUE location, VALUE comment);
+rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, VALUE directives);
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE clauses, VALUE location);
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, VALUE location);
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, VALUE namespace, VALUE location);
