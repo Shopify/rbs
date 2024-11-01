@@ -234,6 +234,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
             break;
         }
+        case RBS_AST_SYMBOL: {
+            if (strcmp(class_name, "RBS::AST::Symbol") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Symbol, got %s\n", class_name);
+                exit(1);
+            }
+            break;
+        }
         case RBS_AST_TYPEPARAM: {
             if (strcmp(class_name, "RBS::AST::TypeParam") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::TypeParam, got %s\n", class_name);
