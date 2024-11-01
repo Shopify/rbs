@@ -41,7 +41,7 @@ VALUE rbs_ast_comment(VALUE string, VALUE location) {
   );
 }
 
-VALUE rbs_ast_decl_class(VALUE name, rbs_node_list_t * type_params, VALUE super_class, rbs_node_list_t * members, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_class(VALUE name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
@@ -71,7 +71,7 @@ VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location) {
   );
 }
 
-VALUE rbs_ast_decl_class_alias(rbs_typename_t * new_name, rbs_typename_t * old_name, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_class_alias(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name->base.cached_ruby_value);
@@ -85,7 +85,7 @@ VALUE rbs_ast_decl_class_alias(rbs_typename_t * new_name, rbs_typename_t * old_n
   );
 }
 
-VALUE rbs_ast_decl_constant(rbs_typename_t * name, rbs_node_t * type, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_constant(rbs_typename_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -99,7 +99,7 @@ VALUE rbs_ast_decl_constant(rbs_typename_t * name, rbs_node_t * type, VALUE loca
   );
 }
 
-VALUE rbs_ast_decl_global(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_global(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -113,7 +113,7 @@ VALUE rbs_ast_decl_global(VALUE name, rbs_node_t * type, VALUE location, VALUE c
   );
 }
 
-VALUE rbs_ast_decl_interface(rbs_typename_t * name, rbs_node_list_t * type_params, rbs_node_list_t * members, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_interface(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
@@ -129,7 +129,7 @@ VALUE rbs_ast_decl_interface(rbs_typename_t * name, rbs_node_list_t * type_param
   );
 }
 
-VALUE rbs_ast_decl_module(VALUE name, rbs_node_list_t * type_params, VALUE self_types, rbs_node_list_t * members, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_module(VALUE name, rbs_node_list_t *type_params, VALUE self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
@@ -159,7 +159,7 @@ VALUE rbs_ast_decl_module_self(VALUE name, VALUE args, VALUE location) {
   );
 }
 
-VALUE rbs_ast_decl_module_alias(rbs_typename_t * new_name, rbs_typename_t * old_name, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_module_alias(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name->base.cached_ruby_value);
@@ -173,7 +173,7 @@ VALUE rbs_ast_decl_module_alias(rbs_typename_t * new_name, rbs_typename_t * old_
   );
 }
 
-VALUE rbs_ast_decl_type_alias(rbs_typename_t * name, rbs_node_list_t * type_params, rbs_node_t * type, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_type_alias(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
@@ -226,7 +226,7 @@ VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location) {
   );
 }
 
-VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name);
@@ -242,7 +242,7 @@ VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, rbs_node
   );
 }
 
-VALUE rbs_ast_members_attr_accessor(VALUE name, rbs_node_t * type, VALUE ivar_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE visibility) {
+VALUE rbs_ast_members_attr_accessor(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -260,7 +260,7 @@ VALUE rbs_ast_members_attr_accessor(VALUE name, rbs_node_t * type, VALUE ivar_na
   );
 }
 
-VALUE rbs_ast_members_attr_reader(VALUE name, rbs_node_t * type, VALUE ivar_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE visibility) {
+VALUE rbs_ast_members_attr_reader(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -278,7 +278,7 @@ VALUE rbs_ast_members_attr_reader(VALUE name, rbs_node_t * type, VALUE ivar_name
   );
 }
 
-VALUE rbs_ast_members_attr_writer(VALUE name, rbs_node_t * type, VALUE ivar_name, VALUE kind, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE visibility) {
+VALUE rbs_ast_members_attr_writer(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -296,7 +296,7 @@ VALUE rbs_ast_members_attr_writer(VALUE name, rbs_node_t * type, VALUE ivar_name
   );
 }
 
-VALUE rbs_ast_members_class_instance_variable(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_class_instance_variable(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -310,7 +310,7 @@ VALUE rbs_ast_members_class_instance_variable(VALUE name, rbs_node_t * type, VAL
   );
 }
 
-VALUE rbs_ast_members_class_variable(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_class_variable(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -324,7 +324,7 @@ VALUE rbs_ast_members_class_variable(VALUE name, rbs_node_t * type, VALUE locati
   );
 }
 
-VALUE rbs_ast_members_extend(VALUE name, VALUE args, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_extend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
@@ -339,7 +339,7 @@ VALUE rbs_ast_members_extend(VALUE name, VALUE args, rbs_node_list_t * annotatio
   );
 }
 
-VALUE rbs_ast_members_include(VALUE name, VALUE args, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_include(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
@@ -354,7 +354,7 @@ VALUE rbs_ast_members_include(VALUE name, VALUE args, rbs_node_list_t * annotati
   );
 }
 
-VALUE rbs_ast_members_instance_variable(VALUE name, rbs_node_t * type, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_instance_variable(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
@@ -368,7 +368,7 @@ VALUE rbs_ast_members_instance_variable(VALUE name, rbs_node_t * type, VALUE loc
   );
 }
 
-VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads, rbs_node_list_t * annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
+VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind);
@@ -398,7 +398,7 @@ VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method
   );
 }
 
-VALUE rbs_ast_members_prepend(VALUE name, VALUE args, rbs_node_list_t * annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_prepend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
@@ -460,7 +460,7 @@ VALUE rbs_ast_type_param(VALUE name, VALUE variance, VALUE upper_bound, VALUE de
   );
 }
 
-VALUE rbs_method_type(rbs_node_list_t * type_params, VALUE type, VALUE block, VALUE location) {
+VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
@@ -498,7 +498,7 @@ VALUE rbs_type_name(VALUE namespace, VALUE name) {
   );
 }
 
-VALUE rbs_alias(rbs_typename_t * name, VALUE args, VALUE location) {
+VALUE rbs_alias(rbs_typename_t *name, VALUE args, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
@@ -623,7 +623,7 @@ VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
   );
 }
 
-VALUE rbs_class_instance(rbs_typename_t * name, VALUE args, VALUE location) {
+VALUE rbs_class_instance(rbs_typename_t *name, VALUE args, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
@@ -636,7 +636,7 @@ VALUE rbs_class_instance(rbs_typename_t * name, VALUE args, VALUE location) {
   );
 }
 
-VALUE rbs_class_singleton(rbs_typename_t * name, VALUE location) {
+VALUE rbs_class_singleton(rbs_typename_t *name, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
@@ -666,7 +666,7 @@ VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE
   );
 }
 
-VALUE rbs_function_param(rbs_node_t * type, VALUE name, VALUE location) {
+VALUE rbs_function_param(rbs_node_t *type, VALUE name, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
@@ -679,7 +679,7 @@ VALUE rbs_function_param(rbs_node_t * type, VALUE name, VALUE location) {
   );
 }
 
-VALUE rbs_interface(rbs_typename_t * name, VALUE args, VALUE location) {
+VALUE rbs_interface(rbs_typename_t *name, VALUE args, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
@@ -716,7 +716,7 @@ VALUE rbs_literal(VALUE literal, VALUE location) {
   );
 }
 
-VALUE rbs_optional(rbs_node_t * type, VALUE location) {
+VALUE rbs_optional(rbs_node_t *type, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
