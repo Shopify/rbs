@@ -1,0 +1,21 @@
+#include "rbs/ast.h"
+#include <stdlib.h>
+
+<%- nodes.each do |node| -%>
+<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(VALUE ruby_value, <%= node.fields.map { |field| "VALUE #{field.name}" }.join(", ") %>) {
+    <%= node.c_type_name %> *instance = (<%= node.c_type_name %> *)calloc(1, sizeof(<%= node.c_type_name %>));
+
+    *instance = (<%= node.c_type_name %>) {
+        .base = (rbs_node_t) { .cached_ruby_value = ruby_value },
+        <%- node.fields.each do |field| -%>
+        .<%= field.name %> = <%= field.name %>,
+        <%- end -%>
+    };
+
+    return instance;
+}
+
+<%- end -%>
+VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
+    return instance->cached_ruby_value;
+}

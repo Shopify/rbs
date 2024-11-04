@@ -44,6 +44,8 @@ module RBS
       # e.g. `RBS_AST_Declarations`
       attr_reader :c_parent_constant_name #: String
 
+      attr_reader :c_base_name #: String
+
       attr_reader :fields #: Array[RBS::Template::Field]
 
       def initialize(yaml)
@@ -58,8 +60,16 @@ module RBS
         end
         @c_constant_name = @ruby_full_name.gsub("::", "_")
         @c_parent_constant_name = @ruby_full_name.split("::")[0..-2].join("::").gsub("::", "_")
+        @c_base_name = @c_constant_name.downcase
+        @c_type_name = @c_base_name + "_t"
 
         @fields = yaml.fetch("fields", []).map { |field| Field.new(field) }.freeze
+      end
+
+      # The name of the C function which constructs new instances of this C structure.
+      # e.g. `rbs_ast_declarations_typealias_new`
+      def c_constructor_function_name #: String
+        "#{@c_base_name}_new"
       end
     end
 
