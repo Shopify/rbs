@@ -961,71 +961,114 @@ static VALUE parse_simple(parserstate *state) {
     return type;
   }
   case kBOOL: {
-    return rbs_bases_bool(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_bool(loc);
+    rbs_types_bases_bool_t *node = rbs_types_bases_bool_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kBOT: {
-    return rbs_bases_bottom(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_bottom(loc);
+    rbs_types_bases_bottom_t *node = rbs_types_bases_bottom_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kCLASS: {
-    return rbs_bases_class(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_class(loc);
+    rbs_types_bases_class_t *node = rbs_types_bases_class_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kINSTANCE: {
-    return rbs_bases_instance(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_instance(loc);
+    rbs_types_bases_instance_t *node = rbs_types_bases_instance_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kNIL: {
-    return rbs_bases_nil(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_nil(loc);
+    rbs_types_bases_nil_t *node = rbs_types_bases_nil_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kSELF: {
-    return rbs_bases_self(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_self(loc);
+    rbs_types_bases_self_t *node = rbs_types_bases_self_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kTOP: {
-    return rbs_bases_top(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_top(loc);
+    rbs_types_bases_top_t *node = rbs_types_bases_top_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kVOID: {
-    return rbs_bases_void(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_void(loc);
+    rbs_types_bases_void_t *node = rbs_types_bases_void_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kUNTYPED: {
-    return rbs_bases_any(rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_any(loc);
+    rbs_types_bases_any_t *node = rbs_types_bases_any_new(value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case k__TODO__: {
-    VALUE type = rbs_bases_any(rbs_location_current_token(state));
-    rb_funcall(type, rb_intern("todo!"), 0);
-    return type;
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_bases_any(loc);
+    rbs_types_bases_any_t *node = rbs_types_bases_any_new(value, loc);
+    rb_funcall(value, rb_intern("todo!"), 0);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case tINTEGER: {
+    VALUE loc = rbs_location_current_token(state);
     VALUE literal = rb_funcall(
       string_of_loc(state, state->current_token.range.start, state->current_token.range.end),
       rb_intern("to_i"),
       0
     );
-    return rbs_literal(
-      literal,
-      rbs_location_current_token(state)
-    );
+    VALUE value = rbs_literal(literal, loc);
+    rbs_types_literal_t *node = rbs_types_literal_new(value, literal, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kTRUE: {
-    return rbs_literal(Qtrue, rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE literal = Qtrue;
+    VALUE value = rbs_literal(literal, loc);
+    rbs_types_literal_t *node = rbs_types_literal_new(value, literal, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case kFALSE: {
-    return rbs_literal(Qfalse, rbs_location_current_token(state));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE literal = Qfalse;
+    VALUE value = rbs_literal(literal, loc);
+    rbs_types_literal_t *node = rbs_types_literal_new(value, literal, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case tSQSTRING:
   case tDQSTRING: {
+    VALUE loc = rbs_location_current_token(state);
     VALUE literal = rbs_unquote_string(state, state->current_token.range, 0);
-    return rbs_literal(
-      literal,
-      rbs_location_current_token(state)
-    );
+    VALUE value = rbs_literal(literal, loc);
+    rbs_types_literal_t *node = rbs_types_literal_new(value, literal, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case tSYMBOL:
   case tSQSYMBOL:
   case tDQSYMBOL: {
-    return parse_symbol(state);
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = parse_symbol(state);
+    rbs_types_literal_t *node = rbs_types_literal_new(value, value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case tUIDENT: {
     ID name = INTERN_TOKEN(state, state->current_token);
     if (parser_typevar_member(state, name)) {
-      return rbs_variable(ID2SYM(name), rbs_location_current_token(state));
+      VALUE loc = rbs_location_current_token(state);
+      VALUE value = rbs_variable(ID2SYM(name), loc);
+      rbs_types_variable_t *node = rbs_types_variable_new(value, ID2SYM(name), loc);
+      return rbs_struct_to_ruby_value((rbs_node_t *)node);
     }
     // fallthrough for type name
   }
@@ -1035,7 +1078,10 @@ static VALUE parse_simple(parserstate *state) {
     return parse_instance_type(state, true);
   }
   case kSINGLETON: {
-    return parse_singleton_type(state);
+    VALUE value = parse_singleton_type(state);
+    VALUE loc = rb_funcall(value, rb_intern("location"), 0);
+    rbs_types_classsingleton_t *node = rbs_types_classsingleton_new(value, value, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case pLBRACKET: {
     range rg;
@@ -1047,21 +1093,32 @@ static VALUE parse_simple(parserstate *state) {
     parser_advance_assert(state, pRBRACKET);
     rg.end = state->current_token.range.end;
 
-    return rbs_tuple(types, rbs_new_location(state->buffer, rg));
+    VALUE location = rbs_new_location(state->buffer, rg);
+    VALUE value = rbs_tuple(types, location);
+    rbs_types_tuple_t *node = rbs_types_tuple_new(value, types, location);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case pAREF_OPR: {
-    return rbs_tuple(EMPTY_ARRAY, rbs_new_location(state->buffer, state->current_token.range));
+    VALUE loc = rbs_location_current_token(state);
+    VALUE value = rbs_tuple(EMPTY_ARRAY, loc);
+    rbs_types_tuple_t *node = rbs_types_tuple_new(value, EMPTY_ARRAY, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case pLBRACE: {
     position start = state->current_token.range.start;
     VALUE fields = parse_record_attributes(state);
     parser_advance_assert(state, pRBRACE);
     position end = state->current_token.range.end;
-    VALUE location = rbs_location_pp(state->buffer, &start, &end);
-    return rbs_record(fields, location);
+    VALUE loc = rbs_location_pp(state->buffer, &start, &end);
+    VALUE value = rbs_record(fields, loc);
+    rbs_types_record_t *node = rbs_types_record_new(value, fields, loc);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   case pHAT: {
-    return parse_proc_type(state);
+    VALUE value = parse_proc_type(state);
+    VALUE loc = rb_funcall(value, rb_intern("location"), 0);
+    rbs_types_proc_t *node = rbs_types_proc_new(value, value, value, loc, value);
+    return rbs_struct_to_ruby_value((rbs_node_t *)node);
   }
   default:
     raise_syntax_error(
