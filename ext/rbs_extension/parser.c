@@ -1840,11 +1840,11 @@ rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, position
   switch (type)
   {
   case kINCLUDE:
-    return (rbs_node_t *) rbs_ast_members_include_new(name, args->cached_ruby_value, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_include_new(name, args, annotations, location, comment);
   case kEXTEND:
-    return (rbs_node_t *) rbs_ast_members_extend_new(name, args->cached_ruby_value, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_extend_new(name, args, annotations, location, comment);
   case kPREPEND:
-    return (rbs_node_t *) rbs_ast_members_prepend_new(name, args->cached_ruby_value, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_prepend_new(name, args, annotations, location, comment);
   default:
     rbs_abort();
   }
