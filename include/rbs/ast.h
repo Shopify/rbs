@@ -120,7 +120,7 @@ typedef struct rbs_ast_declarations_class {
     VALUE super_class;
     struct rbs_node_list *members;
     struct rbs_node_list *annotations;
-    VALUE location;
+    struct rbs_location *location;
     VALUE comment;
 } rbs_ast_declarations_class_t;
 
@@ -129,7 +129,7 @@ typedef struct rbs_ast_declarations_class_super {
 
     VALUE name;
     struct rbs_node_list *args;
-    VALUE location;
+    struct rbs_location *location;
 } rbs_ast_declarations_class_super_t;
 
 typedef struct rbs_ast_declarations_classalias {
@@ -602,8 +602,8 @@ typedef struct rbs_types_variable {
 
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location);
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_location_t *location);
-rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
-rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(VALUE name, rbs_node_list_t *args, VALUE location);
+rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(VALUE name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment);
 rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, VALUE location, VALUE comment);
 rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment);
