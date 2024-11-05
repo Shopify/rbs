@@ -487,10 +487,10 @@ VALUE rbs_namespace(rbs_node_list_t *path, VALUE absolute) {
   );
 }
 
-VALUE rbs_type_name(VALUE namespace, VALUE name) {
+VALUE rbs_type_name(rbs_namespace_t *namespace, rbs_ast_symbol_t *name) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_TypeName,
