@@ -475,9 +475,9 @@ VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, VAL
   );
 }
 
-VALUE rbs_namespace(VALUE path, VALUE absolute) {
+VALUE rbs_namespace(rbs_node_list_t *path, VALUE absolute) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("path")), path);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("path")), path->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("absolute")), absolute);
 
   return CLASS_NEW_INSTANCE(
