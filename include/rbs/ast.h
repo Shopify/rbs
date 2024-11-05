@@ -232,7 +232,7 @@ typedef struct rbs_ast_directives_use {
 typedef struct rbs_ast_directives_use_singleclause {
     rbs_node_t base;
 
-    VALUE type_name;
+    struct rbs_typename *type_name;
     VALUE new_name;
     struct rbs_location *location;
 } rbs_ast_directives_use_singleclause_t;
@@ -617,7 +617,7 @@ rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(rbs_allocator_t *al
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_list_t *directives);
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_allocator_t *allocator, rbs_node_list_t *clauses, rbs_location_t *location);
-rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_allocator_t *allocator, VALUE type_name, VALUE new_name, rbs_location_t *location);
+rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_allocator_t *allocator, rbs_typename_t *type_name, VALUE new_name, rbs_location_t *location);
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_allocator_t *allocator, rbs_namespace_t *namespace, rbs_location_t *location);
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
