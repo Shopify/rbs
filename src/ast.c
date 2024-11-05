@@ -508,7 +508,7 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     return instance;
 }
 
-rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
     rbs_ast_members_alias_t *instance = malloc(sizeof(rbs_ast_members_alias_t));
 
     // Disable GC for all these Ruby objects.
@@ -516,7 +516,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, r
     rb_gc_register_mark_object(old_name->base.cached_ruby_value);
     rb_gc_register_mark_object(kind->base.cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -540,7 +540,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, r
     return instance;
 }
 
-rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
+rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attraccessor_t *instance = malloc(sizeof(rbs_ast_members_attraccessor_t));
 
     // Disable GC for all these Ruby objects.
@@ -549,7 +549,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_
     rb_gc_register_mark_object(ivar_name);
     rb_gc_register_mark_object(kind);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
     rb_gc_register_mark_object(visibility);
 
@@ -576,7 +576,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_
     return instance;
 }
 
-rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
+rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attrreader_t *instance = malloc(sizeof(rbs_ast_members_attrreader_t));
 
     // Disable GC for all these Ruby objects.
@@ -585,7 +585,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *n
     rb_gc_register_mark_object(ivar_name);
     rb_gc_register_mark_object(kind);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
     rb_gc_register_mark_object(visibility);
 
@@ -612,7 +612,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *n
     return instance;
 }
 
-rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility) {
+rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility) {
     rbs_ast_members_attrwriter_t *instance = malloc(sizeof(rbs_ast_members_attrwriter_t));
 
     // Disable GC for all these Ruby objects.
@@ -621,7 +621,7 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *n
     rb_gc_register_mark_object(ivar_name);
     rb_gc_register_mark_object(kind);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
     rb_gc_register_mark_object(visibility);
 
@@ -648,13 +648,13 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *n
     return instance;
 }
 
-rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
+rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
     rbs_ast_members_classinstancevariable_t *instance = malloc(sizeof(rbs_ast_members_classinstancevariable_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -676,13 +676,13 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
     return instance;
 }
 
-rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
+rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
     rbs_ast_members_classvariable_t *instance = malloc(sizeof(rbs_ast_members_classvariable_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -704,14 +704,14 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbo
     return instance;
 }
 
-rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
     rbs_ast_members_extend_t *instance = malloc(sizeof(rbs_ast_members_extend_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name);
     rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -734,14 +734,14 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, rbs_node_list_t
     return instance;
 }
 
-rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
     rbs_ast_members_include_t *instance = malloc(sizeof(rbs_ast_members_include_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name);
     rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -764,13 +764,13 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, rbs_node_list
     return instance;
 }
 
-rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
+rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
     rbs_ast_members_instancevariable_t *instance = malloc(sizeof(rbs_ast_members_instancevariable_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -792,7 +792,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast
     return instance;
 }
 
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility) {
     rbs_ast_members_methoddefinition_t *instance = malloc(sizeof(rbs_ast_members_methoddefinition_t));
 
     // Disable GC for all these Ruby objects.
@@ -800,7 +800,7 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast
     rb_gc_register_mark_object(kind->base.cached_ruby_value);
     rb_gc_register_mark_object(overloads);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
     rb_gc_register_mark_object(overloading);
     rb_gc_register_mark_object(visibility);
@@ -851,14 +851,14 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
     return instance;
 }
 
-rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
     rbs_ast_members_prepend_t *instance = malloc(sizeof(rbs_ast_members_prepend_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name);
     rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -881,11 +881,11 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, rbs_node_list
     return instance;
 }
 
-rbs_ast_members_private_t *rbs_ast_members_private_new(VALUE location) {
+rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location) {
     rbs_ast_members_private_t *instance = malloc(sizeof(rbs_ast_members_private_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_private(location);
@@ -903,11 +903,11 @@ rbs_ast_members_private_t *rbs_ast_members_private_new(VALUE location) {
     return instance;
 }
 
-rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE location) {
+rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
     rbs_ast_members_public_t *instance = malloc(sizeof(rbs_ast_members_public_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_public(location);
