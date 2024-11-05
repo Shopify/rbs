@@ -437,6 +437,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: types
+        c_type: rbs_node_list
       - name: location
   - name: RBS::Types::UntypedFunction
     fields:
