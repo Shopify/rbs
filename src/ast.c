@@ -485,12 +485,12 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(V
     return instance;
 }
 
-rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, VALUE namespace, VALUE location) {
+rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, rbs_namespace_t *namespace, VALUE location) {
     rbs_ast_directives_use_wildcardclause_t *instance = malloc(sizeof(rbs_ast_directives_use_wildcardclause_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(ruby_value);
-    rb_gc_register_mark_object(namespace);
+    rb_gc_register_mark_object(namespace->base.cached_ruby_value);
     rb_gc_register_mark_object(location);
 
 

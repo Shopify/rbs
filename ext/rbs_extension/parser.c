@@ -2758,8 +2758,8 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
         rbs_loc_add_required_child(loc, INTERN("star"), star_range);
 
-        VALUE clause_value = rbs_ast_directives_use_wildcard_clause(((rbs_node_t *)namespace)->cached_ruby_value, location);
-        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(clause_value, ((rbs_node_t *)namespace)->cached_ruby_value, location);
+        VALUE clause_value = rbs_ast_directives_use_wildcard_clause(namespace, location);
+        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(clause_value, namespace, location);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;

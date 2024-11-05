@@ -24,7 +24,7 @@ VALUE rbs_ast_decl_module_alias(rbs_typename_t *new_name, rbs_typename_t *old_na
 VALUE rbs_ast_decl_type_alias(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_directives_use(VALUE clauses, VALUE location);
 VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALUE location);
-VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location);
+VALUE rbs_ast_directives_use_wildcard_clause(rbs_namespace_t *namespace, VALUE location);
 VALUE rbs_ast_members_alias(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_attr_accessor(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
 VALUE rbs_ast_members_attr_reader(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
