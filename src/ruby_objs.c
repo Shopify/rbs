@@ -146,10 +146,10 @@ VALUE rbs_ast_decl_module(VALUE name, rbs_node_list_t *type_params, VALUE self_t
   );
 }
 
-VALUE rbs_ast_decl_module_self(VALUE name, VALUE args, VALUE location) {
+VALUE rbs_ast_decl_module_self(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
 
   return CLASS_NEW_INSTANCE(
