@@ -452,7 +452,7 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_allocator_t *allocator,
     return instance;
 }
 
-rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE type_name, VALUE new_name, rbs_location_t *location) {
+rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_allocator_t *allocator, VALUE type_name, VALUE new_name, rbs_location_t *location) {
     rbs_ast_directives_use_singleclause_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_use_singleclause_t);
 
     // Disable GC for all these Ruby objects.
@@ -460,6 +460,8 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(r
     rb_gc_register_mark_object(new_name);
     rb_gc_register_mark_object(location->cached_ruby_value);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_ast_directives_use_single_clause(type_name, new_name, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -476,13 +478,15 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(r
     return instance;
 }
 
-rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_namespace_t *namespace, rbs_location_t *location) {
+rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_allocator_t *allocator, rbs_namespace_t *namespace, rbs_location_t *location) {
     rbs_ast_directives_use_wildcardclause_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_use_wildcardclause_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(namespace->base.cached_ruby_value);
     rb_gc_register_mark_object(location->cached_ruby_value);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_ast_directives_use_wildcard_clause(namespace, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -818,13 +822,15 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_all
     return instance;
 }
 
-rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE annotations, VALUE method_type) {
+rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_allocator_t *allocator, VALUE annotations, VALUE method_type) {
     rbs_ast_members_methoddefinition_overload_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_methoddefinition_overload_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(annotations);
     rb_gc_register_mark_object(method_type);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_ast_members_method_definition_overload(annotations, method_type);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1266,7 +1272,7 @@ rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_allocator_t *allocator, rbs
     return instance;
 }
 
-rbs_types_block_t *rbs_types_block_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE type, VALUE required, VALUE self_type) {
+rbs_types_block_t *rbs_types_block_new(rbs_allocator_t *allocator, VALUE type, VALUE required, VALUE self_type) {
     rbs_types_block_t *instance = rbs_allocator_alloc(allocator, rbs_types_block_t);
 
     // Disable GC for all these Ruby objects.
@@ -1274,6 +1280,8 @@ rbs_types_block_t *rbs_types_block_new(rbs_allocator_t *allocator, VALUE ruby_va
     rb_gc_register_mark_object(required);
     rb_gc_register_mark_object(self_type);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_block(type, required, self_type);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1340,7 +1348,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_allocator_t *alloca
     return instance;
 }
 
-rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type) {
+rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type) {
     rbs_types_function_t *instance = rbs_allocator_alloc(allocator, rbs_types_function_t);
 
     // Disable GC for all these Ruby objects.
@@ -1353,6 +1361,8 @@ rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE r
     rb_gc_register_mark_object(rest_keywords);
     rb_gc_register_mark_object(return_type);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_function(required_positionals, optional_positionals, rest_positionals, trailing_positionals, required_keywords, optional_keywords, rest_keywords, return_type);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1598,12 +1608,14 @@ rbs_types_union_t *rbs_types_union_new(rbs_allocator_t *allocator, rbs_node_list
     return instance;
 }
 
-rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE return_type) {
+rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_allocator_t *allocator, VALUE return_type) {
     rbs_types_untypedfunction_t *instance = rbs_allocator_alloc(allocator, rbs_types_untypedfunction_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(return_type);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_untyped_function(return_type);
 
     rb_gc_register_mark_object(ruby_value);
 
