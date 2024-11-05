@@ -127,7 +127,7 @@ typedef struct rbs_ast_declarations_class {
 typedef struct rbs_ast_declarations_class_super {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     struct rbs_node_list *args;
     struct rbs_location *location;
 } rbs_ast_declarations_class_super_t;
@@ -315,7 +315,7 @@ typedef struct rbs_ast_members_classvariable {
 typedef struct rbs_ast_members_extend {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     struct rbs_node_list *args;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
@@ -325,7 +325,7 @@ typedef struct rbs_ast_members_extend {
 typedef struct rbs_ast_members_include {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     struct rbs_node_list *args;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
@@ -364,7 +364,7 @@ typedef struct rbs_ast_members_methoddefinition_overload {
 typedef struct rbs_ast_members_prepend {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     struct rbs_node_list *args;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
@@ -603,7 +603,7 @@ typedef struct rbs_types_variable {
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location);
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_location_t *location);
 rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(VALUE name, rbs_node_list_t *args, rbs_location_t *location);
+rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment);
 rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
@@ -623,12 +623,12 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *n
 rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
 rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
-rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility);
 rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_node_list_t *annotations, rbs_node_t *method_type);
-rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
 rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value);

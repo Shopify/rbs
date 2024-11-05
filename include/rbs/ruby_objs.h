@@ -13,7 +13,7 @@
 VALUE rbs_ast_annotation(VALUE string, rbs_location_t *location);
 VALUE rbs_ast_comment(VALUE string, rbs_location_t *location);
 VALUE rbs_ast_decl_class(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-VALUE rbs_ast_decl_class_super(VALUE name, rbs_node_list_t *args, rbs_location_t *location);
+VALUE rbs_ast_decl_class_super(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 VALUE rbs_ast_decl_class_alias(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment);
 VALUE rbs_ast_decl_constant(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 VALUE rbs_ast_decl_global(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
@@ -31,12 +31,12 @@ VALUE rbs_ast_members_attr_reader(rbs_ast_symbol_t *name, rbs_node_t *type, VALU
 VALUE rbs_ast_members_attr_writer(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
 VALUE rbs_ast_members_class_instance_variable(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 VALUE rbs_ast_members_class_variable(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
-VALUE rbs_ast_members_extend(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-VALUE rbs_ast_members_include(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+VALUE rbs_ast_members_extend(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+VALUE rbs_ast_members_include(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 VALUE rbs_ast_members_instance_variable(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility);
 VALUE rbs_ast_members_method_definition_overload(rbs_node_list_t *annotations, rbs_node_t *method_type);
-VALUE rbs_ast_members_prepend(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+VALUE rbs_ast_members_prepend(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 VALUE rbs_ast_members_private(rbs_location_t *location);
 VALUE rbs_ast_members_public(rbs_location_t *location);
 VALUE rbs_ast_symbol();
