@@ -146,6 +146,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_ast_symbol
       - name: type
         c_type: rbs_node
       - name: ivar_name
@@ -159,6 +160,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_ast_symbol
       - name: type
         c_type: rbs_node
       - name: ivar_name
@@ -172,6 +174,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_ast_symbol
       - name: type
         c_type: rbs_node
       - name: ivar_name
