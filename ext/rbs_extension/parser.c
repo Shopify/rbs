@@ -164,7 +164,7 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
     parser_advance(state);
   }
 
-  VALUE namespace = rbs_namespace(path, absolute);
+  rbs_namespace_t *namespace = rbs_namespace_new(path, absolute);
 
   switch (state->current_token.type) {
     case tLIDENT:
@@ -186,7 +186,8 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
     }
 
     VALUE name = ID2SYM(INTERN_TOKEN(state, state->current_token));
-    return rbs_typename_new(namespace, name);
+    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(name);
+    return rbs_typename_new(namespace, symbol);
   }
 
   error: {
@@ -2720,7 +2721,7 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
           : (range) { .start = namespace_range.start, .end = state->current_token.range.end };
 
         rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
-        rbs_typename_t *type_name = rbs_typename_new(namespace->base.cached_ruby_value, symbol->base.cached_ruby_value);
+        rbs_typename_t *type_name = rbs_typename_new(namespace, symbol);
 
         range keyword_range = NULL_RANGE;
         range new_name_range = NULL_RANGE;
