@@ -1492,7 +1492,7 @@ rbs_ast_annotation_t *parse_annotation(parserstate *state) {
   );
   rb_funcall(string, rb_intern("strip!"), 0);
 
-  VALUE location = rbs_location_current_token(state);
+  rbs_location_t *location = rbs_location_new(state->buffer, rg);
   return rbs_ast_annotation_new(string, location);
 }
 
