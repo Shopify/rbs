@@ -135,6 +135,7 @@ nodes:
   - name: RBS::AST::Directives::Use::WildcardClause
     fields:
       - name: namespace
+        c_type: rbs_namespace
       - name: location
   - name: RBS::AST::Members::Alias
     builds_ruby_object_internally: true

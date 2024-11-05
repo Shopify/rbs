@@ -214,9 +214,9 @@ VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALU
   );
 }
 
-VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location) {
+VALUE rbs_ast_directives_use_wildcard_clause(rbs_namespace_t *namespace, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
 
   return CLASS_NEW_INSTANCE(
