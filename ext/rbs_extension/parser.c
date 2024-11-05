@@ -45,11 +45,11 @@
 typedef struct {
   rbs_node_list_t *required_positionals;
   rbs_node_list_t *optional_positionals;
-  VALUE rest_positionals;
+  rbs_node_t *rest_positionals;
   rbs_node_list_t *trailing_positionals;
   VALUE required_keywords;
   VALUE optional_keywords;
-  VALUE rest_keywords;
+  rbs_node_t *rest_keywords;
 } method_params;
 
 static bool rbs_is_untyped_params(method_params *params) {
@@ -469,7 +469,7 @@ PARSE_REST_PARAM:
   if (state->next_token.type == pSTAR) {
     parser_advance(state);
     rbs_types_function_param_t *param = parse_function_param(state);
-    params->rest_positionals = ((rbs_node_t *)param)->cached_ruby_value;
+    params->rest_positionals = (rbs_node_t *) param;
 
     if (!parser_advance_if(state, pCOMMA)) {
       goto EOP;
@@ -524,7 +524,7 @@ PARSE_KEYWORDS:
     case pSTAR2:
       parser_advance(state);
       rbs_types_function_param_t *param = parse_function_param(state);
-      params->rest_keywords = ((rbs_node_t *)param)->cached_ruby_value;
+      params->rest_keywords = (rbs_node_t *) param;
       break;
 
     case tUIDENT:
@@ -589,11 +589,11 @@ static void initialize_method_params(method_params *params){
   *params = (method_params) {
     .required_positionals = rbs_node_list_new(),
     .optional_positionals = rbs_node_list_new(),
-    .rest_positionals = Qnil,
+    .rest_positionals = NULL,
     .trailing_positionals = rbs_node_list_new(),
     .required_keywords = rb_hash_new(),
     .optional_keywords = rb_hash_new(),
-    .rest_keywords = Qnil,
+    .rest_keywords = NULL,
   };
 }
 
@@ -681,14 +681,28 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
     if (rbs_is_untyped_params(&block_params)) {
       block_function = rbs_untyped_function(block_return_type->cached_ruby_value);
     } else {
+      VALUE rest_positionals;
+      if (block_params.rest_positionals == NULL) {
+        rest_positionals = Qnil;
+      } else {
+        rest_positionals = block_params.rest_positionals->cached_ruby_value;
+      }
+
+      VALUE rest_keywords;
+      if (block_params.rest_keywords == NULL) {
+        rest_keywords = Qnil;
+      } else {
+        rest_keywords = block_params.rest_keywords->cached_ruby_value;
+      }
+
       block_function = rbs_function(
         block_params.required_positionals->cached_ruby_value,
         block_params.optional_positionals->cached_ruby_value,
-        block_params.rest_positionals,
+        rest_positionals,
         block_params.trailing_positionals->cached_ruby_value,
         block_params.required_keywords,
         block_params.optional_keywords,
-        block_params.rest_keywords,
+        rest_keywords,
         block_return_type->cached_ruby_value
       );
     }
@@ -704,14 +718,28 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
   if (rbs_is_untyped_params(&params)) {
     *function = rbs_untyped_function(type->cached_ruby_value);
   } else {
+    VALUE rest_positionals;
+    if (params.rest_positionals == NULL) {
+      rest_positionals = Qnil;
+    } else {
+      rest_positionals = params.rest_positionals->cached_ruby_value;
+    }
+
+    VALUE rest_keywords;
+    if (params.rest_keywords == NULL) {
+      rest_keywords = Qnil;
+    } else {
+      rest_keywords = params.rest_keywords->cached_ruby_value;
+    }
+
     *function = rbs_function(
       params.required_positionals->cached_ruby_value,
       params.optional_positionals->cached_ruby_value,
-      params.rest_positionals,
+      rest_positionals,
       params.trailing_positionals->cached_ruby_value,
       params.required_keywords,
       params.optional_keywords,
-      params.rest_keywords,
+      rest_keywords,
       type->cached_ruby_value
     );
   }
