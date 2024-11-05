@@ -1693,7 +1693,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
 
   parser_push_typevar_table(state, kind != INSTANCE_KIND);
 
-  VALUE overloads = rb_ary_new();
+  rbs_node_list_t *overloads = rbs_node_list_new();
   VALUE overloading = Qfalse;
   range overloading_range = NULL_RANGE;
   bool loop = true;
@@ -1712,8 +1712,9 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
     case pLBRACKET:
     case pQUESTION:
       {
-        rbs_methodtype_t *method_type = parse_method_type(state);
-        rb_ary_push(overloads, rbs_ast_members_method_definition_overload(annotations->cached_ruby_value, ((rbs_node_t *)method_type)->cached_ruby_value));
+        rbs_node_t *method_type = (rbs_node_t *) parse_method_type(state);
+        rbs_node_t *overload = (rbs_node_t *) rbs_ast_members_methoddefinition_overload_new(annotations, method_type);
+        rbs_node_list_append(overloads, overload);
         member_range.end = state->current_token.range.end;
         break;
       }

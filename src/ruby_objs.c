@@ -368,11 +368,11 @@ VALUE rbs_ast_members_instance_variable(rbs_ast_symbol_t *name, rbs_node_t *type
   );
 }
 
-VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility) {
+VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("overloads")), overloads);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("overloads")), overloads->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
@@ -386,10 +386,10 @@ VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t
   );
 }
 
-VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type) {
+VALUE rbs_ast_members_method_definition_overload(rbs_node_list_t *annotations, rbs_node_t *method_type) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("method_type")), method_type);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("method_type")), method_type->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Members_MethodDefinition_Overload,
