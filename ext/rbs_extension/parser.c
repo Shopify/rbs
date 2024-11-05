@@ -1777,10 +1777,10 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
  *
  * @param kind
  * */
-void class_instance_name(parserstate *state, TypeNameKind kind, VALUE *name, rbs_node_list_t *args, range *name_range, range *args_range) {
+rbs_typename_t *class_instance_name(parserstate *state, TypeNameKind kind, rbs_node_list_t *args, range *name_range, range *args_range) {
   parser_advance(state);
 
-  *name = ((rbs_node_t *)parse_type_name(state, kind, name_range))->cached_ruby_value;
+  rbs_typename_t *name = parse_type_name(state, kind, name_range);
 
   if (state->next_token.type == pLBRACKET) {
     parser_advance(state);
@@ -1791,6 +1791,8 @@ void class_instance_name(parserstate *state, TypeNameKind kind, VALUE *name, rbs
   } else {
     *args_range = NULL_RANGE;
   }
+
+  return name;
 }
 
 /**
@@ -1841,12 +1843,11 @@ rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, position
 
   parser_push_typevar_table(state, reset_typevar_scope);
 
-  VALUE name;
   rbs_node_list_t *args = rbs_node_list_new();
-  class_instance_name(
+  rbs_typename_t *name = class_instance_name(
     state,
     from_interface ? INTERFACE_NAME : (INTERFACE_NAME | CLASS_NAME),
-    &name, args, &name_range, &args_range
+    args, &name_range, &args_range
   );
 
   parser_pop_typevar_table(state);
@@ -2491,14 +2492,13 @@ rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *state, r
     range name_range;
     range args_range = NULL_RANGE;
 
-    VALUE name;
     rbs_node_list_t *args;
 
     *lt_range = state->current_token.range;
     super_range.start = state->next_token.range.start;
 
     args = rbs_node_list_new();
-    class_instance_name(state, CLASS_NAME, &name, args, &name_range, &args_range);
+    rbs_typename_t *name = class_instance_name(state, CLASS_NAME, args, &name_range, &args_range);
 
     super_range.end = state->current_token.range.end;
 
