@@ -1,17 +1,16 @@
 nodes:
   - name: RBS::AST::Annotation
-    builds_ruby_object_internally: true
     fields:
       - name: string
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Comment
+    builds_ruby_object_internally: false
     fields:
       - name: string
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Declarations::Class
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -26,7 +25,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Class::Super
-    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -34,7 +32,6 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Declarations::ClassAlias
-    builds_ruby_object_internally: true
     fields:
       - name: new_name
         c_type: rbs_typename
@@ -44,7 +41,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Constant
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -54,7 +50,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Global
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -64,7 +59,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Interface
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -78,7 +72,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Module
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -94,7 +87,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Module::Self
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -103,7 +95,6 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Declarations::ModuleAlias
-    builds_ruby_object_internally: true
     fields:
       - name: new_name
         c_type: rbs_typename
@@ -113,12 +104,12 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Nodes
+    builds_ruby_object_internally: false
     expose_to_ruby: false
     fields:
       - name: declarations
         c_type: rbs_node_list
   - name: RBS::AST::Declarations::TypeAlias
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -132,31 +123,32 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Directives::Nodes
+    builds_ruby_object_internally: false
     expose_to_ruby: false
     fields:
       - name: directives
         c_type: rbs_node_list
   - name: RBS::AST::Directives::Use
-    builds_ruby_object_internally: true
     fields:
       - name: clauses
         c_type: rbs_node_list
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Directives::Use::SingleClause
+    builds_ruby_object_internally: false
     fields:
       - name: type_name
       - name: new_name
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Directives::Use::WildcardClause
+    builds_ruby_object_internally: false
     fields:
       - name: namespace
         c_type: rbs_namespace
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Members::Alias
-    builds_ruby_object_internally: true
     fields:
       - name: new_name
         c_type: rbs_ast_symbol
@@ -170,7 +162,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::AttrAccessor
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -185,7 +176,6 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrReader
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -200,7 +190,6 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrWriter
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -215,7 +204,6 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::ClassInstanceVariable
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -225,7 +213,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::ClassVariable
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -235,7 +222,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::Extend
-    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -246,7 +232,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::Include
-    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -257,7 +242,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::InstanceVariable
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -267,7 +251,6 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::MethodDefinition
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -282,11 +265,11 @@ nodes:
       - name: overloading
       - name: visibility
   - name: RBS::AST::Members::MethodDefinition::Overload
+    builds_ruby_object_internally: false
     fields:
       - name: annotations
       - name: method_type
   - name: RBS::AST::Members::Prepend
-    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: args
@@ -297,18 +280,16 @@ nodes:
         c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::Private
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Members::Public
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Symbol
+    builds_ruby_object_internally: false
   - name: RBS::AST::TypeParam
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -319,7 +300,6 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::MethodType
-    builds_ruby_object_internally: true
     fields:
       - name: type_params
         c_type: rbs_node_list
@@ -328,18 +308,15 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Namespace
-    builds_ruby_object_internally: true
     fields:
       - name: path
         c_type: rbs_node_list
       - name: absolute
   - name: RBS::TypeName
-    builds_ruby_object_internally: true
     fields:
       - name: namespace
       - name: name
   - name: RBS::Types::Alias
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -348,57 +325,48 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Any
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Bool
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Bottom
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Class
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Instance
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Nil
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Self
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Top
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Void
-    builds_ruby_object_internally: true
     fields:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Block
+    builds_ruby_object_internally: false
     fields:
       - name: type
       - name: required
       - name: self_type
   - name: RBS::Types::ClassInstance
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -407,13 +375,13 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::ClassSingleton
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Function
+    builds_ruby_object_internally: false
     fields:
       - name: required_positionals
       - name: optional_positionals
@@ -424,7 +392,6 @@ nodes:
       - name: rest_keywords
       - name: return_type
   - name: RBS::Types::Function::Param
-    builds_ruby_object_internally: true
     fields:
       - name: type
         c_type: rbs_node
@@ -432,7 +399,6 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Interface
-    builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
@@ -441,27 +407,23 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Intersection
-    builds_ruby_object_internally: true
     fields:
       - name: types
         c_type: rbs_node_list
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Literal
-    builds_ruby_object_internally: true
     fields:
       - name: literal
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Optional
-    builds_ruby_object_internally: true
     fields:
       - name: type
         c_type: rbs_node
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Proc
-    builds_ruby_object_internally: true
     fields:
       - name: type
       - name: block
@@ -469,30 +431,27 @@ nodes:
         c_type: rbs_location
       - name: self_type
   - name: RBS::Types::Record
-    builds_ruby_object_internally: true
     fields:
       - name: all_fields
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Tuple
-    builds_ruby_object_internally: true
     fields:
       - name: types
         c_type: rbs_node_list
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Union
-    builds_ruby_object_internally: true
     fields:
       - name: types
         c_type: rbs_node_list
       - name: location
         c_type: rbs_location
   - name: RBS::Types::UntypedFunction
+    builds_ruby_object_internally: false
     fields:
       - name: return_type
   - name: RBS::Types::Variable
-    builds_ruby_object_internally: true
     fields:
       - name: name
       - name: location
