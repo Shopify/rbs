@@ -347,43 +347,53 @@ nodes:
       - name: args
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Any
     builds_ruby_object_internally: true
     fields:
       - name: todo
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Bool
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Bottom
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Class
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Instance
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Nil
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Self
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Top
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Bases::Void
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Block
     fields:
       - name: type
@@ -397,12 +407,14 @@ nodes:
       - name: args
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::ClassSingleton
     builds_ruby_object_internally: true
     fields:
       - name: name
         c_type: rbs_typename
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Function
     fields:
       - name: required_positionals
@@ -429,47 +441,55 @@ nodes:
       - name: args
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Intersection
     builds_ruby_object_internally: true
     fields:
       - name: types
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Literal
     builds_ruby_object_internally: true
     fields:
       - name: literal
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Optional
     builds_ruby_object_internally: true
     fields:
       - name: type
         c_type: rbs_node
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Proc
     builds_ruby_object_internally: true
     fields:
       - name: type
       - name: block
       - name: location
+        c_type: rbs_location
       - name: self_type
   - name: RBS::Types::Record
     builds_ruby_object_internally: true
     fields:
       - name: all_fields
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Tuple
     builds_ruby_object_internally: true
     fields:
       - name: types
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Union
     builds_ruby_object_internally: true
     fields:
       - name: types
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::UntypedFunction
     fields:
       - name: return_type
@@ -478,3 +498,4 @@ nodes:
     fields:
       - name: name
       - name: location
+        c_type: rbs_location
