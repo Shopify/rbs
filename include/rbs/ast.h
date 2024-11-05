@@ -172,9 +172,9 @@ typedef struct rbs_ast_declarations_interface {
 typedef struct rbs_ast_declarations_module {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_typename *name;
     struct rbs_node_list *type_params;
-    VALUE self_types;
+    struct rbs_node_list *self_types;
     struct rbs_node_list *members;
     struct rbs_node_list *annotations;
     VALUE location;
@@ -609,7 +609,7 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_alloc
 rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_t *type, VALUE location, VALUE comment);
 rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment);
 rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
-rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *type_params, VALUE self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
+rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location);
 rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_allocator_t *allocator, rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment);
 rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE declarations);
