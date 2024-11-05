@@ -1038,12 +1038,12 @@ rbs_typename_t *rbs_typename_new(rbs_allocator_t *allocator, VALUE namespace, VA
     return instance;
 }
 
-rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_t *name, VALUE args, VALUE location) {
+rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
     rbs_types_alias_t *instance = rbs_allocator_alloc(allocator, rbs_types_alias_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1288,12 +1288,12 @@ rbs_types_block_t *rbs_types_block_new(rbs_allocator_t *allocator, VALUE ruby_va
     return instance;
 }
 
-rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_allocator_t *allocator, rbs_typename_t *name, VALUE args, VALUE location) {
+rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
     rbs_types_classinstance_t *instance = rbs_allocator_alloc(allocator, rbs_types_classinstance_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1398,12 +1398,12 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *alloca
     return instance;
 }
 
-rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, rbs_typename_t *name, VALUE args, VALUE location) {
+rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
     rbs_types_interface_t *instance = rbs_allocator_alloc(allocator, rbs_types_interface_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.

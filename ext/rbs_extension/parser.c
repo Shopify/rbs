@@ -912,11 +912,11 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
     if (kind == CLASS_NAME) {
-      return (rbs_node_t *) rbs_types_classinstance_new(&state->allocator, typename, types->cached_ruby_value, location);
+      return (rbs_node_t *) rbs_types_classinstance_new(&state->allocator, typename, types, location);
     } else if (kind == INTERFACE_NAME) {
-      return (rbs_node_t *) rbs_types_interface_new(&state->allocator, typename, types->cached_ruby_value, location);
+      return (rbs_node_t *) rbs_types_interface_new(&state->allocator, typename, types, location);
     } else if (kind == ALIAS_NAME) {
-      return (rbs_node_t *) rbs_types_alias_new(&state->allocator, typename, types->cached_ruby_value, location);
+      return (rbs_node_t *) rbs_types_alias_new(&state->allocator, typename, types, location);
     } else {
       return NULL;
     }

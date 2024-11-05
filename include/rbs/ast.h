@@ -425,7 +425,7 @@ typedef struct rbs_types_alias {
     rbs_node_t base;
 
     struct rbs_typename *name;
-    VALUE args;
+    struct rbs_node_list *args;
     VALUE location;
 } rbs_types_alias_t;
 
@@ -496,7 +496,7 @@ typedef struct rbs_types_classinstance {
     rbs_node_t base;
 
     struct rbs_typename *name;
-    VALUE args;
+    struct rbs_node_list *args;
     VALUE location;
 } rbs_types_classinstance_t;
 
@@ -532,7 +532,7 @@ typedef struct rbs_types_interface {
     rbs_node_t base;
 
     struct rbs_typename *name;
-    VALUE args;
+    struct rbs_node_list *args;
     VALUE location;
 } rbs_types_interface_t;
 
@@ -637,7 +637,7 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, VALUE nam
 rbs_methodtype_t *rbs_methodtype_new(rbs_allocator_t *allocator, rbs_node_list_t *type_params, VALUE type, VALUE block, VALUE location);
 rbs_namespace_t *rbs_namespace_new(rbs_allocator_t *allocator, rbs_node_list_t *path, VALUE absolute);
 rbs_typename_t *rbs_typename_new(rbs_allocator_t *allocator, VALUE namespace, VALUE name);
-rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_t *name, VALUE args, VALUE location);
+rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location);
 rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_allocator_t *allocator, VALUE todo, VALUE location);
 rbs_types_bases_bool_t *rbs_types_bases_bool_new(rbs_allocator_t *allocator, VALUE location);
 rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(rbs_allocator_t *allocator, VALUE location);
@@ -648,11 +648,11 @@ rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_allocator_t *allocator, VAL
 rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_allocator_t *allocator, VALUE location);
 rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_allocator_t *allocator, VALUE location);
 rbs_types_block_t *rbs_types_block_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE type, VALUE required, VALUE self_type);
-rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_allocator_t *allocator, rbs_typename_t *name, VALUE args, VALUE location);
+rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location);
 rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_allocator_t *allocator, rbs_typename_t *name, VALUE location);
 rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);
 rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *allocator, rbs_node_t *type, VALUE name, VALUE location);
-rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, rbs_typename_t *name, VALUE args, VALUE location);
+rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location);
 rbs_types_intersection_t *rbs_types_intersection_new(rbs_allocator_t *allocator, VALUE types, VALUE location);
 rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, VALUE literal, VALUE location);
 rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_node_t *type, VALUE location);
