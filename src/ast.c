@@ -428,11 +428,11 @@ rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(rbs_allocator_t *alloca
     return instance;
 }
 
-rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_allocator_t *allocator, VALUE clauses, VALUE location) {
+rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_allocator_t *allocator, rbs_node_list_t *clauses, VALUE location) {
     rbs_ast_directives_use_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_use_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(clauses);
+    rb_gc_register_mark_object(clauses->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.

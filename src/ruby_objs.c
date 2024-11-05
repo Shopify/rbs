@@ -189,9 +189,9 @@ VALUE rbs_ast_decl_type_alias(rbs_typename_t *name, rbs_node_list_t *type_params
   );
 }
 
-VALUE rbs_ast_directives_use(VALUE clauses, VALUE location) {
+VALUE rbs_ast_directives_use(rbs_node_list_t *clauses, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("clauses")), clauses);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("clauses")), clauses->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
 
   return CLASS_NEW_INSTANCE(
