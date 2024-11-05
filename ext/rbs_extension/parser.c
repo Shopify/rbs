@@ -1068,12 +1068,12 @@ static rbs_node_t *parse_simple(parserstate *state) {
     rg.end = state->current_token.range.end;
 
     VALUE location = rbs_new_location(state->buffer, rg);
-    return (rbs_node_t *) rbs_types_tuple_new(types->cached_ruby_value, location);
+    return (rbs_node_t *) rbs_types_tuple_new(types, location);
   }
   case pAREF_OPR: {
     VALUE loc = rbs_location_current_token(state);
     rbs_node_list_t *types = rbs_node_list_new();
-    return (rbs_node_t *) rbs_types_tuple_new(types->cached_ruby_value, loc);
+    return (rbs_node_t *) rbs_types_tuple_new(types, loc);
   }
   case pLBRACE: {
     position start = state->current_token.range.start;
