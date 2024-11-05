@@ -75,13 +75,13 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *locat
     return instance;
 }
 
-rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, VALUE location) {
+rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_location_t *location) {
     rbs_ast_comment_t *instance = (rbs_ast_comment_t *)calloc(1, sizeof(rbs_ast_comment_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(ruby_value);
     rb_gc_register_mark_object(string);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
 
     rb_gc_register_mark_object(ruby_value);
