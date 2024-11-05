@@ -201,7 +201,7 @@ typedef struct rbs_ast_declarations_modulealias {
 typedef struct rbs_ast_declarations_nodes {
     rbs_node_t base;
 
-    VALUE declarations;
+    struct rbs_node_list *declarations;
 } rbs_ast_declarations_nodes_t;
 
 typedef struct rbs_ast_declarations_typealias {
@@ -218,7 +218,7 @@ typedef struct rbs_ast_declarations_typealias {
 typedef struct rbs_ast_directives_nodes {
     rbs_node_t base;
 
-    VALUE directives;
+    struct rbs_node_list *directives;
 } rbs_ast_directives_nodes_t;
 
 typedef struct rbs_ast_directives_use {
@@ -610,9 +610,9 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
 rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_typename_t *name, rbs_node_list_t *args, VALUE location);
 rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment);
-rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, VALUE declarations);
+rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, rbs_node_list_t *declarations);
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, VALUE location, VALUE comment);
-rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, VALUE directives);
+rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, rbs_node_list_t *directives);
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE clauses, VALUE location);
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, VALUE location);
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, rbs_namespace_t *namespace, VALUE location);
