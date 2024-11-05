@@ -1029,12 +1029,12 @@ rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, VALUE absolute) {
     return instance;
 }
 
-rbs_typename_t *rbs_typename_new(VALUE namespace, VALUE name) {
+rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *name) {
     rbs_typename_t *instance = malloc(sizeof(rbs_typename_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(namespace);
-    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(namespace->base.cached_ruby_value);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_type_name(namespace, name);
