@@ -286,6 +286,7 @@ nodes:
       - name: name
         c_type: rbs_typename
       - name: args
+        c_type: rbs_node_list
       - name: location
   - name: RBS::Types::Bases::Any
     builds_ruby_object_internally: true
@@ -334,6 +335,7 @@ nodes:
       - name: name
         c_type: rbs_typename
       - name: args
+        c_type: rbs_node_list
       - name: location
   - name: RBS::Types::ClassSingleton
     builds_ruby_object_internally: true
@@ -364,6 +366,7 @@ nodes:
       - name: name
         c_type: rbs_typename
       - name: args
+        c_type: rbs_node_list
       - name: location
   - name: RBS::Types::Intersection
     builds_ruby_object_internally: true
