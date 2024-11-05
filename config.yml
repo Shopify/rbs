@@ -105,6 +105,7 @@ nodes:
     expose_to_ruby: false
     fields:
       - name: declarations
+        c_type: rbs_node_list
   - name: RBS::AST::Declarations::TypeAlias
     builds_ruby_object_internally: true
     fields:
@@ -122,6 +123,7 @@ nodes:
     expose_to_ruby: false
     fields:
       - name: directives
+        c_type: rbs_node_list
   - name: RBS::AST::Directives::Use
     builds_ruby_object_internally: true
     fields:

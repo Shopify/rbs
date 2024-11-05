@@ -2827,10 +2827,10 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
 
 rbs_node_list_t *parse_signature(parserstate *state) {
   rbs_node_list_t *dir_nodes = rbs_node_list_new();
-  rbs_ast_directives_nodes_t *dirs = rbs_ast_directives_nodes_new(dir_nodes->cached_ruby_value, dir_nodes->cached_ruby_value);
+  rbs_ast_directives_nodes_t *dirs = rbs_ast_directives_nodes_new(dir_nodes->cached_ruby_value, dir_nodes);
 
   rbs_node_list_t *decl_nodes = rbs_node_list_new();
-  rbs_ast_declarations_nodes_t *decls = rbs_ast_declarations_nodes_new(decl_nodes->cached_ruby_value, decl_nodes->cached_ruby_value);
+  rbs_ast_declarations_nodes_t *decls = rbs_ast_declarations_nodes_new(decl_nodes->cached_ruby_value, decl_nodes);
 
   while (state->next_token.type == kUSE) {
     rbs_ast_directives_use_t *use_node = parse_use_directive(state);
