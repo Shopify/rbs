@@ -1090,17 +1090,17 @@ static rbs_node_t *parse_intersection(parserstate *state) {
 
   rg.start = state->next_token.range.start;
   rbs_node_t *type = parse_optional(state);
-  VALUE intersection_types = rb_ary_new();
+  rbs_node_list_t *intersection_types = rbs_node_list_new();
 
-  rb_ary_push(intersection_types, type->cached_ruby_value);
+  rbs_node_list_append(intersection_types, type);
   while (state->next_token.type == pAMP) {
     parser_advance(state);
-    rb_ary_push(intersection_types, parse_optional(state)->cached_ruby_value);
+    rbs_node_list_append(intersection_types, parse_optional(state));
   }
 
   rg.end = state->current_token.range.end;
 
-  if (rb_array_len(intersection_types) > 1) {
+  if (intersection_types->length > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
     type = (rbs_node_t *) rbs_types_intersection_new(intersection_types, location);
   }

@@ -1436,11 +1436,11 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_li
     return instance;
 }
 
-rbs_types_intersection_t *rbs_types_intersection_new(VALUE types, VALUE location) {
+rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, VALUE location) {
     rbs_types_intersection_t *instance = (rbs_types_intersection_t *)calloc(1, sizeof(rbs_types_intersection_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(types);
+    rb_gc_register_mark_object(types->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
