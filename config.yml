@@ -167,6 +167,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::AttrAccessor
     builds_ruby_object_internally: true
@@ -180,6 +181,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrReader
@@ -194,6 +196,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrWriter
@@ -208,6 +211,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::ClassInstanceVariable
@@ -218,6 +222,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::ClassVariable
     builds_ruby_object_internally: true
@@ -227,6 +232,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::Extend
     builds_ruby_object_internally: true
@@ -237,6 +243,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::Include
     builds_ruby_object_internally: true
@@ -247,6 +254,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::InstanceVariable
     builds_ruby_object_internally: true
@@ -256,6 +264,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::MethodDefinition
     builds_ruby_object_internally: true
@@ -268,6 +277,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
       - name: overloading
       - name: visibility
@@ -284,15 +294,18 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Members::Private
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::AST::Members::Public
     builds_ruby_object_internally: true
     fields:
       - name: location
+        c_type: rbs_location
   - name: RBS::AST::Symbol
   - name: RBS::AST::TypeParam
     builds_ruby_object_internally: true
