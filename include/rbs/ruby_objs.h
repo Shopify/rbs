@@ -19,7 +19,7 @@ VALUE rbs_ast_decl_constant(rbs_typename_t *name, rbs_node_t *type, VALUE locati
 VALUE rbs_ast_decl_global(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_interface(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_module(VALUE name, rbs_node_list_t *type_params, VALUE self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
-VALUE rbs_ast_decl_module_self(VALUE name, VALUE args, VALUE location);
+VALUE rbs_ast_decl_module_self(rbs_typename_t *name, rbs_node_list_t *args, VALUE location);
 VALUE rbs_ast_decl_module_alias(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_type_alias(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_directives_use(VALUE clauses, VALUE location);
