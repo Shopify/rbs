@@ -2772,8 +2772,7 @@ void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         rbs_loc_add_optional_child(loc, rb_intern("keyword"), keyword_range);
         rbs_loc_add_optional_child(loc, rb_intern("new_name"), new_name_range);
 
-        VALUE clause_value = rbs_ast_directives_use_single_clause(type_name, new_name, location);
-        rbs_ast_directives_use_singleclause_t *clause = rbs_ast_directives_use_singleclause_new(clause_value, type_name, new_name, location);
+        rbs_ast_directives_use_singleclause_t *clause = rbs_ast_directives_use_singleclause_new(type_name, new_name, location);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;
@@ -2791,8 +2790,7 @@ void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         rbs_loc_add_required_child(loc, rb_intern("namespace"), namespace_range);
         rbs_loc_add_required_child(loc, rb_intern("star"), star_range);
 
-        VALUE clause_value = rbs_ast_directives_use_wildcard_clause(namespace, location);
-        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(clause_value, namespace, location);
+        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(namespace, location);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;
