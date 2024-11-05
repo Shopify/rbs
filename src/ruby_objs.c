@@ -58,10 +58,10 @@ VALUE rbs_ast_decl_class(VALUE name, rbs_node_list_t *type_params, VALUE super_c
   );
 }
 
-VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location) {
+VALUE rbs_ast_decl_class_super(VALUE name, rbs_node_list_t *args, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
 
   return CLASS_NEW_INSTANCE(

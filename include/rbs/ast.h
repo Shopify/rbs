@@ -127,7 +127,7 @@ typedef struct rbs_ast_declarations_class_super {
     rbs_node_t base;
 
     VALUE name;
-    VALUE args;
+    struct rbs_node_list *args;
     VALUE location;
 } rbs_ast_declarations_class_super_t;
 
@@ -604,7 +604,7 @@ typedef struct rbs_types_variable {
 rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_allocator_t *allocator, VALUE string, VALUE location);
 rbs_ast_comment_t *rbs_ast_comment_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE string, VALUE location);
 rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
-rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_allocator_t *allocator, VALUE name, VALUE args, VALUE location);
+rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, VALUE location);
 rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_allocator_t *allocator, rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment);
 rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_t *type, VALUE location, VALUE comment);
 rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment);

@@ -126,12 +126,12 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *al
     return instance;
 }
 
-rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_allocator_t *allocator, VALUE name, VALUE args, VALUE location) {
+rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, VALUE location) {
     rbs_ast_declarations_class_super_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_class_super_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
