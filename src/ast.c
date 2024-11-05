@@ -356,11 +356,11 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_all
     return instance;
 }
 
-rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE declarations) {
+rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_list_t *declarations) {
     rbs_ast_declarations_nodes_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_nodes_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(declarations);
+    rb_gc_register_mark_object(declarations->cached_ruby_value);
 
 
     rb_gc_register_mark_object(ruby_value);
@@ -408,11 +408,11 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_allocat
     return instance;
 }
 
-rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE directives) {
+rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_list_t *directives) {
     rbs_ast_directives_nodes_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_nodes_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(directives);
+    rb_gc_register_mark_object(directives->cached_ruby_value);
 
 
     rb_gc_register_mark_object(ruby_value);
