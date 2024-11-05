@@ -10,6 +10,7 @@
 
 #include "ruby.h"
 #include "rbs/util/rbs_allocator.h"
+#include "location.h"
 
 enum rbs_node_type {
     RBS_AST_ANNOTATION = 1,
