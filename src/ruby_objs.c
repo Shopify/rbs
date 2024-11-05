@@ -460,12 +460,12 @@ VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VAL
   );
 }
 
-VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, VALUE location) {
+VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_MethodType,
