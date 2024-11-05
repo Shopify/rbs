@@ -324,10 +324,10 @@ VALUE rbs_ast_members_class_variable(VALUE name, rbs_node_t *type, VALUE locatio
   );
 }
 
-VALUE rbs_ast_members_extend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_extend(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
@@ -339,10 +339,10 @@ VALUE rbs_ast_members_extend(VALUE name, VALUE args, rbs_node_list_t *annotation
   );
 }
 
-VALUE rbs_ast_members_include(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_include(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
@@ -398,10 +398,10 @@ VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method
   );
 }
 
-VALUE rbs_ast_members_prepend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_prepend(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
