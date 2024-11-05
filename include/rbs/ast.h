@@ -576,7 +576,7 @@ typedef struct rbs_types_record {
 typedef struct rbs_types_tuple {
     rbs_node_t base;
 
-    VALUE types;
+    struct rbs_node_list *types;
     VALUE location;
 } rbs_types_tuple_t;
 
@@ -658,7 +658,7 @@ rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, VALUE lit
 rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_node_t *type, VALUE location);
 rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, VALUE type, VALUE block, VALUE location, VALUE self_type);
 rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, VALUE all_fields, VALUE location);
-rbs_types_tuple_t *rbs_types_tuple_new(rbs_allocator_t *allocator, VALUE types, VALUE location);
+rbs_types_tuple_t *rbs_types_tuple_new(rbs_allocator_t *allocator, rbs_node_list_t *types, VALUE location);
 rbs_types_union_t *rbs_types_union_new(rbs_allocator_t *allocator, VALUE types, VALUE location);
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE return_type);
 rbs_types_variable_t *rbs_types_variable_new(rbs_allocator_t *allocator, VALUE name, VALUE location);
