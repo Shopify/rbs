@@ -302,14 +302,16 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_allocator_t *
     return instance;
 }
 
-rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE name, VALUE args, VALUE location) {
+rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
     rbs_ast_declarations_module_self_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_module_self_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_ast_decl_module_self(name, args, location);
 
     rb_gc_register_mark_object(ruby_value);
 
