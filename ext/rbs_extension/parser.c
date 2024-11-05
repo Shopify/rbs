@@ -1117,17 +1117,17 @@ rbs_node_t *parse_type(parserstate *state) {
 
   rg.start = state->next_token.range.start;
   rbs_node_t *type = parse_intersection(state);
-  VALUE union_types = rb_ary_new();
+  rbs_node_list_t *union_types = rbs_node_list_new();
 
-  rb_ary_push(union_types, type->cached_ruby_value);
+  rbs_node_list_append(union_types, type);
   while (state->next_token.type == pBAR) {
     parser_advance(state);
-    rb_ary_push(union_types, parse_intersection(state)->cached_ruby_value);
+    rbs_node_list_append(union_types, parse_intersection(state));
   }
 
   rg.end = state->current_token.range.end;
 
-  if (rb_array_len(union_types) > 1) {
+  if (union_types->length > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
     type = (rbs_node_t *) rbs_types_union_new(union_types, location);
   }
