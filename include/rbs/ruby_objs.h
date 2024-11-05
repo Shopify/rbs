@@ -34,7 +34,7 @@ VALUE rbs_ast_members_class_variable(VALUE name, rbs_node_t *type, VALUE locatio
 VALUE rbs_ast_members_extend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_include(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_instance_variable(VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
-VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
+VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
 VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type);
 VALUE rbs_ast_members_prepend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_private(VALUE location);
