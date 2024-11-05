@@ -1276,8 +1276,8 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
 
       param_range.end = state->current_token.range.end;
 
-      VALUE location = rbs_new_location(state->buffer, param_range);
-      rbs_loc *loc = rbs_check_location(location);
+      rbs_location_t *location = rbs_location_new(state->buffer, param_range);
+      rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
       rbs_loc_alloc_children(loc, 5);
       rbs_loc_add_required_child(loc, INTERN("name"), name_range);
       rbs_loc_add_optional_child(loc, INTERN("variance"), variance_range);
