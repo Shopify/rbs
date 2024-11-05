@@ -666,11 +666,11 @@ VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE
   );
 }
 
-VALUE rbs_function_param(rbs_node_t *type, VALUE name, VALUE location) {
+VALUE rbs_function_param(rbs_node_t *type, VALUE name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Function_Param,

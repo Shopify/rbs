@@ -1384,13 +1384,13 @@ rbs_types_function_t *rbs_types_function_new(VALUE ruby_value, VALUE required_po
     return instance;
 }
 
-rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, VALUE name, VALUE location) {
+rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, VALUE name, rbs_location_t *location) {
     rbs_types_function_param_t *instance = (rbs_types_function_param_t *)calloc(1, sizeof(rbs_types_function_param_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type->cached_ruby_value);
     rb_gc_register_mark_object(name);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_function_param(type, name, location);
