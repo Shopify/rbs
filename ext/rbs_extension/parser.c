@@ -2542,7 +2542,7 @@ rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keywor
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
   rbs_loc_add_optional_child(loc, rb_intern("lt"), lt_range);
 
-  return rbs_ast_declarations_class_new(((rbs_node_t *)name)->cached_ruby_value, type_params, super, members, annotations, location, comment);
+  return rbs_ast_declarations_class_new(name, type_params, super, members, annotations, location, comment);
 }
 
 /*
