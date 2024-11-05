@@ -163,7 +163,7 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
     parser_advance(state);
   }
 
-  VALUE namespace = rbs_namespace(path->cached_ruby_value, absolute);
+  VALUE namespace = rbs_namespace(path, absolute);
 
   switch (state->current_token.type) {
     case tLIDENT:
@@ -2660,7 +2660,7 @@ static rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
     }
   }
 
-  return rbs_namespace_new(path->cached_ruby_value, is_absolute ? Qtrue : Qfalse);
+  return rbs_namespace_new(path, is_absolute ? Qtrue : Qfalse);
 }
 
 /*

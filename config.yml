@@ -273,6 +273,7 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: path
+        c_type: rbs_node_list
       - name: absolute
   - name: RBS::TypeName
     builds_ruby_object_internally: true
