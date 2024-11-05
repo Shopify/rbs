@@ -932,7 +932,7 @@ rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_allocator_t *allocator, VALUE ruby_valu
     return instance;
 }
 
-rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE unchecked, VALUE location) {
+rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE unchecked, rbs_location_t *location) {
     rbs_ast_typeparam_t *instance = rbs_allocator_alloc(allocator, rbs_ast_typeparam_t);
 
     // Disable GC for all these Ruby objects.
@@ -941,7 +941,7 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, rbs_ast_s
     rb_gc_register_mark_object(upper_bound);
     rb_gc_register_mark_object(default_type);
     rb_gc_register_mark_object(unchecked);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_type_param(name, variance, upper_bound, default_type, unchecked, location);
