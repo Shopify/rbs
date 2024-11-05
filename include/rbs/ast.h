@@ -595,7 +595,7 @@ typedef struct rbs_types_untypedfunction {
 typedef struct rbs_types_variable {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_ast_symbol *name;
     struct rbs_location *location;
 } rbs_types_variable_t;
 
@@ -660,7 +660,7 @@ rbs_types_record_t *rbs_types_record_new(VALUE all_fields, rbs_location_t *locat
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE return_type);
-rbs_types_variable_t *rbs_types_variable_new(VALUE name, rbs_location_t *location);
+rbs_types_variable_t *rbs_types_variable_new(rbs_ast_symbol_t *name, rbs_location_t *location);
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance);
 
