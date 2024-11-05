@@ -1342,8 +1342,8 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
 
   parser_pop_typevar_table(state);
 
-  VALUE location = rbs_new_location(state->buffer, rg);
-  rbs_loc *loc = rbs_check_location(location);
+  rbs_location_t *location = rbs_location_new(state->buffer, rg);
+  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
   rbs_loc_alloc_children(loc, 2);
   rbs_loc_add_required_child(loc, INTERN("type"), type_range);
   rbs_loc_add_optional_child(loc, INTERN("type_params"), params_range);
