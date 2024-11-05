@@ -615,8 +615,8 @@ rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, r
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, rbs_node_list_t *directives);
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, rbs_location_t *location);
-rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, rbs_location_t *location);
-rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, rbs_namespace_t *namespace, rbs_location_t *location);
+rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE type_name, VALUE new_name, rbs_location_t *location);
+rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_namespace_t *namespace, rbs_location_t *location);
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
 rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
@@ -627,7 +627,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(VALUE name, rbs_node_list_t
 rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility);
-rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(VALUE ruby_value, VALUE annotations, VALUE method_type);
+rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(VALUE annotations, VALUE method_type);
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
@@ -646,10 +646,10 @@ rbs_types_bases_nil_t *rbs_types_bases_nil_new(rbs_location_t *location);
 rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_location_t *location);
 rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_location_t *location);
 rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_location_t *location);
-rbs_types_block_t *rbs_types_block_new(VALUE ruby_value, VALUE type, VALUE required, VALUE self_type);
+rbs_types_block_t *rbs_types_block_new(VALUE type, VALUE required, VALUE self_type);
 rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t *name, rbs_location_t *location);
-rbs_types_function_t *rbs_types_function_new(VALUE ruby_value, VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);
+rbs_types_function_t *rbs_types_function_new(VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);
 rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, VALUE name, rbs_location_t *location);
 rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs_location_t *location);
@@ -659,7 +659,7 @@ rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, rbs_location_t *lo
 rbs_types_record_t *rbs_types_record_new(VALUE all_fields, rbs_location_t *location);
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *location);
-rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE ruby_value, VALUE return_type);
+rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE return_type);
 rbs_types_variable_t *rbs_types_variable_new(VALUE name, rbs_location_t *location);
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance);
