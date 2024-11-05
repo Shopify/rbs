@@ -2257,8 +2257,7 @@ static void parse_module_self_types(parserstate *state, rbs_node_list_t *array) 
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    VALUE value = rbs_ast_decl_module_self(((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
-    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(value, ((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
+    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(module_name, args, location);
     rbs_node_list_append(array, (rbs_node_t *)self_type);
 
     if (state->next_token.type == pCOMMA) {
