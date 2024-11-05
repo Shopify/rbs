@@ -2102,11 +2102,11 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   switch (attr_type)
   {
   case kATTRREADER:
-    return (rbs_node_t *) rbs_ast_members_attrreader_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility_value);
+    return (rbs_node_t *) rbs_ast_members_attrreader_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility_value);
   case kATTRWRITER:
-    return (rbs_node_t *) rbs_ast_members_attrwriter_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility_value);
+    return (rbs_node_t *) rbs_ast_members_attrwriter_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility_value);
   case kATTRACCESSOR:
-    return (rbs_node_t *) rbs_ast_members_attraccessor_new(((rbs_node_t *)attr_name)->cached_ruby_value, type, ivar_name, kind, annotations, location, comment, visibility_value);
+    return (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility_value);
   default:
     rbs_abort();
   }
