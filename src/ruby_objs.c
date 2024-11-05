@@ -445,14 +445,14 @@ VALUE rbs_ast_symbol() {
   );
 }
 
-VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE unchecked, VALUE location) {
+VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE unchecked, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("variance")), variance->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("upper_bound")), upper_bound);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("default_type")), default_type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("unchecked")), unchecked);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_TypeParam,

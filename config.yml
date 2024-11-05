@@ -318,6 +318,7 @@ nodes:
       - name: default_type
       - name: unchecked
       - name: location
+        c_type: rbs_location
   - name: RBS::MethodType
     builds_ruby_object_internally: true
     fields:
