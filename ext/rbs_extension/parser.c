@@ -1074,7 +1074,8 @@ static rbs_node_t *parse_simple(parserstate *state) {
     if (parser_typevar_member(state, name)) {
       ID name = rb_intern3(name_str, name_len, rb_enc_get(state->lexstate->string));
       rbs_location_t *loc = rbs_location_current_token(state);
-      return (rbs_node_t *) rbs_types_variable_new(&state->allocator, ID2SYM(name), loc);
+      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(&state->allocator, ID2SYM(name));
+      return (rbs_node_t *) rbs_types_variable_new(&state->allocator, symbol, loc);
     }
     // fallthrough for type name
   }

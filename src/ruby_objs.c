@@ -791,9 +791,9 @@ VALUE rbs_untyped_function(VALUE return_type) {
   );
 }
 
-VALUE rbs_variable(VALUE name, rbs_location_t *location) {
+VALUE rbs_variable(rbs_ast_symbol_t *name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
