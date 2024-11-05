@@ -279,8 +279,8 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
   if (state->next_token.type == pCOMMA || state->next_token.type == pRPAREN) {
     range param_range = type_range;
 
-    VALUE location = rbs_new_location(state->buffer, param_range);
-    rbs_loc *loc = rbs_check_location(location);
+    rbs_location_t *location = rbs_location_new(state->buffer, param_range);
+    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, INTERN("name"), NULL_RANGE);
 
@@ -304,8 +304,8 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     }
 
     VALUE name = rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0));
-    VALUE location = rbs_new_location(state->buffer, param_range);
-    rbs_loc *loc = rbs_check_location(location);
+    rbs_location_t *location = rbs_location_new(state->buffer, param_range);
+    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, INTERN("name"), name_range);
 
