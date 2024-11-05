@@ -2272,8 +2272,7 @@ void parse_module_self_types(parserstate *state, rbs_node_list_t *array) {
     rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
     rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
 
-    VALUE value = rbs_ast_decl_module_self(((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
-    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(value, ((rbs_node_t *)module_name)->cached_ruby_value, args->cached_ruby_value, location);
+    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(module_name, args, location);
     rbs_node_list_append(array, (rbs_node_t *)self_type);
 
     if (state->next_token.type == pCOMMA) {
@@ -2416,7 +2415,7 @@ rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyw
 
   parser_pop_typevar_table(state);
 
-  return rbs_ast_declarations_module_new(((rbs_node_t *)module_name)->cached_ruby_value, type_params, self_types->cached_ruby_value, members, annotations, location, comment);
+  return rbs_ast_declarations_module_new(module_name, type_params, self_types, members, annotations, location, comment);
 }
 
 /*
