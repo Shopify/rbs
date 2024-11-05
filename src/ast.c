@@ -647,11 +647,11 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE name, rbs_nod
     return instance;
 }
 
-rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
+rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_members_classinstancevariable_t *instance = malloc(sizeof(rbs_ast_members_classinstancevariable_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);
@@ -675,11 +675,11 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
     return instance;
 }
 
-rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
+rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_members_classvariable_t *instance = malloc(sizeof(rbs_ast_members_classvariable_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);
@@ -763,11 +763,11 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(VALUE name, rbs_node_list
     return instance;
 }
 
-rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
+rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_members_instancevariable_t *instance = malloc(sizeof(rbs_ast_members_instancevariable_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);
