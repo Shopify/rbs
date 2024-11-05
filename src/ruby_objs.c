@@ -99,9 +99,9 @@ VALUE rbs_ast_decl_constant(rbs_typename_t *name, rbs_node_t *type, VALUE locati
   );
 }
 
-VALUE rbs_ast_decl_global(VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
+VALUE rbs_ast_decl_global(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);

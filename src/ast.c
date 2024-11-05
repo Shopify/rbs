@@ -208,11 +208,11 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_allocator
     return instance;
 }
 
-rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE location, VALUE comment) {
+rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment) {
     rbs_ast_declarations_global_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_global_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);
