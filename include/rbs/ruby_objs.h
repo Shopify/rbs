@@ -40,7 +40,7 @@ VALUE rbs_ast_members_prepend(VALUE name, VALUE args, rbs_node_list_t *annotatio
 VALUE rbs_ast_members_private(VALUE location);
 VALUE rbs_ast_members_public(VALUE location);
 VALUE rbs_ast_symbol();
-VALUE rbs_ast_type_param(VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE location);
+VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE location);
 VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, VALUE location);
 VALUE rbs_namespace(rbs_node_list_t *path, VALUE absolute);
 VALUE rbs_type_name(VALUE namespace, VALUE name);
