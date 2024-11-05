@@ -694,9 +694,9 @@ VALUE rbs_interface(rbs_typename_t *name, rbs_node_list_t *args, VALUE location)
   );
 }
 
-VALUE rbs_intersection(VALUE types, VALUE location) {
+VALUE rbs_intersection(rbs_node_list_t *types, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
 
   return CLASS_NEW_INSTANCE(

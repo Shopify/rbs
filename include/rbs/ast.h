@@ -539,7 +539,7 @@ typedef struct rbs_types_interface {
 typedef struct rbs_types_intersection {
     rbs_node_t base;
 
-    VALUE types;
+    struct rbs_node_list *types;
     VALUE location;
 } rbs_types_intersection_t;
 
@@ -653,7 +653,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_allocator_t *alloca
 rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);
 rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *allocator, rbs_node_t *type, VALUE name, VALUE location);
 rbs_types_interface_t *rbs_types_interface_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, VALUE location);
-rbs_types_intersection_t *rbs_types_intersection_new(rbs_allocator_t *allocator, VALUE types, VALUE location);
+rbs_types_intersection_t *rbs_types_intersection_new(rbs_allocator_t *allocator, rbs_node_list_t *types, VALUE location);
 rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, VALUE literal, VALUE location);
 rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_node_t *type, VALUE location);
 rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, VALUE type, VALUE block, VALUE location, VALUE self_type);
