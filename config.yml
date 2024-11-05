@@ -41,6 +41,7 @@ nodes:
       - name: old_name
         c_type: rbs_typename
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Constant
     builds_ruby_object_internally: true
@@ -50,6 +51,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Global
     builds_ruby_object_internally: true
@@ -59,6 +61,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Interface
     builds_ruby_object_internally: true
@@ -72,6 +75,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Module
     builds_ruby_object_internally: true
@@ -87,6 +91,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Module::Self
     builds_ruby_object_internally: true
@@ -96,6 +101,7 @@ nodes:
       - name: args
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::AST::Declarations::ModuleAlias
     builds_ruby_object_internally: true
     fields:
@@ -104,6 +110,7 @@ nodes:
       - name: old_name
         c_type: rbs_typename
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Nodes
     expose_to_ruby: false
@@ -122,6 +129,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Directives::Nodes
     expose_to_ruby: false
