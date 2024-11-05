@@ -498,11 +498,11 @@ VALUE rbs_type_name(VALUE namespace, VALUE name) {
   );
 }
 
-VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
+VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Alias,
@@ -511,9 +511,9 @@ VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
   );
 }
 
-VALUE rbs_bases_any(VALUE location) {
+VALUE rbs_bases_any(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Any,
@@ -522,9 +522,9 @@ VALUE rbs_bases_any(VALUE location) {
   );
 }
 
-VALUE rbs_bases_bool(VALUE location) {
+VALUE rbs_bases_bool(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Bool,
@@ -533,9 +533,9 @@ VALUE rbs_bases_bool(VALUE location) {
   );
 }
 
-VALUE rbs_bases_bottom(VALUE location) {
+VALUE rbs_bases_bottom(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Bottom,
@@ -544,9 +544,9 @@ VALUE rbs_bases_bottom(VALUE location) {
   );
 }
 
-VALUE rbs_bases_class(VALUE location) {
+VALUE rbs_bases_class(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Class,
@@ -555,9 +555,9 @@ VALUE rbs_bases_class(VALUE location) {
   );
 }
 
-VALUE rbs_bases_instance(VALUE location) {
+VALUE rbs_bases_instance(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Instance,
@@ -566,9 +566,9 @@ VALUE rbs_bases_instance(VALUE location) {
   );
 }
 
-VALUE rbs_bases_nil(VALUE location) {
+VALUE rbs_bases_nil(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Nil,
@@ -577,9 +577,9 @@ VALUE rbs_bases_nil(VALUE location) {
   );
 }
 
-VALUE rbs_bases_self(VALUE location) {
+VALUE rbs_bases_self(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Self,
@@ -588,9 +588,9 @@ VALUE rbs_bases_self(VALUE location) {
   );
 }
 
-VALUE rbs_bases_top(VALUE location) {
+VALUE rbs_bases_top(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Top,
@@ -599,9 +599,9 @@ VALUE rbs_bases_top(VALUE location) {
   );
 }
 
-VALUE rbs_bases_void(VALUE location) {
+VALUE rbs_bases_void(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Void,
@@ -623,11 +623,11 @@ VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
   );
 }
 
-VALUE rbs_class_instance(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
+VALUE rbs_class_instance(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_ClassInstance,
@@ -636,10 +636,10 @@ VALUE rbs_class_instance(rbs_typename_t *name, rbs_node_list_t *args, VALUE loca
   );
 }
 
-VALUE rbs_class_singleton(rbs_typename_t *name, VALUE location) {
+VALUE rbs_class_singleton(rbs_typename_t *name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_ClassSingleton,
@@ -679,11 +679,11 @@ VALUE rbs_function_param(rbs_node_t *type, VALUE name, rbs_location_t *location)
   );
 }
 
-VALUE rbs_interface(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
+VALUE rbs_interface(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Interface,
@@ -692,10 +692,10 @@ VALUE rbs_interface(rbs_typename_t *name, rbs_node_list_t *args, VALUE location)
   );
 }
 
-VALUE rbs_intersection(rbs_node_list_t *types, VALUE location) {
+VALUE rbs_intersection(rbs_node_list_t *types, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Intersection,
@@ -704,10 +704,10 @@ VALUE rbs_intersection(rbs_node_list_t *types, VALUE location) {
   );
 }
 
-VALUE rbs_literal(VALUE literal, VALUE location) {
+VALUE rbs_literal(VALUE literal, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("literal")), literal);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Literal,
@@ -716,10 +716,10 @@ VALUE rbs_literal(VALUE literal, VALUE location) {
   );
 }
 
-VALUE rbs_optional(rbs_node_t *type, VALUE location) {
+VALUE rbs_optional(rbs_node_t *type, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Optional,
@@ -728,11 +728,11 @@ VALUE rbs_optional(rbs_node_t *type, VALUE location) {
   );
 }
 
-VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type) {
+VALUE rbs_proc(VALUE type, VALUE block, rbs_location_t *location, VALUE self_type) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type);
 
   return CLASS_NEW_INSTANCE(
@@ -742,10 +742,10 @@ VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type) {
   );
 }
 
-VALUE rbs_record(VALUE all_fields, VALUE location) {
+VALUE rbs_record(VALUE all_fields, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("all_fields")), all_fields);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Record,
@@ -754,10 +754,10 @@ VALUE rbs_record(VALUE all_fields, VALUE location) {
   );
 }
 
-VALUE rbs_tuple(rbs_node_list_t *types, VALUE location) {
+VALUE rbs_tuple(rbs_node_list_t *types, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Tuple,
@@ -766,10 +766,10 @@ VALUE rbs_tuple(rbs_node_list_t *types, VALUE location) {
   );
 }
 
-VALUE rbs_union(rbs_node_list_t *types, VALUE location) {
+VALUE rbs_union(rbs_node_list_t *types, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Union,
@@ -789,10 +789,10 @@ VALUE rbs_untyped_function(VALUE return_type) {
   );
 }
 
-VALUE rbs_variable(VALUE name, VALUE location) {
+VALUE rbs_variable(VALUE name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Variable,
