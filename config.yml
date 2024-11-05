@@ -390,6 +390,7 @@ nodes:
         c_type: rbs_node
       - name: name
       - name: location
+        c_type: rbs_location
   - name: RBS::Types::Interface
     builds_ruby_object_internally: true
     fields:
