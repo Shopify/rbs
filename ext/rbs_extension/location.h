@@ -82,7 +82,7 @@ void rbs_loc_add_optional_child(rbs_loc *loc, ID name, range r);
  * @param end_pos
  * @return New RSS::Location object.
  * */
-VALUE rbs_location_pp(VALUE buffer, const position *start_pos, const position *end_pos);
+rbs_location_t *rbs_location_pp(VALUE buffer, const position *start_pos, const position *end_pos);
 
 /**
  * Define RBS::Location class.
