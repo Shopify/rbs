@@ -436,11 +436,11 @@ rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, rbs_n
     return instance;
 }
 
-rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE clauses, VALUE location) {
+rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, VALUE location) {
     rbs_ast_directives_use_t *instance = (rbs_ast_directives_use_t *)calloc(1, sizeof(rbs_ast_directives_use_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(clauses);
+    rb_gc_register_mark_object(clauses->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
