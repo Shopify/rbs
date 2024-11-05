@@ -104,7 +104,8 @@ module RBS
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
         @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
-        @builds_ruby_object_internally = yaml.fetch("builds_ruby_object_internally", false)
+
+        @builds_ruby_object_internally = yaml.fetch("builds_ruby_object_internally", true)
       end
 
       # The name of the C function which constructs new instances of this C structure.
