@@ -122,7 +122,7 @@ module RBS
         @c_type_enum_name = @c_base_name.upcase
 
         @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
-        @builds_ruby_object_internally = yaml.fetch("builds_ruby_object_internally", false)
+        @builds_ruby_object_internally = yaml.fetch("builds_ruby_object_internally", true)
 
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
