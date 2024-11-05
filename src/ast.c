@@ -1049,12 +1049,12 @@ rbs_typename_t *rbs_typename_new(VALUE namespace, VALUE name) {
     return instance;
 }
 
-rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, VALUE args, VALUE location) {
+rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
     rbs_types_alias_t *instance = malloc(sizeof(rbs_types_alias_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1298,12 +1298,12 @@ rbs_types_block_t *rbs_types_block_new(VALUE ruby_value, VALUE type, VALUE requi
     return instance;
 }
 
-rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, VALUE args, VALUE location) {
+rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
     rbs_types_classinstance_t *instance = malloc(sizeof(rbs_types_classinstance_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1409,12 +1409,12 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, VALUE
     return instance;
 }
 
-rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, VALUE args, VALUE location) {
+rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_list_t *args, VALUE location) {
     rbs_types_interface_t *instance = malloc(sizeof(rbs_types_interface_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(location);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
