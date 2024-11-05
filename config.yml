@@ -26,6 +26,7 @@ nodes:
     fields:
       - name: name
       - name: args
+        c_type: rbs_node_list
       - name: location
   - name: RBS::AST::Declarations::ClassAlias
     builds_ruby_object_internally: true
