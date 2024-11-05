@@ -51,12 +51,12 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
     rb_ary_push(list->cached_ruby_value, node->cached_ruby_value);
 }
 
-rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, VALUE location) {
+rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location) {
     rbs_ast_annotation_t *instance = (rbs_ast_annotation_t *)calloc(1, sizeof(rbs_ast_annotation_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(string);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_annotation(string, location);
