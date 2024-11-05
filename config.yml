@@ -27,6 +27,7 @@ nodes:
   - name: RBS::AST::Declarations::Class::Super
     fields:
       - name: name
+        c_type: rbs_typename
       - name: args
         c_type: rbs_node_list
       - name: location
@@ -222,6 +223,7 @@ nodes:
   - name: RBS::AST::Members::Extend
     fields:
       - name: name
+        c_type: rbs_typename
       - name: args
         c_type: rbs_node_list
       - name: annotations
@@ -232,6 +234,7 @@ nodes:
   - name: RBS::AST::Members::Include
     fields:
       - name: name
+        c_type: rbs_typename
       - name: args
         c_type: rbs_node_list
       - name: annotations
@@ -272,6 +275,7 @@ nodes:
   - name: RBS::AST::Members::Prepend
     fields:
       - name: name
+        c_type: rbs_typename
       - name: args
         c_type: rbs_node_list
       - name: annotations
