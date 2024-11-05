@@ -343,8 +343,8 @@ typedef struct rbs_ast_members_instancevariable {
 typedef struct rbs_ast_members_methoddefinition {
     rbs_node_t base;
 
-    VALUE name;
-    VALUE kind;
+    struct rbs_ast_symbol *name;
+    struct rbs_ast_symbol *kind;
     VALUE overloads;
     struct rbs_node_list *annotations;
     VALUE location;
@@ -627,7 +627,7 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator
 rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator, VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_allocator_t *allocator, VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_allocator_t *allocator, VALUE name, VALUE kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
 rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE annotations, VALUE method_type);
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_allocator_t *allocator, VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_allocator_t *allocator, VALUE location);

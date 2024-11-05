@@ -224,7 +224,9 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_ast_symbol
       - name: kind
+        c_type: rbs_ast_symbol
       - name: overloads
       - name: annotations
         c_type: rbs_node_list

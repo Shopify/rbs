@@ -1741,7 +1741,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
   rbs_loc_add_optional_child(loc, INTERN("overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, INTERN("visibility"), visibility_range);
 
-  return rbs_ast_members_methoddefinition_new(&state->allocator, ((rbs_node_t *)name)->cached_ruby_value, ((rbs_node_t *)k)->cached_ruby_value, overloads, annotations, location, comment, overloading, visibility);
+  return rbs_ast_members_methoddefinition_new(&state->allocator, name, k, overloads, annotations, location, comment, overloading, visibility);
 }
 
 /**
