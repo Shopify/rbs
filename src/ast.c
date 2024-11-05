@@ -692,12 +692,12 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator
     return instance;
 }
 
-rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator, VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_extend_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_extend_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);
@@ -722,12 +722,12 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator,
     return instance;
 }
 
-rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_allocator_t *allocator, VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_include_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_include_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);
@@ -838,12 +838,12 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
     return instance;
 }
 
-rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_allocator_t *allocator, VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_prepend_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_prepend_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name);
-    rb_gc_register_mark_object(args);
+    rb_gc_register_mark_object(args->cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);

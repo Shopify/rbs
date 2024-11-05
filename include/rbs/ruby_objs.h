@@ -31,12 +31,12 @@ VALUE rbs_ast_members_attr_reader(VALUE name, rbs_node_t *type, VALUE ivar_name,
 VALUE rbs_ast_members_attr_writer(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
 VALUE rbs_ast_members_class_instance_variable(VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
 VALUE rbs_ast_members_class_variable(VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
-VALUE rbs_ast_members_extend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
-VALUE rbs_ast_members_include(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
+VALUE rbs_ast_members_extend(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
+VALUE rbs_ast_members_include(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_instance_variable(VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
 VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
 VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type);
-VALUE rbs_ast_members_prepend(VALUE name, VALUE args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
+VALUE rbs_ast_members_prepend(VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_private(VALUE location);
 VALUE rbs_ast_members_public(VALUE location);
 VALUE rbs_ast_symbol();

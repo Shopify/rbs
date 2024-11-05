@@ -199,6 +199,7 @@ nodes:
     fields:
       - name: name
       - name: args
+        c_type: rbs_node_list
       - name: annotations
         c_type: rbs_node_list
       - name: location
@@ -208,6 +209,7 @@ nodes:
     fields:
       - name: name
       - name: args
+        c_type: rbs_node_list
       - name: annotations
         c_type: rbs_node_list
       - name: location
@@ -243,6 +245,7 @@ nodes:
     fields:
       - name: name
       - name: args
+        c_type: rbs_node_list
       - name: annotations
         c_type: rbs_node_list
       - name: location
