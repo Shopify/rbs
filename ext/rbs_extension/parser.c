@@ -2766,8 +2766,8 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
           clause_range.end = new_name_range.end;
         }
 
-        VALUE location = rbs_new_location(state->buffer, clause_range);
-        rbs_loc *loc = rbs_check_location(location);
+        rbs_location_t *location = rbs_location_new(state->buffer, clause_range);
+        rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
         rbs_loc_alloc_children(loc, 3);
         rbs_loc_add_required_child(loc, rb_intern("type_name"), type_name_range);
         rbs_loc_add_optional_child(loc, rb_intern("keyword"), keyword_range);
@@ -2786,8 +2786,8 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         range star_range = state->current_token.range;
         clause_range.end = star_range.end;
 
-        VALUE location = rbs_new_location(state->buffer, clause_range);
-        rbs_loc *loc = rbs_check_location(location);
+        rbs_location_t *location = rbs_location_new(state->buffer, clause_range);
+        rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
         rbs_loc_alloc_children(loc, 2);
         rbs_loc_add_required_child(loc, rb_intern("namespace"), namespace_range);
         rbs_loc_add_required_child(loc, rb_intern("star"), star_range);
@@ -2831,8 +2831,8 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
     range directive_range = keyword_range;
     directive_range.end = state->current_token.range.end;
 
-    VALUE location = rbs_new_location(state->buffer, directive_range);
-    rbs_loc *loc = rbs_check_location(location);
+    rbs_location_t *location = rbs_location_new(state->buffer, directive_range);
+    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
 
