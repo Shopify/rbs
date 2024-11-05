@@ -296,7 +296,7 @@ typedef struct rbs_ast_members_attrwriter {
 typedef struct rbs_ast_members_classinstancevariable {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_ast_symbol *name;
     struct rbs_node *type;
     VALUE location;
     VALUE comment;
@@ -305,7 +305,7 @@ typedef struct rbs_ast_members_classinstancevariable {
 typedef struct rbs_ast_members_classvariable {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_ast_symbol *name;
     struct rbs_node *type;
     VALUE location;
     VALUE comment;
@@ -334,7 +334,7 @@ typedef struct rbs_ast_members_include {
 typedef struct rbs_ast_members_instancevariable {
     rbs_node_t base;
 
-    VALUE name;
+    struct rbs_ast_symbol *name;
     struct rbs_node *type;
     VALUE location;
     VALUE comment;
@@ -622,11 +622,11 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, r
 rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
 rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
 rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
-rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
-rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
+rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment);
+rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment);
 rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
-rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_allocator_t *allocator, VALUE name, rbs_node_t *type, VALUE location, VALUE comment);
+rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE location, VALUE comment);
 rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
 rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE annotations, VALUE method_type);
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_allocator_t *allocator, VALUE name, rbs_node_list_t *args, rbs_node_list_t *annotations, VALUE location, VALUE comment);
