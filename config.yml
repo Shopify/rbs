@@ -135,14 +135,12 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Directives::Use::SingleClause
-    builds_ruby_object_internally: false
     fields:
       - name: type_name
       - name: new_name
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Directives::Use::WildcardClause
-    builds_ruby_object_internally: false
     fields:
       - name: namespace
         c_type: rbs_namespace
@@ -265,7 +263,6 @@ nodes:
       - name: overloading
       - name: visibility
   - name: RBS::AST::Members::MethodDefinition::Overload
-    builds_ruby_object_internally: false
     fields:
       - name: annotations
       - name: method_type
@@ -363,7 +360,6 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Block
-    builds_ruby_object_internally: false
     fields:
       - name: type
       - name: required
@@ -383,7 +379,6 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Function
-    builds_ruby_object_internally: false
     fields:
       - name: required_positionals
       - name: optional_positionals
@@ -450,7 +445,6 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::Types::UntypedFunction
-    builds_ruby_object_internally: false
     fields:
       - name: return_type
   - name: RBS::Types::Variable
