@@ -258,7 +258,9 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_ast_symbol
       - name: variance
+        c_type: rbs_ast_symbol
       - name: upper_bound
       - name: default_type
       - name: location

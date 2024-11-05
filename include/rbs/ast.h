@@ -390,8 +390,8 @@ typedef struct rbs_ast_symbol {
 typedef struct rbs_ast_typeparam {
     rbs_node_t base;
 
-    VALUE name;
-    VALUE variance;
+    struct rbs_ast_symbol *name;
+    struct rbs_ast_symbol *variance;
     VALUE upper_bound;
     VALUE default_type;
     VALUE location;
@@ -631,7 +631,7 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(VALUE name, VALUE args, r
 rbs_ast_members_private_t *rbs_ast_members_private_new(VALUE location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(VALUE location);
 rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value);
-rbs_ast_typeparam_t *rbs_ast_typeparam_new(VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE location);
+rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE location);
 rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, VALUE block, VALUE location);
 rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, VALUE absolute);
 rbs_typename_t *rbs_typename_new(VALUE namespace, VALUE name);
