@@ -496,13 +496,13 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     return instance;
 }
 
-rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, VALUE new_name, VALUE old_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_members_alias_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_alias_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(new_name);
-    rb_gc_register_mark_object(old_name);
-    rb_gc_register_mark_object(kind);
+    rb_gc_register_mark_object(new_name->base.cached_ruby_value);
+    rb_gc_register_mark_object(old_name->base.cached_ruby_value);
+    rb_gc_register_mark_object(kind->base.cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
     rb_gc_register_mark_object(location);
     rb_gc_register_mark_object(comment);
