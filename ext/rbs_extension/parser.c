@@ -1906,7 +1906,7 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
   rbs_loc_add_optional_child(loc, rb_intern("new_kind"), new_kind_range);
   rbs_loc_add_optional_child(loc, rb_intern("old_kind"), old_kind_range);
 
-  return rbs_ast_members_alias_new(((rbs_node_t *)new_name)->cached_ruby_value, ((rbs_node_t *)old_name)->cached_ruby_value, ((rbs_node_t *)kind)->cached_ruby_value, annotations, location, comment);
+  return rbs_ast_members_alias_new(new_name, old_name, kind, annotations, location, comment);
 }
 
 /*
