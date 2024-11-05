@@ -23,6 +23,7 @@ nodes:
       - name: annotations
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
       - name: comment
   - name: RBS::AST::Declarations::Class::Super
     builds_ruby_object_internally: true
@@ -31,6 +32,7 @@ nodes:
       - name: args
         c_type: rbs_node_list
       - name: location
+        c_type: rbs_location
   - name: RBS::AST::Declarations::ClassAlias
     builds_ruby_object_internally: true
     fields:
