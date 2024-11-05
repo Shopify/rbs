@@ -81,9 +81,12 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module::Self
+    builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename
       - name: args
+        c_type: rbs_node_list
       - name: location
   - name: RBS::AST::Declarations::ModuleAlias
     builds_ruby_object_internally: true
