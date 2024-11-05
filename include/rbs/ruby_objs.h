@@ -11,7 +11,7 @@
 #include "ruby.h"
 
 VALUE rbs_ast_annotation(VALUE string, rbs_location_t *location);
-VALUE rbs_ast_comment(VALUE string, VALUE location);
+VALUE rbs_ast_comment(VALUE string, rbs_location_t *location);
 VALUE rbs_ast_decl_class(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_class_super(VALUE name, rbs_node_list_t *args, VALUE location);
 VALUE rbs_ast_decl_class_alias(rbs_typename_t *new_name, rbs_typename_t *old_name, VALUE location, VALUE comment);
