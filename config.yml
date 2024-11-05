@@ -71,9 +71,11 @@ nodes:
     builds_ruby_object_internally: true
     fields:
       - name: name
+        c_type: rbs_typename
       - name: type_params
         c_type: rbs_node_list
       - name: self_types
+        c_type: rbs_node_list
       - name: members
         c_type: rbs_node_list
       - name: annotations

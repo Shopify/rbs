@@ -2384,7 +2384,7 @@ static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, ran
 
   parser_pop_typevar_table(state);
 
-  return rbs_ast_declarations_module_new(((rbs_node_t *)module_name)->cached_ruby_value, type_params, self_types->cached_ruby_value, members, annotations, location, comment);
+  return rbs_ast_declarations_module_new(module_name, type_params, self_types, members, annotations, location, comment);
 }
 
 /*
