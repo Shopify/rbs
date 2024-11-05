@@ -791,12 +791,12 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(VALUE n
     return instance;
 }
 
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(VALUE name, VALUE kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility) {
     rbs_ast_members_methoddefinition_t *instance = (rbs_ast_members_methoddefinition_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name);
-    rb_gc_register_mark_object(kind);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
+    rb_gc_register_mark_object(kind->base.cached_ruby_value);
     rb_gc_register_mark_object(overloads);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
     rb_gc_register_mark_object(location);
