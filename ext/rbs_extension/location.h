@@ -5,6 +5,14 @@
 #include "lexer.h"
 #include "rbs/util/rbs_constant_pool.h"
 
+typedef struct rbs_location {
+    VALUE cached_ruby_value;
+    VALUE buffer;
+    range rg;
+} rbs_location_t;
+
+rbs_location_t *rbs_location_new(VALUE buffer, range rg);
+
 /**
  * RBS::Location class
  * */
