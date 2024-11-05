@@ -65,7 +65,7 @@ VALUE rbs_literal(VALUE literal, VALUE location);
 VALUE rbs_optional(rbs_node_t *type, VALUE location);
 VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type);
 VALUE rbs_record(VALUE all_fields, VALUE location);
-VALUE rbs_tuple(VALUE types, VALUE location);
+VALUE rbs_tuple(rbs_node_list_t *types, VALUE location);
 VALUE rbs_union(VALUE types, VALUE location);
 VALUE rbs_untyped_function(VALUE return_type);
 VALUE rbs_variable(VALUE name, VALUE location);

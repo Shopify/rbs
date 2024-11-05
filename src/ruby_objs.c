@@ -754,9 +754,9 @@ VALUE rbs_record(VALUE all_fields, VALUE location) {
   );
 }
 
-VALUE rbs_tuple(VALUE types, VALUE location) {
+VALUE rbs_tuple(rbs_node_list_t *types, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
 
   return CLASS_NEW_INSTANCE(
