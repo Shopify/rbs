@@ -189,10 +189,10 @@ VALUE rbs_ast_decl_type_alias(rbs_typename_t *name, rbs_node_list_t *type_params
   );
 }
 
-VALUE rbs_ast_directives_use(rbs_node_list_t *clauses, VALUE location) {
+VALUE rbs_ast_directives_use(rbs_node_list_t *clauses, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("clauses")), clauses->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Directives_Use,
@@ -201,11 +201,11 @@ VALUE rbs_ast_directives_use(rbs_node_list_t *clauses, VALUE location) {
   );
 }
 
-VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALUE location) {
+VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_name")), type_name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Directives_Use_SingleClause,
@@ -214,10 +214,10 @@ VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALU
   );
 }
 
-VALUE rbs_ast_directives_use_wildcard_clause(rbs_namespace_t *namespace, VALUE location) {
+VALUE rbs_ast_directives_use_wildcard_clause(rbs_namespace_t *namespace, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Directives_Use_WildcardClause,

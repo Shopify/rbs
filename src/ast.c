@@ -436,12 +436,12 @@ rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, rbs_n
     return instance;
 }
 
-rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, VALUE location) {
+rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, rbs_location_t *location) {
     rbs_ast_directives_use_t *instance = (rbs_ast_directives_use_t *)calloc(1, sizeof(rbs_ast_directives_use_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(clauses->cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_directives_use(clauses, location);
@@ -460,14 +460,14 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, V
     return instance;
 }
 
-rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, VALUE location) {
+rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, rbs_location_t *location) {
     rbs_ast_directives_use_singleclause_t *instance = (rbs_ast_directives_use_singleclause_t *)calloc(1, sizeof(rbs_ast_directives_use_singleclause_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(ruby_value);
     rb_gc_register_mark_object(type_name);
     rb_gc_register_mark_object(new_name);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
 
     rb_gc_register_mark_object(ruby_value);
@@ -485,13 +485,13 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(V
     return instance;
 }
 
-rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, rbs_namespace_t *namespace, VALUE location) {
+rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, rbs_namespace_t *namespace, rbs_location_t *location) {
     rbs_ast_directives_use_wildcardclause_t *instance = (rbs_ast_directives_use_wildcardclause_t *)calloc(1, sizeof(rbs_ast_directives_use_wildcardclause_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(ruby_value);
     rb_gc_register_mark_object(namespace->base.cached_ruby_value);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
 
     rb_gc_register_mark_object(ruby_value);
