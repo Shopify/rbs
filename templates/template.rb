@@ -24,7 +24,7 @@ module RBS
         case @c_type
         when "VALUE"
           @name
-        when "rbs_node", "rbs_node_list"
+        when "rbs_node", "rbs_node_list", "rbs_location"
           "#{@name}->cached_ruby_value"
         else
           "#{@name}->base.cached_ruby_value"
