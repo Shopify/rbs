@@ -445,10 +445,10 @@ VALUE rbs_ast_symbol() {
   );
 }
 
-VALUE rbs_ast_type_param(VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE location) {
+VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("variance")), variance);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("variance")), variance->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("upper_bound")), upper_bound);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("default_type")), default_type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
