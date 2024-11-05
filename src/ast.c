@@ -974,14 +974,14 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbo
     return instance;
 }
 
-rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, VALUE block, VALUE location) {
+rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location) {
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type_params->cached_ruby_value);
     rb_gc_register_mark_object(type);
     rb_gc_register_mark_object(block);
-    rb_gc_register_mark_object(location);
+    rb_gc_register_mark_object(location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_method_type(type_params, type, block, location);
