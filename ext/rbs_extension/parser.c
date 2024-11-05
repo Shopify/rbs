@@ -2488,7 +2488,8 @@ rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *state, r
     rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
     rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
 
-    return rbs_ast_declarations_class_super_new(name, args->cached_ruby_value, location);
+
+    return rbs_ast_declarations_class_super_new(name, args, location);
   } else {
     *lt_range = NULL_RANGE;
     return NULL;
