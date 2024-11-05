@@ -224,7 +224,7 @@ typedef struct rbs_ast_directives_nodes {
 typedef struct rbs_ast_directives_use {
     rbs_node_t base;
 
-    VALUE clauses;
+    struct rbs_node_list *clauses;
     VALUE location;
 } rbs_ast_directives_use_t;
 
@@ -613,7 +613,7 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typ
 rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, rbs_node_list_t *declarations);
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, rbs_node_list_t *directives);
-rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE clauses, VALUE location);
+rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, VALUE location);
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, VALUE location);
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, rbs_namespace_t *namespace, VALUE location);
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, VALUE location, VALUE comment);

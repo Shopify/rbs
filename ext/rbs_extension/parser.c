@@ -2802,7 +2802,7 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
 
-    return rbs_ast_directives_use_new(clauses->cached_ruby_value, location);
+    return rbs_ast_directives_use_new(clauses, location);
   } else {
     return NULL;
   }
