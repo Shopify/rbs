@@ -794,13 +794,13 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast
     return instance;
 }
 
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, VALUE overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility) {
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility) {
     rbs_ast_members_methoddefinition_t *instance = (rbs_ast_members_methoddefinition_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(overloads);
+    rb_gc_register_mark_object(overloads->cached_ruby_value);
     rb_gc_register_mark_object(annotations->cached_ruby_value);
     rb_gc_register_mark_object(location->cached_ruby_value);
     rb_gc_register_mark_object(comment);
@@ -830,12 +830,12 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast
     return instance;
 }
 
-rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(VALUE annotations, VALUE method_type) {
+rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_node_list_t *annotations, rbs_node_t *method_type) {
     rbs_ast_members_methoddefinition_overload_t *instance = (rbs_ast_members_methoddefinition_overload_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_overload_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(annotations);
-    rb_gc_register_mark_object(method_type);
+    rb_gc_register_mark_object(annotations->cached_ruby_value);
+    rb_gc_register_mark_object(method_type->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_method_definition_overload(annotations, method_type);
