@@ -246,9 +246,9 @@ typedef struct rbs_ast_directives_use_wildcardclause {
 typedef struct rbs_ast_members_alias {
     rbs_node_t base;
 
-    VALUE new_name;
-    VALUE old_name;
-    VALUE kind;
+    struct rbs_ast_symbol *new_name;
+    struct rbs_ast_symbol *old_name;
+    struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     VALUE location;
     VALUE comment;
@@ -616,7 +616,7 @@ rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, VALUE
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(VALUE clauses, VALUE location);
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(VALUE ruby_value, VALUE type_name, VALUE new_name, VALUE location);
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(VALUE ruby_value, VALUE namespace, VALUE location);
-rbs_ast_members_alias_t *rbs_ast_members_alias_new(VALUE new_name, VALUE old_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment);
+rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, VALUE location, VALUE comment);
 rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
 rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);
 rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(VALUE name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment, VALUE visibility);

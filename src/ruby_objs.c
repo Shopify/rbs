@@ -226,11 +226,11 @@ VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location) {
   );
 }
 
-VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+VALUE rbs_ast_members_alias(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
