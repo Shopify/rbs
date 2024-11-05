@@ -98,11 +98,11 @@ rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, VALUE loc
     return instance;
 }
 
-rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(VALUE name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
+rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, VALUE location, VALUE comment) {
     rbs_ast_declarations_class_t *instance = malloc(sizeof(rbs_ast_declarations_class_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(name->base.cached_ruby_value);
     rb_gc_register_mark_object(type_params->cached_ruby_value);
     rb_gc_register_mark_object(super_class);
     rb_gc_register_mark_object(members->cached_ruby_value);
