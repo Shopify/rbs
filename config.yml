@@ -320,7 +320,9 @@ nodes:
   - name: RBS::TypeName
     fields:
       - name: namespace
+        c_type: rbs_namespace
       - name: name
+        c_type: rbs_ast_symbol
   - name: RBS::Types::Alias
     fields:
       - name: name

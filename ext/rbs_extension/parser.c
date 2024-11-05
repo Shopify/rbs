@@ -139,7 +139,6 @@ void parser_advance_no_gap(parserstate *state) {
 rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
   VALUE absolute = Qfalse;
   rbs_node_list_t *path = rbs_node_list_new();
-  VALUE namespace;
 
   if (rg) {
     rg->start = state->current_token.range.start;
@@ -163,7 +162,7 @@ rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg
     parser_advance(state);
     parser_advance(state);
   }
-  namespace = rbs_namespace(path, absolute);
+  rbs_namespace_t *namespace = rbs_namespace_new(path, absolute);
 
   switch (state->current_token.type) {
     case tLIDENT:
@@ -185,7 +184,8 @@ rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg
     }
 
     VALUE name = ID2SYM(INTERN_TOKEN(state, state->current_token));
-    return rbs_typename_new(namespace, name);
+    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(name);
+    return rbs_typename_new(namespace, symbol);
   }
 
   error: {
@@ -2747,7 +2747,7 @@ void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         clause_range = type_name_range;
 
         rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
-        rbs_typename_t *type_name = rbs_typename_new(namespace->base.cached_ruby_value, symbol->base.cached_ruby_value);
+        rbs_typename_t *type_name = rbs_typename_new(namespace, symbol);
 
         range keyword_range = NULL_RANGE;
         range new_name_range = NULL_RANGE;
