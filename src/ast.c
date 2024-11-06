@@ -982,13 +982,13 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbo
     return instance;
 }
 
-rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location) {
+rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, rbs_types_block_t *block, rbs_location_t *location) {
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
     rb_gc_register_mark_object(type);
-    rb_gc_register_mark_object(block);
+    rb_gc_register_mark_object(block == NULL ? Qnil : block->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1518,12 +1518,12 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *l
     return instance;
 }
 
-rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, rbs_location_t *location, rbs_node_t *self_type) {
+rbs_types_proc_t *rbs_types_proc_new(VALUE type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type) {
     rbs_types_proc_t *instance = (rbs_types_proc_t *)calloc(1, sizeof(rbs_types_proc_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type);
-    rb_gc_register_mark_object(block);
+    rb_gc_register_mark_object(block == NULL ? Qnil : block->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(self_type == NULL ? Qnil : self_type->cached_ruby_value);
 
@@ -2339,11 +2339,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_methodtype_t *node = (rbs_methodtype_t *)instance;
-            // [#<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="type" c_type="VALUE">, #<RBS::Template::Field name="block" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="type" c_type="VALUE">, #<RBS::Template::Field name="block" c_type="rbs_types_block">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params));
             rb_hash_aset(h, ID2SYM(rb_intern("type")), node->type);
-            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block);
+            #warning unexpected type rbs_types_block            rb_hash_aset(h, ID2SYM(rb_intern("block")), rbs_struct_to_ruby_value((rbs_node_t *) node->block)); // rbs_types_block
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(
@@ -2739,10 +2739,10 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_types_proc_t *node = (rbs_types_proc_t *)instance;
-            // [#<RBS::Template::Field name="type" c_type="VALUE">, #<RBS::Template::Field name="block" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="self_type" c_type="rbs_node">]
+            // [#<RBS::Template::Field name="type" c_type="VALUE">, #<RBS::Template::Field name="block" c_type="rbs_types_block">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="self_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("type")), node->type);
-            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block);
+            #warning unexpected type rbs_types_block            rb_hash_aset(h, ID2SYM(rb_intern("block")), rbs_struct_to_ruby_value((rbs_node_t *) node->block)); // rbs_types_block
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("self_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->self_type)); // rbs_node
 

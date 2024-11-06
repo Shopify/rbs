@@ -615,7 +615,7 @@ static rbs_node_t *parse_self_type_binding(parserstate *state) {
 
 typedef struct {
   VALUE function;
-  VALUE block;
+  rbs_types_block_t *block;
   rbs_node_t *function_self_type;
 } parse_function_result;
 
@@ -628,7 +628,7 @@ typedef struct {
 */
 static parse_function_result parse_function(parserstate *state, bool accept_type_binding) {
   VALUE function;
-  VALUE block = Qnil;
+  rbs_types_block_t *block = NULL;
   rbs_node_t *function_self_type = NULL;
   method_params params;
   initialize_method_params(&params);
@@ -710,7 +710,7 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
       );
     }
 
-    block = rbs_block(block_function, required, block_self_type);
+    block = rbs_types_block_new(block_function, required, block_self_type);
 
     parser_advance_assert(state, pRBRACE);
   }
@@ -761,7 +761,7 @@ static rbs_types_proc_t *parse_proc_type(parserstate *state) {
   position start = state->current_token.range.start;
   parse_function_result result = parse_function(state, true);
   VALUE function = result.function;
-  VALUE block = result.block;
+  rbs_types_block_t *block = result.block;
   rbs_node_t *function_self_type = result.function_self_type;
   position end = state->current_token.range.end;
   rbs_location_t *loc = rbs_location_pp(state->buffer, &start, &end);
@@ -1325,7 +1325,7 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
 
   parse_function_result result = parse_function(state, false);
   VALUE function = result.function;
-  VALUE block = result.block;
+  rbs_types_block_t *block = result.block;
 
   rg.end = state->current_token.range.end;
   type_range.end = rg.end;
