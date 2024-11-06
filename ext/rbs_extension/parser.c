@@ -2082,7 +2082,7 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   range kind_range = NULL_RANGE, ivar_range = NULL_RANGE, ivar_name_range = NULL_RANGE, visibility_range = NULL_RANGE;
 
   InstanceSingletonKind is_kind;
-  VALUE kind;
+  rbs_ast_symbol_t *kind;
   rbs_ast_symbol_t *attr_name;
   VALUE ivar_name;
   rbs_node_t *type;
@@ -2117,9 +2117,9 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
 
   is_kind = parse_instance_singleton_kind(state, false, &kind_range);
   if (is_kind == INSTANCE_KIND) {
-    kind = ID2SYM(rb_intern("instance"));
+    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("instance")));
   } else {
-    kind = ID2SYM(rb_intern("singleton"));
+    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton")));
   }
 
   attr_name = parse_method_name(state, &name_range);
@@ -2160,16 +2160,14 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   rbs_loc_add_optional_child(loc, rb_intern("ivar_name"), ivar_name_range);
   rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
 
-  VALUE visibility_value = visibility ? ((rbs_node_t *)visibility)->cached_ruby_value : Qnil;
-
   switch (attr_type)
   {
   case kATTRREADER:
-    return (rbs_node_t *) rbs_ast_members_attrreader_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility_value);
+    return (rbs_node_t *) rbs_ast_members_attrreader_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRWRITER:
-    return (rbs_node_t *) rbs_ast_members_attrwriter_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility_value);
+    return (rbs_node_t *) rbs_ast_members_attrwriter_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRACCESSOR:
-    return (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility_value);
+    return (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   default:
     rbs_abort();
   }

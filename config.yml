@@ -170,12 +170,14 @@ nodes:
         c_type: rbs_node
       - name: ivar_name
       - name: kind
+        c_type: rbs_ast_symbol
       - name: annotations
         c_type: rbs_node_list
       - name: location
         c_type: rbs_location
       - name: comment
       - name: visibility
+        c_type: rbs_ast_symbol
   - name: RBS::AST::Members::AttrReader
     fields:
       - name: name
@@ -184,12 +186,14 @@ nodes:
         c_type: rbs_node
       - name: ivar_name
       - name: kind
+        c_type: rbs_ast_symbol
       - name: annotations
         c_type: rbs_node_list
       - name: location
         c_type: rbs_location
       - name: comment
       - name: visibility
+        c_type: rbs_ast_symbol
   - name: RBS::AST::Members::AttrWriter
     fields:
       - name: name
@@ -198,12 +202,14 @@ nodes:
         c_type: rbs_node
       - name: ivar_name
       - name: kind
+        c_type: rbs_ast_symbol
       - name: annotations
         c_type: rbs_node_list
       - name: location
         c_type: rbs_location
       - name: comment
       - name: visibility
+        c_type: rbs_ast_symbol
   - name: RBS::AST::Members::ClassInstanceVariable
     fields:
       - name: name
