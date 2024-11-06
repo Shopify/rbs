@@ -321,6 +321,7 @@ nodes:
         c_type: rbs_node_list
       - name: type
       - name: block
+        c_type: rbs_types_block
       - name: location
         c_type: rbs_location
   - name: RBS::Namespace
@@ -445,6 +446,7 @@ nodes:
     fields:
       - name: type
       - name: block
+        c_type: rbs_types_block
       - name: location
         c_type: rbs_location
       - name: self_type
