@@ -137,14 +137,14 @@ void parser_advance_no_gap(parserstate *state) {
               | {<tXIDENT>}
 */
 static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
-  VALUE absolute = Qfalse;
+  bool absolute = false;
 
   if (rg) {
     rg->start = state->current_token.range.start;
   }
 
   if (state->current_token.type == pCOLON2) {
-    absolute = Qtrue;
+    absolute = true;
     parser_advance_no_gap(state);
   }
 

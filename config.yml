@@ -317,6 +317,7 @@ nodes:
       - name: path
         c_type: rbs_node_list
       - name: absolute
+        c_type: bool
   - name: RBS::TypeName
     fields:
       - name: namespace
