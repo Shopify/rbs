@@ -42,7 +42,7 @@ VALUE rbs_ast_members_public(rbs_location_t *location);
 VALUE rbs_ast_symbol();
 VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE unchecked, rbs_location_t *location);
 VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location);
-VALUE rbs_namespace(rbs_node_list_t *path, VALUE absolute);
+VALUE rbs_namespace(rbs_node_list_t *path, bool absolute);
 VALUE rbs_type_name(rbs_namespace_t *namespace, rbs_ast_symbol_t *name);
 VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 VALUE rbs_bases_any(VALUE todo, rbs_location_t *location);

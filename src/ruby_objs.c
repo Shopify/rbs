@@ -475,10 +475,10 @@ VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs
   );
 }
 
-VALUE rbs_namespace(rbs_node_list_t *path, VALUE absolute) {
+VALUE rbs_namespace(rbs_node_list_t *path, bool absolute) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("path")), path == NULL ? Qnil : path->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("absolute")), absolute);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("absolute")), absolute ? Qtrue : Qfalse);
 
   return CLASS_NEW_INSTANCE(
     RBS_Namespace,
