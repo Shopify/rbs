@@ -460,12 +460,12 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, r
     return instance;
 }
 
-rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_typename_t *type_name, VALUE new_name, rbs_location_t *location) {
+rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_typename_t *type_name, rbs_ast_symbol_t *new_name, rbs_location_t *location) {
     rbs_ast_directives_use_singleclause_t *instance = malloc(sizeof(rbs_ast_directives_use_singleclause_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type_name == NULL ? Qnil : type_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(new_name);
+    rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
