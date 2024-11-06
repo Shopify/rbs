@@ -368,7 +368,7 @@ VALUE rbs_ast_members_instance_variable(rbs_ast_symbol_t *name, rbs_node_t *type
   );
 }
 
-VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility) {
+VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, bool overloading, rbs_ast_symbol_t *visibility) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind == NULL ? Qnil : kind->base.cached_ruby_value);
@@ -376,8 +376,8 @@ VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("overloading")), overloading);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("visibility")), visibility);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("overloading")), overloading ? Qtrue : Qfalse);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("visibility")), visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Members_MethodDefinition,

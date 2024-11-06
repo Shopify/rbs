@@ -1641,26 +1641,26 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
   VALUE comment = get_comment(state, comment_pos.line);
 
   range visibility_range;
-  VALUE visibility;
+  rbs_ast_symbol_t *visibility;
   switch (state->current_token.type)
   {
   case kPRIVATE: {
     visibility_range = state->current_token.range;
-    visibility = ID2SYM(rb_intern("private"));
+    visibility = rbs_ast_symbol_new(&state->allocator, ID2SYM(rb_intern("private")));
     member_range.start = visibility_range.start;
     parser_advance(state);
     break;
   }
   case kPUBLIC: {
     visibility_range = state->current_token.range;
-    visibility = ID2SYM(rb_intern("public"));
+    visibility = rbs_ast_symbol_new(&state->allocator, ID2SYM(rb_intern("public")));
     member_range.start = visibility_range.start;
     parser_advance(state);
     break;
   }
   default:
     visibility_range = NULL_RANGE;
-    visibility = Qnil;
+    visibility = NULL;
     break;
   }
 
@@ -1672,7 +1672,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
     kind_range = NULL_RANGE;
     kind = INSTANCE_KIND;
   } else {
-    kind = parse_instance_singleton_kind(state, NIL_P(visibility), &kind_range);
+    kind = parse_instance_singleton_kind(state, visibility == NULL, &kind_range);
   }
 
   range name_range;
@@ -1691,7 +1691,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
   parser_push_typevar_table(state, kind != INSTANCE_KIND);
 
   rbs_node_list_t *overloads = rbs_node_list_new();
-  VALUE overloading = Qfalse;
+  bool overloading = false;
   range overloading_range = NULL_RANGE;
   bool loop = true;
   while (loop) {
@@ -1718,7 +1718,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
 
     case pDOT3:
       if (accept_overload) {
-        overloading = Qtrue;
+        overloading = true;
         parser_advance(state);
         loop = false;
         overloading_range = state->current_token.range;
