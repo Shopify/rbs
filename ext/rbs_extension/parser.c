@@ -617,7 +617,7 @@ static rbs_node_t *parse_self_type_binding(parserstate *state) {
 typedef struct {
   VALUE function;
   VALUE block;
-  VALUE function_self_type;
+  rbs_node_t *function_self_type;
 } parse_function_result;
 
 /*
@@ -630,7 +630,7 @@ typedef struct {
 static parse_function_result parse_function(parserstate *state, bool accept_type_binding) {
   VALUE function;
   VALUE block = Qnil;
-  VALUE function_self_type = Qnil;
+  rbs_node_t *function_self_type = NULL;
   method_params params;
   initialize_method_params(&params);
 
@@ -649,10 +649,7 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
 
   // Passing NULL to function_self_type means the function itself doesn't accept self type binding. (== method type)
   if (accept_type_binding) {
-    rbs_node_t *self_type = parse_self_type_binding(state);
-    if (self_type) {
-      function_self_type = self_type->cached_ruby_value;
-    }
+    function_self_type = parse_self_type_binding(state);
   }
 
   VALUE required = Qtrue;
@@ -766,10 +763,10 @@ static rbs_types_proc_t *parse_proc_type(parserstate *state) {
   parse_function_result result = parse_function(state, true);
   VALUE function = result.function;
   VALUE block = result.block;
-  VALUE proc_self = result.function_self_type;
+  rbs_node_t *function_self_type = result.function_self_type;
   position end = state->current_token.range.end;
   rbs_location_t *loc = rbs_location_pp(state->buffer, &start, &end);
-  return rbs_types_proc_new(function, block, loc, proc_self);
+  return rbs_types_proc_new(function, block, loc, function_self_type);
 }
 
 static void check_key_duplication(parserstate *state, VALUE fields, rbs_ast_symbol_t *key) {

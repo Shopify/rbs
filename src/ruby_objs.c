@@ -728,12 +728,12 @@ VALUE rbs_optional(rbs_node_t *type, rbs_location_t *location) {
   );
 }
 
-VALUE rbs_proc(VALUE type, VALUE block, rbs_location_t *location, VALUE self_type) {
+VALUE rbs_proc(VALUE type, VALUE block, rbs_location_t *location, rbs_node_t *self_type) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type == NULL ? Qnil : self_type->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Proc,

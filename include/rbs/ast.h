@@ -564,7 +564,7 @@ typedef struct rbs_types_proc {
     VALUE type;
     VALUE block;
     struct rbs_location *location;
-    VALUE self_type;
+    struct rbs_node *self_type;
 } rbs_types_proc_t;
 
 typedef struct rbs_types_record {
@@ -657,7 +657,7 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_li
 rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_literal_t *rbs_types_literal_new(VALUE literal, rbs_location_t *location);
 rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *location);
-rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, rbs_location_t *location, VALUE self_type);
+rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, rbs_location_t *location, rbs_node_t *self_type);
 rbs_types_record_t *rbs_types_record_new(VALUE all_fields, rbs_location_t *location);
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *location);
