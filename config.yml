@@ -267,7 +267,9 @@ nodes:
         c_type: rbs_location
       - name: comment
       - name: overloading
+        c_type: bool
       - name: visibility
+        c_type: rbs_ast_symbol
   - name: RBS::AST::Members::MethodDefinition::Overload
     fields:
       - name: annotations
