@@ -2741,8 +2741,7 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
 
         range keyword_range = NULL_RANGE;
         range new_name_range = NULL_RANGE;
-
-        VALUE new_name = Qnil;
+        rbs_ast_symbol_t *new_name = NULL;
         range clause_range = type_name_range;
         if (state->next_token.type == kAS) {
           parser_advance(state);
@@ -2752,7 +2751,7 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
           if (ident_type == tLIDENT) parser_advance_assert(state, tLIDENT);
           if (ident_type == tULIDENT) parser_advance_assert(state, tULIDENT);
 
-          new_name = ID2SYM(INTERN_TOKEN(state, state->current_token));
+          new_name = rbs_ast_symbol_new(&state->allocator, ID2SYM(INTERN_TOKEN(state, state->current_token)));
           new_name_range = state->current_token.range;
           clause_range.end = new_name_range.end;
         }
