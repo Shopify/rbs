@@ -261,11 +261,11 @@ typedef struct rbs_ast_members_attraccessor {
     struct rbs_ast_symbol *name;
     struct rbs_node *type;
     VALUE ivar_name;
-    VALUE kind;
+    struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
     VALUE comment;
-    VALUE visibility;
+    struct rbs_ast_symbol *visibility;
 } rbs_ast_members_attraccessor_t;
 
 typedef struct rbs_ast_members_attrreader {
@@ -274,11 +274,11 @@ typedef struct rbs_ast_members_attrreader {
     struct rbs_ast_symbol *name;
     struct rbs_node *type;
     VALUE ivar_name;
-    VALUE kind;
+    struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
     VALUE comment;
-    VALUE visibility;
+    struct rbs_ast_symbol *visibility;
 } rbs_ast_members_attrreader_t;
 
 typedef struct rbs_ast_members_attrwriter {
@@ -287,11 +287,11 @@ typedef struct rbs_ast_members_attrwriter {
     struct rbs_ast_symbol *name;
     struct rbs_node *type;
     VALUE ivar_name;
-    VALUE kind;
+    struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
     VALUE comment;
-    VALUE visibility;
+    struct rbs_ast_symbol *visibility;
 } rbs_ast_members_attrwriter_t;
 
 typedef struct rbs_ast_members_classinstancevariable {
@@ -620,9 +620,9 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_allocator_t *allocator,
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_allocator_t *allocator, rbs_typename_t *type_name, rbs_ast_symbol_t *new_name, rbs_location_t *location);
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_allocator_t *allocator, rbs_namespace_t *namespace, rbs_location_t *location);
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
-rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
-rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility);
+rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility);
+rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility);
+rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility);
 rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
 rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
