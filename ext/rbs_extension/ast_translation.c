@@ -698,8 +698,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
 
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params));
-            rb_hash_aset(h, ID2SYM(rb_intern("type")), node->type);
-            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block);
+            rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
+            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block ? rbs_struct_to_ruby_value((rbs_node_t *) node->block) : Qnil); // rbs_types_block
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(
@@ -1098,8 +1098,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rbs_types_proc_t *node = (rbs_types_proc_t *)instance;
 
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("type")), node->type);
-            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block);
+            rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
+            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block ? rbs_struct_to_ruby_value((rbs_node_t *) node->block) : Qnil); // rbs_types_block
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("self_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->self_type)); // rbs_node
 
