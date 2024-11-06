@@ -1637,7 +1637,7 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
   range kind_range;
   range overloading_range = NULL_RANGE;
 
-  VALUE visibility;
+  rbs_ast_symbol_t *visibility;
 
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
@@ -1647,19 +1647,19 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
   {
   case kPRIVATE:
     visibility_range = state->current_token.range;
-    visibility = ID2SYM(rb_intern("private"));
+    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("private")));
     member_range.start = visibility_range.start;
     parser_advance(state);
     break;
   case kPUBLIC:
     visibility_range = state->current_token.range;
-    visibility = ID2SYM(rb_intern("public"));
+    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("public")));
     member_range.start = visibility_range.start;
     parser_advance(state);
     break;
   default:
     visibility_range = NULL_RANGE;
-    visibility = Qnil;
+    visibility = NULL;
     break;
   }
 
@@ -1670,12 +1670,12 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
     kind_range = NULL_RANGE;
     kind = INSTANCE_KIND;
   } else {
-    kind = parse_instance_singleton_kind(state, NIL_P(visibility), &kind_range);
+    kind = parse_instance_singleton_kind(state, visibility == NULL, &kind_range);
   }
 
   rbs_ast_symbol_t *name = parse_method_name(state, &name_range);
   rbs_node_list_t *overloads = rbs_node_list_new();
-  VALUE overloading = Qfalse;
+  bool overloading = false;
 
   if (state->next_token.type == pDOT && RB_SYM2ID(((rbs_node_t *)name)->cached_ruby_value) == rb_intern("self?")) {
     raise_syntax_error(
@@ -1714,7 +1714,7 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
 
     case pDOT3:
       if (accept_overload) {
-        overloading = Qtrue;
+        overloading = true;
         parser_advance(state);
         loop = false;
         overloading_range = state->current_token.range;
