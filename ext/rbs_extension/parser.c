@@ -624,6 +624,12 @@ static rbs_node_t *parse_self_type_binding(parserstate *state) {
   }
 }
 
+typedef struct {
+  VALUE function;
+  VALUE block;
+  VALUE function_self_type;
+} parse_function_result;
+
 /*
   function ::= {} `(` params `)` self_type_binding? `{` `(` params `)` self_type_binding? `->` optional `}` `->` <optional>
              | {} `(` params `)` self_type_binding? `->` <optional>
@@ -631,7 +637,10 @@ static rbs_node_t *parse_self_type_binding(parserstate *state) {
              | {} self_type_binding? `{` self_type_binding `->` optional `}` `->` <optional>
              | {} self_type_binding? `->` <optional>
 */
-static void parse_function(parserstate *state, VALUE *function, VALUE *block, VALUE *function_self_type) {
+static parse_function_result parse_function(parserstate *state, bool accept_type_binding) {
+  VALUE function;
+  VALUE block = Qnil;
+  VALUE function_self_type = Qnil;
   method_params params;
   initialize_method_params(&params);
 
@@ -649,12 +658,10 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
   }
 
   // Passing NULL to function_self_type means the function itself doesn't accept self type binding. (== method type)
-  if (function_self_type) {
+  if (accept_type_binding) {
     rbs_node_t *self_type = parse_self_type_binding(state);
-    if (self_type == NULL) {
-      *function_self_type = Qnil;
-    } else {
-      *function_self_type = self_type->cached_ruby_value;
+    if (self_type) {
+      function_self_type = self_type->cached_ruby_value;
     }
   }
 
@@ -717,7 +724,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       );
     }
 
-    *block = rbs_block(block_function, required, block_self_type);
+    block = rbs_block(block_function, required, block_self_type);
 
     parser_advance_assert(state, pRBRACE);
   }
@@ -726,7 +733,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
   rbs_node_t *type = parse_optional(state);
 
   if (rbs_is_untyped_params(&params)) {
-    *function = rbs_untyped_function(type);
+    function = rbs_untyped_function(type);
   } else {
     VALUE rest_positionals;
     if (params.rest_positionals == NULL) {
@@ -742,7 +749,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       rest_keywords = params.rest_keywords->cached_ruby_value;
     }
 
-    *function = rbs_function(
+    function = rbs_function(
       params.required_positionals->cached_ruby_value,
       params.optional_positionals->cached_ruby_value,
       rest_positionals,
@@ -753,6 +760,12 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       type->cached_ruby_value
     );
   }
+
+  parse_function_result result;
+  result.function = function;
+  result.block = block;
+  result.function_self_type = function_self_type;
+  return result;
 }
 
 /*
@@ -760,10 +773,10 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
 */
 static rbs_types_proc_t *parse_proc_type(parserstate *state) {
   position start = state->current_token.range.start;
-  VALUE function = Qnil;
-  VALUE block = Qnil;
-  VALUE proc_self = Qnil;
-  parse_function(state, &function, &block, &proc_self);
+  parse_function_result result = parse_function(state, true);
+  VALUE function = result.function;
+  VALUE block = result.block;
+  VALUE proc_self = result.function_self_type;
   position end = state->current_token.range.end;
   rbs_location_t *loc = rbs_location_pp(state->buffer, &start, &end);
   return rbs_types_proc_new(&state->allocator, function, block, loc, proc_self);
@@ -1325,9 +1338,9 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
   range type_range;
   type_range.start = state->next_token.range.start;
 
-  VALUE function = Qnil;
-  VALUE block = Qnil;
-  parse_function(state, &function, &block, NULL);
+  parse_function_result result = parse_function(state, false);
+  VALUE function = result.function;
+  VALUE block = result.block;
 
   rg.end = state->current_token.range.end;
   type_range.end = rg.end;
