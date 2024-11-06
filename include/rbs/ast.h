@@ -411,7 +411,7 @@ typedef struct rbs_namespace {
     rbs_node_t base;
 
     struct rbs_node_list *path;
-    VALUE absolute;
+    bool absolute;
 } rbs_namespace_t;
 
 typedef struct rbs_typename {
@@ -634,7 +634,7 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
 rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value);
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, rbs_location_t *location);
 rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location);
-rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, VALUE absolute);
+rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute);
 rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *name);
 rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_location_t *location);

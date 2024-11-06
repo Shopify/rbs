@@ -1005,12 +1005,12 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, V
     return instance;
 }
 
-rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, VALUE absolute) {
+rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute) {
     rbs_namespace_t *instance = malloc(sizeof(rbs_namespace_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(path == NULL ? Qnil : path->cached_ruby_value);
-    rb_gc_register_mark_object(absolute);
+    rb_gc_register_mark_object(absolute ? Qtrue : Qfalse);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_namespace(path, absolute);
