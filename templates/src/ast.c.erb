@@ -150,6 +150,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %>->string);
             <%- when "bool" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %> ? Qtrue : Qfalse);
+            <%- when "rbs_types_block" -%>
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %> ? rbs_struct_to_ruby_value((rbs_node_t *) node-><%= field.name %>) : Qnil); // <%= field.c_type %>
             <%- else -%>
             <%- unless field.ast_node? -%>
             #warning unexpected type <%= field.c_type -%>
