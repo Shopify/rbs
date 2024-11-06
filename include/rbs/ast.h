@@ -402,8 +402,8 @@ typedef struct rbs_methodtype {
     rbs_node_t base;
 
     struct rbs_node_list *type_params;
-    VALUE type;
-    VALUE block;
+    struct rbs_node *type;
+    struct rbs_types_block *block;
     struct rbs_location *location;
 } rbs_methodtype_t;
 
@@ -559,8 +559,8 @@ typedef struct rbs_types_optional {
 typedef struct rbs_types_proc {
     rbs_node_t base;
 
-    VALUE type;
-    VALUE block;
+    struct rbs_node *type;
+    struct rbs_types_block *block;
     struct rbs_location *location;
     struct rbs_node *self_type;
 } rbs_types_proc_t;
@@ -633,7 +633,7 @@ rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location)
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
 rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value);
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, rbs_location_t *location);
-rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location);
+rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location);
 rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute);
 rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *name);
 rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
@@ -655,7 +655,7 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_li
 rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_literal_t *rbs_types_literal_new(VALUE literal, rbs_location_t *location);
 rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *location);
-rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, rbs_location_t *location, rbs_node_t *self_type);
+rbs_types_proc_t *rbs_types_proc_new(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type);
 rbs_types_record_t *rbs_types_record_new(VALUE all_fields, rbs_location_t *location);
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *location);
