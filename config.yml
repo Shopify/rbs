@@ -310,8 +310,11 @@ nodes:
       - name: variance
         c_type: rbs_ast_symbol
       - name: upper_bound
+        c_type: rbs_node
       - name: default_type
+        c_type: rbs_node
       - name: unchecked
+        c_type: bool
       - name: location
         c_type: rbs_location
   - name: RBS::MethodType
