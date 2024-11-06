@@ -20,7 +20,7 @@
 VALUE rbs_ast_annotation(VALUE string, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("string")), string);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Annotation,
@@ -32,7 +32,7 @@ VALUE rbs_ast_annotation(VALUE string, rbs_location_t *location) {
 VALUE rbs_ast_comment(VALUE string, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("string")), string);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Comment,
@@ -43,12 +43,12 @@ VALUE rbs_ast_comment(VALUE string, rbs_location_t *location) {
 
 VALUE rbs_ast_decl_class(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params == NULL ? Qnil : type_params->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("super_class")), super_class);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("members")), members->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("members")), members == NULL ? Qnil : members->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -60,9 +60,9 @@ VALUE rbs_ast_decl_class(rbs_typename_t *name, rbs_node_list_t *type_params, VAL
 
 VALUE rbs_ast_decl_class_super(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Declarations_Class_Super,
@@ -73,9 +73,9 @@ VALUE rbs_ast_decl_class_super(rbs_typename_t *name, rbs_node_list_t *args, rbs_
 
 VALUE rbs_ast_decl_class_alias(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -87,9 +87,9 @@ VALUE rbs_ast_decl_class_alias(rbs_typename_t *new_name, rbs_typename_t *old_nam
 
 VALUE rbs_ast_decl_constant(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -101,9 +101,9 @@ VALUE rbs_ast_decl_constant(rbs_typename_t *name, rbs_node_t *type, rbs_location
 
 VALUE rbs_ast_decl_global(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -115,11 +115,11 @@ VALUE rbs_ast_decl_global(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location
 
 VALUE rbs_ast_decl_interface(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("members")), members->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params == NULL ? Qnil : type_params->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("members")), members == NULL ? Qnil : members->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -131,12 +131,12 @@ VALUE rbs_ast_decl_interface(rbs_typename_t *name, rbs_node_list_t *type_params,
 
 VALUE rbs_ast_decl_module(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_types")), self_types->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("members")), members->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params == NULL ? Qnil : type_params->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_types")), self_types == NULL ? Qnil : self_types->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("members")), members == NULL ? Qnil : members->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -148,9 +148,9 @@ VALUE rbs_ast_decl_module(rbs_typename_t *name, rbs_node_list_t *type_params, rb
 
 VALUE rbs_ast_decl_module_self(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Declarations_Module_Self,
@@ -161,9 +161,9 @@ VALUE rbs_ast_decl_module_self(rbs_typename_t *name, rbs_node_list_t *args, rbs_
 
 VALUE rbs_ast_decl_module_alias(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -175,11 +175,11 @@ VALUE rbs_ast_decl_module_alias(rbs_typename_t *new_name, rbs_typename_t *old_na
 
 VALUE rbs_ast_decl_type_alias(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params == NULL ? Qnil : type_params->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -191,8 +191,8 @@ VALUE rbs_ast_decl_type_alias(rbs_typename_t *name, rbs_node_list_t *type_params
 
 VALUE rbs_ast_directives_use(rbs_node_list_t *clauses, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("clauses")), clauses->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("clauses")), clauses == NULL ? Qnil : clauses->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Directives_Use,
@@ -203,9 +203,9 @@ VALUE rbs_ast_directives_use(rbs_node_list_t *clauses, rbs_location_t *location)
 
 VALUE rbs_ast_directives_use_single_clause(rbs_typename_t *type_name, VALUE new_name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_name")), type_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_name")), type_name == NULL ? Qnil : type_name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Directives_Use_SingleClause,
@@ -216,8 +216,8 @@ VALUE rbs_ast_directives_use_single_clause(rbs_typename_t *type_name, VALUE new_
 
 VALUE rbs_ast_directives_use_wildcard_clause(rbs_namespace_t *namespace, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace == NULL ? Qnil : namespace->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Directives_Use_WildcardClause,
@@ -228,11 +228,11 @@ VALUE rbs_ast_directives_use_wildcard_clause(rbs_namespace_t *namespace, rbs_loc
 
 VALUE rbs_ast_members_alias(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind == NULL ? Qnil : kind->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -244,12 +244,12 @@ VALUE rbs_ast_members_alias(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_na
 
 VALUE rbs_ast_members_attr_accessor(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("ivar_name")), ivar_name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("visibility")), visibility);
 
@@ -262,12 +262,12 @@ VALUE rbs_ast_members_attr_accessor(rbs_ast_symbol_t *name, rbs_node_t *type, VA
 
 VALUE rbs_ast_members_attr_reader(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("ivar_name")), ivar_name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("visibility")), visibility);
 
@@ -280,12 +280,12 @@ VALUE rbs_ast_members_attr_reader(rbs_ast_symbol_t *name, rbs_node_t *type, VALU
 
 VALUE rbs_ast_members_attr_writer(rbs_ast_symbol_t *name, rbs_node_t *type, VALUE ivar_name, VALUE kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("ivar_name")), ivar_name);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("visibility")), visibility);
 
@@ -298,9 +298,9 @@ VALUE rbs_ast_members_attr_writer(rbs_ast_symbol_t *name, rbs_node_t *type, VALU
 
 VALUE rbs_ast_members_class_instance_variable(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -312,9 +312,9 @@ VALUE rbs_ast_members_class_instance_variable(rbs_ast_symbol_t *name, rbs_node_t
 
 VALUE rbs_ast_members_class_variable(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -326,10 +326,10 @@ VALUE rbs_ast_members_class_variable(rbs_ast_symbol_t *name, rbs_node_t *type, r
 
 VALUE rbs_ast_members_extend(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -341,10 +341,10 @@ VALUE rbs_ast_members_extend(rbs_typename_t *name, rbs_node_list_t *args, rbs_no
 
 VALUE rbs_ast_members_include(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -356,9 +356,9 @@ VALUE rbs_ast_members_include(rbs_typename_t *name, rbs_node_list_t *args, rbs_n
 
 VALUE rbs_ast_members_instance_variable(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -370,11 +370,11 @@ VALUE rbs_ast_members_instance_variable(rbs_ast_symbol_t *name, rbs_node_t *type
 
 VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, VALUE overloading, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("overloads")), overloads->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind == NULL ? Qnil : kind->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("overloads")), overloads == NULL ? Qnil : overloads->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("overloading")), overloading);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("visibility")), visibility);
@@ -388,8 +388,8 @@ VALUE rbs_ast_members_method_definition(rbs_ast_symbol_t *name, rbs_ast_symbol_t
 
 VALUE rbs_ast_members_method_definition_overload(rbs_node_list_t *annotations, rbs_node_t *method_type) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("method_type")), method_type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("method_type")), method_type == NULL ? Qnil : method_type->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Members_MethodDefinition_Overload,
@@ -400,10 +400,10 @@ VALUE rbs_ast_members_method_definition_overload(rbs_node_list_t *annotations, r
 
 VALUE rbs_ast_members_prepend(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations == NULL ? Qnil : annotations->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
 
   return CLASS_NEW_INSTANCE(
@@ -415,7 +415,7 @@ VALUE rbs_ast_members_prepend(rbs_typename_t *name, rbs_node_list_t *args, rbs_n
 
 VALUE rbs_ast_members_private(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Members_Private,
@@ -426,7 +426,7 @@ VALUE rbs_ast_members_private(rbs_location_t *location) {
 
 VALUE rbs_ast_members_public(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_Members_Public,
@@ -447,12 +447,12 @@ VALUE rbs_ast_symbol() {
 
 VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VALUE upper_bound, VALUE default_type, VALUE unchecked, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("variance")), variance->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("variance")), variance == NULL ? Qnil : variance->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("upper_bound")), upper_bound);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("default_type")), default_type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("unchecked")), unchecked);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_AST_TypeParam,
@@ -463,10 +463,10 @@ VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, VAL
 
 VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params == NULL ? Qnil : type_params->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_MethodType,
@@ -477,7 +477,7 @@ VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, VALUE block, rbs
 
 VALUE rbs_namespace(rbs_node_list_t *path, VALUE absolute) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("path")), path->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("path")), path == NULL ? Qnil : path->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("absolute")), absolute);
 
   return CLASS_NEW_INSTANCE(
@@ -489,8 +489,8 @@ VALUE rbs_namespace(rbs_node_list_t *path, VALUE absolute) {
 
 VALUE rbs_type_name(rbs_namespace_t *namespace, rbs_ast_symbol_t *name) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace == NULL ? Qnil : namespace->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_TypeName,
@@ -501,9 +501,9 @@ VALUE rbs_type_name(rbs_namespace_t *namespace, rbs_ast_symbol_t *name) {
 
 VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Alias,
@@ -515,7 +515,7 @@ VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *loc
 VALUE rbs_bases_any(VALUE todo, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("todo")), todo);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Any,
@@ -526,7 +526,7 @@ VALUE rbs_bases_any(VALUE todo, rbs_location_t *location) {
 
 VALUE rbs_bases_bool(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Bool,
@@ -537,7 +537,7 @@ VALUE rbs_bases_bool(rbs_location_t *location) {
 
 VALUE rbs_bases_bottom(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Bottom,
@@ -548,7 +548,7 @@ VALUE rbs_bases_bottom(rbs_location_t *location) {
 
 VALUE rbs_bases_class(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Class,
@@ -559,7 +559,7 @@ VALUE rbs_bases_class(rbs_location_t *location) {
 
 VALUE rbs_bases_instance(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Instance,
@@ -570,7 +570,7 @@ VALUE rbs_bases_instance(rbs_location_t *location) {
 
 VALUE rbs_bases_nil(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Nil,
@@ -581,7 +581,7 @@ VALUE rbs_bases_nil(rbs_location_t *location) {
 
 VALUE rbs_bases_self(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Self,
@@ -592,7 +592,7 @@ VALUE rbs_bases_self(rbs_location_t *location) {
 
 VALUE rbs_bases_top(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Top,
@@ -603,7 +603,7 @@ VALUE rbs_bases_top(rbs_location_t *location) {
 
 VALUE rbs_bases_void(rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Bases_Void,
@@ -627,9 +627,9 @@ VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
 
 VALUE rbs_class_instance(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_ClassInstance,
@@ -640,8 +640,8 @@ VALUE rbs_class_instance(rbs_typename_t *name, rbs_node_list_t *args, rbs_locati
 
 VALUE rbs_class_singleton(rbs_typename_t *name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_ClassSingleton,
@@ -670,9 +670,9 @@ VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE
 
 VALUE rbs_function_param(rbs_node_t *type, VALUE name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Function_Param,
@@ -683,9 +683,9 @@ VALUE rbs_function_param(rbs_node_t *type, VALUE name, rbs_location_t *location)
 
 VALUE rbs_interface(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args == NULL ? Qnil : args->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Interface,
@@ -696,8 +696,8 @@ VALUE rbs_interface(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t 
 
 VALUE rbs_intersection(rbs_node_list_t *types, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types == NULL ? Qnil : types->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Intersection,
@@ -709,7 +709,7 @@ VALUE rbs_intersection(rbs_node_list_t *types, rbs_location_t *location) {
 VALUE rbs_literal(VALUE literal, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("literal")), literal);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Literal,
@@ -720,8 +720,8 @@ VALUE rbs_literal(VALUE literal, rbs_location_t *location) {
 
 VALUE rbs_optional(rbs_node_t *type, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Optional,
@@ -734,7 +734,7 @@ VALUE rbs_proc(VALUE type, VALUE block, rbs_location_t *location, VALUE self_typ
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type);
 
   return CLASS_NEW_INSTANCE(
@@ -747,7 +747,7 @@ VALUE rbs_proc(VALUE type, VALUE block, rbs_location_t *location, VALUE self_typ
 VALUE rbs_record(VALUE all_fields, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("all_fields")), all_fields);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Record,
@@ -758,8 +758,8 @@ VALUE rbs_record(VALUE all_fields, rbs_location_t *location) {
 
 VALUE rbs_tuple(rbs_node_list_t *types, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types == NULL ? Qnil : types->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Tuple,
@@ -770,8 +770,8 @@ VALUE rbs_tuple(rbs_node_list_t *types, rbs_location_t *location) {
 
 VALUE rbs_union(rbs_node_list_t *types, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types == NULL ? Qnil : types->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Union,
@@ -793,8 +793,8 @@ VALUE rbs_untyped_function(VALUE return_type) {
 
 VALUE rbs_variable(rbs_ast_symbol_t *name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Variable,
