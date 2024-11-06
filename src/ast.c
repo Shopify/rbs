@@ -1613,11 +1613,11 @@ rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *l
     return instance;
 }
 
-rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(VALUE return_type) {
+rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_node_t *return_type) {
     rbs_types_untypedfunction_t *instance = (rbs_types_untypedfunction_t *)calloc(1, sizeof(rbs_types_untypedfunction_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(return_type);
+    rb_gc_register_mark_object(return_type == NULL ? Qnil : return_type->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_untyped_function(return_type);
