@@ -969,13 +969,13 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, rbs_ast_s
     return instance;
 }
 
-rbs_methodtype_t *rbs_methodtype_new(rbs_allocator_t *allocator, rbs_node_list_t *type_params, VALUE type, VALUE block, rbs_location_t *location) {
+rbs_methodtype_t *rbs_methodtype_new(rbs_allocator_t *allocator, rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location) {
     rbs_methodtype_t *instance = rbs_allocator_alloc(allocator, rbs_methodtype_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
-    rb_gc_register_mark_object(type);
-    rb_gc_register_mark_object(block);
+    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
+    rb_gc_register_mark_object(block == NULL ? Qnil : block->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1507,12 +1507,12 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_nod
     return instance;
 }
 
-rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, VALUE type, VALUE block, rbs_location_t *location, rbs_node_t *self_type) {
+rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type) {
     rbs_types_proc_t *instance = rbs_allocator_alloc(allocator, rbs_types_proc_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type);
-    rb_gc_register_mark_object(block);
+    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
+    rb_gc_register_mark_object(block == NULL ? Qnil : block->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(self_type == NULL ? Qnil : self_type->cached_ruby_value);
 

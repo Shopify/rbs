@@ -322,7 +322,9 @@ nodes:
       - name: type_params
         c_type: rbs_node_list
       - name: type
+        c_type: rbs_node
       - name: block
+        c_type: rbs_types_block
       - name: location
         c_type: rbs_location
   - name: RBS::Namespace
@@ -447,7 +449,9 @@ nodes:
   - name: RBS::Types::Proc
     fields:
       - name: type
+        c_type: rbs_node
       - name: block
+        c_type: rbs_types_block
       - name: location
         c_type: rbs_location
       - name: self_type
