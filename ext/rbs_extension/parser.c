@@ -137,7 +137,7 @@ void parser_advance_no_gap(parserstate *state) {
               | {<tXIDENT>}
 */
 rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
-  VALUE absolute = Qfalse;
+  bool absolute = false;
   rbs_node_list_t *path = rbs_node_list_new();
 
   if (rg) {
@@ -145,7 +145,7 @@ rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg
   }
 
   if (state->current_token.type == pCOLON2) {
-    absolute = Qtrue;
+    absolute = true;
     parser_advance_no_gap(state);
   }
 
