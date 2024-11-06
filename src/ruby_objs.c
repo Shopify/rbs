@@ -778,9 +778,9 @@ VALUE rbs_union(rbs_node_list_t *types, rbs_location_t *location) {
   );
 }
 
-VALUE rbs_untyped_function(VALUE return_type) {
+VALUE rbs_untyped_function(rbs_node_t *return_type) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("return_type")), return_type);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("return_type")), return_type == NULL ? Qnil : return_type->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_UntypedFunction,
