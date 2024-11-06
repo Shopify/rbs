@@ -451,6 +451,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: self_type
+        c_type: rbs_node
   - name: RBS::Types::Record
     fields:
       - name: all_fields
