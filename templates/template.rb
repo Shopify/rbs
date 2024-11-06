@@ -27,6 +27,8 @@ module RBS
         case @c_type
         when "VALUE"
           @name
+        when "bool"
+          "#{@name} ? Qtrue : Qfalse"
         when "rbs_node", "rbs_node_list", "rbs_location"
           "#{@name}->cached_ruby_value"
         else
@@ -35,7 +37,8 @@ module RBS
       end
 
       def parameter_decl
-        if @c_type == "VALUE"
+        case @c_type
+        when "VALUE", "bool"
           "#{@c_type} #{@name}"
         else
           "#{@c_type}_t *#{@name}"
@@ -43,8 +46,11 @@ module RBS
       end
 
       def stored_field_decl
-        if @c_type == "VALUE"
+        case @c_type
+        when "VALUE"
           "VALUE #{@name}"
+        when "bool"
+          "bool #{@name}"
         else
           "struct #{@c_type} *#{@name}"
         end
