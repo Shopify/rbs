@@ -201,10 +201,10 @@ VALUE rbs_ast_directives_use(rbs_node_list_t *clauses, rbs_location_t *location)
   );
 }
 
-VALUE rbs_ast_directives_use_single_clause(rbs_typename_t *type_name, VALUE new_name, rbs_location_t *location) {
+VALUE rbs_ast_directives_use_single_clause(rbs_typename_t *type_name, rbs_ast_symbol_t *new_name, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_name")), type_name == NULL ? Qnil : type_name->base.cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
