@@ -467,6 +467,7 @@ nodes:
   - name: RBS::Types::UntypedFunction
     fields:
       - name: return_type
+        c_type: rbs_node
   - name: RBS::Types::Variable
     fields:
       - name: name

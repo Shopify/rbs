@@ -681,7 +681,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
 
     VALUE block_function = Qnil;
     if (rbs_is_untyped_params(&block_params)) {
-      block_function = rbs_untyped_function(block_return_type->cached_ruby_value);
+      block_function = rbs_untyped_function(block_return_type);
     } else {
       VALUE rest_positionals;
       if (block_params.rest_positionals == NULL) {
@@ -718,7 +718,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
   rbs_node_t *type = parse_optional(state);
 
   if (rbs_is_untyped_params(&params)) {
-    *function = rbs_untyped_function(type->cached_ruby_value);
+    *function = rbs_untyped_function(type);
   } else {
     VALUE rest_positionals;
     if (params.rest_positionals == NULL) {
