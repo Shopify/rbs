@@ -1512,14 +1512,14 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *l
     return instance;
 }
 
-rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, rbs_location_t *location, VALUE self_type) {
+rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, rbs_location_t *location, rbs_node_t *self_type) {
     rbs_types_proc_t *instance = malloc(sizeof(rbs_types_proc_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type);
     rb_gc_register_mark_object(block);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(self_type);
+    rb_gc_register_mark_object(self_type == NULL ? Qnil : self_type->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_proc(type, block, location, self_type);
