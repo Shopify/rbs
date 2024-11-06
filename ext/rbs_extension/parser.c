@@ -1187,8 +1187,8 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
       rbs_ast_symbol_t *name;
       bool unchecked = false;
       rbs_ast_symbol_t *variance = rbs_ast_symbol_new(ID2SYM(rb_intern("invariant")));
-      VALUE upper_bound = Qnil;
-      VALUE default_type = Qnil;
+      rbs_node_t *upper_bound = NULL;
+      rbs_node_t *default_type = NULL;
 
       range param_range = NULL_RANGE;
       range name_range;
@@ -1234,7 +1234,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
       if (state->next_token.type == pLT) {
         parser_advance(state);
         upper_bound_range.start = state->current_token.range.start;
-        upper_bound = parse_type(state)->cached_ruby_value;
+        upper_bound = parse_type(state);
         upper_bound_range.end = state->current_token.range.end;
       }
 
@@ -1243,7 +1243,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
           parser_advance(state);
 
           default_type_range.start = state->current_token.range.start;
-          default_type = parse_type(state)->cached_ruby_value;
+          default_type = parse_type(state);
           default_type_range.end = state->current_token.range.end;
 
           required_param_allowed = false;
