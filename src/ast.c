@@ -1384,12 +1384,12 @@ rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE r
     return instance;
 }
 
-rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *allocator, rbs_node_t *type, VALUE name, rbs_location_t *location) {
+rbs_types_function_param_t *rbs_types_function_param_new(rbs_allocator_t *allocator, rbs_node_t *type, rbs_ast_symbol_t *name, rbs_location_t *location) {
     rbs_types_function_param_t *instance = rbs_allocator_alloc(allocator, rbs_types_function_param_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(name);
+    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
