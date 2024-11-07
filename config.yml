@@ -384,8 +384,11 @@ nodes:
   - name: RBS::Types::Block
     fields:
       - name: type
+        c_type: rbs_node
       - name: required
+        c_type: bool
       - name: self_type
+        c_type: rbs_node
   - name: RBS::Types::ClassInstance
     fields:
       - name: name
