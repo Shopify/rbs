@@ -956,8 +956,8 @@ static rbs_types_classsingleton_t *parse_singleton_type(parserstate *state) {
   type_range.end = state->current_token.range.end;
 
   rbs_location_t *loc = rbs_location_new(state->buffer, type_range);
-  rbs_loc_legacy_alloc_children(loc, 1);
-  rbs_loc_legacy_add_required_child(loc, rb_intern("name"), name_range);
+  rbs_loc_alloc_children(loc, 1);
+  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
 
   return rbs_types_classsingleton_new(typename, loc);
 }
