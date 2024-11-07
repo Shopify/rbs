@@ -460,10 +460,10 @@ VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs
   );
 }
 
-VALUE rbs_method_type(rbs_node_list_t *type_params, VALUE type, rbs_types_block_t *block, rbs_location_t *location) {
+VALUE rbs_method_type(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type_params")), type_params == NULL ? Qnil : type_params->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block == NULL ? Qnil : block->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
@@ -728,9 +728,9 @@ VALUE rbs_optional(rbs_node_t *type, rbs_location_t *location) {
   );
 }
 
-VALUE rbs_proc(VALUE type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type) {
+VALUE rbs_proc(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block == NULL ? Qnil : block->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type == NULL ? Qnil : self_type->cached_ruby_value);
