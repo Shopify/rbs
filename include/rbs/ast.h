@@ -9,7 +9,7 @@
 #define RBS__AST_H
 
 #include "ruby.h"
-#include "location.h"
+#include "rbs_location.h"
 
 enum rbs_node_type {
     RBS_AST_ANNOTATION = 1,

@@ -5,14 +5,6 @@
 #include "lexer.h"
 #include "rbs/util/rbs_constant_pool.h"
 
-typedef struct rbs_location {
-    VALUE cached_ruby_value;
-    VALUE buffer;
-    range rg;
-} rbs_location_t;
-
-rbs_location_t *rbs_location_new(VALUE buffer, range rg);
-
 /**
  * RBS::Location class
  * */
@@ -75,15 +67,6 @@ void rbs_loc_add_required_child(rbs_loc *loc, rbs_constant_id_t name, range r);
  * Allocate memory for children with rbs_loc_alloc_children before calling this function.
  * */
 void rbs_loc_add_optional_child(rbs_loc *loc, rbs_constant_id_t name, range r);
-
-/**
- * Returns RBS::Location object with start/end positions.
- *
- * @param start_pos
- * @param end_pos
- * @return New RSS::Location object.
- * */
-rbs_location_t *rbs_location_pp(VALUE buffer, const position *start_pos, const position *end_pos);
 
 /**
  * Define RBS::Location class.
