@@ -1282,13 +1282,13 @@ rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_location_t *location) {
     return instance;
 }
 
-rbs_types_block_t *rbs_types_block_new(VALUE type, VALUE required, VALUE self_type) {
+rbs_types_block_t *rbs_types_block_new(rbs_node_t *type, bool required, rbs_node_t *self_type) {
     rbs_types_block_t *instance = (rbs_types_block_t *)calloc(1, sizeof(rbs_types_block_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type);
-    rb_gc_register_mark_object(required);
-    rb_gc_register_mark_object(self_type);
+    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
+    rb_gc_register_mark_object(required ? Qtrue : Qfalse);
+    rb_gc_register_mark_object(self_type == NULL ? Qnil : self_type->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_block(type, required, self_type);
@@ -2567,11 +2567,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_types_block_t *node = (rbs_types_block_t *)instance;
-            // [#<RBS::Template::Field name="type" c_type="VALUE">, #<RBS::Template::Field name="required" c_type="VALUE">, #<RBS::Template::Field name="self_type" c_type="VALUE">]
+            // [#<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="required" c_type="bool">, #<RBS::Template::Field name="self_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("type")), node->type);
-            rb_hash_aset(h, ID2SYM(rb_intern("required")), node->required);
-            rb_hash_aset(h, ID2SYM(rb_intern("self_type")), node->self_type);
+            rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
+            rb_hash_aset(h, ID2SYM(rb_intern("required")), node->required ? Qtrue : Qfalse);
+            rb_hash_aset(h, ID2SYM(rb_intern("self_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->self_type)); // rbs_node
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Block,
