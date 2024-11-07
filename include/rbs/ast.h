@@ -98,6 +98,8 @@ void rbs_node_list_free(rbs_node_list_t *list);
 
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
+VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list);
+
 typedef struct rbs_ast_annotation {
     rbs_node_t base;
 
