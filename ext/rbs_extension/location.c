@@ -277,14 +277,6 @@ static VALUE location_required_keys(VALUE self) {
   return keys;
 }
 
-rbs_location_t *rbs_location_pp(VALUE buffer, const position *start_pos, const position *end_pos) {
-  range rg = { *start_pos, *end_pos };
-  rg.start = *start_pos;
-  rg.end = *end_pos;
-
-  return rbs_location_new(buffer, rg);
-}
-
 void rbs__init_location(void) {
   RBS_Location = rb_define_class_under(RBS, "Location", rb_cObject);
   rb_define_alloc_func(RBS_Location, location_s_allocate);
