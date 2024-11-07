@@ -25,3 +25,7 @@ void rbs_loc_add_required_child(rbs_location_t *loc, ID name, range r) {
 void rbs_loc_add_optional_child(rbs_location_t *loc, ID name, range r) {
   rbs_loc_legacy_add_optional_child(get_rbs_location(loc), name, r);
 }
+
+VALUE rbs_loc_to_ruby_location(rbs_location_t *loc) {
+  return loc->cached_ruby_value;
+}

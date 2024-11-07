@@ -55,6 +55,14 @@ module RBS
           "struct #{@c_type} *#{@name}"
         end
       end
+
+      def ast_node?
+        @c_type == "rbs_node" ||
+          @c_type == "rbs_typename" ||
+          @c_type == "rbs_namespace" ||
+          @c_type.include?("_ast_") ||
+          @c_type.include?("_decl_")
+      end
     end
 
     class Type
