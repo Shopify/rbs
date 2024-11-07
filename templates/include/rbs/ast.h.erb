@@ -33,6 +33,8 @@ void rbs_node_list_free(rbs_node_list_t *list);
 
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
+VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list);
+
 <%- nodes.each do |node| -%>
 typedef struct <%= node.c_base_name %> {
     rbs_node_t base;

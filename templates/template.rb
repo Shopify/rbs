@@ -53,6 +53,14 @@ module RBS
         end
       end
 
+      def ast_node?
+        @c_type == "rbs_node" ||
+          @c_type == "rbs_typename" ||
+          @c_type == "rbs_namespace" ||
+          @c_type.include?("_ast_") ||
+          @c_type.include?("_decl_")
+      end
+
       def inspect
         "#<RBS::Template::Field name=#{@name.inspect} c_type=#{@c_type.inspect}>"
       end
