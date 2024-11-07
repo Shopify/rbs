@@ -486,9 +486,9 @@ typedef struct rbs_types_bases_void {
 typedef struct rbs_types_block {
     rbs_node_t base;
 
-    VALUE type;
-    VALUE required;
-    VALUE self_type;
+    struct rbs_node *type;
+    bool required;
+    struct rbs_node *self_type;
 } rbs_types_block_t;
 
 typedef struct rbs_types_classinstance {
@@ -646,7 +646,7 @@ rbs_types_bases_nil_t *rbs_types_bases_nil_new(rbs_location_t *location);
 rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_location_t *location);
 rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_location_t *location);
 rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_location_t *location);
-rbs_types_block_t *rbs_types_block_new(VALUE type, VALUE required, VALUE self_type);
+rbs_types_block_t *rbs_types_block_new(rbs_node_t *type, bool required, rbs_node_t *self_type);
 rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t *name, rbs_location_t *location);
 rbs_types_function_t *rbs_types_function_new(VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);

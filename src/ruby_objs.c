@@ -610,11 +610,11 @@ VALUE rbs_bases_void(rbs_location_t *location) {
   );
 }
 
-VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
+VALUE rbs_block(rbs_node_t *type, bool required, rbs_node_t *self_type) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required")), required);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type == NULL ? Qnil : type->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required")), required ? Qtrue : Qfalse);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type == NULL ? Qnil : self_type->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_Block,
