@@ -103,8 +103,7 @@ const char* get_class_name(VALUE o) {
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
     if (instance == NULL) {
-        fprintf(stderr, "Tried to call rbs_struct_to_ruby_value(NULL)\n");
-        exit(1);
+        return Qnil;
     }
 
     VALUE ruby_value = instance->cached_ruby_value;
