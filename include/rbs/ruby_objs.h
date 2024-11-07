@@ -54,7 +54,7 @@ VALUE rbs_bases_nil(rbs_location_t *location);
 VALUE rbs_bases_self(rbs_location_t *location);
 VALUE rbs_bases_top(rbs_location_t *location);
 VALUE rbs_bases_void(rbs_location_t *location);
-VALUE rbs_block(VALUE type, VALUE required, VALUE self_type);
+VALUE rbs_block(rbs_node_t *type, bool required, rbs_node_t *self_type);
 VALUE rbs_class_instance(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 VALUE rbs_class_singleton(rbs_typename_t *name, rbs_location_t *location);
 VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);
