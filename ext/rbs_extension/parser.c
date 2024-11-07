@@ -662,10 +662,10 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
     function_self_type = parse_self_type_binding(state);
   }
 
-  VALUE required = Qtrue;
+  bool required = true;
   if (state->next_token.type == pQUESTION && state->next_token2.type == pLBRACE) {
     // Optional block
-    required = Qfalse;
+    required = false;
     parser_advance(state);
   }
   if (state->next_token.type == pLBRACE) {
@@ -681,19 +681,13 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
     }
 
     rbs_node_t *self_type = parse_self_type_binding(state);
-    VALUE block_self_type;
-    if (self_type == NULL) {
-      block_self_type = Qnil;
-    } else {
-      block_self_type = self_type->cached_ruby_value;
-    }
 
     parser_advance_assert(state, pARROW);
     rbs_node_t *block_return_type = parse_optional(state);
 
-    VALUE block_function = Qnil;
+    rbs_node_t *block_function = NULL;
     if (rbs_is_untyped_params(&block_params)) {
-      block_function = rbs_untyped_function(block_return_type);
+      block_function = (rbs_node_t *) rbs_types_untypedfunction_new(&state->allocator, block_return_type);
     } else {
       VALUE rest_positionals;
       if (block_params.rest_positionals == NULL) {
@@ -709,7 +703,8 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
         rest_keywords = block_params.rest_keywords->cached_ruby_value;
       }
 
-      block_function = rbs_function(
+      block_function = (rbs_node_t *) rbs_types_function_new(
+        &state->allocator,
         block_params.required_positionals->cached_ruby_value,
         block_params.optional_positionals->cached_ruby_value,
         rest_positionals,
@@ -721,7 +716,7 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
       );
     }
 
-    block = rbs_types_block_new(&state->allocator, block_function, required, block_self_type);
+    block = rbs_types_block_new(&state->allocator, block_function, required, self_type);
 
     parser_advance_assert(state, pRBRACE);
   }

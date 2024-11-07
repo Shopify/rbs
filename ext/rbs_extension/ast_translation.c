@@ -38,10 +38,7 @@ const char* get_class_name(VALUE o) {
 }
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
-    if (instance == NULL) {
-        fprintf(stderr, "Tried to call rbs_struct_to_ruby_value(NULL)\n");
-        exit(1);
-    }
+    if (instance == NULL) return Qnil;
 
     VALUE ruby_value = instance->cached_ruby_value;
 
@@ -699,7 +696,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params));
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
-            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block ? rbs_struct_to_ruby_value((rbs_node_t *) node->block) : Qnil); // rbs_types_block
+            rb_hash_aset(h, ID2SYM(rb_intern("block")), rbs_struct_to_ruby_value((rbs_node_t *) node->block)); // rbs_types_block
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(
@@ -926,9 +923,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rbs_types_block_t *node = (rbs_types_block_t *)instance;
 
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("type")), node->type);
-            rb_hash_aset(h, ID2SYM(rb_intern("required")), node->required);
-            rb_hash_aset(h, ID2SYM(rb_intern("self_type")), node->self_type);
+            rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
+            rb_hash_aset(h, ID2SYM(rb_intern("required")), node->required ? Qtrue : Qfalse);
+            rb_hash_aset(h, ID2SYM(rb_intern("self_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->self_type)); // rbs_node
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Block,
@@ -1099,7 +1096,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
 
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
-            rb_hash_aset(h, ID2SYM(rb_intern("block")), node->block ? rbs_struct_to_ruby_value((rbs_node_t *) node->block) : Qnil); // rbs_types_block
+            rb_hash_aset(h, ID2SYM(rb_intern("block")), rbs_struct_to_ruby_value((rbs_node_t *) node->block)); // rbs_types_block
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("self_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->self_type)); // rbs_node
 
