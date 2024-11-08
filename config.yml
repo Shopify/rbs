@@ -415,13 +415,19 @@ nodes:
   - name: RBS::Types::Function
     fields:
       - name: required_positionals
+        c_type: rbs_node_list
       - name: optional_positionals
+        c_type: rbs_node_list
       - name: rest_positionals
+        c_type: rbs_node
       - name: trailing_positionals
+        c_type: rbs_node_list
       - name: required_keywords
       - name: optional_keywords
       - name: rest_keywords
+        c_type: rbs_node
       - name: return_type
+        c_type: rbs_node
   - name: RBS::Types::Function::Param
     fields:
       - name: type
