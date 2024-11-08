@@ -1444,18 +1444,18 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_allocator_t *alloca
     return instance;
 }
 
-rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type) {
+rbs_types_function_t *rbs_types_function_new(rbs_allocator_t *allocator, rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, VALUE required_keywords, VALUE optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
     rbs_types_function_t *instance = rbs_allocator_alloc(allocator, rbs_types_function_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(required_positionals);
-    rb_gc_register_mark_object(optional_positionals);
-    rb_gc_register_mark_object(rest_positionals);
-    rb_gc_register_mark_object(trailing_positionals);
+    rb_gc_register_mark_object(required_positionals == NULL ? Qnil : required_positionals->cached_ruby_value);
+    rb_gc_register_mark_object(optional_positionals == NULL ? Qnil : optional_positionals->cached_ruby_value);
+    rb_gc_register_mark_object(rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
+    rb_gc_register_mark_object(trailing_positionals == NULL ? Qnil : trailing_positionals->cached_ruby_value);
     rb_gc_register_mark_object(required_keywords);
     rb_gc_register_mark_object(optional_keywords);
-    rb_gc_register_mark_object(rest_keywords);
-    rb_gc_register_mark_object(return_type);
+    rb_gc_register_mark_object(rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
+    rb_gc_register_mark_object(return_type == NULL ? Qnil : return_type->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_function(required_positionals, optional_positionals, rest_positionals, trailing_positionals, required_keywords, optional_keywords, rest_keywords, return_type);
