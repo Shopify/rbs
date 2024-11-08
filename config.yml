@@ -17,6 +17,7 @@ nodes:
       - name: type_params
         c_type: rbs_node_list
       - name: super_class
+        c_type: rbs_ast_declarations_class_super
       - name: members
         c_type: rbs_node_list
       - name: annotations

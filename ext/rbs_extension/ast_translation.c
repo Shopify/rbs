@@ -97,7 +97,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_typename
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params));
-            rb_hash_aset(h, ID2SYM(rb_intern("super_class")), node->super_class);
+            rb_hash_aset(h, ID2SYM(rb_intern("super_class")), rbs_struct_to_ruby_value((rbs_node_t *) node->super_class)); // rbs_ast_declarations_class_super
             rb_hash_aset(h, ID2SYM(rb_intern("members")), rbs_node_list_to_ruby_array(node->members));
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
