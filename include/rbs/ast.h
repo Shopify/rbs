@@ -10,8 +10,9 @@
 
 #include "ruby.h"
 #include "rbs/util/rbs_allocator.h"
-#include "rbs_location.h"
 #include "rbs/util/rbs_constant_pool.h"
+#include "rbs_string.h"
+#include "rbs_location.h"
 
 enum rbs_node_type {
     RBS_OTHER_RUBY_VALUE = 0,
@@ -133,7 +134,7 @@ rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key);
 typedef struct rbs_ast_annotation {
     rbs_node_t base;
 
-    VALUE string;
+    rbs_string_t string;
     struct rbs_location *location;
 } rbs_ast_annotation_t;
 
@@ -662,7 +663,7 @@ typedef struct rbs_other_ruby_value {
 
 rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value);
 
-rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_allocator_t *allocator, VALUE string, rbs_location_t *location);
+rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_allocator_t *allocator, rbs_string_t string, rbs_location_t *location);
 rbs_ast_bool_t *rbs_ast_bool_new(rbs_allocator_t *allocator, bool value);
 rbs_ast_comment_t *rbs_ast_comment_new(rbs_allocator_t *allocator, VALUE string, rbs_location_t *location);
 rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);

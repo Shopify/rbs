@@ -65,6 +65,8 @@ module RBS
           "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value /* rbs_constant used */"
         when "rbs_node", "rbs_node_list", "rbs_location", "rbs_hash"
           "#{@name} == NULL ? Qnil : #{@name}->cached_ruby_value"
+        when "rbs_string"
+          "#{@name}.cached_ruby_string"
         else
           "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value"
         end
