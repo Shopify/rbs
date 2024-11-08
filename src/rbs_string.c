@@ -6,6 +6,7 @@ rbs_string_t rbs_string_shared_new(const char *start, const char *end) {
         .end = end,
         .cached_ruby_string = Qnil,
         .type = RBS_STRING_SHARED,
+        .encoding = false,
     };
 }
 
@@ -15,6 +16,7 @@ rbs_string_t rbs_string_owned_new(const char *start, const char *end) {
         .end = end,
         .cached_ruby_string = Qnil,
         .type = RBS_STRING_OWNED,
+        .encoding = false,
     };
 }
 
