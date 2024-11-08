@@ -91,13 +91,13 @@ rbs_ast_comment_t *rbs_ast_comment_new(rbs_allocator_t *allocator, VALUE ruby_va
     return instance;
 }
 
-rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
     rbs_ast_declarations_class_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_class_t);
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
-    rb_gc_register_mark_object(super_class);
+    rb_gc_register_mark_object(super_class == NULL ? Qnil : super_class->base.cached_ruby_value);
     rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
