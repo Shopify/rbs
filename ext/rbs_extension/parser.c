@@ -48,8 +48,8 @@ typedef struct {
   rbs_node_list_t *optional_positionals;
   rbs_node_t *rest_positionals;
   rbs_node_list_t *trailing_positionals;
-  VALUE required_keywords;
-  VALUE optional_keywords;
+  rbs_hash_t *required_keywords;
+  rbs_hash_t *optional_keywords;
   rbs_node_t *rest_keywords;
 } method_params;
 
@@ -329,7 +329,7 @@ static rbs_ast_symbol_t *parse_keyword_key(parserstate *state) {
 /*
   keyword ::= {} keyword `:` <function_param>
 */
-static void parse_keyword(parserstate *state, VALUE keywords, VALUE memo) {
+static void parse_keyword(parserstate *state, rbs_hash_t *keywords, VALUE memo) {
   rbs_ast_symbol_t *key = parse_keyword_key(state);
 
   if (!NIL_P(rb_hash_aref(memo, ((rbs_node_t *)key)->cached_ruby_value))) {
@@ -345,7 +345,7 @@ static void parse_keyword(parserstate *state, VALUE keywords, VALUE memo) {
   parser_advance_assert(state, pCOLON);
   rbs_types_function_param_t *param = parse_function_param(state);
 
-  rb_hash_aset(keywords, ((rbs_node_t *)key)->cached_ruby_value, ((rbs_node_t *)param)->cached_ruby_value);
+  rbs_hash_set(keywords, (rbs_node_t *) key, (rbs_node_t *) param);
 
   return;
 }
@@ -591,8 +591,8 @@ static void initialize_method_params(method_params *params){
     .optional_positionals = rbs_node_list_new(),
     .rest_positionals = NULL,
     .trailing_positionals = rbs_node_list_new(),
-    .required_keywords = rb_hash_new(),
-    .optional_keywords = rb_hash_new(),
+    .required_keywords = rbs_hash_new(),
+    .optional_keywords = rbs_hash_new(),
     .rest_keywords = NULL,
   };
 }
