@@ -71,10 +71,11 @@ enum rbs_node_type {
     RBS_TYPES_OPTIONAL = 56,
     RBS_TYPES_PROC = 57,
     RBS_TYPES_RECORD = 58,
-    RBS_TYPES_TUPLE = 59,
-    RBS_TYPES_UNION = 60,
-    RBS_TYPES_UNTYPEDFUNCTION = 61,
-    RBS_TYPES_VARIABLE = 62,
+    RBS_TYPES_RECORD_FIELDTYPE = 59,
+    RBS_TYPES_TUPLE = 60,
+    RBS_TYPES_UNION = 61,
+    RBS_TYPES_UNTYPEDFUNCTION = 62,
+    RBS_TYPES_VARIABLE = 63,
 };
 
 typedef struct rbs_node {
@@ -605,9 +606,14 @@ typedef struct rbs_types_proc {
 typedef struct rbs_types_record {
     rbs_node_t base;
 
-    VALUE all_fields;
+    struct rbs_hash *all_fields;
     struct rbs_location *location;
 } rbs_types_record_t;
+
+typedef struct rbs_types_record_fieldtype {
+    rbs_node_t base;
+
+} rbs_types_record_fieldtype_t;
 
 typedef struct rbs_types_tuple {
     rbs_node_t base;
@@ -694,7 +700,8 @@ rbs_types_intersection_t *rbs_types_intersection_new(rbs_allocator_t *allocator,
 rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, VALUE literal, rbs_location_t *location);
 rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_node_t *type, rbs_location_t *location);
 rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type);
-rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, VALUE all_fields, rbs_location_t *location);
+rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, rbs_hash_t *all_fields, rbs_location_t *location);
+rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(rbs_allocator_t *allocator, VALUE ruby_value);
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_allocator_t *allocator, rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_union_t *rbs_types_union_new(rbs_allocator_t *allocator, rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_allocator_t *allocator, rbs_node_t *return_type);
