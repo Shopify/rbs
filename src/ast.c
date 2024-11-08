@@ -1456,7 +1456,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t *name, r
     return instance;
 }
 
-rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, VALUE required_keywords, VALUE optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
+rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, rbs_hash_t *required_keywords, rbs_hash_t *optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
     rbs_types_function_t *instance = malloc(sizeof(rbs_types_function_t));
 
     // Disable GC for all these Ruby objects.
@@ -1464,8 +1464,8 @@ rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positiona
     rb_gc_register_mark_object(optional_positionals == NULL ? Qnil : optional_positionals->cached_ruby_value);
     rb_gc_register_mark_object(rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
     rb_gc_register_mark_object(trailing_positionals == NULL ? Qnil : trailing_positionals->cached_ruby_value);
-    rb_gc_register_mark_object(required_keywords);
-    rb_gc_register_mark_object(optional_keywords);
+    rb_gc_register_mark_object(required_keywords == NULL ? Qnil : required_keywords->cached_ruby_value);
+    rb_gc_register_mark_object(optional_keywords == NULL ? Qnil : optional_keywords->cached_ruby_value);
     rb_gc_register_mark_object(rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
     rb_gc_register_mark_object(return_type == NULL ? Qnil : return_type->cached_ruby_value);
 
