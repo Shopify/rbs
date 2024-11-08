@@ -8,6 +8,7 @@
 #include "ast_translation.h"
 
 #include "rbs/constants.h"
+#include "rbs_string_bridging.h"
 
 #include <stdlib.h>
 
@@ -61,9 +62,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_ast_annotation_t *node = (rbs_ast_annotation_t *)instance;
-            // [#<RBS::Template::Field name="string" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="string" c_type="rbs_string">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("string")), node->string);
+            rb_hash_aset(h, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&node->string));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(

@@ -1,6 +1,7 @@
 #include "ast_translation.h"
 
 #include "rbs/constants.h"
+#include "rbs_string_bridging.h"
 
 #include <stdlib.h>
 
@@ -83,6 +84,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value((rbs_node_t *) node-><%= field.name %>)); // rbs_ast_symbol
             <%- when "rbs_keyword" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value((rbs_node_t *) node-><%= field.name %>)); // rbs_keyword
+            <%- when "rbs_string" -%>
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_string_to_ruby_string(&node-><%= field.name %>));
             <%- when "bool" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %> ? Qtrue : Qfalse);
             <%- else -%>

@@ -192,11 +192,11 @@ rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
     return instance;
 }
 
-rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location) {
+rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_string_t string, rbs_location_t *location) {
     rbs_ast_annotation_t *instance = malloc(sizeof(rbs_ast_annotation_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(string);
+    rb_gc_register_mark_object(string.cached_ruby_string);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
