@@ -103,13 +103,13 @@ rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_locat
     return instance;
 }
 
-rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, VALUE super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
     rbs_ast_declarations_class_t *instance = (rbs_ast_declarations_class_t *)calloc(1, sizeof(rbs_ast_declarations_class_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
-    rb_gc_register_mark_object(super_class);
+    rb_gc_register_mark_object(super_class == NULL ? Qnil : super_class->base.cached_ruby_value);
     rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
@@ -1740,11 +1740,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_ast_declarations_class_t *node = (rbs_ast_declarations_class_t *)instance;
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="super_class" c_type="VALUE">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="VALUE">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="super_class" c_type="rbs_ast_declarations_class_super">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="VALUE">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_typename
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params));
-            rb_hash_aset(h, ID2SYM(rb_intern("super_class")), node->super_class);
+            rb_hash_aset(h, ID2SYM(rb_intern("super_class")), rbs_struct_to_ruby_value((rbs_node_t *) node->super_class)); // rbs_ast_declarations_class_super
             rb_hash_aset(h, ID2SYM(rb_intern("members")), rbs_node_list_to_ruby_array(node->members));
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
