@@ -57,7 +57,7 @@ VALUE rbs_bases_void(rbs_location_t *location);
 VALUE rbs_block(rbs_node_t *type, bool required, rbs_node_t *self_type);
 VALUE rbs_class_instance(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 VALUE rbs_class_singleton(rbs_typename_t *name, rbs_location_t *location);
-VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);
+VALUE rbs_function(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, VALUE required_keywords, VALUE optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type);
 VALUE rbs_function_param(rbs_node_t *type, rbs_ast_symbol_t *name, rbs_location_t *location);
 VALUE rbs_interface(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 VALUE rbs_intersection(rbs_node_list_t *types, rbs_location_t *location);
