@@ -1810,10 +1810,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_BOOL: {
-            if (strcmp(class_name, "RBS::AST::Bool") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Bool, got %s\n", class_name);
-                exit(1);
-            }
             return instance->cached_ruby_value;
         }
         case RBS_AST_COMMENT: {
@@ -2021,10 +2017,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_NODES: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Nodes") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Nodes, got %s\n", class_name);
-                exit(1);
-            }
             return instance->cached_ruby_value;
         }
         case RBS_AST_DECLARATIONS_TYPEALIAS: {
@@ -2050,10 +2042,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DIRECTIVES_NODES: {
-            if (strcmp(class_name, "RBS::AST::Directives::Nodes") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Directives::Nodes, got %s\n", class_name);
-                exit(1);
-            }
             return instance->cached_ruby_value;
         }
         case RBS_AST_DIRECTIVES_USE: {
@@ -2405,10 +2393,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_SYMBOL: {
-            if (strcmp(class_name, "RBS::AST::Symbol") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Symbol, got %s\n", class_name);
-                exit(1);
-            }
             return instance->cached_ruby_value;
         }
         case RBS_AST_TYPEPARAM: {
