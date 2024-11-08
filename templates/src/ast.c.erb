@@ -138,7 +138,11 @@ parameters = node.constructor_parameters
 
     <%- if node.builds_ruby_object_internally? -%>
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    <%- if node.c_type_name == "rbs_ast_bool_t" -%>
+    VALUE ruby_value = value ? Qtrue : Qfalse;
+    <%- else -%>
     VALUE ruby_value = <%= node.c_function_name %>(<%= parameters.map(&:name).join(", ") %>);
+    <%- end -%>
     <%- end -%>
 
     rb_gc_register_mark_object(ruby_value);
@@ -196,6 +200,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
             <%-
             rbs_struct_to_ruby_value_shitlist = [
+                "RBS::AST::Bool",
                 "RBS::AST::Symbol",
                 "RBS::AST::Declarations::Nodes",
                 "RBS::AST::Directives::Nodes",

@@ -154,6 +154,28 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *locat
     return instance;
 }
 
+rbs_ast_bool_t *rbs_ast_bool_new(bool value) {
+    rbs_ast_bool_t *instance = (rbs_ast_bool_t *)calloc(1, sizeof(rbs_ast_bool_t));
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(value ? Qtrue : Qfalse);
+
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = value ? Qtrue : Qfalse;
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_ast_bool_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_BOOL
+        },
+        .value = value,
+    };
+
+    return instance;
+}
+
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_location_t *location) {
     rbs_ast_comment_t *instance = (rbs_ast_comment_t *)calloc(1, sizeof(rbs_ast_comment_t));
 
@@ -1786,6 +1808,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_AST_BOOL: {
+            if (strcmp(class_name, "RBS::AST::Bool") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Bool, got %s\n", class_name);
+                exit(1);
+            }
+            return instance->cached_ruby_value;
         }
         case RBS_AST_COMMENT: {
             if (strcmp(class_name, "RBS::AST::Comment") != 0) {
