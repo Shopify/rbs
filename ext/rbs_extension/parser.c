@@ -689,30 +689,16 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
     if (rbs_is_untyped_params(&block_params)) {
       block_function = (rbs_node_t *) rbs_types_untypedfunction_new(&state->allocator, block_return_type);
     } else {
-      VALUE rest_positionals;
-      if (block_params.rest_positionals == NULL) {
-        rest_positionals = Qnil;
-      } else {
-        rest_positionals = block_params.rest_positionals->cached_ruby_value;
-      }
-
-      VALUE rest_keywords;
-      if (block_params.rest_keywords == NULL) {
-        rest_keywords = Qnil;
-      } else {
-        rest_keywords = block_params.rest_keywords->cached_ruby_value;
-      }
-
       block_function = (rbs_node_t *) rbs_types_function_new(
         &state->allocator,
-        block_params.required_positionals->cached_ruby_value,
-        block_params.optional_positionals->cached_ruby_value,
-        rest_positionals,
-        block_params.trailing_positionals->cached_ruby_value,
+        block_params.required_positionals,
+        block_params.optional_positionals,
+        block_params.rest_positionals,
+        block_params.trailing_positionals,
         block_params.required_keywords,
         block_params.optional_keywords,
-        rest_keywords,
-        block_return_type->cached_ruby_value
+        block_params.rest_keywords,
+        block_return_type
       );
     }
 
@@ -727,30 +713,16 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
   if (rbs_is_untyped_params(&params)) {
     function = (rbs_node_t *) rbs_types_untypedfunction_new(&state->allocator, type);
   } else {
-    VALUE rest_positionals;
-    if (params.rest_positionals == NULL) {
-      rest_positionals = Qnil;
-    } else {
-      rest_positionals = params.rest_positionals->cached_ruby_value;
-    }
-
-    VALUE rest_keywords;
-    if (params.rest_keywords == NULL) {
-      rest_keywords = Qnil;
-    } else {
-      rest_keywords = params.rest_keywords->cached_ruby_value;
-    }
-
     function = (rbs_node_t *) rbs_types_function_new(
       &state->allocator,
-      params.required_positionals->cached_ruby_value,
-      params.optional_positionals->cached_ruby_value,
-      rest_positionals,
-      params.trailing_positionals->cached_ruby_value,
+      params.required_positionals,
+      params.optional_positionals,
+      params.rest_positionals,
+      params.trailing_positionals,
       params.required_keywords,
       params.optional_keywords,
-      rest_keywords,
-      type->cached_ruby_value
+      params.rest_keywords,
+      type
     );
   }
 
