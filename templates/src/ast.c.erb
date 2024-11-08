@@ -200,6 +200,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 "RBS::AST::Symbol",
                 "RBS::AST::Declarations::Nodes",
                 "RBS::AST::Directives::Nodes",
+                "RBS::Types::Record::FieldType",
             ]
 
             if rbs_struct_to_ruby_value_shitlist.include?(node.ruby_full_name) -%>
