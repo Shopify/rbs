@@ -978,8 +978,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("optional_positionals")), rbs_node_list_to_ruby_array(node->optional_positionals));
             rb_hash_aset(h, ID2SYM(rb_intern("rest_positionals")), rbs_struct_to_ruby_value((rbs_node_t *) node->rest_positionals)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("trailing_positionals")), rbs_node_list_to_ruby_array(node->trailing_positionals));
-            rb_hash_aset(h, ID2SYM(rb_intern("required_keywords")), node->required_keywords);
-            rb_hash_aset(h, ID2SYM(rb_intern("optional_keywords")), node->optional_keywords);
+            rb_hash_aset(h, ID2SYM(rb_intern("required_keywords")), rbs_hash_to_ruby_hash(node->required_keywords));
+            rb_hash_aset(h, ID2SYM(rb_intern("optional_keywords")), rbs_hash_to_ruby_hash(node->optional_keywords));
             rb_hash_aset(h, ID2SYM(rb_intern("rest_keywords")), rbs_struct_to_ruby_value((rbs_node_t *) node->rest_keywords)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("return_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->return_type)); // rbs_node
 
