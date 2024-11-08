@@ -1106,9 +1106,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_types_record_t *node = (rbs_types_record_t *)instance;
-            // [#<RBS::Template::Field name="all_fields" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="all_fields" c_type="rbs_hash">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("all_fields")), node->all_fields);
+            rb_hash_aset(h, ID2SYM(rb_intern("all_fields")), rbs_hash_to_ruby_hash(node->all_fields));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(
@@ -1116,6 +1116,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_TYPES_RECORD_FIELDTYPE: {
+            return instance->cached_ruby_value;
         }
         case RBS_TYPES_TUPLE: {
             if (strcmp(class_name, "RBS::Types::Tuple") != 0) {

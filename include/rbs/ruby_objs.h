@@ -64,7 +64,7 @@ VALUE rbs_intersection(rbs_node_list_t *types, rbs_location_t *location);
 VALUE rbs_literal(VALUE literal, rbs_location_t *location);
 VALUE rbs_optional(rbs_node_t *type, rbs_location_t *location);
 VALUE rbs_proc(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type);
-VALUE rbs_record(VALUE all_fields, rbs_location_t *location);
+VALUE rbs_record(rbs_hash_t *all_fields, rbs_location_t *location);
 VALUE rbs_tuple(rbs_node_list_t *types, rbs_location_t *location);
 VALUE rbs_union(rbs_node_list_t *types, rbs_location_t *location);
 VALUE rbs_untyped_function(rbs_node_t *return_type);

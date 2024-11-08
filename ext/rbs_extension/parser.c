@@ -762,8 +762,8 @@ static void check_key_duplication(parserstate *state, VALUE fields, rbs_ast_symb
   record_attribute ::= {} keyword_token `:` <type>
                      | {} literal_type `=>` <type>
 */
-static VALUE parse_record_attributes(parserstate *state) {
-  VALUE fields = rb_hash_new();
+static rbs_hash_t *parse_record_attributes(parserstate *state) {
+  rbs_hash_t *fields = rbs_hash_new();
 
   if (state->next_token.type == pRBRACE) {
     return fields;
@@ -771,7 +771,7 @@ static VALUE parse_record_attributes(parserstate *state) {
 
   while (true) {
     rbs_ast_symbol_t *key;
-    VALUE value = rb_ary_new();
+    rbs_node_list_t *value = rbs_node_list_new();
     bool required = true;
 
     if (state->next_token.type == pQUESTION) {
@@ -783,7 +783,7 @@ static VALUE parse_record_attributes(parserstate *state) {
     if (is_keyword(state)) {
       // { foo: type } syntax
       key = parse_keyword_key(state);
-      check_key_duplication(state, fields, key);
+      check_key_duplication(state, fields->cached_ruby_value, key);
       parser_advance_assert(state, pCOLON);
     } else {
       // { key => type } syntax
@@ -806,13 +806,13 @@ static VALUE parse_record_attributes(parserstate *state) {
           "unexpected record key token"
         );
       }
-      check_key_duplication(state, fields, key);
+      check_key_duplication(state, fields->cached_ruby_value, key);
       parser_advance_assert(state, pFATARROW);
     }
     rbs_node_t *type = parse_type(state);
-    rb_ary_push(value, type->cached_ruby_value);
-    rb_ary_push(value, rbs_ast_bool_new(required)->base.cached_ruby_value);
-    rb_hash_aset(fields, ((rbs_node_t *)key)->cached_ruby_value, value);
+    rbs_node_list_append(value, type);
+    rbs_node_list_append(value, (rbs_node_t *) rbs_ast_bool_new(required));
+    rbs_hash_set(fields, (rbs_node_t *) key, (rbs_node_t *) rbs_types_record_fieldtype_new(value->cached_ruby_value));
 
     if (parser_advance_if(state, pCOMMA)) {
       if (state->next_token.type == pRBRACE) {
@@ -1077,7 +1077,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
   }
   case pLBRACE: {
     position start = state->current_token.range.start;
-    VALUE fields = parse_record_attributes(state);
+    rbs_hash_t *fields = parse_record_attributes(state);
     parser_advance_assert(state, pRBRACE);
     position end = state->current_token.range.end;
     rbs_location_t *loc = rbs_location_pp(state->buffer, &start, &end);

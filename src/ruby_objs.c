@@ -742,9 +742,9 @@ VALUE rbs_proc(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *locat
   );
 }
 
-VALUE rbs_record(VALUE all_fields, rbs_location_t *location) {
+VALUE rbs_record(rbs_hash_t *all_fields, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("all_fields")), all_fields);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("all_fields")), all_fields == NULL ? Qnil : all_fields->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
