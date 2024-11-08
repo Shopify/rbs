@@ -9,6 +9,7 @@
 #define RBS__AST_H
 
 #include "ruby.h"
+#include "rbs_string.h"
 #include "rbs_location.h"
 #include "rbs_constant_pool.h"
 
@@ -137,7 +138,7 @@ VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash);
 typedef struct rbs_ast_annotation {
     rbs_node_t base;
 
-    VALUE string;
+    rbs_string_t string;
     struct rbs_location *location;
 } rbs_ast_annotation_t;
 
@@ -654,7 +655,7 @@ typedef struct rbs_other_ruby_value {
 
 rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value);
 
-rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location);
+rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_string_t string, rbs_location_t *location);
 rbs_ast_bool_t *rbs_ast_bool_new(bool value);
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE string, rbs_location_t *location);
 rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);

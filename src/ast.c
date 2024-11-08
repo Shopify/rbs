@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "rbs/ruby_objs.h"
 #include "rbs/constants.h"
+#include "rbs_string_bridging.h"
 #include "ruby/encoding.h"
 
 /* rbs_node_list */
@@ -165,11 +166,11 @@ rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
     return instance;
 }
 
-rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location) {
+rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_string_t string, rbs_location_t *location) {
     rbs_ast_annotation_t *instance = (rbs_ast_annotation_t *)calloc(1, sizeof(rbs_ast_annotation_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(string);
+    rb_gc_register_mark_object(string.cached_ruby_string);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1825,9 +1826,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_ast_annotation_t *node = (rbs_ast_annotation_t *)instance;
-            // [#<RBS::Template::Field name="string" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="string" c_type="rbs_string">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("string")), node->string);
+            rb_hash_aset(h, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&node->string));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(
