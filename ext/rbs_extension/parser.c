@@ -339,17 +339,17 @@ static rbs_ast_symbol_t *parse_keyword_key(parserstate *state) {
 /*
   keyword ::= {} keyword `:` <function_param>
 */
-static void parse_keyword(parserstate *state, rbs_hash_t *keywords, VALUE memo) {
+static void parse_keyword(parserstate *state, rbs_hash_t *keywords, rbs_hash_t *memo) {
   rbs_ast_symbol_t *key = parse_keyword_key(state);
 
-  if (!NIL_P(rb_hash_aref(memo, ((rbs_node_t *)key)->cached_ruby_value))) {
+  if (rbs_hash_find(memo, (rbs_node_t *) key)) {
     raise_syntax_error(
       state,
       state->current_token,
       "duplicated keyword argument"
     );
   } else {
-    rb_hash_aset(memo, ((rbs_node_t *)key)->cached_ruby_value, Qtrue);
+    rbs_hash_set(memo, (rbs_node_t *) key, (rbs_node_t *) rbs_ast_bool_new(true));
   }
 
   parser_advance_assert(state, pCOLON);
@@ -421,7 +421,7 @@ static void parse_params(parserstate *state, method_params *params) {
     return;
   }
 
-  VALUE memo = rb_hash_new();
+  rbs_hash_t *memo = rbs_hash_new();
 
   while (true) {
     switch (state->next_token.type) {
