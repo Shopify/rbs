@@ -731,8 +731,8 @@ static rbs_types_proc_t *parse_proc_type(parserstate *state) {
   return rbs_types_proc_new(result.function, result.block, loc, result.function_self_type);
 }
 
-static void check_key_duplication(parserstate *state, VALUE fields, rbs_ast_symbol_t *key) {
-  if (!NIL_P(rb_hash_aref(fields, ((rbs_node_t *)key)->cached_ruby_value))) {
+static void check_key_duplication(parserstate *state, rbs_hash_t *fields, rbs_ast_symbol_t *key) {
+  if (rbs_hash_find(fields, ((rbs_node_t *) key))) {
     raise_syntax_error(
       state,
       state->current_token,
@@ -772,7 +772,7 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
     if (is_keyword(state)) {
       // { foo: type } syntax
       key = parse_keyword_key(state);
-      check_key_duplication(state, fields->cached_ruby_value, key);
+      check_key_duplication(state, fields, key);
       parser_advance_assert(state, pCOLON);
     } else {
       // { key => type } syntax
@@ -794,7 +794,7 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
           "unexpected record key token"
         );
       }
-      check_key_duplication(state, fields->cached_ruby_value, key);
+      check_key_duplication(state, fields, key);
       parser_advance_assert(state, pFATARROW);
     }
     rbs_node_t *type = parse_type(state);
