@@ -479,8 +479,12 @@ nodes:
   - name: RBS::Types::Record
     fields:
       - name: all_fields
+        c_type: rbs_hash
       - name: location
         c_type: rbs_location
+  - name: RBS::Types::Record::FieldType
+    expose_to_ruby: false
+    builds_ruby_object_internally: false
   - name: RBS::Types::Tuple
     fields:
       - name: types

@@ -1632,11 +1632,11 @@ rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, rbs_node_t *typ
     return instance;
 }
 
-rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, VALUE all_fields, rbs_location_t *location) {
+rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, rbs_hash_t *all_fields, rbs_location_t *location) {
     rbs_types_record_t *instance = rbs_allocator_alloc(allocator, rbs_types_record_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(all_fields);
+    rb_gc_register_mark_object(all_fields == NULL ? Qnil : all_fields->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1651,6 +1651,24 @@ rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, VALUE all_f
         },
         .all_fields = all_fields,
         .location = location,
+    };
+
+    return instance;
+}
+
+rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(rbs_allocator_t *allocator, VALUE ruby_value) {
+    rbs_types_record_fieldtype_t *instance = rbs_allocator_alloc(allocator, rbs_types_record_fieldtype_t);
+
+    // Disable GC for all these Ruby objects.
+
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_types_record_fieldtype_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_TYPES_RECORD_FIELDTYPE
+        },
     };
 
     return instance;
