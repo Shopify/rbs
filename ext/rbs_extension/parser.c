@@ -789,11 +789,11 @@ static VALUE parse_record_attributes(parserstate *state) {
   while (true) {
     rbs_ast_symbol_t *key;
     VALUE value = rb_ary_new();
-    VALUE required = Qtrue;
+    bool required = true;
 
     if (state->next_token.type == pQUESTION) {
       // { ?foo: type } syntax
-      required = Qfalse;
+      required = false;
       parser_advance(state);
     }
 
@@ -827,7 +827,7 @@ static VALUE parse_record_attributes(parserstate *state) {
     }
     rbs_node_t *type = parse_type(state);
     rb_ary_push(value, type->cached_ruby_value);
-    rb_ary_push(value, required);
+    rb_ary_push(value, rbs_ast_bool_new(required)->base.cached_ruby_value);
     rb_hash_aset(fields, ((rbs_node_t *)key)->cached_ruby_value, value);
 
     if (parser_advance_if(state, pCOMMA)) {
