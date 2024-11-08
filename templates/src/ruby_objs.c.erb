@@ -1,4 +1,5 @@
 #include "rbs_extension.h"
+#include "rbs_string_bridging.h"
 
 #ifdef RB_PASS_KEYWORDS
   // Ruby 2.7 or later
@@ -28,7 +29,12 @@
 VALUE <%= node.c_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>) {
   VALUE _init_kwargs = rb_hash_new();
   <%- node.fields.each do |field| -%>
+  <%- case field.c_type -%>
+  <%- when "rbs_string" -%>
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("<%= field.name %>")), rbs_string_to_ruby_string(&<%= field.name %>));
+   <%- else -%>
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("<%= field.name %>")), <%= field.cached_ruby_value_expr %>);
+  <%- end -%>
   <%- end -%>
 
   return CLASS_NEW_INSTANCE(

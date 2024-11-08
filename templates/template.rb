@@ -30,6 +30,8 @@ module RBS
           "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value /* rbs_constant used */"
         when "rbs_node", "rbs_node_list", "rbs_location", "rbs_hash"
           "#{@name} == NULL ? Qnil : #{@name}->cached_ruby_value"
+        when "rbs_string"
+          "#{@name}.cached_ruby_string"
         else
           "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value"
         end
@@ -39,6 +41,8 @@ module RBS
         case @c_type
         when "VALUE", "bool"
           "#{@c_type} #{@name}"
+        when "rbs_string"
+          "rbs_string_t #{@name}"
         else
           "#{@c_type}_t *#{@name}"
         end
@@ -50,6 +54,8 @@ module RBS
           "VALUE #{@name}"
         when "bool"
           "bool #{@name}"
+        when "rbs_string"
+          "rbs_string_t #{@name}"
         else
           "struct #{@c_type} *#{@name}"
         end

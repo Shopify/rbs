@@ -6,6 +6,7 @@
 /*----------------------------------------------------------------------------*/
 
 #include "rbs_extension.h"
+#include "rbs_string_bridging.h"
 
 #ifdef RB_PASS_KEYWORDS
   // Ruby 2.7 or later
@@ -19,9 +20,9 @@
 
 
 
-VALUE rbs_ast_annotation(VALUE string, rbs_location_t *location) {
+VALUE rbs_ast_annotation(rbs_string_t string, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("string")), string);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&string));
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
