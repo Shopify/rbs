@@ -2686,7 +2686,7 @@ static rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
     }
   }
 
-  return rbs_namespace_new(path, is_absolute ? Qtrue : Qfalse);
+  return rbs_namespace_new(path, is_absolute);
 }
 
 /*
