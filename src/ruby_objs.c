@@ -648,14 +648,14 @@ VALUE rbs_class_singleton(rbs_typename_t *name, rbs_location_t *location) {
   );
 }
 
-VALUE rbs_function(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, VALUE required_keywords, VALUE optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
+VALUE rbs_function(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, rbs_hash_t *required_keywords, rbs_hash_t *optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required_positionals")), required_positionals == NULL ? Qnil : required_positionals->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("optional_positionals")), optional_positionals == NULL ? Qnil : optional_positionals->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("rest_positionals")), rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("trailing_positionals")), trailing_positionals == NULL ? Qnil : trailing_positionals->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required_keywords")), required_keywords);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("optional_keywords")), optional_keywords);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required_keywords")), required_keywords == NULL ? Qnil : required_keywords->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("optional_keywords")), optional_keywords == NULL ? Qnil : optional_keywords->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("rest_keywords")), rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("return_type")), return_type == NULL ? Qnil : return_type->cached_ruby_value);
 

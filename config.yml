@@ -423,7 +423,9 @@ nodes:
       - name: trailing_positionals
         c_type: rbs_node_list
       - name: required_keywords
+        c_type: rbs_hash
       - name: optional_keywords
+        c_type: rbs_hash
       - name: rest_keywords
         c_type: rbs_node
       - name: return_type

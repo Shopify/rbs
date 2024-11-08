@@ -1454,7 +1454,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t *name, r
     return instance;
 }
 
-rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, VALUE required_keywords, VALUE optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
+rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, rbs_hash_t *required_keywords, rbs_hash_t *optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
     rbs_types_function_t *instance = (rbs_types_function_t *)calloc(1, sizeof(rbs_types_function_t));
 
     // Disable GC for all these Ruby objects.
@@ -1462,8 +1462,8 @@ rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positiona
     rb_gc_register_mark_object(optional_positionals == NULL ? Qnil : optional_positionals->cached_ruby_value);
     rb_gc_register_mark_object(rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
     rb_gc_register_mark_object(trailing_positionals == NULL ? Qnil : trailing_positionals->cached_ruby_value);
-    rb_gc_register_mark_object(required_keywords);
-    rb_gc_register_mark_object(optional_keywords);
+    rb_gc_register_mark_object(required_keywords == NULL ? Qnil : required_keywords->cached_ruby_value);
+    rb_gc_register_mark_object(optional_keywords == NULL ? Qnil : optional_keywords->cached_ruby_value);
     rb_gc_register_mark_object(rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
     rb_gc_register_mark_object(return_type == NULL ? Qnil : return_type->cached_ruby_value);
 
@@ -2709,14 +2709,14 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_types_function_t *node = (rbs_types_function_t *)instance;
-            // [#<RBS::Template::Field name="required_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="optional_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="rest_positionals" c_type="rbs_node">, #<RBS::Template::Field name="trailing_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="required_keywords" c_type="VALUE">, #<RBS::Template::Field name="optional_keywords" c_type="VALUE">, #<RBS::Template::Field name="rest_keywords" c_type="rbs_node">, #<RBS::Template::Field name="return_type" c_type="rbs_node">]
+            // [#<RBS::Template::Field name="required_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="optional_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="rest_positionals" c_type="rbs_node">, #<RBS::Template::Field name="trailing_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="required_keywords" c_type="rbs_hash">, #<RBS::Template::Field name="optional_keywords" c_type="rbs_hash">, #<RBS::Template::Field name="rest_keywords" c_type="rbs_node">, #<RBS::Template::Field name="return_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("required_positionals")), rbs_node_list_to_ruby_array(node->required_positionals));
             rb_hash_aset(h, ID2SYM(rb_intern("optional_positionals")), rbs_node_list_to_ruby_array(node->optional_positionals));
             rb_hash_aset(h, ID2SYM(rb_intern("rest_positionals")), rbs_struct_to_ruby_value((rbs_node_t *) node->rest_positionals)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("trailing_positionals")), rbs_node_list_to_ruby_array(node->trailing_positionals));
-            rb_hash_aset(h, ID2SYM(rb_intern("required_keywords")), node->required_keywords);
-            rb_hash_aset(h, ID2SYM(rb_intern("optional_keywords")), node->optional_keywords);
+            rb_hash_aset(h, ID2SYM(rb_intern("required_keywords")), rbs_hash_to_ruby_hash(node->required_keywords));
+            rb_hash_aset(h, ID2SYM(rb_intern("optional_keywords")), rbs_hash_to_ruby_hash(node->optional_keywords));
             rb_hash_aset(h, ID2SYM(rb_intern("rest_keywords")), rbs_struct_to_ruby_value((rbs_node_t *) node->rest_keywords)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("return_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->return_type)); // rbs_node
 
