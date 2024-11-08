@@ -2481,8 +2481,7 @@ static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range
   rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
 
   range lt_range;
-  rbs_ast_declarations_class_super_t *super_node = parse_class_decl_super(state, &lt_range);
-  VALUE super = (super_node == NULL) ? Qnil : ((rbs_node_t *)super_node)->cached_ruby_value;
+  rbs_ast_declarations_class_super_t *super = parse_class_decl_super(state, &lt_range);
 
   struct rbs_node_list *members = parse_module_members(state);
   parser_advance_assert(state, kEND);
