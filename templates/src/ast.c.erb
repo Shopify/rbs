@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "rbs/ruby_objs.h"
 #include "rbs/constants.h"
+#include "rbs_string_bridging.h"
 #include "ruby/encoding.h"
 
 /* rbs_node_list */
@@ -261,6 +262,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_hash_to_ruby_hash(node-><%= field.name %>));
             <%- when "rbs_location" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(node-><%= field.name %>));
+            <%- when "rbs_string" -%>
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_string_to_ruby_string(&node-><%= field.name %>));
             <%- when "bool" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %> ? Qtrue : Qfalse);
             <%- else -%>

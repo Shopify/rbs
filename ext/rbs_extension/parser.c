@@ -1,6 +1,8 @@
 #include "location.h"
 #include "rbs_extension.h"
+#include "rbs/rbs_string.h"
 #include "rbs/rbs_constant_pool.h"
+#include "rbs_string_bridging.h"
 
 #define rbs_constant_pool_insert_constant2(pool, start, length) \
   (/*printf("trace: %s:%d rbs_constant_pool_insert_constant2(%p, %s, %i)\n", __FILE__, __LINE__, pool, start, length),*/ \
@@ -1457,13 +1459,11 @@ rbs_ast_annotation_t *parse_annotation(parserstate *state) {
   int open_bytes = rb_enc_codelen(open_char, enc);
   int close_bytes = rb_enc_codelen(close_char, enc);
 
-  char *buffer = RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes + open_bytes;
-  VALUE string = rb_enc_str_new(
-    buffer,
-    rg.end.byte_pos - rg.start.byte_pos - offset_bytes - open_bytes - close_bytes,
-    enc
-  );
-  rb_funcall(string, rb_intern("strip!"), 0);
+  rbs_string_t string = rbs_string_from_ruby_string(state->lexstate->string);
+  rbs_string_drop_first(&string, rg.start.byte_pos + offset_bytes + open_bytes);
+  rbs_string_limit_length(&string, rg.end.byte_pos - rg.start.byte_pos - offset_bytes - open_bytes - close_bytes);
+  rbs_string_strip_whitespace(&string);
+  rbs_string_ensure_owned(&string);
 
   rbs_location_t *loc = rbs_location_new(state->buffer, rg);
   return rbs_ast_annotation_new(string, loc);

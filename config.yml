@@ -2,6 +2,7 @@ nodes:
   - name: RBS::AST::Annotation
     fields:
       - name: string
+        c_type: rbs_string
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Bool
