@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include "ruby.h" // Temporary, just for the `VALUE cached_ruby_string`
 
+typedef bool rbs_encoding_placeholder_t;
+
 typedef struct {
   const char *start;
   const char *end;
@@ -18,6 +20,9 @@ typedef struct {
     /** This string owns its memory, and should be freed using `rbs_string_free`. */
     RBS_STRING_OWNED,
   } type;
+
+  // Not a real value, just looking a placeholder for when we eventually wire it up.
+  rbs_encoding_placeholder_t encoding;
 } rbs_string_t;
 
 #define RBS_STRING_NULL ((rbs_string_t) { \
@@ -25,6 +30,7 @@ typedef struct {
     .end = NULL,                          \
     .cached_ruby_string = Qnil,           \
     .type = RBS_STRING_CONSTANT,          \
+    .encoding = false,                    \
   })
 
 /**
