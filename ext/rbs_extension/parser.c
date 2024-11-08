@@ -2502,7 +2502,6 @@ rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keywor
   range lt_range;
 
   rbs_node_list_t *type_params;
-  VALUE super;
   rbs_node_list_t *members;
 
   parser_push_typevar_table(state, true);
@@ -2511,12 +2510,7 @@ rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keywor
 
   type_params = parse_type_params(state, &type_params_range, true);
 
-  rbs_ast_declarations_class_super_t *super_node = parse_class_decl_super(state, &lt_range);
-  if (super_node != NULL) {
-    super = ((rbs_node_t *)super_node)->cached_ruby_value;
-  } else {
-    super = Qnil;
-  }
+  rbs_ast_declarations_class_super_t *super = parse_class_decl_super(state, &lt_range);
 
   members = parse_module_members(state);
   parser_advance_assert(state, kEND);
