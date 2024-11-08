@@ -80,6 +80,8 @@ typedef struct rbs_node {
     enum rbs_node_type type;
 } rbs_node_t;
 
+/* rbs_node_list_node */
+
 typedef struct rbs_node_list_node {
     rbs_node_t *node;
     struct rbs_node_list_node *next;
@@ -99,6 +101,35 @@ void rbs_node_list_free(rbs_node_list_t *list);
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
 VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list);
+
+/* rbs_hash */
+
+typedef struct rbs_hash_node {
+    rbs_node_t *key;
+    rbs_node_t *value;
+    struct rbs_hash_node *next;
+} rbs_hash_node_t;
+
+typedef struct rbs_hash {
+    rbs_hash_node_t *head;
+    rbs_hash_node_t *tail;
+    size_t length;
+    VALUE cached_ruby_value;
+} rbs_hash_t;
+
+rbs_hash_t* rbs_hash_new(void);
+
+void rbs_hash_free(rbs_hash_t *hash);
+
+void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value);
+
+rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key);
+
+rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key);
+
+VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash);
+
+/* rbs_ast_node */
 
 typedef struct rbs_ast_annotation {
     rbs_node_t base;
