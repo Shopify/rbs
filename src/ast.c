@@ -178,14 +178,15 @@ rbs_ast_bool_t *rbs_ast_bool_new(bool value) {
     return instance;
 }
 
-rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_location_t *location) {
+rbs_ast_comment_t *rbs_ast_comment_new(VALUE string, rbs_location_t *location) {
     rbs_ast_comment_t *instance = malloc(sizeof(rbs_ast_comment_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(ruby_value);
     rb_gc_register_mark_object(string);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = rbs_ast_comment(string, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -201,7 +202,7 @@ rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_locat
     return instance;
 }
 
-rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_class_t *instance = malloc(sizeof(rbs_ast_declarations_class_t));
 
     // Disable GC for all these Ruby objects.
@@ -211,7 +212,7 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *nam
     rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_class(name, type_params, super_class, members, annotations, location, comment);
@@ -261,14 +262,14 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_typ
     return instance;
 }
 
-rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_classalias_t *instance = malloc(sizeof(rbs_ast_declarations_classalias_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
     rb_gc_register_mark_object(old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_class_alias(new_name, old_name, location, comment);
@@ -289,14 +290,14 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typen
     return instance;
 }
 
-rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_constant_t *instance = malloc(sizeof(rbs_ast_declarations_constant_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_constant(name, type, location, comment);
@@ -317,14 +318,14 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_
     return instance;
 }
 
-rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_global_t *instance = malloc(sizeof(rbs_ast_declarations_global_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_global(name, type, location, comment);
@@ -345,7 +346,7 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t 
     return instance;
 }
 
-rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_interface_t *instance = malloc(sizeof(rbs_ast_declarations_interface_t));
 
     // Disable GC for all these Ruby objects.
@@ -354,7 +355,7 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
     rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_interface(name, type_params, members, annotations, location, comment);
@@ -377,7 +378,7 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
     return instance;
 }
 
-rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_module_t *instance = malloc(sizeof(rbs_ast_declarations_module_t));
 
     // Disable GC for all these Ruby objects.
@@ -387,7 +388,7 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *n
     rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_module(name, type_params, self_types, members, annotations, location, comment);
@@ -437,14 +438,14 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_typ
     return instance;
 }
 
-rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_modulealias_t *instance = malloc(sizeof(rbs_ast_declarations_modulealias_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
     rb_gc_register_mark_object(old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_module_alias(new_name, old_name, location, comment);
@@ -486,7 +487,7 @@ rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, r
     return instance;
 }
 
-rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_typealias_t *instance = malloc(sizeof(rbs_ast_declarations_typealias_t));
 
     // Disable GC for all these Ruby objects.
@@ -495,7 +496,7 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typenam
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_decl_type_alias(name, type_params, type, annotations, location, comment);
@@ -613,7 +614,7 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     return instance;
 }
 
-rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_alias_t *instance = malloc(sizeof(rbs_ast_members_alias_t));
 
     // Disable GC for all these Ruby objects.
@@ -622,7 +623,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, r
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_alias(new_name, old_name, kind, annotations, location, comment);
@@ -645,7 +646,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, r
     return instance;
 }
 
-rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attraccessor_t *instance = malloc(sizeof(rbs_ast_members_attraccessor_t));
 
     // Disable GC for all these Ruby objects.
@@ -655,7 +656,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -681,7 +682,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_
     return instance;
 }
 
-rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attrreader_t *instance = malloc(sizeof(rbs_ast_members_attrreader_t));
 
     // Disable GC for all these Ruby objects.
@@ -691,7 +692,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *n
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -717,7 +718,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *n
     return instance;
 }
 
-rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attrwriter_t *instance = malloc(sizeof(rbs_ast_members_attrwriter_t));
 
     // Disable GC for all these Ruby objects.
@@ -727,7 +728,7 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *n
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -753,14 +754,14 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *n
     return instance;
 }
 
-rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
+rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_classinstancevariable_t *instance = malloc(sizeof(rbs_ast_members_classinstancevariable_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_class_instance_variable(name, type, location, comment);
@@ -781,14 +782,14 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
     return instance;
 }
 
-rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
+rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_classvariable_t *instance = malloc(sizeof(rbs_ast_members_classvariable_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_class_variable(name, type, location, comment);
@@ -809,7 +810,7 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbo
     return instance;
 }
 
-rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_extend_t *instance = malloc(sizeof(rbs_ast_members_extend_t));
 
     // Disable GC for all these Ruby objects.
@@ -817,7 +818,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_n
     rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_extend(name, args, annotations, location, comment);
@@ -839,7 +840,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_n
     return instance;
 }
 
-rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_include_t *instance = malloc(sizeof(rbs_ast_members_include_t));
 
     // Disable GC for all these Ruby objects.
@@ -847,7 +848,7 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs
     rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_include(name, args, annotations, location, comment);
@@ -869,14 +870,14 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs
     return instance;
 }
 
-rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment) {
+rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_instancevariable_t *instance = malloc(sizeof(rbs_ast_members_instancevariable_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_instance_variable(name, type, location, comment);
@@ -897,7 +898,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast
     return instance;
 }
 
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, bool overloading, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, bool overloading, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_methoddefinition_t *instance = malloc(sizeof(rbs_ast_members_methoddefinition_t));
 
     // Disable GC for all these Ruby objects.
@@ -906,7 +907,7 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast
     rb_gc_register_mark_object(overloads == NULL ? Qnil : overloads->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(overloading ? Qtrue : Qfalse);
     rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
 
@@ -957,7 +958,7 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
     return instance;
 }
 
-rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment) {
+rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_prepend_t *instance = malloc(sizeof(rbs_ast_members_prepend_t));
 
     // Disable GC for all these Ruby objects.
@@ -965,7 +966,7 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs
     rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
     rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment);
+    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
     VALUE ruby_value = rbs_ast_members_prepend(name, args, annotations, location, comment);

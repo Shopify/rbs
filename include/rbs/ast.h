@@ -158,7 +158,7 @@ typedef struct rbs_ast_declarations_class {
     struct rbs_node_list *members;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_class_t;
 
 typedef struct rbs_ast_declarations_class_super {
@@ -175,7 +175,7 @@ typedef struct rbs_ast_declarations_classalias {
     struct rbs_typename *new_name;
     struct rbs_typename *old_name;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_classalias_t;
 
 typedef struct rbs_ast_declarations_constant {
@@ -184,7 +184,7 @@ typedef struct rbs_ast_declarations_constant {
     struct rbs_typename *name;
     struct rbs_node *type;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_constant_t;
 
 typedef struct rbs_ast_declarations_global {
@@ -193,7 +193,7 @@ typedef struct rbs_ast_declarations_global {
     struct rbs_ast_symbol *name;
     struct rbs_node *type;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_global_t;
 
 typedef struct rbs_ast_declarations_interface {
@@ -204,7 +204,7 @@ typedef struct rbs_ast_declarations_interface {
     struct rbs_node_list *members;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_interface_t;
 
 typedef struct rbs_ast_declarations_module {
@@ -216,7 +216,7 @@ typedef struct rbs_ast_declarations_module {
     struct rbs_node_list *members;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_module_t;
 
 typedef struct rbs_ast_declarations_module_self {
@@ -233,7 +233,7 @@ typedef struct rbs_ast_declarations_modulealias {
     struct rbs_typename *new_name;
     struct rbs_typename *old_name;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_modulealias_t;
 
 typedef struct rbs_ast_declarations_nodes {
@@ -250,7 +250,7 @@ typedef struct rbs_ast_declarations_typealias {
     struct rbs_node *type;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_declarations_typealias_t;
 
 typedef struct rbs_ast_directives_nodes {
@@ -289,7 +289,7 @@ typedef struct rbs_ast_members_alias {
     struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_members_alias_t;
 
 typedef struct rbs_ast_members_attraccessor {
@@ -301,7 +301,7 @@ typedef struct rbs_ast_members_attraccessor {
     struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
     struct rbs_ast_symbol *visibility;
 } rbs_ast_members_attraccessor_t;
 
@@ -314,7 +314,7 @@ typedef struct rbs_ast_members_attrreader {
     struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
     struct rbs_ast_symbol *visibility;
 } rbs_ast_members_attrreader_t;
 
@@ -327,7 +327,7 @@ typedef struct rbs_ast_members_attrwriter {
     struct rbs_ast_symbol *kind;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
     struct rbs_ast_symbol *visibility;
 } rbs_ast_members_attrwriter_t;
 
@@ -337,7 +337,7 @@ typedef struct rbs_ast_members_classinstancevariable {
     struct rbs_ast_symbol *name;
     struct rbs_node *type;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_members_classinstancevariable_t;
 
 typedef struct rbs_ast_members_classvariable {
@@ -346,7 +346,7 @@ typedef struct rbs_ast_members_classvariable {
     struct rbs_ast_symbol *name;
     struct rbs_node *type;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_members_classvariable_t;
 
 typedef struct rbs_ast_members_extend {
@@ -356,7 +356,7 @@ typedef struct rbs_ast_members_extend {
     struct rbs_node_list *args;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_members_extend_t;
 
 typedef struct rbs_ast_members_include {
@@ -366,7 +366,7 @@ typedef struct rbs_ast_members_include {
     struct rbs_node_list *args;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_members_include_t;
 
 typedef struct rbs_ast_members_instancevariable {
@@ -375,7 +375,7 @@ typedef struct rbs_ast_members_instancevariable {
     struct rbs_ast_symbol *name;
     struct rbs_node *type;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_members_instancevariable_t;
 
 typedef struct rbs_ast_members_methoddefinition {
@@ -386,7 +386,7 @@ typedef struct rbs_ast_members_methoddefinition {
     struct rbs_node_list *overloads;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
     bool overloading;
     struct rbs_ast_symbol *visibility;
 } rbs_ast_members_methoddefinition_t;
@@ -405,7 +405,7 @@ typedef struct rbs_ast_members_prepend {
     struct rbs_node_list *args;
     struct rbs_node_list *annotations;
     struct rbs_location *location;
-    VALUE comment;
+    struct rbs_ast_comment *comment;
 } rbs_ast_members_prepend_t;
 
 typedef struct rbs_ast_members_private {
@@ -644,34 +644,34 @@ typedef struct rbs_types_variable {
 
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location);
 rbs_ast_bool_t *rbs_ast_bool_new(bool value);
-rbs_ast_comment_t *rbs_ast_comment_new(VALUE ruby_value, VALUE string, rbs_location_t *location);
-rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_comment_t *rbs_ast_comment_new(VALUE string, rbs_location_t *location);
+rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
 rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
-rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment);
-rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
-rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
-rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
 rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
-rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, VALUE comment);
+rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, rbs_ast_comment_t *comment);
 rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, rbs_node_list_t *declarations);
-rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
 rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, rbs_node_list_t *directives);
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, rbs_location_t *location);
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_typename_t *type_name, rbs_ast_symbol_t *new_name, rbs_location_t *location);
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_namespace_t *namespace, rbs_location_t *location);
-rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility);
-rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility);
-rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, rbs_ast_symbol_t *visibility);
-rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
-rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
-rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
-rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, VALUE comment);
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment, bool overloading, rbs_ast_symbol_t *visibility);
+rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility);
+rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility);
+rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility);
+rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment);
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, bool overloading, rbs_ast_symbol_t *visibility);
 rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_node_list_t *annotations, rbs_node_t *method_type);
-rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, VALUE comment);
+rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
 rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value);

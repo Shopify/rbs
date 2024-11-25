@@ -63,7 +63,7 @@ comment *alloc_comment(token comment_token, comment *last_comment);
 void free_comment(comment *com);
 void comment_insert_new_line(comment *com, token comment_token);
 comment *comment_get_comment(comment *com, int line);
-VALUE comment_to_ruby(comment *com, VALUE buffer);
+rbs_ast_comment_t *comment_to_ruby(comment *com, VALUE buffer);
 
 /**
  * Insert new table entry.
@@ -158,6 +158,6 @@ void insert_comment_line(parserstate *state, token token);
  * end
  * ```
  * */
-VALUE get_comment(parserstate *state, int subject_line);
+rbs_ast_comment_t *get_comment(parserstate *state, int subject_line);
 
 #endif
