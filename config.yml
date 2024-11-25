@@ -10,7 +10,6 @@ nodes:
       - name: value
         c_type: bool
   - name: RBS::AST::Comment
-    builds_ruby_object_internally: false
     fields:
       - name: string
       - name: location
@@ -30,6 +29,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Declarations::Class::Super
     fields:
       - name: name
@@ -47,6 +47,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Declarations::Constant
     fields:
       - name: name
@@ -56,6 +57,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Declarations::Global
     fields:
       - name: name
@@ -65,6 +67,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Declarations::Interface
     fields:
       - name: name
@@ -78,6 +81,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Declarations::Module
     fields:
       - name: name
@@ -93,6 +97,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Declarations::Module::Self
     fields:
       - name: name
@@ -110,6 +115,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Declarations::Nodes
     builds_ruby_object_internally: false
     expose_to_ruby: false
@@ -129,6 +135,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Directives::Nodes
     builds_ruby_object_internally: false
     expose_to_ruby: false
@@ -168,6 +175,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Members::AttrAccessor
     fields:
       - name: name
@@ -183,6 +191,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
       - name: visibility
         c_type: rbs_ast_symbol
   - name: RBS::AST::Members::AttrReader
@@ -200,6 +209,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
       - name: visibility
         c_type: rbs_ast_symbol
   - name: RBS::AST::Members::AttrWriter
@@ -217,6 +227,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
       - name: visibility
         c_type: rbs_ast_symbol
   - name: RBS::AST::Members::ClassInstanceVariable
@@ -228,6 +239,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Members::ClassVariable
     fields:
       - name: name
@@ -237,6 +249,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Members::Extend
     fields:
       - name: name
@@ -248,6 +261,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Members::Include
     fields:
       - name: name
@@ -259,6 +273,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Members::InstanceVariable
     fields:
       - name: name
@@ -268,6 +283,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Members::MethodDefinition
     fields:
       - name: name
@@ -281,6 +297,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
       - name: overloading
         c_type: bool
       - name: visibility
@@ -302,6 +319,7 @@ nodes:
       - name: location
         c_type: rbs_location
       - name: comment
+        c_type: rbs_ast_comment
   - name: RBS::AST::Members::Private
     fields:
       - name: location

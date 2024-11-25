@@ -1310,7 +1310,7 @@ static rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
 
   rbs_ast_symbol_t *typename;
   rbs_node_t *type;
-  VALUE comment;
+  rbs_ast_comment_t *comment;
 
   decl_range.start = state->current_token.range.start;
   comment = get_comment(state, decl_range.start.line);
@@ -1341,7 +1341,7 @@ static rbs_ast_declarations_constant_t *parse_const_decl(parserstate *state) {
 
   rbs_typename_t *typename;
   rbs_node_t *type;
-  VALUE comment;
+  rbs_ast_comment_t *comment;
 
   decl_range.start = state->current_token.range.start;
   comment = get_comment(state, decl_range.start.line);
@@ -1396,7 +1396,7 @@ static rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, pos
 
   parser_pop_typevar_table(state);
 
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
   return rbs_ast_declarations_typealias_new(typename, type_params, type, annotations, loc, comment);
 }
 
@@ -1603,7 +1603,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
 
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   switch (state->current_token.type)
   {
@@ -1822,7 +1822,7 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
   rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
   rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
 
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
   switch (type)
   {
   case kINCLUDE:
@@ -1853,7 +1853,7 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
   keyword_range = state->current_token.range;
 
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   rbs_ast_symbol_t *new_name;
   rbs_ast_symbol_t *old_name;
@@ -1914,7 +1914,7 @@ static rbs_node_t *parse_variable_member(parserstate *state, position comment_po
 
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   rbs_location_t *loc;
   rbs_ast_symbol_t *name;
@@ -2041,7 +2041,7 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   rbs_ast_symbol_t *attr_name;
   rbs_node_t *ivar_name; // rbs_ast_symbol_t, NULL or rbs_ast_bool_new(false)
   rbs_node_t *type;
-  VALUE comment;
+  rbs_ast_comment_t *comment;
   rbs_ast_symbol_t *visibility;
   enum TokenType attr_type;
 
@@ -2208,7 +2208,7 @@ static rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state
   rbs_loc_add_required_child(loc, rb_intern("end"), end_range);
   rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
 
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   return rbs_ast_declarations_interface_new(name, type_params, members, annotations, loc, comment);
 }
@@ -2346,7 +2346,7 @@ static rbs_node_list_t *parse_module_members(parserstate *state) {
   module_decl ::= {module_name} module_type_params module_members <kEND>
                 | {module_name} module_name module_type_params `:` module_self_types module_members <kEND>
 */
-static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyword_range, rbs_typename_t *module_name, range name_range, VALUE comment, rbs_node_list_t *annotations) {
+static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyword_range, rbs_typename_t *module_name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations) {
   range decl_range;
   range end_range;
   range type_params_range;
@@ -2401,7 +2401,7 @@ static rbs_node_t *parse_module_decl(parserstate *state, position comment_pos, r
   range module_name_range;
 
   comment_pos = nonnull_pos_or(comment_pos, state->current_token.range.start);
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   parser_advance(state);
   rbs_typename_t *module_name = parse_type_name(state, CLASS_NAME, &module_name_range);
@@ -2467,7 +2467,7 @@ static rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *s
 /*
   class_decl ::= {class_name} type_params class_decl_super class_members <`end`>
 */
-static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keyword_range, rbs_typename_t *name, range name_range, VALUE comment, rbs_node_list_t *annotations) {
+static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range keyword_range, rbs_typename_t *name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations) {
   range decl_range;
   range end_range;
   range type_params_range;
@@ -2512,7 +2512,7 @@ static rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, rb
   range class_name_range;
 
   comment_pos = nonnull_pos_or(comment_pos, state->current_token.range.start);
-  VALUE comment = get_comment(state, comment_pos.line);
+  rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   parser_advance(state);
   rbs_typename_t *class_name = parse_type_name(state, CLASS_NAME, &class_name_range);

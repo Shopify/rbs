@@ -227,8 +227,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_hash_to_ruby_hash(node-><%= field.name %>));
             <%- when "rbs_location" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(node-><%= field.name %>));
-            <%- when "comment" -%>
-            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %>->string);
             <%- when "bool" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %> ? Qtrue : Qfalse);
             <%- else -%>
