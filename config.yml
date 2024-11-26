@@ -171,7 +171,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: ivar_name
-        c_type: rbs_node
+        c_type: rbs_ast_symbol
       - name: kind
         c_type: rbs_ast_symbol
       - name: annotations
@@ -189,7 +189,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: ivar_name
-        c_type: rbs_node
+        c_type: rbs_ast_symbol
       - name: kind
         c_type: rbs_ast_symbol
       - name: annotations
@@ -207,7 +207,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: ivar_name
-        c_type: rbs_node
+        c_type: rbs_ast_symbol
       - name: kind
         c_type: rbs_ast_symbol
       - name: annotations
@@ -316,11 +316,6 @@ nodes:
     fields:
       - name: location
         c_type: rbs_location
-  - name: RBS::AST::Symbol
-    expose_to_ruby: false
-    builds_ruby_object_internally: false
-    fields:
-      - name: symbol
   - name: RBS::AST::TypeParam
     fields:
       - name: name
