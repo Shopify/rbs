@@ -44,7 +44,7 @@ VALUE rbs_method_type(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_
 VALUE rbs_namespace(rbs_node_list_t *path, bool absolute);
 VALUE rbs_type_name(rbs_namespace_t *namespace, rbs_ast_symbol_t *name);
 VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
-VALUE rbs_bases_any(rbs_location_t *location);
+VALUE rbs_bases_any(bool todo, rbs_location_t *location);
 VALUE rbs_bases_bool(rbs_location_t *location);
 VALUE rbs_bases_bottom(rbs_location_t *location);
 VALUE rbs_bases_class(rbs_location_t *location);
