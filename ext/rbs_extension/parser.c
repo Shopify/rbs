@@ -421,7 +421,7 @@ static void parse_params(parserstate *state, method_params *params) {
     return;
   }
 
-  rbs_hash_t *memo = rbs_hash_new();
+  rbs_hash_t *memo = rbs_hash_new(&state->allocator);
 
   while (true) {
     switch (state->next_token.type) {
@@ -765,7 +765,7 @@ static void check_key_duplication(parserstate *state, rbs_hash_t *fields, rbs_as
                      | {} literal_type `=>` <type>
 */
 static rbs_hash_t *parse_record_attributes(parserstate *state) {
-  rbs_hash_t *fields = rbs_hash_new();
+  rbs_hash_t *fields = rbs_hash_new(&state->allocator);
 
   if (state->next_token.type == pRBRACE) {
     return fields;
@@ -773,7 +773,7 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
 
   while (true) {
     rbs_ast_symbol_t *key;
-    rbs_node_list_t *value = rbs_node_list_new();
+    rbs_node_list_t *value = rbs_node_list_new(&state->allocator);
     bool required = true;
 
     if (state->next_token.type == pQUESTION) {
@@ -2775,31 +2775,25 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
   }
 }
 
-rbs_node_list_t *parse_signature(parserstate *state) {
-  rbs_node_list_t *dir_nodes = rbs_node_list_new(&state->allocator);
-  rbs_ast_directives_nodes_t *dirs = rbs_ast_directives_nodes_new(&state->allocator, dir_nodes->cached_ruby_value, dir_nodes);
-
-  rbs_node_list_t *decl_nodes = rbs_node_list_new(&state->allocator);
-  rbs_ast_declarations_nodes_t *decls = rbs_ast_declarations_nodes_new(&state->allocator, decl_nodes->cached_ruby_value, decl_nodes);
+rbs_signature_t *parse_signature(parserstate *state) {
+  rbs_node_list_t *dirs = rbs_node_list_new(&state->allocator);
+  rbs_node_list_t *decls = rbs_node_list_new(&state->allocator);
 
   while (state->next_token.type == kUSE) {
     rbs_ast_directives_use_t *use_node = parse_use_directive(state);
     if (use_node == NULL) {
-      rbs_node_list_append(dir_nodes, NULL);
+      rbs_node_list_append(dirs, NULL);
     } else {
-      rbs_node_list_append(dir_nodes, (rbs_node_t *)use_node);
+      rbs_node_list_append(dirs, (rbs_node_t *)use_node);
     }
   }
 
   while (state->next_token.type != pEOF) {
     rbs_node_t *decl = parse_decl(state);
-    rbs_node_list_append(decl_nodes, decl);
+    rbs_node_list_append(decls, decl);
   }
 
-  rbs_node_list_t *ret = rbs_node_list_new(&state->allocator);
-  rbs_node_list_append(ret, (rbs_node_t *)dirs);
-  rbs_node_list_append(ret, (rbs_node_t *)decls);
-  return ret;
+  return rbs_signature_new(&state->allocator, Qnil, dirs, decls);
 }
 
 struct parse_type_arg {
@@ -2876,7 +2870,13 @@ rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end
 static VALUE
 parse_signature_try(VALUE a) {
   parserstate *parser = (parserstate *)a;
-  return parse_signature(parser)->cached_ruby_value;
+
+  rbs_signature_t *signature = parse_signature(parser);
+
+  VALUE array = rb_ary_new();
+  rb_ary_push(array, signature->directives->cached_ruby_value);
+  rb_ary_push(array, signature->declarations->cached_ruby_value);
+  return array;
 }
 
 static VALUE
