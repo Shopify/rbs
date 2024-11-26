@@ -612,6 +612,8 @@ typedef struct rbs_types_record {
 typedef struct rbs_types_record_fieldtype {
     rbs_node_t base;
 
+    struct rbs_node *type;
+    bool required;
 } rbs_types_record_fieldtype_t;
 
 typedef struct rbs_types_tuple {
@@ -700,7 +702,7 @@ rbs_types_literal_t *rbs_types_literal_new(VALUE literal, rbs_location_t *locati
 rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *location);
 rbs_types_proc_t *rbs_types_proc_new(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type);
 rbs_types_record_t *rbs_types_record_new(rbs_hash_t *all_fields, rbs_location_t *location);
-rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(VALUE ruby_value);
+rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(VALUE ruby_value, rbs_node_t *type, bool required);
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_node_t *return_type);

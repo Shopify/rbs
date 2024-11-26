@@ -1669,11 +1669,13 @@ rbs_types_record_t *rbs_types_record_new(rbs_hash_t *all_fields, rbs_location_t 
     return instance;
 }
 
-rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(VALUE ruby_value) {
+rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(VALUE ruby_value, rbs_node_t *type, bool required) {
     rbs_types_record_fieldtype_t *instance = malloc(sizeof(rbs_types_record_fieldtype_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
+    rb_gc_register_mark_object(required ? Qtrue : Qfalse);
 
 
     rb_gc_register_mark_object(ruby_value);
@@ -1683,6 +1685,8 @@ rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(VALUE ruby_value) {
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_RECORD_FIELDTYPE
         },
+        .type = type,
+        .required = required,
     };
 
     return instance;
