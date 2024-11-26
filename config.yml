@@ -500,6 +500,11 @@ nodes:
   - name: RBS::Types::Record::FieldType
     expose_to_ruby: false
     builds_ruby_object_internally: false
+    fields:
+      - name: type
+        c_type: rbs_node
+      - name: required
+        c_type: bool
   - name: RBS::Types::Tuple
     fields:
       - name: types
