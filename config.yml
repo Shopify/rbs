@@ -319,6 +319,8 @@ nodes:
   - name: RBS::AST::Symbol
     expose_to_ruby: false
     builds_ruby_object_internally: false
+    fields:
+      - name: symbol
   - name: RBS::AST::TypeParam
     fields:
       - name: name

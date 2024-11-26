@@ -156,7 +156,7 @@ rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg
     && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos
   ) {
     VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
-    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value);
+    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value, symbol_value);
     rbs_node_list_append(path, (rbs_node_t *)symbol);
 
     parser_advance(state);
@@ -183,8 +183,8 @@ rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, range *rg
       rg->end = state->current_token.range.end;
     }
 
-    VALUE name = ID2SYM(INTERN_TOKEN(state, state->current_token));
-    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(name);
+    VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value, symbol_value);
     return rbs_typename_new(namespace, symbol);
   }
 
@@ -291,7 +291,8 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
       );
     }
 
-    rbs_ast_symbol_t *name = rbs_ast_symbol_new(rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0)));
+    VALUE name_value = rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0));
+    rbs_ast_symbol_t *name = rbs_ast_symbol_new(name_value, name_value);
     rbs_location_t *loc = rbs_location_new(state->buffer, param_range);
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, rb_intern("name"), name_range);
@@ -318,10 +319,12 @@ static rbs_ast_symbol_t *parse_keyword_key(parserstate *state) {
   parser_advance(state);
 
   if (state->next_token.type == pQUESTION) {
-    key = rbs_ast_symbol_new(ID2SYM(intern_token_start_end(state, state->current_token, state->next_token)));
+    VALUE key_value = ID2SYM(intern_token_start_end(state, state->current_token, state->next_token));
+    key = rbs_ast_symbol_new(key_value, key_value);
     parser_advance(state);
   } else {
-    key = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    VALUE key_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    key = rbs_ast_symbol_new(key_value, key_value);
   }
 
   return key;
@@ -784,9 +787,11 @@ rbs_hash_t *parse_record_attributes(parserstate *state) {
       case tDQSTRING:
       case tINTEGER:
       case kTRUE:
-      case kFALSE:
-        key = rbs_ast_symbol_new(rb_funcall(rbs_struct_to_ruby_value(parse_simple(state)), rb_intern("literal"), 0));
+      case kFALSE: {
+        VALUE key_value = rb_funcall(rbs_struct_to_ruby_value(parse_simple(state)), rb_intern("literal"), 0);
+        key = rbs_ast_symbol_new(key_value, key_value);
         break;
+      }
       default:
         raise_syntax_error(
           state,
@@ -829,18 +834,18 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, rbs_location_t *loc
   {
   case tSYMBOL: {
     char *buffer = peek_token(state->lexstate, state->current_token);
-    literal = rbs_ast_symbol_new(ID2SYM(rb_intern3(buffer+offset_bytes, bytes, enc)));
+    VALUE literal_value = ID2SYM(rb_intern3(buffer+offset_bytes, bytes, enc));
+    literal = rbs_ast_symbol_new(literal_value, literal_value);
     break;
   }
   case tDQSYMBOL:
   case tSQSYMBOL: {
-    literal = rbs_ast_symbol_new(
-      rb_funcall(
-        rbs_unquote_string(state, state->current_token.range, offset_bytes),
-        rb_intern("to_sym"),
-        0
-      )
+    VALUE literal_value = rb_funcall(
+      rbs_unquote_string(state, state->current_token.range, offset_bytes),
+      rb_intern("to_sym"),
+      0
     );
+    literal = rbs_ast_symbol_new(literal_value, literal_value);
     break;
   }
   default:
@@ -1028,7 +1033,8 @@ static rbs_node_t *parse_simple(parserstate *state) {
     ID name = INTERN_TOKEN(state, state->current_token);
     if (parser_typevar_member(state, name)) {
       rbs_location_t *loc = rbs_location_current_token(state);
-      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ID2SYM(name));
+      VALUE symbol_value = ID2SYM(name);
+      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value, symbol_value);
       return (rbs_node_t *) rbs_types_variable_new(symbol, loc);
     }
     // fallthrough for type name
@@ -1155,7 +1161,8 @@ rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_ty
     while (true) {
       rbs_ast_symbol_t *name;
       bool unchecked = false;
-      rbs_ast_symbol_t *variance = rbs_ast_symbol_new(ID2SYM(rb_intern("invariant")));
+      VALUE variance_value = ID2SYM(rb_intern("invariant"));
+      rbs_ast_symbol_t *variance = rbs_ast_symbol_new(variance_value, variance_value);
       rbs_node_t *upper_bound = NULL;
       rbs_node_t *default_type = NULL;
 
@@ -1177,12 +1184,16 @@ rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_ty
 
         if (state->next_token.type == kIN || state->next_token.type == kOUT) {
           switch (state->next_token.type) {
-          case kIN:
-            variance = rbs_ast_symbol_new(ID2SYM(rb_intern("contravariant")));
+          case kIN: {
+            VALUE variance_value = ID2SYM(rb_intern("contravariant"));
+            variance = rbs_ast_symbol_new(variance_value, variance_value);
             break;
-          case kOUT:
-            variance = rbs_ast_symbol_new(ID2SYM(rb_intern("covariant")));
+          }
+          case kOUT: {
+            VALUE variance_value = ID2SYM(rb_intern("covariant"));
+            variance = rbs_ast_symbol_new(variance_value, variance_value);
             break;
+          }
           default:
             rbs_abort();
           }
@@ -1196,7 +1207,8 @@ rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_ty
       name_range = state->current_token.range;
 
       ID id = INTERN_TOKEN(state, state->current_token);
-      name = rbs_ast_symbol_new(ID2SYM(id));
+      VALUE name_value = ID2SYM(id);
+      name = rbs_ast_symbol_new(name_value, name_value);
 
       parser_insert_typevar(state, id);
 
@@ -1316,7 +1328,8 @@ rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   comment = get_comment(state, decl_range.start.line);
 
   name_range = state->current_token.range;
-  typename = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+  VALUE typename_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+  typename = rbs_ast_symbol_new(typename_value, typename_value);
 
   parser_advance_assert(state, pCOLON);
   colon_range = state->current_token.range;
@@ -1501,20 +1514,24 @@ rbs_ast_symbol_t *parse_method_name(parserstate *state, range *range) {
         rb_enc_get(state->lexstate->string)
       );
 
-      return rbs_ast_symbol_new(ID2SYM(id));
+      VALUE id_value = ID2SYM(id);
+      return rbs_ast_symbol_new(id_value, id_value);
     } else {
       *range = state->current_token.range;
-      return rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+      VALUE name_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+      return rbs_ast_symbol_new(name_value, name_value);
     }
 
   case tBANGIDENT:
-  case tEQIDENT:
+  case tEQIDENT: {
     *range = state->current_token.range;
-    return rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
-
-  case tQIDENT:
-    return rbs_ast_symbol_new(rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0)));
-
+    VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    return rbs_ast_symbol_new(symbol_value, symbol_value);
+  }
+  case tQIDENT: {
+    VALUE symbol_value = rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0));
+    return rbs_ast_symbol_new(symbol_value, symbol_value);
+  }
   case pBAR:
   case pHAT:
   case pAMP:
@@ -1522,10 +1539,11 @@ rbs_ast_symbol_t *parse_method_name(parserstate *state, range *range) {
   case pSTAR2:
   case pLT:
   case pAREF_OPR:
-  case tOPERATOR:
+  case tOPERATOR: {
     *range = state->current_token.range;
-    return rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
-
+    VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    return rbs_ast_symbol_new(symbol_value, symbol_value);
+  }
   default:
     raise_syntax_error(
       state,
@@ -1607,18 +1625,22 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
 
   switch (state->current_token.type)
   {
-  case kPRIVATE:
+  case kPRIVATE: {
     visibility_range = state->current_token.range;
-    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("private")));
+    VALUE visibility_value = ID2SYM(rb_intern("private"));
+    visibility = rbs_ast_symbol_new(visibility_value, visibility_value);
     member_range.start = visibility_range.start;
     parser_advance(state);
     break;
-  case kPUBLIC:
+  }
+  case kPUBLIC: {
     visibility_range = state->current_token.range;
-    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("public")));
+    VALUE visibility_value = ID2SYM(rb_intern("public"));
+    visibility = rbs_ast_symbol_new(visibility_value, visibility_value);
     member_range.start = visibility_range.start;
     parser_advance(state);
     break;
+  }
   default:
     visibility_range = NULL_RANGE;
     visibility = NULL;
@@ -1709,15 +1731,21 @@ rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, bool in
 
   rbs_ast_symbol_t *k;
   switch (kind) {
-  case INSTANCE_KIND:
-    k = rbs_ast_symbol_new(ID2SYM(rb_intern("instance")));
+  case INSTANCE_KIND: {
+    VALUE kind_value = ID2SYM(rb_intern("instance"));
+    k = rbs_ast_symbol_new(kind_value, kind_value);
     break;
-  case SINGLETON_KIND:
-    k = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton")));
+  }
+  case SINGLETON_KIND: {
+    VALUE kind_value = ID2SYM(rb_intern("singleton"));
+    k = rbs_ast_symbol_new(kind_value, kind_value);
     break;
-  case INSTANCE_SINGLETON_KIND:
-    k = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton_instance")));
+  }
+  case INSTANCE_SINGLETON_KIND: {
+    VALUE kind_value = ID2SYM(rb_intern("singleton_instance"));
+    k = rbs_ast_symbol_new(kind_value, kind_value);
     break;
+  }
   default:
     rbs_abort();
   }
@@ -1860,7 +1888,8 @@ rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool instance_on
   rbs_ast_symbol_t *kind;
 
   if (!instance_only && state->next_token.type == kSELF) {
-    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton")));
+    VALUE kind_value = ID2SYM(rb_intern("singleton"));
+    kind = rbs_ast_symbol_new(kind_value, kind_value);
 
     new_kind_range.start = state->next_token.range.start;
     new_kind_range.end = state->next_token2.range.end;
@@ -1874,7 +1903,8 @@ rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool instance_on
     parser_advance_assert(state, pDOT);
     old_name = parse_method_name(state, &old_name_range);
   } else {
-    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("instance")));
+    VALUE kind_value = ID2SYM(rb_intern("instance"));
+    kind = rbs_ast_symbol_new(kind_value, kind_value);
     new_name = parse_method_name(state, &new_name_range);
     old_name = parse_method_name(state, &old_name_range);
 
@@ -1922,9 +1952,10 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
 
   switch (state->current_token.type)
   {
-  case tAIDENT:
+  case tAIDENT: {
     name_range = state->current_token.range;
-    name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    VALUE name_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    name = rbs_ast_symbol_new(name_value, name_value);
 
     parser_advance_assert(state, pCOLON);
     colon_range = state->current_token.range;
@@ -1939,10 +1970,11 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
     return (rbs_node_t *)rbs_ast_members_instancevariable_new(name, type, loc, comment);
-
-  case tA2IDENT:
+  }
+  case tA2IDENT: {
     name_range = state->current_token.range;
-    name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    VALUE name_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    name = rbs_ast_symbol_new(name_value, name_value);
 
     parser_advance_assert(state, pCOLON);
     colon_range = state->current_token.range;
@@ -1959,8 +1991,8 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
     return (rbs_node_t *) rbs_ast_members_classvariable_new(name, type, loc, comment);
-
-  case kSELF:
+  }
+  case kSELF: {
     kind_range.start = state->current_token.range.start;
     kind_range.end = state->next_token.range.end;
 
@@ -1968,7 +2000,8 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     parser_advance_assert(state, tAIDENT);
 
     name_range = state->current_token.range;
-    name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    VALUE name_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+    name = rbs_ast_symbol_new(name_value, name_value);
 
     parser_advance_assert(state, pCOLON);
     colon_range = state->current_token.range;
@@ -1985,7 +2018,7 @@ rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
 
     return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(name, type, loc, comment);
-
+  }
   default:
     rbs_abort();
   }
@@ -2051,16 +2084,20 @@ rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, rbs
 
   switch (state->current_token.type)
   {
-  case kPRIVATE:
-    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("private")));
+  case kPRIVATE: {
+    VALUE visibility_value = ID2SYM(rb_intern("private"));
+    visibility = rbs_ast_symbol_new(visibility_value, visibility_value);
     visibility_range = state->current_token.range;
     parser_advance(state);
     break;
-  case kPUBLIC:
-    visibility = rbs_ast_symbol_new(ID2SYM(rb_intern("public")));
+  }
+  case kPUBLIC: {
+    VALUE visibility_value = ID2SYM(rb_intern("public"));
+    visibility = rbs_ast_symbol_new(visibility_value, visibility_value);
     visibility_range = state->current_token.range;
     parser_advance(state);
     break;
+  }
   default:
     visibility = NULL;
     visibility_range = NULL_RANGE;
@@ -2072,9 +2109,11 @@ rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, rbs
 
   is_kind = parse_instance_singleton_kind(state, false, &kind_range);
   if (is_kind == INSTANCE_KIND) {
-    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("instance")));
+    VALUE kind_value = ID2SYM(rb_intern("instance"));
+    kind = rbs_ast_symbol_new(kind_value, kind_value);
   } else {
-    kind = rbs_ast_symbol_new(ID2SYM(rb_intern("singleton")));
+    VALUE kind_value = ID2SYM(rb_intern("singleton"));
+    kind = rbs_ast_symbol_new(kind_value, kind_value);
   }
 
   attr_name = parse_method_name(state, &name_range);
@@ -2084,7 +2123,8 @@ rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, rbs
     ivar_range.start = state->current_token.range.start;
 
     if (parser_advance_if(state, tAIDENT)) {
-      ivar_name = (rbs_node_t *) rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+      VALUE ivar_name_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+      ivar_name = (rbs_node_t *) rbs_ast_symbol_new(ivar_name_value, ivar_name_value);
       ivar_name_range = state->current_token.range;
     } else {
       ivar_name = (rbs_node_t *) rbs_ast_bool_new(false);
@@ -2638,7 +2678,7 @@ rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
   while (true) {
     if (state->next_token.type == tUIDENT && state->next_token2.type == pCOLON2) {
       VALUE symbol_value = ID2SYM(INTERN_TOKEN(state, state->next_token));
-      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value);
+      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbol_value, symbol_value);
       rbs_node_list_append(path, (rbs_node_t *)symbol);
       if (null_position_p(rg->start)) {
         rg->start = state->next_token.range.start;
@@ -2686,7 +2726,8 @@ void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         }
         clause_range = type_name_range;
 
-        rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+        VALUE type_name_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+        rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(type_name_value, type_name_value);
         rbs_typename_t *type_name = rbs_typename_new(namespace, symbol);
 
         range keyword_range = NULL_RANGE;
@@ -2701,7 +2742,8 @@ void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
           if (ident_type == tLIDENT) parser_advance_assert(state, tLIDENT);
           if (ident_type == tULIDENT) parser_advance_assert(state, tULIDENT);
 
-          new_name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+          VALUE new_name_value = ID2SYM(INTERN_TOKEN(state, state->current_token));
+          new_name = rbs_ast_symbol_new(new_name_value, new_name_value);
           new_name_range = state->current_token.range;
           clause_range.end = new_name_range.end;
         }
