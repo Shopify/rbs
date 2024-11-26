@@ -329,6 +329,8 @@ nodes:
         c_type: rbs_ast_symbol
       - name: upper_bound
         c_type: rbs_node
+      - name: unchecked
+        c_type: bool
       - name: default_type
         c_type: rbs_node
       - name: location
