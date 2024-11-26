@@ -799,7 +799,7 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
       case tINTEGER:
       case kTRUE:
       case kFALSE: {
-        VALUE key_value = rb_funcall(rbs_struct_to_ruby_value(parse_simple(state)), rb_intern("literal"), 0);
+        VALUE key_value = rb_funcall(parse_simple(state)->cached_ruby_value, rb_intern("literal"), 0);
         key = rbs_ast_symbol_new(key_value, key_value);
         break;
       }
@@ -2893,7 +2893,7 @@ parse_method_type_try(VALUE a) {
     parser_advance_assert(arg->parser, pEOF);
   }
 
-  return rbs_struct_to_ruby_value((rbs_node_t *)method_type);
+  return method_type->base.cached_ruby_value;
 }
 
 static VALUE
