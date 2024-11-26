@@ -761,7 +761,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rbs_types_bases_any_t *node = (rbs_types_bases_any_t *)instance;
 
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("todo")), node->todo);
+            rb_hash_aset(h, ID2SYM(rb_intern("todo")), node->todo ? Qtrue : Qfalse);
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(

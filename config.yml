@@ -376,6 +376,7 @@ nodes:
   - name: RBS::Types::Bases::Any
     fields:
       - name: todo
+        c_type: bool
       - name: location
         c_type: rbs_location
   - name: RBS::Types::Bases::Bool

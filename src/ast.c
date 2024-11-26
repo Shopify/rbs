@@ -1154,11 +1154,11 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_
     return instance;
 }
 
-rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_allocator_t *allocator, VALUE todo, rbs_location_t *location) {
+rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_allocator_t *allocator, bool todo, rbs_location_t *location) {
     rbs_types_bases_any_t *instance = rbs_allocator_alloc(allocator, rbs_types_bases_any_t);
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(todo);
+    rb_gc_register_mark_object(todo ? Qtrue : Qfalse);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
