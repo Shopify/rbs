@@ -5,12 +5,12 @@ module RBS
     class TypeParam
       attr_reader :name, :variance, :location, :upper_bound_type, :default_type
 
-      def initialize(name:, variance:, upper_bound:, location:, default_type: nil)
+      def initialize(name:, variance:, upper_bound:, location:, default_type: nil, unchecked: false)
         @name = name
         @variance = variance
         @upper_bound_type = upper_bound
         @location = location
-        @unchecked = false
+        @unchecked = unchecked
         @default_type = default_type
       end
 

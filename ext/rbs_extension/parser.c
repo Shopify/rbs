@@ -1249,11 +1249,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
       rbs_loc_add_optional_child(loc, rb_intern("upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, rb_intern("default"), default_type_range);
 
-      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(name, variance, upper_bound, default_type, loc);
-
-      if (unchecked) {
-        rb_funcall(((rbs_node_t *) param)->cached_ruby_value, rb_intern("unchecked!"), 0);
-      }
+      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(name, variance, upper_bound, unchecked, default_type, loc);
 
       rbs_node_list_append(params, (rbs_node_t *) param);
 
