@@ -1004,11 +1004,11 @@ static rbs_node_t *parse_simple(parserstate *state) {
   }
   case kUNTYPED: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    return (rbs_node_t *) rbs_types_bases_any_new(&state->allocator, Qfalse, loc);
+    return (rbs_node_t *) rbs_types_bases_any_new(&state->allocator, false, loc);
   }
   case k__TODO__: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    return (rbs_node_t *) rbs_types_bases_any_new(&state->allocator, Qtrue, loc);
+    return (rbs_node_t *) rbs_types_bases_any_new(&state->allocator, true, loc);
   }
   case tINTEGER: {
     rbs_location_t *loc = rbs_location_current_token(state);
