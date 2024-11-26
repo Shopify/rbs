@@ -10,8 +10,10 @@
 
 #include "ruby.h"
 #include "rbs_location.h"
+#include "rbs_constant_pool.h"
 
 enum rbs_node_type {
+    RBS_OTHER_RUBY_VALUE = 0,
     RBS_AST_ANNOTATION = 1,
     RBS_AST_BOOL = 2,
     RBS_AST_COMMENT = 3,
@@ -42,38 +44,38 @@ enum rbs_node_type {
     RBS_AST_MEMBERS_PREPEND = 28,
     RBS_AST_MEMBERS_PRIVATE = 29,
     RBS_AST_MEMBERS_PUBLIC = 30,
-    RBS_AST_SYMBOL = 31,
-    RBS_AST_TYPEPARAM = 32,
-    RBS_METHODTYPE = 33,
-    RBS_NAMESPACE = 34,
-    RBS_SIGNATURE = 35,
-    RBS_TYPENAME = 36,
-    RBS_TYPES_ALIAS = 37,
-    RBS_TYPES_BASES_ANY = 38,
-    RBS_TYPES_BASES_BOOL = 39,
-    RBS_TYPES_BASES_BOTTOM = 40,
-    RBS_TYPES_BASES_CLASS = 41,
-    RBS_TYPES_BASES_INSTANCE = 42,
-    RBS_TYPES_BASES_NIL = 43,
-    RBS_TYPES_BASES_SELF = 44,
-    RBS_TYPES_BASES_TOP = 45,
-    RBS_TYPES_BASES_VOID = 46,
-    RBS_TYPES_BLOCK = 47,
-    RBS_TYPES_CLASSINSTANCE = 48,
-    RBS_TYPES_CLASSSINGLETON = 49,
-    RBS_TYPES_FUNCTION = 50,
-    RBS_TYPES_FUNCTION_PARAM = 51,
-    RBS_TYPES_INTERFACE = 52,
-    RBS_TYPES_INTERSECTION = 53,
-    RBS_TYPES_LITERAL = 54,
-    RBS_TYPES_OPTIONAL = 55,
-    RBS_TYPES_PROC = 56,
-    RBS_TYPES_RECORD = 57,
-    RBS_TYPES_RECORD_FIELDTYPE = 58,
-    RBS_TYPES_TUPLE = 59,
-    RBS_TYPES_UNION = 60,
-    RBS_TYPES_UNTYPEDFUNCTION = 61,
-    RBS_TYPES_VARIABLE = 62,
+    RBS_AST_TYPEPARAM = 31,
+    RBS_METHODTYPE = 32,
+    RBS_NAMESPACE = 33,
+    RBS_SIGNATURE = 34,
+    RBS_TYPENAME = 35,
+    RBS_TYPES_ALIAS = 36,
+    RBS_TYPES_BASES_ANY = 37,
+    RBS_TYPES_BASES_BOOL = 38,
+    RBS_TYPES_BASES_BOTTOM = 39,
+    RBS_TYPES_BASES_CLASS = 40,
+    RBS_TYPES_BASES_INSTANCE = 41,
+    RBS_TYPES_BASES_NIL = 42,
+    RBS_TYPES_BASES_SELF = 43,
+    RBS_TYPES_BASES_TOP = 44,
+    RBS_TYPES_BASES_VOID = 45,
+    RBS_TYPES_BLOCK = 46,
+    RBS_TYPES_CLASSINSTANCE = 47,
+    RBS_TYPES_CLASSSINGLETON = 48,
+    RBS_TYPES_FUNCTION = 49,
+    RBS_TYPES_FUNCTION_PARAM = 50,
+    RBS_TYPES_INTERFACE = 51,
+    RBS_TYPES_INTERSECTION = 52,
+    RBS_TYPES_LITERAL = 53,
+    RBS_TYPES_OPTIONAL = 54,
+    RBS_TYPES_PROC = 55,
+    RBS_TYPES_RECORD = 56,
+    RBS_TYPES_RECORD_FIELDTYPE = 57,
+    RBS_TYPES_TUPLE = 58,
+    RBS_TYPES_UNION = 59,
+    RBS_TYPES_UNTYPEDFUNCTION = 60,
+    RBS_TYPES_VARIABLE = 61,
+    RBS_AST_SYMBOL,
 };
 
 typedef struct rbs_node {
@@ -411,12 +413,6 @@ typedef struct rbs_ast_members_public {
     struct rbs_location *location;
 } rbs_ast_members_public_t;
 
-typedef struct rbs_ast_symbol {
-    rbs_node_t base;
-
-    VALUE symbol;
-} rbs_ast_symbol_t;
-
 typedef struct rbs_ast_typeparam {
     rbs_node_t base;
 
@@ -645,6 +641,19 @@ typedef struct rbs_types_variable {
 } rbs_types_variable_t;
 
 
+typedef struct rbs_ast_symbol {
+    rbs_node_t base;
+    rbs_constant_id_t constant_id;
+} rbs_ast_symbol_t;
+
+rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id);
+
+typedef struct rbs_other_ruby_value {
+    rbs_node_t base;
+} rbs_other_ruby_value_t;
+
+rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value);
+
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location);
 rbs_ast_bool_t *rbs_ast_bool_new(bool value);
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE string, rbs_location_t *location);
@@ -675,7 +684,6 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
-rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value, VALUE symbol);
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type, rbs_location_t *location);
 rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location);
 rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute);

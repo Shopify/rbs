@@ -3,6 +3,8 @@
 
 #include "ruby.h"
 
+<%# VALUE rbs_ast_symbol(rbs_constant_t constant); %>
+
 <%- nodes.filter(&:expose_to_ruby?).each do |node| -%>
 VALUE <%= node.c_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>);
 <%- end -%>
