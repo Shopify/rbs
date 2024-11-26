@@ -435,16 +435,6 @@ VALUE rbs_ast_members_public(rbs_location_t *location) {
   );
 }
 
-VALUE rbs_ast_symbol() {
-  VALUE _init_kwargs = rb_hash_new();
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Symbol,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);

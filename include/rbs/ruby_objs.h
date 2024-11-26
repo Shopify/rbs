@@ -39,7 +39,6 @@ VALUE rbs_ast_members_method_definition_overload(rbs_node_list_t *annotations, r
 VALUE rbs_ast_members_prepend(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
 VALUE rbs_ast_members_private(rbs_location_t *location);
 VALUE rbs_ast_members_public(rbs_location_t *location);
-VALUE rbs_ast_symbol();
 VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, rbs_location_t *location);
 VALUE rbs_method_type(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location);
 VALUE rbs_namespace(rbs_node_list_t *path, bool absolute);
