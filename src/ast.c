@@ -464,27 +464,6 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typ
     return instance;
 }
 
-rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(VALUE ruby_value, rbs_node_list_t *declarations) {
-    rbs_ast_declarations_nodes_t *instance = (rbs_ast_declarations_nodes_t *)calloc(1, sizeof(rbs_ast_declarations_nodes_t));
-
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(ruby_value);
-    rb_gc_register_mark_object(declarations == NULL ? Qnil : declarations->cached_ruby_value);
-
-
-    rb_gc_register_mark_object(ruby_value);
-
-    *instance = (rbs_ast_declarations_nodes_t) {
-        .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
-            .type = RBS_AST_DECLARATIONS_NODES
-        },
-        .declarations = declarations,
-    };
-
-    return instance;
-}
-
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_typealias_t *instance = (rbs_ast_declarations_typealias_t *)calloc(1, sizeof(rbs_ast_declarations_typealias_t));
 
@@ -512,27 +491,6 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typenam
         .annotations = annotations,
         .location = location,
         .comment = comment,
-    };
-
-    return instance;
-}
-
-rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(VALUE ruby_value, rbs_node_list_t *directives) {
-    rbs_ast_directives_nodes_t *instance = (rbs_ast_directives_nodes_t *)calloc(1, sizeof(rbs_ast_directives_nodes_t));
-
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(ruby_value);
-    rb_gc_register_mark_object(directives == NULL ? Qnil : directives->cached_ruby_value);
-
-
-    rb_gc_register_mark_object(ruby_value);
-
-    *instance = (rbs_ast_directives_nodes_t) {
-        .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
-            .type = RBS_AST_DIRECTIVES_NODES
-        },
-        .directives = directives,
     };
 
     return instance;
@@ -1126,6 +1084,29 @@ rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute) {
         },
         .path = path,
         .absolute = absolute,
+    };
+
+    return instance;
+}
+
+rbs_signature_t *rbs_signature_new(VALUE ruby_value, rbs_node_list_t *directives, rbs_node_list_t *declarations) {
+    rbs_signature_t *instance = (rbs_signature_t *)calloc(1, sizeof(rbs_signature_t));
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(ruby_value);
+    rb_gc_register_mark_object(directives == NULL ? Qnil : directives->cached_ruby_value);
+    rb_gc_register_mark_object(declarations == NULL ? Qnil : declarations->cached_ruby_value);
+
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_signature_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_SIGNATURE
+        },
+        .directives = directives,
+        .declarations = declarations,
     };
 
     return instance;
@@ -2040,9 +2021,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 &h
             );
         }
-        case RBS_AST_DECLARATIONS_NODES: {
-            return instance->cached_ruby_value;
-        }
         case RBS_AST_DECLARATIONS_TYPEALIAS: {
             if (strcmp(class_name, "RBS::AST::Declarations::TypeAlias") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::Declarations::TypeAlias, got %s\n", class_name);
@@ -2064,9 +2042,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
-        }
-        case RBS_AST_DIRECTIVES_NODES: {
-            return instance->cached_ruby_value;
         }
         case RBS_AST_DIRECTIVES_USE: {
             if (strcmp(class_name, "RBS::AST::Directives::Use") != 0) {
@@ -2477,6 +2452,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_SIGNATURE: {
+            return instance->cached_ruby_value;
         }
         case RBS_TYPENAME: {
             if (strcmp(class_name, "RBS::TypeName") != 0) {
