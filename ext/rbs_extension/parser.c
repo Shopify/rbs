@@ -800,7 +800,7 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
     rbs_node_t *type = parse_type(state);
     rbs_node_list_append(value, type);
     rbs_node_list_append(value, (rbs_node_t *) rbs_ast_bool_new(required));
-    rbs_hash_set(fields, (rbs_node_t *) key, (rbs_node_t *) rbs_types_record_fieldtype_new(value->cached_ruby_value));
+    rbs_hash_set(fields, (rbs_node_t *) key, (rbs_node_t *) rbs_types_record_fieldtype_new(value->cached_ruby_value, type, required));
 
     if (parser_advance_if(state, pCOMMA)) {
       if (state->next_token.type == pRBRACE) {
