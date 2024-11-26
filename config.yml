@@ -116,12 +116,6 @@ nodes:
         c_type: rbs_location
       - name: comment
         c_type: rbs_ast_comment
-  - name: RBS::AST::Declarations::Nodes
-    builds_ruby_object_internally: false
-    expose_to_ruby: false
-    fields:
-      - name: declarations
-        c_type: rbs_node_list
   - name: RBS::AST::Declarations::TypeAlias
     fields:
       - name: name
@@ -136,12 +130,6 @@ nodes:
         c_type: rbs_location
       - name: comment
         c_type: rbs_ast_comment
-  - name: RBS::AST::Directives::Nodes
-    builds_ruby_object_internally: false
-    expose_to_ruby: false
-    fields:
-      - name: directives
-        c_type: rbs_node_list
   - name: RBS::AST::Directives::Use
     fields:
       - name: clauses
@@ -329,6 +317,7 @@ nodes:
       - name: location
         c_type: rbs_location
   - name: RBS::AST::Symbol
+    expose_to_ruby: false
     builds_ruby_object_internally: false
   - name: RBS::AST::TypeParam
     fields:
@@ -360,6 +349,14 @@ nodes:
         c_type: rbs_node_list
       - name: absolute
         c_type: bool
+  - name: RBS::Signature
+    expose_to_ruby: false
+    builds_ruby_object_internally: false
+    fields:
+      - name: directives
+        c_type: rbs_node_list
+      - name: declarations
+        c_type: rbs_node_list
   - name: RBS::TypeName
     fields:
       - name: namespace

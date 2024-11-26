@@ -454,26 +454,6 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_all
     return instance;
 }
 
-rbs_ast_declarations_nodes_t *rbs_ast_declarations_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_list_t *declarations) {
-    rbs_ast_declarations_nodes_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_nodes_t);
-
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(declarations == NULL ? Qnil : declarations->cached_ruby_value);
-
-
-    rb_gc_register_mark_object(ruby_value);
-
-    *instance = (rbs_ast_declarations_nodes_t) {
-        .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
-            .type = RBS_AST_DECLARATIONS_NODES
-        },
-        .declarations = declarations,
-    };
-
-    return instance;
-}
-
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_typealias_t *instance = rbs_allocator_alloc(allocator, rbs_ast_declarations_typealias_t);
 
@@ -501,26 +481,6 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_allocat
         .annotations = annotations,
         .location = location,
         .comment = comment,
-    };
-
-    return instance;
-}
-
-rbs_ast_directives_nodes_t *rbs_ast_directives_nodes_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_list_t *directives) {
-    rbs_ast_directives_nodes_t *instance = rbs_allocator_alloc(allocator, rbs_ast_directives_nodes_t);
-
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(directives == NULL ? Qnil : directives->cached_ruby_value);
-
-
-    rb_gc_register_mark_object(ruby_value);
-
-    *instance = (rbs_ast_directives_nodes_t) {
-        .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
-            .type = RBS_AST_DIRECTIVES_NODES
-        },
-        .directives = directives,
     };
 
     return instance;
@@ -1115,6 +1075,28 @@ rbs_namespace_t *rbs_namespace_new(rbs_allocator_t *allocator, rbs_node_list_t *
         },
         .path = path,
         .absolute = absolute,
+    };
+
+    return instance;
+}
+
+rbs_signature_t *rbs_signature_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_list_t *directives, rbs_node_list_t *declarations) {
+    rbs_signature_t *instance = rbs_allocator_alloc(allocator, rbs_signature_t);
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(directives == NULL ? Qnil : directives->cached_ruby_value);
+    rb_gc_register_mark_object(declarations == NULL ? Qnil : declarations->cached_ruby_value);
+
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_signature_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_SIGNATURE
+        },
+        .directives = directives,
+        .declarations = declarations,
     };
 
     return instance;
