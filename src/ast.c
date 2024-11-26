@@ -1011,18 +1011,19 @@ rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value, VALUE symbol) {
     return instance;
 }
 
-rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, rbs_location_t *location) {
+rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type, rbs_location_t *location) {
     rbs_ast_typeparam_t *instance = malloc(sizeof(rbs_ast_typeparam_t));
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(variance == NULL ? Qnil : variance->base.cached_ruby_value);
     rb_gc_register_mark_object(upper_bound == NULL ? Qnil : upper_bound->cached_ruby_value);
+    rb_gc_register_mark_object(unchecked ? Qtrue : Qfalse);
     rb_gc_register_mark_object(default_type == NULL ? Qnil : default_type->cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_type_param(name, variance, upper_bound, default_type, location);
+    VALUE ruby_value = rbs_ast_type_param(name, variance, upper_bound, unchecked, default_type, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1034,6 +1035,7 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbo
         .name = name,
         .variance = variance,
         .upper_bound = upper_bound,
+        .unchecked = unchecked,
         .default_type = default_type,
         .location = location,
     };

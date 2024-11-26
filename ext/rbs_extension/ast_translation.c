@@ -659,11 +659,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_ast_typeparam_t *node = (rbs_ast_typeparam_t *)instance;
-            // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="variance" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="upper_bound" c_type="rbs_node">, #<RBS::Template::Field name="default_type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="variance" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="upper_bound" c_type="rbs_node">, #<RBS::Template::Field name="unchecked" c_type="bool">, #<RBS::Template::Field name="default_type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("variance")), rbs_struct_to_ruby_value((rbs_node_t *) node->variance)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("upper_bound")), rbs_struct_to_ruby_value((rbs_node_t *) node->upper_bound)); // rbs_node
+            rb_hash_aset(h, ID2SYM(rb_intern("unchecked")), node->unchecked ? Qtrue : Qfalse);
             rb_hash_aset(h, ID2SYM(rb_intern("default_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->default_type)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 

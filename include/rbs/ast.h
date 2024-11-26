@@ -419,6 +419,7 @@ typedef struct rbs_ast_typeparam {
     struct rbs_ast_symbol *name;
     struct rbs_ast_symbol *variance;
     struct rbs_node *upper_bound;
+    bool unchecked;
     struct rbs_node *default_type;
     struct rbs_location *location;
 } rbs_ast_typeparam_t;
@@ -670,7 +671,7 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
 rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value, VALUE symbol);
-rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, rbs_location_t *location);
+rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type, rbs_location_t *location);
 rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location);
 rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute);
 rbs_signature_t *rbs_signature_new(VALUE ruby_value, rbs_node_list_t *directives, rbs_node_list_t *declarations);

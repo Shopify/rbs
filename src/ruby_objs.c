@@ -435,11 +435,12 @@ VALUE rbs_ast_members_public(rbs_location_t *location) {
   );
 }
 
-VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, rbs_location_t *location) {
+VALUE rbs_ast_type_param(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name == NULL ? Qnil : name->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("variance")), variance == NULL ? Qnil : variance->base.cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("upper_bound")), upper_bound == NULL ? Qnil : upper_bound->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("unchecked")), unchecked ? Qtrue : Qfalse);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("default_type")), default_type == NULL ? Qnil : default_type->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
