@@ -502,8 +502,9 @@ VALUE rbs_alias(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *loc
   );
 }
 
-VALUE rbs_bases_any(rbs_location_t *location) {
+VALUE rbs_bases_any(bool todo, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("todo")), todo ? Qtrue : Qfalse);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(

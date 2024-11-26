@@ -1166,14 +1166,15 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *ar
     return instance;
 }
 
-rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_location_t *location) {
+rbs_types_bases_any_t *rbs_types_bases_any_new(bool todo, rbs_location_t *location) {
     rbs_types_bases_any_t *instance = (rbs_types_bases_any_t *)calloc(1, sizeof(rbs_types_bases_any_t));
 
     // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(todo ? Qtrue : Qfalse);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_any(location);
+    VALUE ruby_value = rbs_bases_any(todo, location);
 
     rb_gc_register_mark_object(ruby_value);
 
@@ -1182,6 +1183,7 @@ rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_location_t *location) {
             .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_ANY
         },
+        .todo = todo,
         .location = location,
     };
 
@@ -2507,8 +2509,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_types_bases_any_t *node = (rbs_types_bases_any_t *)instance;
-            // [#<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="todo" c_type="bool">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
+            rb_hash_aset(h, ID2SYM(rb_intern("todo")), node->todo ? Qtrue : Qfalse);
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(

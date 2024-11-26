@@ -469,6 +469,7 @@ typedef struct rbs_types_alias {
 typedef struct rbs_types_bases_any {
     rbs_node_t base;
 
+    bool todo;
     struct rbs_location *location;
 } rbs_types_bases_any_t;
 
@@ -681,7 +682,7 @@ rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute);
 rbs_signature_t *rbs_signature_new(VALUE ruby_value, rbs_node_list_t *directives, rbs_node_list_t *declarations);
 rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *name);
 rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
-rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_location_t *location);
+rbs_types_bases_any_t *rbs_types_bases_any_new(bool todo, rbs_location_t *location);
 rbs_types_bases_bool_t *rbs_types_bases_bool_new(rbs_location_t *location);
 rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(rbs_location_t *location);
 rbs_types_bases_class_t *rbs_types_bases_class_new(rbs_location_t *location);
