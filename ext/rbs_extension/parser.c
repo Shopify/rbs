@@ -1002,13 +1002,11 @@ static rbs_node_t *parse_simple(parserstate *state) {
   }
   case kUNTYPED: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    return (rbs_node_t *) rbs_types_bases_any_new(loc);
+    return (rbs_node_t *) rbs_types_bases_any_new(false, loc);
   }
   case k__TODO__: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    rbs_types_bases_any_t *node = rbs_types_bases_any_new(loc);
-    rb_funcall(node->base.cached_ruby_value, rb_intern("todo!"), 0);
-    return (rbs_node_t *) node;
+    return (rbs_node_t *) rbs_types_bases_any_new(true, loc);
   }
   case tINTEGER: {
     rbs_location_t *loc = rbs_location_current_token(state);

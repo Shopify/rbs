@@ -759,8 +759,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             }
  
             rbs_types_bases_any_t *node = (rbs_types_bases_any_t *)instance;
-            // [#<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="todo" c_type="bool">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
+            rb_hash_aset(h, ID2SYM(rb_intern("todo")), node->todo ? Qtrue : Qfalse);
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
             return CLASS_NEW_INSTANCE(
