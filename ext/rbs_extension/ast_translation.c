@@ -279,9 +279,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 &h
             );
         }
-        case RBS_AST_DECLARATIONS_NODES: {
-            return instance->cached_ruby_value;
-        }
         case RBS_AST_DECLARATIONS_TYPEALIAS: {
             if (strcmp(class_name, "RBS::AST::Declarations::TypeAlias") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::Declarations::TypeAlias, got %s\n", class_name);
@@ -303,9 +300,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
-        }
-        case RBS_AST_DIRECTIVES_NODES: {
-            return instance->cached_ruby_value;
         }
         case RBS_AST_DIRECTIVES_USE: {
             if (strcmp(class_name, "RBS::AST::Directives::Use") != 0) {
@@ -716,6 +710,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_SIGNATURE: {
+            return instance->cached_ruby_value;
         }
         case RBS_TYPENAME: {
             if (strcmp(class_name, "RBS::TypeName") != 0) {
