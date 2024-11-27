@@ -293,6 +293,7 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
 
 parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_pos, VALUE variables) {
   parserstate *parser = calloc(1, sizeof(parserstate));
+  parser->aborted = false;
   parser->lexstate = lexer;
   parser->buffer = buffer;
   parser->current_token = NullToken;
