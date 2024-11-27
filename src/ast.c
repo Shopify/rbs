@@ -695,6 +695,20 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
     return instance;
 }
 
+rbs_ast_string_t *rbs_ast_string_new(rbs_string_t string) {
+    rbs_ast_string_t *instance = (rbs_ast_string_t *)calloc(1, sizeof(rbs_ast_string_t));
+
+
+    *instance = (rbs_ast_string_t) {
+        .base = (rbs_node_t) {
+            .type = RBS_AST_STRING
+        },
+        .string = string,
+    };
+
+    return instance;
+}
+
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type, rbs_location_t *location) {
     rbs_ast_typeparam_t *instance = (rbs_ast_typeparam_t *)calloc(1, sizeof(rbs_ast_typeparam_t));
 
@@ -1728,6 +1742,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_AST_STRING: {
+            rbs_ast_string_t *string_node = (rbs_ast_string_t *) instance;
+            rbs_string_t s = string_node->string;
+
+            return rb_enc_str_new(s.start, rbs_string_len(s), rb_utf8_encoding());
+
         }
         case RBS_AST_TYPEPARAM: {
  
