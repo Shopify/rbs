@@ -1,7 +1,6 @@
 #include "rbs/ast.h"
 
 #include <stdlib.h>
-#include "rbs/ruby_objs.h"
 #include "rbs/constants.h"
 #include "rbs_string_bridging.h"
 #include "ruby/encoding.h"
@@ -13,9 +12,6 @@ rbs_node_list_t* rbs_node_list_new(void) {
     list->head = NULL;
     list->tail = NULL;
     list->length = 0;
-    list->cached_ruby_value = rb_ary_new();
-
-    rb_gc_register_mark_object(list->cached_ruby_value);
 
     return list;
 }
@@ -31,8 +27,6 @@ void rbs_node_list_free(rbs_node_list_t *list) {
 }
 
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
-    rb_gc_register_mark_object(node->cached_ruby_value);
-
     rbs_node_list_node_t *new_node = (rbs_node_list_node_t *)malloc(sizeof(rbs_node_list_node_t));
     new_node->node = node;
     new_node->next = NULL;
@@ -44,13 +38,20 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
         list->tail->next = new_node;
         list->tail = new_node;
     }
-    list->length++;
 
-    rb_ary_push(list->cached_ruby_value, node->cached_ruby_value);
+    list->length++;
 }
 
 VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
-    return list->cached_ruby_value;
+    VALUE array = rb_ary_new();
+
+    rbs_node_list_node_t *current = list->head;
+    while (current != NULL) {
+        rb_ary_push(array, rbs_struct_to_ruby_value(current->node));
+        current = current->next;
+    }
+
+    return array;
 }
 
 /* rbs_hash */
@@ -78,7 +79,7 @@ rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key) {
     rbs_hash_node_t *current = hash->head;
 
     while (current != NULL) {
-        if (rb_equal(key->cached_ruby_value, current->key->cached_ruby_value)) {
+        if (rb_equal(rbs_struct_to_ruby_value(key), rbs_struct_to_ruby_value(current->key))) {
             return current;
         }
         current = current->next;
@@ -88,9 +89,6 @@ rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key) {
 }
 
 void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
-    rb_gc_register_mark_object(key->cached_ruby_value);
-    rb_gc_register_mark_object(value->cached_ruby_value);
-
     rbs_hash_node_t *existing_node = rbs_hash_find(hash, key);
     if (existing_node != NULL) {
         existing_node->value = value;
@@ -131,16 +129,8 @@ VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
 rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
     rbs_ast_symbol_t *instance = (rbs_ast_symbol_t *)calloc(1, sizeof(rbs_ast_symbol_t));
 
-
-    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(fake_constant_pool, constant_id);
-    assert(constant != NULL);
-
-    rb_encoding *fake_encoding = rb_utf8_encoding();
-    VALUE ruby_symbol = ID2SYM(rb_intern3(constant->start, constant->length, fake_encoding));
-
     *instance = (rbs_ast_symbol_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_symbol,
             .type = RBS_AST_SYMBOL
         },
         .constant_id = constant_id,
@@ -150,45 +140,32 @@ rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
 }
 
 rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
+    rb_gc_register_mark_object(ruby_value);
+
     rbs_other_ruby_value_t *instance = (rbs_other_ruby_value_t *)calloc(1, sizeof(rbs_other_ruby_value_t));
 
     *instance = (rbs_other_ruby_value_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_OTHER_RUBY_VALUE
         },
+        .ruby_value = ruby_value,
     };
 
     return instance;
 }
 
-<%-
-nodes.each do |node|
-
-parameters = node.constructor_parameters
--%>
-<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= parameters.map(&:parameter_decl).join(", ") %>) {
+<%- nodes.each do |node| -%>
+<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>) {
     <%= node.c_type_name %> *instance = (<%= node.c_type_name %> *)calloc(1, sizeof(<%= node.c_type_name %>));
 
-    // Disable GC for all these Ruby objects.
-    <%- parameters.each do |parameter| -%>
-    rb_gc_register_mark_object(<%= parameter.cached_ruby_value_expr %>);
-    <%- end -%>
-
-    <%- if node.builds_ruby_object_internally? -%>
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    <%- if node.c_type_name == "rbs_ast_bool_t" -%>
-    VALUE ruby_value = value ? Qtrue : Qfalse;
-    <%- else -%>
-    VALUE ruby_value = <%= node.c_function_name %>(<%= parameters.map(&:name).join(", ") %>);
+    <%- node.fields.each do |field| -%>
+    <%- if field.c_type == "VALUE" -%>
+    rb_gc_register_mark_object(<%= field.name %>);
     <%- end -%>
     <%- end -%>
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (<%= node.c_type_name %>) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = <%= node.c_type_enum_name %>
         },
         <%- node.fields.each do |field| -%>
@@ -211,43 +188,30 @@ parameters = node.constructor_parameters
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-const char* get_class_name(VALUE o) {
-    VALUE klass = rb_class_of(o);      // Get the class of the object
-    VALUE klass_name = rb_class_name(klass);  // Get the name of the class
-    const char* name = StringValueCStr(klass_name);  // Convert to C string
-    return name;
-}
-
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
     if (instance == NULL) return Qnil;
-
-    VALUE ruby_value = instance->cached_ruby_value;
-
-    if (ruby_value == Qnil || ruby_value == Qundef) {
-        fprintf(stderr, "cached_ruby_value is NULL\n");
-        exit(1);
-    }
-
-    const char *class_name = get_class_name(ruby_value);
 
     switch (instance->type) {
         <%- nodes.each do |node| -%>
         case <%= node.c_type_enum_name %>: {
-            <%-
-            rbs_struct_to_ruby_value_shitlist = [
-                "RBS::AST::Bool",
-                "RBS::AST::Symbol",
-                "RBS::Signature",
-                "RBS::Types::Record::FieldType",
-            ]
+            <%- case node.ruby_full_name -%>
+            <%- when "RBS::AST::Bool" -%>
+            return ((rbs_ast_bool_t *) instance)->value ? Qtrue : Qfalse;
+            <%- when "RBS::Types::Record::FieldType" -%>
+            rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
 
-            if rbs_struct_to_ruby_value_shitlist.include?(node.ruby_full_name) -%>
-            return instance->cached_ruby_value;
+            VALUE array = rb_ary_new();
+            rb_ary_push(array, rbs_struct_to_ruby_value(record_fieldtype->type));
+            rb_ary_push(array, record_fieldtype->required ? Qtrue : Qfalse);
+            return array;
+            <%- when "RBS::Signature" -%>
+            rbs_signature_t *signature = (rbs_signature_t *) instance;
+
+            VALUE array = rb_ary_new();
+            rb_ary_push(array, rbs_node_list_to_ruby_array(signature->directives));
+            rb_ary_push(array, rbs_node_list_to_ruby_array(signature->declarations));
+            return array;
             <%- else -%>
-            if (strcmp(class_name, "<%= node.ruby_full_name %>") != 0) {
-                fprintf(stderr, "Expected class name: <%= node.ruby_full_name %>, got %s\n", class_name);
-                exit(1);
-            }
             <%- if node.fields.any? -%> <%# This prevents "warning: unused variable 'node'" %>
             <%= node.c_type_name %> *node = (<%= node.c_type_name %> *)instance;
             <%- end -%>
@@ -275,6 +239,16 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             <%- end -%>
             <%- end -%>
 
+            <%- case node.ruby_full_name -%>
+            <%- when "RBS::AST::Declarations::Class", "RBS::AST::Declarations::Module", "RBS::AST::Declarations::Interface", "RBS::AST::Declarations::TypeAlias", "RBS::MethodType" -%>
+            rb_funcall(
+              RBS_AST_TypeParam,
+              rb_intern("resolve_variables"),
+              1,
+              rb_hash_lookup(h, ID2SYM(rb_intern("type_params")))
+            );
+            <%- end -%>
+
             return CLASS_NEW_INSTANCE(
                 <%= node.c_constant_name %>,
                 1,
@@ -284,15 +258,17 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         }
         <%- end -%>
         case RBS_AST_SYMBOL: {
-           if (strcmp(class_name, "Symbol") != 0) {
-               fprintf(stderr, "Expected class name: Symbol, got %s\n", class_name);
-               exit(1);
-           }
+            rbs_constant_t *constant = rbs_constant_pool_id_to_constant(fake_constant_pool, ((rbs_ast_symbol_t *) instance)->constant_id);
+            assert(constant != NULL);
+            assert(constant->start != NULL);
 
-           return instance->cached_ruby_value;
+            rb_encoding *fake_encoding = rb_utf8_encoding();
+            VALUE ruby_symbol = ID2SYM(rb_intern3(constant->start, constant->length, fake_encoding));
+
+            return ruby_symbol;
         }
         case RBS_OTHER_RUBY_VALUE: {
-          return instance->cached_ruby_value;
+            return ((rbs_other_ruby_value_t *) instance)->ruby_value;
         }
     }
 }

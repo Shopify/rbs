@@ -776,7 +776,6 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
 
   while (true) {
     rbs_node_t *key;
-    rbs_node_list_t *value = rbs_node_list_new();
     bool required = true;
 
     if (state->next_token.type == pQUESTION) {
@@ -816,9 +815,7 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
       parser_advance_assert(state, pFATARROW);
     }
     rbs_node_t *type = parse_type(state);
-    rbs_node_list_append(value, type);
-    rbs_node_list_append(value, (rbs_node_t *) rbs_ast_bool_new(required));
-    rbs_hash_set(fields, (rbs_node_t *) key, (rbs_node_t *) rbs_types_record_fieldtype_new(value->cached_ruby_value, type, required));
+    rbs_hash_set(fields, (rbs_node_t *) key, (rbs_node_t *) rbs_types_record_fieldtype_new(type, required));
 
     if (parser_advance_if(state, pCOMMA)) {
       if (state->next_token.type == pRBRACE) {
@@ -860,7 +857,7 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, rbs_location_t *loc
     rbs_abort();
   }
 
-  return rbs_types_literal_new(((rbs_node_t *)literal)->cached_ruby_value, location);
+  return rbs_types_literal_new(rbs_struct_to_ruby_value((rbs_node_t *)literal), location);
 }
 
 /*
@@ -1265,13 +1262,6 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
     *rg = NULL_RANGE;
   }
 
-  rb_funcall(
-    RBS_AST_TypeParam,
-    rb_intern("resolve_variables"),
-    1,
-    params->cached_ruby_value
-  );
-
   return params;
 }
 
@@ -1634,7 +1624,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
   range name_range;
   rbs_ast_symbol_t *name = parse_method_name(state, &name_range);
 
-  if (state->next_token.type == pDOT && RB_SYM2ID(((rbs_node_t *)name)->cached_ruby_value) == rb_intern("self?")) {
+  if (state->next_token.type == pDOT && RB_SYM2ID(rbs_struct_to_ruby_value((rbs_node_t *) name)) == rb_intern("self?")) {
     raise_syntax_error(
       state,
       state->next_token,
@@ -2789,7 +2779,7 @@ rbs_signature_t *parse_signature(parserstate *state) {
     rbs_node_list_append(decls, decl);
   }
 
-  return rbs_signature_new(Qnil, dirs, decls);
+  return rbs_signature_new(dirs, decls);
 }
 
 struct parse_type_arg {
@@ -2817,7 +2807,7 @@ parse_type_try(VALUE a) {
     parser_advance_assert(arg->parser, pEOF);
   }
 
-  return type->cached_ruby_value;
+  return rbs_struct_to_ruby_value(type);
 }
 
 static VALUE
@@ -2848,7 +2838,7 @@ parse_method_type_try(VALUE a) {
     parser_advance_assert(arg->parser, pEOF);
   }
 
-  return method_type->base.cached_ruby_value;
+  return rbs_struct_to_ruby_value((rbs_node_t *) method_type);
 }
 
 static VALUE
@@ -2868,13 +2858,8 @@ rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end
 static VALUE
 parse_signature_try(VALUE a) {
   parserstate *parser = (parserstate *)a;
-
   rbs_signature_t *signature = parse_signature(parser);
-
-  VALUE array = rb_ary_new();
-  rb_ary_push(array, signature->directives->cached_ruby_value);
-  rb_ary_push(array, signature->declarations->cached_ruby_value);
-  return array;
+  return rbs_struct_to_ruby_value((rbs_node_t *) signature);
 }
 
 static VALUE
