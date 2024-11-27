@@ -5,6 +5,7 @@
 
 #include "lexer.h"
 #include "location.h"
+#include "rbs/ast.h"
 
 /**
  * id_table represents a set of IDs.
