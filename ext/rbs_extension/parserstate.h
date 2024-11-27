@@ -55,6 +55,8 @@ typedef struct {
 
   id_table *vars;         /* Known type variables */
   comment *last_comment;  /* Last read comment */
+
+  bool aborted;
 } parserstate;
 
 comment *alloc_comment(token comment_token, comment *last_comment);
