@@ -23,13 +23,13 @@ rbs_constant_id_t rbs_constant_pool_insert_constant(rbs_constant_pool_t *self, c
 
     rbs_constant_t *new_constant = malloc(sizeof(rbs_constant_t));
 
-    // char *copied_str = malloc(length + 1);
-    // memcpy(copied_str, start, length);
+    char *copied_str = malloc(length + 1);
+    memcpy(copied_str, start, length);
     // copied_str[length] = '\0';
     // // printf("Copied string: %s\n", copied_str);
 
     *new_constant = (rbs_constant_t) {
-        .start = start,
+        .start = copied_str,
         .length = length,
     };
 
