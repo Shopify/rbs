@@ -67,9 +67,6 @@ rbs_hash_t* rbs_hash_new(void) {
     hash->head = NULL;
     hash->tail = NULL;
     hash->length = 0;
-    hash->cached_ruby_value = rb_hash_new();
-
-    rb_gc_register_mark_object(hash->cached_ruby_value);
 
     return hash;
 }
@@ -107,8 +104,6 @@ void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
         return;
     }
 
-    rb_hash_aset(hash->cached_ruby_value, key->cached_ruby_value, value->cached_ruby_value);
-
     rbs_hash_node_t *new_node = (rbs_hash_node_t *)malloc(sizeof(rbs_hash_node_t));
     new_node->key = key;
     new_node->value = value;
@@ -129,7 +124,15 @@ rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
 }
 
 VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
-    return hash->cached_ruby_value;
+    VALUE ruby_hash = rb_hash_new();
+
+    rbs_hash_node_t *current = hash->head;
+    while (current != NULL) {
+        rb_hash_aset(ruby_hash, rbs_struct_to_ruby_value(current->key), rbs_struct_to_ruby_value(current->value));
+        current = current->next;
+    }
+
+    return ruby_hash;
 }
 
 rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
@@ -1465,8 +1468,8 @@ rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positiona
     rb_gc_register_mark_object(optional_positionals == NULL ? Qnil : optional_positionals->cached_ruby_value);
     rb_gc_register_mark_object(rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
     rb_gc_register_mark_object(trailing_positionals == NULL ? Qnil : trailing_positionals->cached_ruby_value);
-    rb_gc_register_mark_object(required_keywords == NULL ? Qnil : required_keywords->cached_ruby_value);
-    rb_gc_register_mark_object(optional_keywords == NULL ? Qnil : optional_keywords->cached_ruby_value);
+    rb_gc_register_mark_object(required_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(required_keywords));
+    rb_gc_register_mark_object(optional_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(optional_keywords));
     rb_gc_register_mark_object(rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
     rb_gc_register_mark_object(return_type == NULL ? Qnil : return_type->cached_ruby_value);
 
@@ -1649,7 +1652,7 @@ rbs_types_record_t *rbs_types_record_new(rbs_hash_t *all_fields, rbs_location_t 
     rbs_types_record_t *instance = (rbs_types_record_t *)calloc(1, sizeof(rbs_types_record_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(all_fields == NULL ? Qnil : all_fields->cached_ruby_value);
+    rb_gc_register_mark_object(all_fields == NULL ? Qnil : rbs_hash_to_ruby_hash(all_fields));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
