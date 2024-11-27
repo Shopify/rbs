@@ -8,7 +8,6 @@
 #include "rbs/ast.h"
 
 #include <stdlib.h>
-#include "rbs/ruby_objs.h"
 #include "rbs/constants.h"
 #include "rbs_string_bridging.h"
 #include "ruby/encoding.h"
@@ -35,8 +34,6 @@ void rbs_node_list_free(rbs_node_list_t *list) {
 }
 
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
-    rb_gc_register_mark_object(node->cached_ruby_value);
-
     rbs_node_list_node_t *new_node = (rbs_node_list_node_t *)malloc(sizeof(rbs_node_list_node_t));
     new_node->node = node;
     new_node->next = NULL;
@@ -89,7 +86,7 @@ rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key) {
     rbs_hash_node_t *current = hash->head;
 
     while (current != NULL) {
-        if (rb_equal(key->cached_ruby_value, current->key->cached_ruby_value)) {
+        if (rb_equal(rbs_struct_to_ruby_value(key), rbs_struct_to_ruby_value(current->key))) {
             return current;
         }
         current = current->next;
@@ -99,9 +96,6 @@ rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key) {
 }
 
 void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
-    rb_gc_register_mark_object(key->cached_ruby_value);
-    rb_gc_register_mark_object(value->cached_ruby_value);
-
     rbs_hash_node_t *existing_node = rbs_hash_find(hash, key);
     if (existing_node != NULL) {
         existing_node->value = value;
@@ -142,16 +136,8 @@ VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
 rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
     rbs_ast_symbol_t *instance = (rbs_ast_symbol_t *)calloc(1, sizeof(rbs_ast_symbol_t));
 
-
-    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(fake_constant_pool, constant_id);
-    assert(constant != NULL);
-
-    rb_encoding *fake_encoding = rb_utf8_encoding();
-    VALUE ruby_symbol = ID2SYM(rb_intern3(constant->start, constant->length, fake_encoding));
-
     *instance = (rbs_ast_symbol_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_symbol,
             .type = RBS_AST_SYMBOL
         },
         .constant_id = constant_id,
@@ -161,13 +147,15 @@ rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
 }
 
 rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
+    rb_gc_register_mark_object(ruby_value);
+
     rbs_other_ruby_value_t *instance = (rbs_other_ruby_value_t *)calloc(1, sizeof(rbs_other_ruby_value_t));
 
     *instance = (rbs_other_ruby_value_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_OTHER_RUBY_VALUE
         },
+        .ruby_value = ruby_value,
     };
 
     return instance;
@@ -176,18 +164,9 @@ rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
 rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_string_t string, rbs_location_t *location) {
     rbs_ast_annotation_t *instance = (rbs_ast_annotation_t *)calloc(1, sizeof(rbs_ast_annotation_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(string.cached_ruby_string);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_annotation(string, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_annotation_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_ANNOTATION
         },
         .string = string,
@@ -200,17 +179,9 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_string_t string, rbs_location_t
 rbs_ast_bool_t *rbs_ast_bool_new(bool value) {
     rbs_ast_bool_t *instance = (rbs_ast_bool_t *)calloc(1, sizeof(rbs_ast_bool_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(value ? Qtrue : Qfalse);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = value ? Qtrue : Qfalse;
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_bool_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_BOOL
         },
         .value = value,
@@ -222,18 +193,10 @@ rbs_ast_bool_t *rbs_ast_bool_new(bool value) {
 rbs_ast_comment_t *rbs_ast_comment_new(VALUE string, rbs_location_t *location) {
     rbs_ast_comment_t *instance = (rbs_ast_comment_t *)calloc(1, sizeof(rbs_ast_comment_t));
 
-    // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(string);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_comment(string, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_comment_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_COMMENT
         },
         .string = string,
@@ -246,23 +209,9 @@ rbs_ast_comment_t *rbs_ast_comment_new(VALUE string, rbs_location_t *location) {
 rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_class_t *instance = (rbs_ast_declarations_class_t *)calloc(1, sizeof(rbs_ast_declarations_class_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
-    rb_gc_register_mark_object(super_class == NULL ? Qnil : super_class->base.cached_ruby_value);
-    rb_gc_register_mark_object(members == NULL ? Qnil : rbs_node_list_to_ruby_array(members));
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_class(name, type_params, super_class, members, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_class_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CLASS
         },
         .name = name,
@@ -280,19 +229,9 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *nam
 rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
     rbs_ast_declarations_class_super_t *instance = (rbs_ast_declarations_class_super_t *)calloc(1, sizeof(rbs_ast_declarations_class_super_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_class_super(name, args, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_class_super_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CLASS_SUPER
         },
         .name = name,
@@ -306,20 +245,9 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_typ
 rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_classalias_t *instance = (rbs_ast_declarations_classalias_t *)calloc(1, sizeof(rbs_ast_declarations_classalias_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_class_alias(new_name, old_name, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_classalias_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CLASSALIAS
         },
         .new_name = new_name,
@@ -334,20 +262,9 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_typen
 rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_constant_t *instance = (rbs_ast_declarations_constant_t *)calloc(1, sizeof(rbs_ast_declarations_constant_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_constant(name, type, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_constant_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_CONSTANT
         },
         .name = name,
@@ -362,20 +279,9 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_typename_
 rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_global_t *instance = (rbs_ast_declarations_global_t *)calloc(1, sizeof(rbs_ast_declarations_global_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_global(name, type, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_global_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_GLOBAL
         },
         .name = name,
@@ -390,22 +296,9 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_ast_symbol_t 
 rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_interface_t *instance = (rbs_ast_declarations_interface_t *)calloc(1, sizeof(rbs_ast_declarations_interface_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
-    rb_gc_register_mark_object(members == NULL ? Qnil : rbs_node_list_to_ruby_array(members));
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_interface(name, type_params, members, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_interface_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_INTERFACE
         },
         .name = name,
@@ -422,23 +315,9 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
 rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_module_t *instance = (rbs_ast_declarations_module_t *)calloc(1, sizeof(rbs_ast_declarations_module_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
-    rb_gc_register_mark_object(self_types == NULL ? Qnil : rbs_node_list_to_ruby_array(self_types));
-    rb_gc_register_mark_object(members == NULL ? Qnil : rbs_node_list_to_ruby_array(members));
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_module(name, type_params, self_types, members, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_module_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_MODULE
         },
         .name = name,
@@ -456,19 +335,9 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *n
 rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
     rbs_ast_declarations_module_self_t *instance = (rbs_ast_declarations_module_self_t *)calloc(1, sizeof(rbs_ast_declarations_module_self_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_module_self(name, args, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_module_self_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_MODULE_SELF
         },
         .name = name,
@@ -482,20 +351,9 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_typ
 rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_modulealias_t *instance = (rbs_ast_declarations_modulealias_t *)calloc(1, sizeof(rbs_ast_declarations_modulealias_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_module_alias(new_name, old_name, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_modulealias_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_MODULEALIAS
         },
         .new_name = new_name,
@@ -510,22 +368,9 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_typ
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_typealias_t *instance = (rbs_ast_declarations_typealias_t *)calloc(1, sizeof(rbs_ast_declarations_typealias_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_decl_type_alias(name, type_params, type, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_declarations_typealias_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DECLARATIONS_TYPEALIAS
         },
         .name = name,
@@ -542,18 +387,9 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typenam
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, rbs_location_t *location) {
     rbs_ast_directives_use_t *instance = (rbs_ast_directives_use_t *)calloc(1, sizeof(rbs_ast_directives_use_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(clauses == NULL ? Qnil : rbs_node_list_to_ruby_array(clauses));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_directives_use(clauses, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_directives_use_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DIRECTIVES_USE
         },
         .clauses = clauses,
@@ -566,19 +402,9 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, r
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_typename_t *type_name, rbs_ast_symbol_t *new_name, rbs_location_t *location) {
     rbs_ast_directives_use_singleclause_t *instance = (rbs_ast_directives_use_singleclause_t *)calloc(1, sizeof(rbs_ast_directives_use_singleclause_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type_name == NULL ? Qnil : type_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_directives_use_single_clause(type_name, new_name, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_directives_use_singleclause_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DIRECTIVES_USE_SINGLECLAUSE
         },
         .type_name = type_name,
@@ -592,18 +418,9 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(r
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_namespace_t *namespace, rbs_location_t *location) {
     rbs_ast_directives_use_wildcardclause_t *instance = (rbs_ast_directives_use_wildcardclause_t *)calloc(1, sizeof(rbs_ast_directives_use_wildcardclause_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(namespace == NULL ? Qnil : namespace->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_directives_use_wildcard_clause(namespace, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_directives_use_wildcardclause_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE
         },
         .namespace = namespace,
@@ -616,22 +433,9 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_alias_t *instance = (rbs_ast_members_alias_t *)calloc(1, sizeof(rbs_ast_members_alias_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
-    rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_alias(new_name, old_name, kind, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_alias_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_ALIAS
         },
         .new_name = new_name,
@@ -648,24 +452,9 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, r
 rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attraccessor_t *instance = (rbs_ast_members_attraccessor_t *)calloc(1, sizeof(rbs_ast_members_attraccessor_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(ivar_name == NULL ? Qnil : ivar_name->cached_ruby_value);
-    rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-    rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_attr_accessor(name, type, ivar_name, kind, annotations, location, comment, visibility);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_attraccessor_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_ATTRACCESSOR
         },
         .name = name,
@@ -684,24 +473,9 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_
 rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attrreader_t *instance = (rbs_ast_members_attrreader_t *)calloc(1, sizeof(rbs_ast_members_attrreader_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(ivar_name == NULL ? Qnil : ivar_name->cached_ruby_value);
-    rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-    rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_attr_reader(name, type, ivar_name, kind, annotations, location, comment, visibility);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_attrreader_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_ATTRREADER
         },
         .name = name,
@@ -720,24 +494,9 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *n
 rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attrwriter_t *instance = (rbs_ast_members_attrwriter_t *)calloc(1, sizeof(rbs_ast_members_attrwriter_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(ivar_name == NULL ? Qnil : ivar_name->cached_ruby_value);
-    rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-    rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_attr_writer(name, type, ivar_name, kind, annotations, location, comment, visibility);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_attrwriter_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_ATTRWRITER
         },
         .name = name,
@@ -756,20 +515,9 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *n
 rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_classinstancevariable_t *instance = (rbs_ast_members_classinstancevariable_t *)calloc(1, sizeof(rbs_ast_members_classinstancevariable_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_class_instance_variable(name, type, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_classinstancevariable_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE
         },
         .name = name,
@@ -784,20 +532,9 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
 rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_classvariable_t *instance = (rbs_ast_members_classvariable_t *)calloc(1, sizeof(rbs_ast_members_classvariable_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_class_variable(name, type, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_classvariable_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_CLASSVARIABLE
         },
         .name = name,
@@ -812,21 +549,9 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_ast_symbo
 rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_extend_t *instance = (rbs_ast_members_extend_t *)calloc(1, sizeof(rbs_ast_members_extend_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_extend(name, args, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_extend_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_EXTEND
         },
         .name = name,
@@ -842,21 +567,9 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_n
 rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_include_t *instance = (rbs_ast_members_include_t *)calloc(1, sizeof(rbs_ast_members_include_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_include(name, args, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_include_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_INCLUDE
         },
         .name = name,
@@ -872,20 +585,9 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs
 rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast_symbol_t *name, rbs_node_t *type, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_instancevariable_t *instance = (rbs_ast_members_instancevariable_t *)calloc(1, sizeof(rbs_ast_members_instancevariable_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_instance_variable(name, type, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_instancevariable_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_INSTANCEVARIABLE
         },
         .name = name,
@@ -900,24 +602,9 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_ast
 rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, bool overloading, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_methoddefinition_t *instance = (rbs_ast_members_methoddefinition_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(overloads == NULL ? Qnil : rbs_node_list_to_ruby_array(overloads));
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-    rb_gc_register_mark_object(overloading ? Qtrue : Qfalse);
-    rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_method_definition(name, kind, overloads, annotations, location, comment, overloading, visibility);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_methoddefinition_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_METHODDEFINITION
         },
         .name = name,
@@ -936,18 +623,9 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast
 rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_node_list_t *annotations, rbs_node_t *method_type) {
     rbs_ast_members_methoddefinition_overload_t *instance = (rbs_ast_members_methoddefinition_overload_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_overload_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(method_type == NULL ? Qnil : method_type->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_method_definition_overload(annotations, method_type);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_methoddefinition_overload_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD
         },
         .annotations = annotations,
@@ -960,21 +638,9 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_prepend_t *instance = (rbs_ast_members_prepend_t *)calloc(1, sizeof(rbs_ast_members_prepend_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_prepend(name, args, annotations, location, comment);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_prepend_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_PREPEND
         },
         .name = name,
@@ -990,17 +656,9 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location) {
     rbs_ast_members_private_t *instance = (rbs_ast_members_private_t *)calloc(1, sizeof(rbs_ast_members_private_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_private(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_private_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_PRIVATE
         },
         .location = location,
@@ -1012,17 +670,9 @@ rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location)
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
     rbs_ast_members_public_t *instance = (rbs_ast_members_public_t *)calloc(1, sizeof(rbs_ast_members_public_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_members_public(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_members_public_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_MEMBERS_PUBLIC
         },
         .location = location,
@@ -1034,22 +684,9 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type, rbs_location_t *location) {
     rbs_ast_typeparam_t *instance = (rbs_ast_typeparam_t *)calloc(1, sizeof(rbs_ast_typeparam_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(variance == NULL ? Qnil : variance->base.cached_ruby_value);
-    rb_gc_register_mark_object(upper_bound == NULL ? Qnil : upper_bound->cached_ruby_value);
-    rb_gc_register_mark_object(unchecked ? Qtrue : Qfalse);
-    rb_gc_register_mark_object(default_type == NULL ? Qnil : default_type->cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_ast_type_param(name, variance, upper_bound, unchecked, default_type, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_ast_typeparam_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_AST_TYPEPARAM
         },
         .name = name,
@@ -1066,20 +703,9 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_ast_symbo
 rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location) {
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(block == NULL ? Qnil : block->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_method_type(type_params, type, block, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_methodtype_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_METHODTYPE
         },
         .type_params = type_params,
@@ -1094,18 +720,9 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, rbs_node_t *t
 rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute) {
     rbs_namespace_t *instance = (rbs_namespace_t *)calloc(1, sizeof(rbs_namespace_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(path == NULL ? Qnil : rbs_node_list_to_ruby_array(path));
-    rb_gc_register_mark_object(absolute ? Qtrue : Qfalse);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_namespace(path, absolute);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_namespace_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_NAMESPACE
         },
         .path = path,
@@ -1115,20 +732,12 @@ rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute) {
     return instance;
 }
 
-rbs_signature_t *rbs_signature_new(VALUE ruby_value, rbs_node_list_t *directives, rbs_node_list_t *declarations) {
+rbs_signature_t *rbs_signature_new(rbs_node_list_t *directives, rbs_node_list_t *declarations) {
     rbs_signature_t *instance = (rbs_signature_t *)calloc(1, sizeof(rbs_signature_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(ruby_value);
-    rb_gc_register_mark_object(directives == NULL ? Qnil : rbs_node_list_to_ruby_array(directives));
-    rb_gc_register_mark_object(declarations == NULL ? Qnil : rbs_node_list_to_ruby_array(declarations));
-
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_signature_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_SIGNATURE
         },
         .directives = directives,
@@ -1141,18 +750,9 @@ rbs_signature_t *rbs_signature_new(VALUE ruby_value, rbs_node_list_t *directives
 rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *name) {
     rbs_typename_t *instance = (rbs_typename_t *)calloc(1, sizeof(rbs_typename_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(namespace == NULL ? Qnil : namespace->base.cached_ruby_value);
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_type_name(namespace, name);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_typename_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPENAME
         },
         .namespace = namespace,
@@ -1165,19 +765,9 @@ rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *n
 rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
     rbs_types_alias_t *instance = (rbs_types_alias_t *)calloc(1, sizeof(rbs_types_alias_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_alias(name, args, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_alias_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_ALIAS
         },
         .name = name,
@@ -1191,18 +781,9 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *ar
 rbs_types_bases_any_t *rbs_types_bases_any_new(bool todo, rbs_location_t *location) {
     rbs_types_bases_any_t *instance = (rbs_types_bases_any_t *)calloc(1, sizeof(rbs_types_bases_any_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(todo ? Qtrue : Qfalse);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_any(todo, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_any_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_ANY
         },
         .todo = todo,
@@ -1215,17 +796,9 @@ rbs_types_bases_any_t *rbs_types_bases_any_new(bool todo, rbs_location_t *locati
 rbs_types_bases_bool_t *rbs_types_bases_bool_new(rbs_location_t *location) {
     rbs_types_bases_bool_t *instance = (rbs_types_bases_bool_t *)calloc(1, sizeof(rbs_types_bases_bool_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_bool(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_bool_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_BOOL
         },
         .location = location,
@@ -1237,17 +810,9 @@ rbs_types_bases_bool_t *rbs_types_bases_bool_new(rbs_location_t *location) {
 rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(rbs_location_t *location) {
     rbs_types_bases_bottom_t *instance = (rbs_types_bases_bottom_t *)calloc(1, sizeof(rbs_types_bases_bottom_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_bottom(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_bottom_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_BOTTOM
         },
         .location = location,
@@ -1259,17 +824,9 @@ rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(rbs_location_t *location) {
 rbs_types_bases_class_t *rbs_types_bases_class_new(rbs_location_t *location) {
     rbs_types_bases_class_t *instance = (rbs_types_bases_class_t *)calloc(1, sizeof(rbs_types_bases_class_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_class(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_class_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_CLASS
         },
         .location = location,
@@ -1281,17 +838,9 @@ rbs_types_bases_class_t *rbs_types_bases_class_new(rbs_location_t *location) {
 rbs_types_bases_instance_t *rbs_types_bases_instance_new(rbs_location_t *location) {
     rbs_types_bases_instance_t *instance = (rbs_types_bases_instance_t *)calloc(1, sizeof(rbs_types_bases_instance_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_instance(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_instance_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_INSTANCE
         },
         .location = location,
@@ -1303,17 +852,9 @@ rbs_types_bases_instance_t *rbs_types_bases_instance_new(rbs_location_t *locatio
 rbs_types_bases_nil_t *rbs_types_bases_nil_new(rbs_location_t *location) {
     rbs_types_bases_nil_t *instance = (rbs_types_bases_nil_t *)calloc(1, sizeof(rbs_types_bases_nil_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_nil(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_nil_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_NIL
         },
         .location = location,
@@ -1325,17 +866,9 @@ rbs_types_bases_nil_t *rbs_types_bases_nil_new(rbs_location_t *location) {
 rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_location_t *location) {
     rbs_types_bases_self_t *instance = (rbs_types_bases_self_t *)calloc(1, sizeof(rbs_types_bases_self_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_self(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_self_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_SELF
         },
         .location = location,
@@ -1347,17 +880,9 @@ rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_location_t *location) {
 rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_location_t *location) {
     rbs_types_bases_top_t *instance = (rbs_types_bases_top_t *)calloc(1, sizeof(rbs_types_bases_top_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_top(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_top_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_TOP
         },
         .location = location,
@@ -1369,17 +894,9 @@ rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_location_t *location) {
 rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_location_t *location) {
     rbs_types_bases_void_t *instance = (rbs_types_bases_void_t *)calloc(1, sizeof(rbs_types_bases_void_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_bases_void(location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_bases_void_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BASES_VOID
         },
         .location = location,
@@ -1391,19 +908,9 @@ rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_location_t *location) {
 rbs_types_block_t *rbs_types_block_new(rbs_node_t *type, bool required, rbs_node_t *self_type) {
     rbs_types_block_t *instance = (rbs_types_block_t *)calloc(1, sizeof(rbs_types_block_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(required ? Qtrue : Qfalse);
-    rb_gc_register_mark_object(self_type == NULL ? Qnil : self_type->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_block(type, required, self_type);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_block_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_BLOCK
         },
         .type = type,
@@ -1417,19 +924,9 @@ rbs_types_block_t *rbs_types_block_new(rbs_node_t *type, bool required, rbs_node
 rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
     rbs_types_classinstance_t *instance = (rbs_types_classinstance_t *)calloc(1, sizeof(rbs_types_classinstance_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_class_instance(name, args, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_classinstance_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_CLASSINSTANCE
         },
         .name = name,
@@ -1443,18 +940,9 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, rbs
 rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t *name, rbs_location_t *location) {
     rbs_types_classsingleton_t *instance = (rbs_types_classsingleton_t *)calloc(1, sizeof(rbs_types_classsingleton_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_class_singleton(name, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_classsingleton_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_CLASSSINGLETON
         },
         .name = name,
@@ -1467,24 +955,9 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_typename_t *name, r
 rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, rbs_hash_t *required_keywords, rbs_hash_t *optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
     rbs_types_function_t *instance = (rbs_types_function_t *)calloc(1, sizeof(rbs_types_function_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(required_positionals == NULL ? Qnil : rbs_node_list_to_ruby_array(required_positionals));
-    rb_gc_register_mark_object(optional_positionals == NULL ? Qnil : rbs_node_list_to_ruby_array(optional_positionals));
-    rb_gc_register_mark_object(rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
-    rb_gc_register_mark_object(trailing_positionals == NULL ? Qnil : rbs_node_list_to_ruby_array(trailing_positionals));
-    rb_gc_register_mark_object(required_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(required_keywords));
-    rb_gc_register_mark_object(optional_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(optional_keywords));
-    rb_gc_register_mark_object(rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
-    rb_gc_register_mark_object(return_type == NULL ? Qnil : return_type->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_function(required_positionals, optional_positionals, rest_positionals, trailing_positionals, required_keywords, optional_keywords, rest_keywords, return_type);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_function_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_FUNCTION
         },
         .required_positionals = required_positionals,
@@ -1503,19 +976,9 @@ rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positiona
 rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, rbs_ast_symbol_t *name, rbs_location_t *location) {
     rbs_types_function_param_t *instance = (rbs_types_function_param_t *)calloc(1, sizeof(rbs_types_function_param_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_function_param(type, name, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_function_param_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_FUNCTION_PARAM
         },
         .type = type,
@@ -1529,19 +992,9 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, rbs_a
 rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location) {
     rbs_types_interface_t *instance = (rbs_types_interface_t *)calloc(1, sizeof(rbs_types_interface_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_interface(name, args, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_interface_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_INTERFACE
         },
         .name = name,
@@ -1555,18 +1008,9 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_li
 rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs_location_t *location) {
     rbs_types_intersection_t *instance = (rbs_types_intersection_t *)calloc(1, sizeof(rbs_types_intersection_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(types == NULL ? Qnil : rbs_node_list_to_ruby_array(types));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_intersection(types, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_intersection_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_INTERSECTION
         },
         .types = types,
@@ -1579,18 +1023,10 @@ rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs
 rbs_types_literal_t *rbs_types_literal_new(VALUE literal, rbs_location_t *location) {
     rbs_types_literal_t *instance = (rbs_types_literal_t *)calloc(1, sizeof(rbs_types_literal_t));
 
-    // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(literal);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_literal(literal, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_literal_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_LITERAL
         },
         .literal = literal,
@@ -1603,18 +1039,9 @@ rbs_types_literal_t *rbs_types_literal_new(VALUE literal, rbs_location_t *locati
 rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *location) {
     rbs_types_optional_t *instance = (rbs_types_optional_t *)calloc(1, sizeof(rbs_types_optional_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_optional(type, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_optional_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_OPTIONAL
         },
         .type = type,
@@ -1627,20 +1054,9 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *l
 rbs_types_proc_t *rbs_types_proc_new(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type) {
     rbs_types_proc_t *instance = (rbs_types_proc_t *)calloc(1, sizeof(rbs_types_proc_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(block == NULL ? Qnil : block->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-    rb_gc_register_mark_object(self_type == NULL ? Qnil : self_type->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_proc(type, block, location, self_type);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_proc_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_PROC
         },
         .type = type,
@@ -1655,18 +1071,9 @@ rbs_types_proc_t *rbs_types_proc_new(rbs_node_t *type, rbs_types_block_t *block,
 rbs_types_record_t *rbs_types_record_new(rbs_hash_t *all_fields, rbs_location_t *location) {
     rbs_types_record_t *instance = (rbs_types_record_t *)calloc(1, sizeof(rbs_types_record_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(all_fields == NULL ? Qnil : rbs_hash_to_ruby_hash(all_fields));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_record(all_fields, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_record_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_RECORD
         },
         .all_fields = all_fields,
@@ -1676,20 +1083,12 @@ rbs_types_record_t *rbs_types_record_new(rbs_hash_t *all_fields, rbs_location_t 
     return instance;
 }
 
-rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(VALUE ruby_value, rbs_node_t *type, bool required) {
+rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(rbs_node_t *type, bool required) {
     rbs_types_record_fieldtype_t *instance = (rbs_types_record_fieldtype_t *)calloc(1, sizeof(rbs_types_record_fieldtype_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(ruby_value);
-    rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(required ? Qtrue : Qfalse);
-
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_record_fieldtype_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_RECORD_FIELDTYPE
         },
         .type = type,
@@ -1702,18 +1101,9 @@ rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(VALUE ruby_value, r
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *location) {
     rbs_types_tuple_t *instance = (rbs_types_tuple_t *)calloc(1, sizeof(rbs_types_tuple_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(types == NULL ? Qnil : rbs_node_list_to_ruby_array(types));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_tuple(types, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_tuple_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_TUPLE
         },
         .types = types,
@@ -1726,18 +1116,9 @@ rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *l
 rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *location) {
     rbs_types_union_t *instance = (rbs_types_union_t *)calloc(1, sizeof(rbs_types_union_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(types == NULL ? Qnil : rbs_node_list_to_ruby_array(types));
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_union(types, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_union_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_UNION
         },
         .types = types,
@@ -1750,17 +1131,9 @@ rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *l
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_node_t *return_type) {
     rbs_types_untypedfunction_t *instance = (rbs_types_untypedfunction_t *)calloc(1, sizeof(rbs_types_untypedfunction_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(return_type == NULL ? Qnil : return_type->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_untyped_function(return_type);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_untypedfunction_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_UNTYPEDFUNCTION
         },
         .return_type = return_type,
@@ -1772,18 +1145,9 @@ rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_node_t *return_ty
 rbs_types_variable_t *rbs_types_variable_new(rbs_ast_symbol_t *name, rbs_location_t *location) {
     rbs_types_variable_t *instance = (rbs_types_variable_t *)calloc(1, sizeof(rbs_types_variable_t));
 
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
-
-    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
-    VALUE ruby_value = rbs_variable(name, location);
-
-    rb_gc_register_mark_object(ruby_value);
 
     *instance = (rbs_types_variable_t) {
         .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
             .type = RBS_TYPES_VARIABLE
         },
         .name = name,
@@ -1804,39 +1168,20 @@ rbs_types_variable_t *rbs_types_variable_new(rbs_ast_symbol_t *name, rbs_locatio
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-const char* get_class_name(VALUE o) {
-    VALUE klass = rb_class_of(o);      // Get the class of the object
-    VALUE klass_name = rb_class_name(klass);  // Get the name of the class
-    const char* name = StringValueCStr(klass_name);  // Convert to C string
-    return name;
-}
-
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
     if (instance == NULL) {
         return Qnil;
     }
 
-    VALUE ruby_value = instance->cached_ruby_value;
-
-    if (ruby_value == Qnil || ruby_value == Qundef) {
-        fprintf(stderr, "cached_ruby_value is NULL\n");
-        exit(1);
-    }
-
-    const char *class_name = get_class_name(ruby_value);
-
     switch (instance->type) {
         case RBS_AST_ANNOTATION: {
-            if (strcmp(class_name, "RBS::AST::Annotation") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Annotation, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_annotation_t *node = (rbs_ast_annotation_t *)instance;
             // [#<RBS::Template::Field name="string" c_type="rbs_string">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&node->string));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Annotation,
@@ -1845,19 +1190,16 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_BOOL: {
-            return instance->cached_ruby_value;
+            return ((rbs_ast_bool_t *) instance)->value ? Qtrue : Qfalse;
         }
         case RBS_AST_COMMENT: {
-            if (strcmp(class_name, "RBS::AST::Comment") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Comment, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_comment_t *node = (rbs_ast_comment_t *)instance;
             // [#<RBS::Template::Field name="string" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("string")), node->string);
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Comment,
@@ -1866,10 +1208,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_CLASS: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Class") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Class, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_class_t *node = (rbs_ast_declarations_class_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="super_class" c_type="rbs_ast_declarations_class_super">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -1882,6 +1220,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+            rb_funcall(
+              RBS_AST_TypeParam,
+              rb_intern("resolve_variables"),
+              1,
+              rb_hash_lookup(h, ID2SYM(rb_intern("type_params")))
+            );
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_Class,
                 1,
@@ -1889,10 +1234,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_CLASS_SUPER: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Class::Super") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Class::Super, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_class_super_t *node = (rbs_ast_declarations_class_super_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -1901,6 +1242,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_Class_Super,
                 1,
@@ -1908,10 +1250,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_CLASSALIAS: {
-            if (strcmp(class_name, "RBS::AST::Declarations::ClassAlias") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::ClassAlias, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_classalias_t *node = (rbs_ast_declarations_classalias_t *)instance;
             // [#<RBS::Template::Field name="new_name" c_type="rbs_typename">, #<RBS::Template::Field name="old_name" c_type="rbs_typename">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -1921,6 +1259,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_ClassAlias,
                 1,
@@ -1928,10 +1267,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_CONSTANT: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Constant") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Constant, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_constant_t *node = (rbs_ast_declarations_constant_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -1941,6 +1276,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_Constant,
                 1,
@@ -1948,10 +1284,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_GLOBAL: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Global") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Global, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_global_t *node = (rbs_ast_declarations_global_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -1961,6 +1293,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_Global,
                 1,
@@ -1968,10 +1301,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_INTERFACE: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Interface") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Interface, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_interface_t *node = (rbs_ast_declarations_interface_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -1983,6 +1312,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+            rb_funcall(
+              RBS_AST_TypeParam,
+              rb_intern("resolve_variables"),
+              1,
+              rb_hash_lookup(h, ID2SYM(rb_intern("type_params")))
+            );
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_Interface,
                 1,
@@ -1990,10 +1326,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_MODULE: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Module") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Module, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_module_t *node = (rbs_ast_declarations_module_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="self_types" c_type="rbs_node_list">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2006,6 +1338,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+            rb_funcall(
+              RBS_AST_TypeParam,
+              rb_intern("resolve_variables"),
+              1,
+              rb_hash_lookup(h, ID2SYM(rb_intern("type_params")))
+            );
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_Module,
                 1,
@@ -2013,10 +1352,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_MODULE_SELF: {
-            if (strcmp(class_name, "RBS::AST::Declarations::Module::Self") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::Module::Self, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_module_self_t *node = (rbs_ast_declarations_module_self_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2025,6 +1360,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_Module_Self,
                 1,
@@ -2032,10 +1368,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_MODULEALIAS: {
-            if (strcmp(class_name, "RBS::AST::Declarations::ModuleAlias") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::ModuleAlias, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_modulealias_t *node = (rbs_ast_declarations_modulealias_t *)instance;
             // [#<RBS::Template::Field name="new_name" c_type="rbs_typename">, #<RBS::Template::Field name="old_name" c_type="rbs_typename">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2045,6 +1377,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_ModuleAlias,
                 1,
@@ -2052,10 +1385,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DECLARATIONS_TYPEALIAS: {
-            if (strcmp(class_name, "RBS::AST::Declarations::TypeAlias") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Declarations::TypeAlias, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_declarations_typealias_t *node = (rbs_ast_declarations_typealias_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2067,6 +1396,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+            rb_funcall(
+              RBS_AST_TypeParam,
+              rb_intern("resolve_variables"),
+              1,
+              rb_hash_lookup(h, ID2SYM(rb_intern("type_params")))
+            );
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Declarations_TypeAlias,
                 1,
@@ -2074,16 +1410,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DIRECTIVES_USE: {
-            if (strcmp(class_name, "RBS::AST::Directives::Use") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Directives::Use, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_directives_use_t *node = (rbs_ast_directives_use_t *)instance;
             // [#<RBS::Template::Field name="clauses" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("clauses")), rbs_node_list_to_ruby_array(node->clauses));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Directives_Use,
@@ -2092,10 +1425,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DIRECTIVES_USE_SINGLECLAUSE: {
-            if (strcmp(class_name, "RBS::AST::Directives::Use::SingleClause") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Directives::Use::SingleClause, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_directives_use_singleclause_t *node = (rbs_ast_directives_use_singleclause_t *)instance;
             // [#<RBS::Template::Field name="type_name" c_type="rbs_typename">, #<RBS::Template::Field name="new_name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2104,6 +1433,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("new_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->new_name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Directives_Use_SingleClause,
                 1,
@@ -2111,16 +1441,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE: {
-            if (strcmp(class_name, "RBS::AST::Directives::Use::WildcardClause") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Directives::Use::WildcardClause, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_directives_use_wildcardclause_t *node = (rbs_ast_directives_use_wildcardclause_t *)instance;
             // [#<RBS::Template::Field name="namespace" c_type="rbs_namespace">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("namespace")), rbs_struct_to_ruby_value((rbs_node_t *) node->namespace)); // rbs_namespace
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Directives_Use_WildcardClause,
@@ -2129,10 +1456,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_ALIAS: {
-            if (strcmp(class_name, "RBS::AST::Members::Alias") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::Alias, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_alias_t *node = (rbs_ast_members_alias_t *)instance;
             // [#<RBS::Template::Field name="new_name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="old_name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2144,6 +1467,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_Alias,
                 1,
@@ -2151,10 +1475,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_ATTRACCESSOR: {
-            if (strcmp(class_name, "RBS::AST::Members::AttrAccessor") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::AttrAccessor, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_attraccessor_t *node = (rbs_ast_members_attraccessor_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="ivar_name" c_type="rbs_node">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
@@ -2168,6 +1488,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
             rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_AttrAccessor,
                 1,
@@ -2175,10 +1496,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_ATTRREADER: {
-            if (strcmp(class_name, "RBS::AST::Members::AttrReader") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::AttrReader, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_attrreader_t *node = (rbs_ast_members_attrreader_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="ivar_name" c_type="rbs_node">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
@@ -2192,6 +1509,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
             rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_AttrReader,
                 1,
@@ -2199,10 +1517,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_ATTRWRITER: {
-            if (strcmp(class_name, "RBS::AST::Members::AttrWriter") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::AttrWriter, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_attrwriter_t *node = (rbs_ast_members_attrwriter_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="ivar_name" c_type="rbs_node">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
@@ -2216,6 +1530,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
             rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_AttrWriter,
                 1,
@@ -2223,10 +1538,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE: {
-            if (strcmp(class_name, "RBS::AST::Members::ClassInstanceVariable") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::ClassInstanceVariable, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_classinstancevariable_t *node = (rbs_ast_members_classinstancevariable_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2236,6 +1547,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_ClassInstanceVariable,
                 1,
@@ -2243,10 +1555,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_CLASSVARIABLE: {
-            if (strcmp(class_name, "RBS::AST::Members::ClassVariable") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::ClassVariable, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_classvariable_t *node = (rbs_ast_members_classvariable_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2256,6 +1564,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_ClassVariable,
                 1,
@@ -2263,10 +1572,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_EXTEND: {
-            if (strcmp(class_name, "RBS::AST::Members::Extend") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::Extend, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_extend_t *node = (rbs_ast_members_extend_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2277,6 +1582,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_Extend,
                 1,
@@ -2284,10 +1590,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_INCLUDE: {
-            if (strcmp(class_name, "RBS::AST::Members::Include") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::Include, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_include_t *node = (rbs_ast_members_include_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2298,6 +1600,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_Include,
                 1,
@@ -2305,10 +1608,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_INSTANCEVARIABLE: {
-            if (strcmp(class_name, "RBS::AST::Members::InstanceVariable") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::InstanceVariable, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_instancevariable_t *node = (rbs_ast_members_instancevariable_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2318,6 +1617,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_InstanceVariable,
                 1,
@@ -2325,10 +1625,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_METHODDEFINITION: {
-            if (strcmp(class_name, "RBS::AST::Members::MethodDefinition") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::MethodDefinition, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_methoddefinition_t *node = (rbs_ast_members_methoddefinition_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="overloads" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="overloading" c_type="bool">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
@@ -2342,6 +1638,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("overloading")), node->overloading ? Qtrue : Qfalse);
             rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_MethodDefinition,
                 1,
@@ -2349,16 +1646,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD: {
-            if (strcmp(class_name, "RBS::AST::Members::MethodDefinition::Overload") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::MethodDefinition::Overload, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_methoddefinition_overload_t *node = (rbs_ast_members_methoddefinition_overload_t *)instance;
             // [#<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="method_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("method_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->method_type)); // rbs_node
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_MethodDefinition_Overload,
@@ -2367,10 +1661,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_PREPEND: {
-            if (strcmp(class_name, "RBS::AST::Members::Prepend") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::Prepend, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_prepend_t *node = (rbs_ast_members_prepend_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
@@ -2381,6 +1671,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_Prepend,
                 1,
@@ -2388,15 +1679,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_PRIVATE: {
-            if (strcmp(class_name, "RBS::AST::Members::Private") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::Private, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_private_t *node = (rbs_ast_members_private_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_Private,
@@ -2405,15 +1693,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_MEMBERS_PUBLIC: {
-            if (strcmp(class_name, "RBS::AST::Members::Public") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::Members::Public, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_members_public_t *node = (rbs_ast_members_public_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_Public,
@@ -2422,10 +1707,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_TYPEPARAM: {
-            if (strcmp(class_name, "RBS::AST::TypeParam") != 0) {
-                fprintf(stderr, "Expected class name: RBS::AST::TypeParam, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_ast_typeparam_t *node = (rbs_ast_typeparam_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="variance" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="upper_bound" c_type="rbs_node">, #<RBS::Template::Field name="unchecked" c_type="bool">, #<RBS::Template::Field name="default_type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2437,6 +1718,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("default_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->default_type)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_AST_TypeParam,
                 1,
@@ -2444,10 +1726,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_METHODTYPE: {
-            if (strcmp(class_name, "RBS::MethodType") != 0) {
-                fprintf(stderr, "Expected class name: RBS::MethodType, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_methodtype_t *node = (rbs_methodtype_t *)instance;
             // [#<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="block" c_type="rbs_types_block">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2457,6 +1735,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("block")), rbs_struct_to_ruby_value((rbs_node_t *) node->block)); // rbs_types_block
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+            rb_funcall(
+              RBS_AST_TypeParam,
+              rb_intern("resolve_variables"),
+              1,
+              rb_hash_lookup(h, ID2SYM(rb_intern("type_params")))
+            );
+
             return CLASS_NEW_INSTANCE(
                 RBS_MethodType,
                 1,
@@ -2464,16 +1749,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_NAMESPACE: {
-            if (strcmp(class_name, "RBS::Namespace") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Namespace, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_namespace_t *node = (rbs_namespace_t *)instance;
             // [#<RBS::Template::Field name="path" c_type="rbs_node_list">, #<RBS::Template::Field name="absolute" c_type="bool">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("path")), rbs_node_list_to_ruby_array(node->path));
             rb_hash_aset(h, ID2SYM(rb_intern("absolute")), node->absolute ? Qtrue : Qfalse);
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Namespace,
@@ -2482,19 +1764,21 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_SIGNATURE: {
-            return instance->cached_ruby_value;
+            rbs_signature_t *signature = (rbs_signature_t *) instance;
+
+            VALUE array = rb_ary_new();
+            rb_ary_push(array, rbs_node_list_to_ruby_array(signature->directives));
+            rb_ary_push(array, rbs_node_list_to_ruby_array(signature->declarations));
+            return array;
         }
         case RBS_TYPENAME: {
-            if (strcmp(class_name, "RBS::TypeName") != 0) {
-                fprintf(stderr, "Expected class name: RBS::TypeName, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_typename_t *node = (rbs_typename_t *)instance;
             // [#<RBS::Template::Field name="namespace" c_type="rbs_namespace">, #<RBS::Template::Field name="name" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("namespace")), rbs_struct_to_ruby_value((rbs_node_t *) node->namespace)); // rbs_namespace
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_TypeName,
@@ -2503,10 +1787,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_ALIAS: {
-            if (strcmp(class_name, "RBS::Types::Alias") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Alias, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_alias_t *node = (rbs_types_alias_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2515,6 +1795,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Alias,
                 1,
@@ -2522,16 +1803,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_ANY: {
-            if (strcmp(class_name, "RBS::Types::Bases::Any") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Any, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_any_t *node = (rbs_types_bases_any_t *)instance;
             // [#<RBS::Template::Field name="todo" c_type="bool">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("todo")), node->todo ? Qtrue : Qfalse);
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Any,
@@ -2540,15 +1818,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_BOOL: {
-            if (strcmp(class_name, "RBS::Types::Bases::Bool") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Bool, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_bool_t *node = (rbs_types_bases_bool_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Bool,
@@ -2557,15 +1832,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_BOTTOM: {
-            if (strcmp(class_name, "RBS::Types::Bases::Bottom") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Bottom, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_bottom_t *node = (rbs_types_bases_bottom_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Bottom,
@@ -2574,15 +1846,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_CLASS: {
-            if (strcmp(class_name, "RBS::Types::Bases::Class") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Class, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_class_t *node = (rbs_types_bases_class_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Class,
@@ -2591,15 +1860,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_INSTANCE: {
-            if (strcmp(class_name, "RBS::Types::Bases::Instance") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Instance, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_instance_t *node = (rbs_types_bases_instance_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Instance,
@@ -2608,15 +1874,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_NIL: {
-            if (strcmp(class_name, "RBS::Types::Bases::Nil") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Nil, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_nil_t *node = (rbs_types_bases_nil_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Nil,
@@ -2625,15 +1888,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_SELF: {
-            if (strcmp(class_name, "RBS::Types::Bases::Self") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Self, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_self_t *node = (rbs_types_bases_self_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Self,
@@ -2642,15 +1902,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_TOP: {
-            if (strcmp(class_name, "RBS::Types::Bases::Top") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Top, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_top_t *node = (rbs_types_bases_top_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Top,
@@ -2659,15 +1916,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BASES_VOID: {
-            if (strcmp(class_name, "RBS::Types::Bases::Void") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Bases::Void, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_bases_void_t *node = (rbs_types_bases_void_t *)instance;
             // [#<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Bases_Void,
@@ -2676,10 +1930,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_BLOCK: {
-            if (strcmp(class_name, "RBS::Types::Block") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Block, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_block_t *node = (rbs_types_block_t *)instance;
             // [#<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="required" c_type="bool">, #<RBS::Template::Field name="self_type" c_type="rbs_node">]
@@ -2688,6 +1938,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("required")), node->required ? Qtrue : Qfalse);
             rb_hash_aset(h, ID2SYM(rb_intern("self_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->self_type)); // rbs_node
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Block,
                 1,
@@ -2695,10 +1946,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_CLASSINSTANCE: {
-            if (strcmp(class_name, "RBS::Types::ClassInstance") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::ClassInstance, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_classinstance_t *node = (rbs_types_classinstance_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2707,6 +1954,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_Types_ClassInstance,
                 1,
@@ -2714,16 +1962,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_CLASSSINGLETON: {
-            if (strcmp(class_name, "RBS::Types::ClassSingleton") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::ClassSingleton, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_classsingleton_t *node = (rbs_types_classsingleton_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_typename
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_ClassSingleton,
@@ -2732,10 +1977,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_FUNCTION: {
-            if (strcmp(class_name, "RBS::Types::Function") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Function, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_function_t *node = (rbs_types_function_t *)instance;
             // [#<RBS::Template::Field name="required_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="optional_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="rest_positionals" c_type="rbs_node">, #<RBS::Template::Field name="trailing_positionals" c_type="rbs_node_list">, #<RBS::Template::Field name="required_keywords" c_type="rbs_hash">, #<RBS::Template::Field name="optional_keywords" c_type="rbs_hash">, #<RBS::Template::Field name="rest_keywords" c_type="rbs_node">, #<RBS::Template::Field name="return_type" c_type="rbs_node">]
@@ -2749,6 +1990,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("rest_keywords")), rbs_struct_to_ruby_value((rbs_node_t *) node->rest_keywords)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("return_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->return_type)); // rbs_node
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Function,
                 1,
@@ -2756,10 +1998,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_FUNCTION_PARAM: {
-            if (strcmp(class_name, "RBS::Types::Function::Param") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Function::Param, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_function_param_t *node = (rbs_types_function_param_t *)instance;
             // [#<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2768,6 +2006,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Function_Param,
                 1,
@@ -2775,10 +2014,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_INTERFACE: {
-            if (strcmp(class_name, "RBS::Types::Interface") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Interface, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_interface_t *node = (rbs_types_interface_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
@@ -2787,6 +2022,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Interface,
                 1,
@@ -2794,16 +2030,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_INTERSECTION: {
-            if (strcmp(class_name, "RBS::Types::Intersection") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Intersection, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_intersection_t *node = (rbs_types_intersection_t *)instance;
             // [#<RBS::Template::Field name="types" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("types")), rbs_node_list_to_ruby_array(node->types));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Intersection,
@@ -2812,16 +2045,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_LITERAL: {
-            if (strcmp(class_name, "RBS::Types::Literal") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Literal, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_literal_t *node = (rbs_types_literal_t *)instance;
             // [#<RBS::Template::Field name="literal" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("literal")), node->literal);
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Literal,
@@ -2830,16 +2060,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_OPTIONAL: {
-            if (strcmp(class_name, "RBS::Types::Optional") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Optional, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_optional_t *node = (rbs_types_optional_t *)instance;
             // [#<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Optional,
@@ -2848,10 +2075,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_PROC: {
-            if (strcmp(class_name, "RBS::Types::Proc") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Proc, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_proc_t *node = (rbs_types_proc_t *)instance;
             // [#<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="block" c_type="rbs_types_block">, #<RBS::Template::Field name="location" c_type="rbs_location">, #<RBS::Template::Field name="self_type" c_type="rbs_node">]
@@ -2861,6 +2084,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("self_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->self_type)); // rbs_node
 
+
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Proc,
                 1,
@@ -2868,16 +2092,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_RECORD: {
-            if (strcmp(class_name, "RBS::Types::Record") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Record, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_record_t *node = (rbs_types_record_t *)instance;
             // [#<RBS::Template::Field name="all_fields" c_type="rbs_hash">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("all_fields")), rbs_hash_to_ruby_hash(node->all_fields));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Record,
@@ -2886,19 +2107,21 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_RECORD_FIELDTYPE: {
-            return instance->cached_ruby_value;
+            rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
+
+            VALUE array = rb_ary_new();
+            rb_ary_push(array, rbs_struct_to_ruby_value(record_fieldtype->type));
+            rb_ary_push(array, record_fieldtype->required ? Qtrue : Qfalse);
+            return array;
         }
         case RBS_TYPES_TUPLE: {
-            if (strcmp(class_name, "RBS::Types::Tuple") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Tuple, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_tuple_t *node = (rbs_types_tuple_t *)instance;
             // [#<RBS::Template::Field name="types" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("types")), rbs_node_list_to_ruby_array(node->types));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Tuple,
@@ -2907,16 +2130,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_UNION: {
-            if (strcmp(class_name, "RBS::Types::Union") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Union, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_union_t *node = (rbs_types_union_t *)instance;
             // [#<RBS::Template::Field name="types" c_type="rbs_node_list">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("types")), rbs_node_list_to_ruby_array(node->types));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Union,
@@ -2925,15 +2145,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_UNTYPEDFUNCTION: {
-            if (strcmp(class_name, "RBS::Types::UntypedFunction") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::UntypedFunction, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_untypedfunction_t *node = (rbs_types_untypedfunction_t *)instance;
             // [#<RBS::Template::Field name="return_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("return_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->return_type)); // rbs_node
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_UntypedFunction,
@@ -2942,16 +2159,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_TYPES_VARIABLE: {
-            if (strcmp(class_name, "RBS::Types::Variable") != 0) {
-                fprintf(stderr, "Expected class name: RBS::Types::Variable, got %s\n", class_name);
-                exit(1);
-            }
  
             rbs_types_variable_t *node = (rbs_types_variable_t *)instance;
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
+
 
             return CLASS_NEW_INSTANCE(
                 RBS_Types_Variable,
@@ -2960,15 +2174,17 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             );
         }
         case RBS_AST_SYMBOL: {
-           if (strcmp(class_name, "Symbol") != 0) {
-               fprintf(stderr, "Expected class name: Symbol, got %s\n", class_name);
-               exit(1);
-           }
+            rbs_constant_t *constant = rbs_constant_pool_id_to_constant(fake_constant_pool, ((rbs_ast_symbol_t *) instance)->constant_id);
+            assert(constant != NULL);
+            assert(constant->start != NULL);
 
-           return instance->cached_ruby_value;
+            rb_encoding *fake_encoding = rb_utf8_encoding();
+            VALUE ruby_symbol = ID2SYM(rb_intern3(constant->start, constant->length, fake_encoding));
+
+            return ruby_symbol;
         }
         case RBS_OTHER_RUBY_VALUE: {
-          return instance->cached_ruby_value;
+            return ((rbs_other_ruby_value_t *) instance)->ruby_value;
         }
     }
 }

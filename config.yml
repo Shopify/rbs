@@ -349,7 +349,6 @@ nodes:
         c_type: bool
   - name: RBS::Signature
     expose_to_ruby: false
-    builds_ruby_object_internally: false
     fields:
       - name: directives
         c_type: rbs_node_list
@@ -498,7 +497,6 @@ nodes:
         c_type: rbs_location
   - name: RBS::Types::Record::FieldType
     expose_to_ruby: false
-    builds_ruby_object_internally: false
     fields:
       - name: type
         c_type: rbs_node

@@ -19,28 +19,6 @@ module RBS
         new(name: hash["name"], c_type: hash.fetch("c_type", "VALUE"))
       end
 
-      # Returns a C expression that evaluates to the Ruby VALUE object for this field.
-      def cached_ruby_value_expr
-        case @c_type
-        when "VALUE"
-          @name
-        when "bool"
-          "#{@name} ? Qtrue : Qfalse"
-        when "rbs_constant"
-          "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value /* rbs_constant used */"
-        when "rbs_node", "rbs_location"
-          "#{@name} == NULL ? Qnil : #{@name}->cached_ruby_value"
-        when "rbs_string"
-          "#{@name}.cached_ruby_string"
-        when "rbs_node_list"
-          "#{@name} == NULL ? Qnil : rbs_node_list_to_ruby_array(#{@name})"
-        when "rbs_hash"
-          "#{@name} == NULL ? Qnil : rbs_hash_to_ruby_hash(#{@name})"
-        else
-          "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value"
-        end
-      end
-
       def parameter_decl
         case @c_type
         when "VALUE", "bool"
@@ -131,8 +109,6 @@ module RBS
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
         @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
-
-        @builds_ruby_object_internally = yaml.fetch("builds_ruby_object_internally", true)
       end
 
       # The name of the C function which constructs new instances of this C structure.
@@ -145,20 +121,6 @@ module RBS
       # If this is true, then we will also create a Ruby class for it, otherwise we'll skip that.
       def expose_to_ruby?
         @expose_to_ruby
-      end
-
-      # When true, this object is expected to build its own Ruby VALUE object inside its `*_new()` function.
-      # When false, the `*_new()` function will take a Ruby VALUE as its first argument.
-      def builds_ruby_object_internally?
-        @builds_ruby_object_internally
-      end
-
-      def constructor_parameters
-        if builds_ruby_object_internally?
-          @fields
-        else
-          [Field.new(name: "ruby_value", c_type: "VALUE")] + @fields
-        end
       end
     end
 
