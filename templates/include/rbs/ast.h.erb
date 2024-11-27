@@ -15,7 +15,6 @@ enum rbs_node_type {
 };
 
 typedef struct rbs_node {
-    VALUE cached_ruby_value;
     enum rbs_node_type type;
 } rbs_node_t;
 
@@ -88,16 +87,13 @@ rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id);
 
 typedef struct rbs_other_ruby_value {
     rbs_node_t base;
+    VALUE ruby_value;
 } rbs_other_ruby_value_t;
 
 rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value);
 
-<%-
-nodes.each do |node|
-
-parameters = node.constructor_parameters
--%>
-<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= parameters.map(&:parameter_decl).join(", ") %>);
+<%- nodes.each do |node| -%>
+<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>);
 <%- end -%>
 
 VALUE rbs_struct_to_ruby_value(rbs_node_t *instance);
