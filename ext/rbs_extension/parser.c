@@ -2059,7 +2059,7 @@ rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, rbs
   InstanceSingletonKind is_kind;
   rbs_ast_symbol_t *kind;
   rbs_ast_symbol_t *attr_name;
-  rbs_node_t *ivar_name;
+  rbs_ast_symbol_t *ivar_name;
   rbs_node_t *type;
   rbs_ast_comment_t *comment;
   rbs_ast_symbol_t *visibility;
@@ -2105,10 +2105,10 @@ rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, rbs
 
     if (parser_advance_if(state, tAIDENT)) {
       rbs_constant_id_t ivar_name_constant = INTERN_TOKEN(state, state->current_token);
-      ivar_name = (rbs_node_t *) rbs_ast_symbol_new2(ivar_name_constant);
+      ivar_name = rbs_ast_symbol_new2(ivar_name_constant);
       ivar_name_range = state->current_token.range;
     } else {
-      ivar_name = (rbs_node_t *) rbs_other_ruby_value_new(Qfalse);
+      ivar_name = (rbs_ast_symbol_t *) rbs_other_ruby_value_new(Qfalse);
     }
 
     parser_advance_assert(state, pRPAREN);
