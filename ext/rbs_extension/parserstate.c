@@ -332,6 +332,8 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
 
     .vars = NULL,
     .last_comment = NULL,
+
+    .aborted = false,
   };
 
   parser_advance(parser);
