@@ -31,10 +31,12 @@ module RBS
           "#{@name} ? Qtrue : Qfalse"
         when "rbs_constant"
           "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value /* rbs_constant used */"
-        when "rbs_node", "rbs_node_list", "rbs_location", "rbs_hash"
+        when "rbs_node", "rbs_node_list", "rbs_location"
           "#{@name} == NULL ? Qnil : #{@name}->cached_ruby_value"
         when "rbs_string"
           "#{@name}.cached_ruby_string"
+        when "rbs_hash"
+          "#{@name} == NULL ? Qnil : rbs_hash_to_ruby_hash(#{@name})"
         else
           "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value"
         end

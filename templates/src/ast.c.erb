@@ -60,9 +60,6 @@ rbs_hash_t* rbs_hash_new(void) {
     hash->head = NULL;
     hash->tail = NULL;
     hash->length = 0;
-    hash->cached_ruby_value = rb_hash_new();
-
-    rb_gc_register_mark_object(hash->cached_ruby_value);
 
     return hash;
 }
@@ -100,8 +97,6 @@ void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
         return;
     }
 
-    rb_hash_aset(hash->cached_ruby_value, key->cached_ruby_value, value->cached_ruby_value);
-
     rbs_hash_node_t *new_node = (rbs_hash_node_t *)malloc(sizeof(rbs_hash_node_t));
     new_node->key = key;
     new_node->value = value;
@@ -122,7 +117,15 @@ rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
 }
 
 VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
-    return hash->cached_ruby_value;
+    VALUE ruby_hash = rb_hash_new();
+
+    rbs_hash_node_t *current = hash->head;
+    while (current != NULL) {
+        rb_hash_aset(ruby_hash, rbs_struct_to_ruby_value(current->key), rbs_struct_to_ruby_value(current->value));
+        current = current->next;
+    }
+
+    return ruby_hash;
 }
 
 rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
