@@ -20,9 +20,6 @@ rbs_node_list_t* rbs_node_list_new(void) {
     list->head = NULL;
     list->tail = NULL;
     list->length = 0;
-    list->cached_ruby_value = rb_ary_new();
-
-    rb_gc_register_mark_object(list->cached_ruby_value);
 
     return list;
 }
@@ -51,13 +48,20 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
         list->tail->next = new_node;
         list->tail = new_node;
     }
-    list->length++;
 
-    rb_ary_push(list->cached_ruby_value, node->cached_ruby_value);
+    list->length++;
 }
 
 VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
-    return list->cached_ruby_value;
+    VALUE array = rb_ary_new();
+
+    rbs_node_list_node_t *current = list->head;
+    while (current != NULL) {
+        rb_ary_push(array, rbs_struct_to_ruby_value(current->node));
+        current = current->next;
+    }
+
+    return array;
 }
 
 /* rbs_hash */
@@ -244,10 +248,10 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_typename_t *nam
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
+    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
     rb_gc_register_mark_object(super_class == NULL ? Qnil : super_class->base.cached_ruby_value);
-    rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(members == NULL ? Qnil : rbs_node_list_to_ruby_array(members));
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -278,7 +282,7 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_typ
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -388,9 +392,9 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_typenam
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
-    rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
+    rb_gc_register_mark_object(members == NULL ? Qnil : rbs_node_list_to_ruby_array(members));
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -420,10 +424,10 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_typename_t *n
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
-    rb_gc_register_mark_object(self_types == NULL ? Qnil : self_types->cached_ruby_value);
-    rb_gc_register_mark_object(members == NULL ? Qnil : members->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
+    rb_gc_register_mark_object(self_types == NULL ? Qnil : rbs_node_list_to_ruby_array(self_types));
+    rb_gc_register_mark_object(members == NULL ? Qnil : rbs_node_list_to_ruby_array(members));
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -454,7 +458,7 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_typ
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -508,9 +512,9 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_typenam
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
+    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -539,7 +543,7 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_node_list_t *clauses, r
     rbs_ast_directives_use_t *instance = (rbs_ast_directives_use_t *)calloc(1, sizeof(rbs_ast_directives_use_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(clauses == NULL ? Qnil : clauses->cached_ruby_value);
+    rb_gc_register_mark_object(clauses == NULL ? Qnil : rbs_node_list_to_ruby_array(clauses));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -616,7 +620,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, r
     rb_gc_register_mark_object(new_name == NULL ? Qnil : new_name->base.cached_ruby_value);
     rb_gc_register_mark_object(old_name == NULL ? Qnil : old_name->base.cached_ruby_value);
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -649,7 +653,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_ast_symbol_
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(ivar_name == NULL ? Qnil : ivar_name->cached_ruby_value);
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
@@ -685,7 +689,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_ast_symbol_t *n
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(ivar_name == NULL ? Qnil : ivar_name->cached_ruby_value);
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
@@ -721,7 +725,7 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_ast_symbol_t *n
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(ivar_name == NULL ? Qnil : ivar_name->cached_ruby_value);
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(visibility == NULL ? Qnil : visibility->base.cached_ruby_value);
@@ -810,8 +814,8 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_typename_t *name, rbs_n
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -840,8 +844,8 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_typename_t *name, rbs
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -899,8 +903,8 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_ast
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
     rb_gc_register_mark_object(kind == NULL ? Qnil : kind->base.cached_ruby_value);
-    rb_gc_register_mark_object(overloads == NULL ? Qnil : overloads->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(overloads == NULL ? Qnil : rbs_node_list_to_ruby_array(overloads));
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
     rb_gc_register_mark_object(overloading ? Qtrue : Qfalse);
@@ -933,7 +937,7 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
     rbs_ast_members_methoddefinition_overload_t *instance = (rbs_ast_members_methoddefinition_overload_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_overload_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(method_type == NULL ? Qnil : method_type->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -958,8 +962,8 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
-    rb_gc_register_mark_object(annotations == NULL ? Qnil : annotations->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
+    rb_gc_register_mark_object(annotations == NULL ? Qnil : rbs_node_list_to_ruby_array(annotations));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
     rb_gc_register_mark_object(comment == NULL ? Qnil : comment->base.cached_ruby_value);
 
@@ -1063,7 +1067,7 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, rbs_node_t *t
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(type_params == NULL ? Qnil : type_params->cached_ruby_value);
+    rb_gc_register_mark_object(type_params == NULL ? Qnil : rbs_node_list_to_ruby_array(type_params));
     rb_gc_register_mark_object(type == NULL ? Qnil : type->cached_ruby_value);
     rb_gc_register_mark_object(block == NULL ? Qnil : block->base.cached_ruby_value);
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
@@ -1091,7 +1095,7 @@ rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute) {
     rbs_namespace_t *instance = (rbs_namespace_t *)calloc(1, sizeof(rbs_namespace_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(path == NULL ? Qnil : path->cached_ruby_value);
+    rb_gc_register_mark_object(path == NULL ? Qnil : rbs_node_list_to_ruby_array(path));
     rb_gc_register_mark_object(absolute ? Qtrue : Qfalse);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1116,8 +1120,8 @@ rbs_signature_t *rbs_signature_new(VALUE ruby_value, rbs_node_list_t *directives
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(ruby_value);
-    rb_gc_register_mark_object(directives == NULL ? Qnil : directives->cached_ruby_value);
-    rb_gc_register_mark_object(declarations == NULL ? Qnil : declarations->cached_ruby_value);
+    rb_gc_register_mark_object(directives == NULL ? Qnil : rbs_node_list_to_ruby_array(directives));
+    rb_gc_register_mark_object(declarations == NULL ? Qnil : rbs_node_list_to_ruby_array(declarations));
 
 
     rb_gc_register_mark_object(ruby_value);
@@ -1163,7 +1167,7 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_typename_t *name, rbs_node_list_t *ar
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1415,7 +1419,7 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_typename_t *name, rbs
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1464,10 +1468,10 @@ rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positiona
     rbs_types_function_t *instance = (rbs_types_function_t *)calloc(1, sizeof(rbs_types_function_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(required_positionals == NULL ? Qnil : required_positionals->cached_ruby_value);
-    rb_gc_register_mark_object(optional_positionals == NULL ? Qnil : optional_positionals->cached_ruby_value);
+    rb_gc_register_mark_object(required_positionals == NULL ? Qnil : rbs_node_list_to_ruby_array(required_positionals));
+    rb_gc_register_mark_object(optional_positionals == NULL ? Qnil : rbs_node_list_to_ruby_array(optional_positionals));
     rb_gc_register_mark_object(rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
-    rb_gc_register_mark_object(trailing_positionals == NULL ? Qnil : trailing_positionals->cached_ruby_value);
+    rb_gc_register_mark_object(trailing_positionals == NULL ? Qnil : rbs_node_list_to_ruby_array(trailing_positionals));
     rb_gc_register_mark_object(required_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(required_keywords));
     rb_gc_register_mark_object(optional_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(optional_keywords));
     rb_gc_register_mark_object(rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
@@ -1527,7 +1531,7 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_li
 
     // Disable GC for all these Ruby objects.
     rb_gc_register_mark_object(name == NULL ? Qnil : name->base.cached_ruby_value);
-    rb_gc_register_mark_object(args == NULL ? Qnil : args->cached_ruby_value);
+    rb_gc_register_mark_object(args == NULL ? Qnil : rbs_node_list_to_ruby_array(args));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1552,7 +1556,7 @@ rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs
     rbs_types_intersection_t *instance = (rbs_types_intersection_t *)calloc(1, sizeof(rbs_types_intersection_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(types == NULL ? Qnil : types->cached_ruby_value);
+    rb_gc_register_mark_object(types == NULL ? Qnil : rbs_node_list_to_ruby_array(types));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1699,7 +1703,7 @@ rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *l
     rbs_types_tuple_t *instance = (rbs_types_tuple_t *)calloc(1, sizeof(rbs_types_tuple_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(types == NULL ? Qnil : types->cached_ruby_value);
+    rb_gc_register_mark_object(types == NULL ? Qnil : rbs_node_list_to_ruby_array(types));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
@@ -1723,7 +1727,7 @@ rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *l
     rbs_types_union_t *instance = (rbs_types_union_t *)calloc(1, sizeof(rbs_types_union_t));
 
     // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(types == NULL ? Qnil : types->cached_ruby_value);
+    rb_gc_register_mark_object(types == NULL ? Qnil : rbs_node_list_to_ruby_array(types));
     rb_gc_register_mark_object(location == NULL ? Qnil : location->cached_ruby_value);
 
     // Generate our own Ruby VALUE here, rather than accepting it from a parameter.

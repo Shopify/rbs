@@ -95,7 +95,6 @@ typedef struct rbs_node_list {
     rbs_node_list_node_t *head;
     rbs_node_list_node_t *tail;
     size_t length;
-    VALUE cached_ruby_value;
 } rbs_node_list_t;
 
 rbs_node_list_t* rbs_node_list_new(void);
