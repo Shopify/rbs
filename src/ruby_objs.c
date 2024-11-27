@@ -649,8 +649,8 @@ VALUE rbs_function(rbs_node_list_t *required_positionals, rbs_node_list_t *optio
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("optional_positionals")), optional_positionals == NULL ? Qnil : optional_positionals->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("rest_positionals")), rest_positionals == NULL ? Qnil : rest_positionals->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("trailing_positionals")), trailing_positionals == NULL ? Qnil : trailing_positionals->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required_keywords")), required_keywords == NULL ? Qnil : required_keywords->cached_ruby_value);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("optional_keywords")), optional_keywords == NULL ? Qnil : optional_keywords->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required_keywords")), required_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(required_keywords));
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("optional_keywords")), optional_keywords == NULL ? Qnil : rbs_hash_to_ruby_hash(optional_keywords));
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("rest_keywords")), rest_keywords == NULL ? Qnil : rest_keywords->cached_ruby_value);
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("return_type")), return_type == NULL ? Qnil : return_type->cached_ruby_value);
 
@@ -739,7 +739,7 @@ VALUE rbs_proc(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *locat
 
 VALUE rbs_record(rbs_hash_t *all_fields, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("all_fields")), all_fields == NULL ? Qnil : all_fields->cached_ruby_value);
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("all_fields")), all_fields == NULL ? Qnil : rbs_hash_to_ruby_hash(all_fields));
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location == NULL ? Qnil : location->cached_ruby_value);
 
   return CLASS_NEW_INSTANCE(
