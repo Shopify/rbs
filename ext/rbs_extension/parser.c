@@ -2,6 +2,7 @@
 #include "rbs_extension.h"
 #include "rbs/rbs_string.h"
 #include "rbs/rbs_constant_pool.h"
+#include "rbs/rbs_unescape.h"
 #include "rbs_string_bridging.h"
 
 #define INTERN_TOKEN_ID(parserstate, tok) \
@@ -1016,9 +1017,17 @@ static rbs_node_t *parse_simple(parserstate *state) {
   case tSQSTRING:
   case tDQSTRING: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    VALUE literal = rbs_unquote_string(state, state->current_token.range, 0);
-    rbs_node_t *box = (rbs_node_t *) rbs_other_ruby_value_new(literal);
-    return (rbs_node_t *) rbs_types_literal_new(box, loc);
+
+    rbs_string_t string = rbs_string_from_ruby_string(state->lexstate->string);
+    rbs_string_drop_first(&string, state->current_token.range.start.byte_pos);
+    rbs_string_limit_length(&string, state->current_token.range.end.byte_pos - state->current_token.range.start.byte_pos);
+    rbs_string_ensure_owned(&string);
+
+    rbs_string_t unquoted_str = rbs_unquote_string2(string);
+    rbs_string_ensure_owned(&unquoted_str);
+
+    rbs_node_t *literal = (rbs_node_t *) rbs_ast_string_new(unquoted_str);
+    return (rbs_node_t *) rbs_types_literal_new(literal, loc);
   }
   case tSYMBOL:
   case tSQSYMBOL:

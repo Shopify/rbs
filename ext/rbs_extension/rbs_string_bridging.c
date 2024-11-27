@@ -7,6 +7,8 @@ rbs_string_t rbs_string_from_ruby_string(VALUE ruby_string) {
     rbs_string_t s = rbs_string_shared_new(StringValueCStr(ruby_string), RSTRING_END(ruby_string));
     s.encoding = rb_enc_get(ruby_string);
 
+    rbs_string_ensure_owned(&s); // Copy out the string so we don't need the Ruby object to stay alive.
+
     return s;
 }
 

@@ -206,6 +206,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
 
             return rb_funcall(str, rb_intern("to_i"), 0);
 
+            <%- when "RBS::AST::String" -%>
+            rbs_ast_string_t *string_node = (rbs_ast_string_t *) instance;
+            rbs_string_t s = string_node->string;
+
+            return rb_enc_str_new(s.start, rbs_string_len(s), rb_utf8_encoding());
+
             <%- when "RBS::Types::Record::FieldType" -%>
             rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
 
