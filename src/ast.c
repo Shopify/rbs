@@ -8,7 +8,7 @@
 #include "rbs/ast.h"
 
 #include <stdlib.h>
-#include "rbs/constants.h"
+#include "class_constants.h"
 #include "rbs_string_bridging.h"
 #include "ruby/encoding.h"
 
