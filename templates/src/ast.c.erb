@@ -198,6 +198,14 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             <%- when "RBS::AST::Bool" -%>
             return ((rbs_ast_bool_t *) instance)->value ? Qtrue : Qfalse;
 
+            <%- when "RBS::AST::Integer" -%>
+            rbs_ast_integer_t *integer_node = (rbs_ast_integer_t *) instance;
+            rbs_string_t string_repr = integer_node->string_representation;
+
+            VALUE str = rb_enc_str_new(string_repr.start, rbs_string_len(string_repr), rb_utf8_encoding());
+
+            return rb_funcall(str, rb_intern("to_i"), 0);
+
             <%- when "RBS::Types::Record::FieldType" -%>
             rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
 
