@@ -12,6 +12,26 @@
 #include "class_constants.h"
 #include "rbs_string_bridging.h"
 
+VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
+    VALUE a = rb_ary_new();
+
+    for (rbs_node_list_node_t *n = list->head; n != NULL; n = n->next) {
+        rb_ary_push(a, rbs_struct_to_ruby_value(n->node));
+    }
+
+    return a;
+}
+
+VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
+    VALUE h = rb_hash_new();
+
+    for (rbs_hash_node_t *n = hash->head; n != NULL; n = n->next) {
+        rb_hash_aset(h, rbs_struct_to_ruby_value(n->key), rbs_struct_to_ruby_value(n->value));
+    }
+
+    return h;
+}
+
 #ifdef RB_PASS_KEYWORDS
   // Ruby 2.7 or later
   #define CLASS_NEW_INSTANCE(klass, argc, argv)\
