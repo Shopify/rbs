@@ -1020,10 +1020,9 @@ rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs
     return instance;
 }
 
-rbs_types_literal_t *rbs_types_literal_new(VALUE literal, rbs_location_t *location) {
+rbs_types_literal_t *rbs_types_literal_new(rbs_node_t *literal, rbs_location_t *location) {
     rbs_types_literal_t *instance = (rbs_types_literal_t *)calloc(1, sizeof(rbs_types_literal_t));
 
-    rb_gc_register_mark_object(literal);
 
     *instance = (rbs_types_literal_t) {
         .base = (rbs_node_t) {
@@ -1189,6 +1188,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         }
         case RBS_AST_BOOL: {
             return ((rbs_ast_bool_t *) instance)->value ? Qtrue : Qfalse;
+
         }
         case RBS_AST_COMMENT: {
  
@@ -2045,9 +2045,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         case RBS_TYPES_LITERAL: {
  
             rbs_types_literal_t *node = (rbs_types_literal_t *)instance;
-            // [#<RBS::Template::Field name="literal" c_type="VALUE">, #<RBS::Template::Field name="location" c_type="rbs_location">]
+            // [#<RBS::Template::Field name="literal" c_type="rbs_node">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("literal")), node->literal);
+            rb_hash_aset(h, ID2SYM(rb_intern("literal")), rbs_struct_to_ruby_value((rbs_node_t *) node->literal)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
 
 
@@ -2111,6 +2111,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_ary_push(array, rbs_struct_to_ruby_value(record_fieldtype->type));
             rb_ary_push(array, record_fieldtype->required ? Qtrue : Qfalse);
             return array;
+
         }
         case RBS_TYPES_TUPLE: {
  

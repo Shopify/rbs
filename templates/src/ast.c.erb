@@ -197,6 +197,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             <%- case node.ruby_full_name -%>
             <%- when "RBS::AST::Bool" -%>
             return ((rbs_ast_bool_t *) instance)->value ? Qtrue : Qfalse;
+
             <%- when "RBS::Types::Record::FieldType" -%>
             rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
 
@@ -204,6 +205,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_ary_push(array, rbs_struct_to_ruby_value(record_fieldtype->type));
             rb_ary_push(array, record_fieldtype->required ? Qtrue : Qfalse);
             return array;
+
             <%- when "RBS::Signature" -%>
             rbs_signature_t *signature = (rbs_signature_t *) instance;
 
