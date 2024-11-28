@@ -1,10 +1,14 @@
 #include "rbs/rbs_string.h"
 
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <ctype.h>
+
 rbs_string_t rbs_string_shared_new(const char *start, const char *end) {
     return (rbs_string_t) {
         .start = start,
         .end = end,
-        .cached_ruby_string = Qnil,
         .type = RBS_STRING_SHARED,
     };
 }
@@ -13,7 +17,6 @@ rbs_string_t rbs_string_owned_new(const char *start, const char *end) {
     return (rbs_string_t) {
         .start = start,
         .end = end,
-        .cached_ruby_string = Qnil,
         .type = RBS_STRING_OWNED,
     };
 }
