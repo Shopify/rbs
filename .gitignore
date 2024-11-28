@@ -20,11 +20,11 @@ lib/**/*.so
 lib/**/*.dll
 doc/
 
-include/rbs/ast.h
 ext/rbs_extension/class_constants.h
-include/rbs/ruby_objs.h
-src/ast.c
 ext/rbs_extension/class_constants.c
-src/ruby_objs.c
+ext/rbs_extension/ast_translation.h
+ext/rbs_extension/ast_translation.c
+include/rbs/ast.h
+src/ast.c
 
 **/*.gem
