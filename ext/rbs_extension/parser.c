@@ -1255,8 +1255,9 @@ bool parse_type(parserstate *state, rbs_node_t **type) {
 
   type_param ::= tUIDENT upper_bound? default_type?                           (module_type_params == false)
 */
-static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_type_params) {
-  rbs_node_list_t *params = rbs_node_list_new();
+NODISCARD
+static bool parse_type_params(parserstate *state, range *rg, bool module_type_params, rbs_node_list_t **params) {
+  *params = rbs_node_list_new();
 
   bool required_param_allowed = true;
 
@@ -1293,7 +1294,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
             break;
           default:
             state->aborted = true;
-            return NULL;
+            return false;
           }
 
           parser_advance(state);
@@ -1335,7 +1336,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
         } else {
           if (!required_param_allowed) {
             syntax_error(state, state->current_token, "required type parameter is not allowed after optional type parameter");
-            return NULL;
+            return false;
           }
         }
       }
@@ -1352,7 +1353,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
 
       rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(name, variance, upper_bound, unchecked, default_type, loc);
 
-      rbs_node_list_append(params, (rbs_node_t *) param);
+      rbs_node_list_append(*params, (rbs_node_t *) param);
 
       if (state->next_token.type == pCOMMA) {
         parser_advance(state);
@@ -1369,7 +1370,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
     *rg = NULL_RANGE;
   }
 
-  return params;
+  return true;
 }
 
 /*
@@ -1383,8 +1384,8 @@ bool parse_method_type(parserstate *state, rbs_methodtype_t **method_type) {
   rg.start = state->next_token.range.start;
 
   range params_range = NULL_RANGE;
-  rbs_node_list_t *type_params = parse_type_params(state, &params_range, false); // TODO
-  if (has_error(state)) return false;
+  rbs_node_list_t *type_params;
+  CHECK_PARSE(parse_type_params(state, &params_range, false, &type_params));
 
   range type_range;
   type_range.start = state->next_token.range.start;
@@ -1486,8 +1487,8 @@ static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_l
   CHECK_PARSE(parse_type_name(state, ALIAS_NAME, &name_range, &typename));
 
   range params_range;
-  rbs_node_list_t *type_params = parse_type_params(state, &params_range, true);
-  if (has_error(state)) return false;
+  rbs_node_list_t *type_params;
+  CHECK_PARSE(parse_type_params(state, &params_range, true, &type_params));
 
   parser_advance_assert(state, pEQ);
   range eq_range = state->current_token.range;
@@ -2350,8 +2351,8 @@ static bool parse_interface_decl(parserstate *state, position comment_pos, rbs_n
   CHECK_PARSE(parse_type_name(state, INTERFACE_NAME, &name_range, &name));
 
   range type_params_range;
-  rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
-  if (has_error(state)) return false;
+  rbs_node_list_t *type_params;
+  CHECK_PARSE(parse_type_params(state, &type_params_range, true, &type_params));
 
   rbs_node_list_t *members = NULL;
   CHECK_PARSE(parse_interface_members(state, &members));
@@ -2532,8 +2533,8 @@ static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_type
   decl_range.start = keyword_range.start;
 
   range type_params_range;
-  rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
-  if (has_error(state)) return false;
+  rbs_node_list_t *type_params;
+  CHECK_PARSE(parse_type_params(state, &type_params_range, true, &type_params));
 
   rbs_node_list_t *self_types = rbs_node_list_new();
   range colon_range;
@@ -2664,8 +2665,8 @@ static bool parse_class_decl0(parserstate *state, range keyword_range, rbs_typen
   decl_range.start = keyword_range.start;
 
   range type_params_range;
-  rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
-  if (has_error(state)) return false;
+  rbs_node_list_t *type_params;
+  CHECK_PARSE(parse_type_params(state, &type_params_range, true, &type_params));
 
   range lt_range;
   rbs_ast_declarations_class_super_t *super = NULL;
