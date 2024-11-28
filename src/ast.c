@@ -430,6 +430,20 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     return instance;
 }
 
+rbs_ast_integer_t *rbs_ast_integer_new(rbs_string_t string_representation) {
+    rbs_ast_integer_t *instance = (rbs_ast_integer_t *)calloc(1, sizeof(rbs_ast_integer_t));
+
+
+    *instance = (rbs_ast_integer_t) {
+        .base = (rbs_node_t) {
+            .type = RBS_AST_INTEGER
+        },
+        .string_representation = string_representation,
+    };
+
+    return instance;
+}
+
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_alias_t *instance = (rbs_ast_members_alias_t *)calloc(1, sizeof(rbs_ast_members_alias_t));
 
@@ -1454,6 +1468,15 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_AST_INTEGER: {
+            rbs_ast_integer_t *integer_node = (rbs_ast_integer_t *) instance;
+            rbs_string_t string_repr = integer_node->string_representation;
+
+            VALUE str = rb_enc_str_new(string_repr.start, rbs_string_len(string_repr), rb_utf8_encoding());
+
+            return rb_funcall(str, rb_intern("to_i"), 0);
+
         }
         case RBS_AST_MEMBERS_ALIAS: {
  
