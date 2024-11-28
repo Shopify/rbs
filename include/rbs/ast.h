@@ -579,7 +579,7 @@ typedef struct rbs_types_intersection {
 typedef struct rbs_types_literal {
     rbs_node_t base;
 
-    VALUE literal;
+    struct rbs_node *literal;
     struct rbs_location *location;
 } rbs_types_literal_t;
 
@@ -719,7 +719,7 @@ rbs_types_function_t *rbs_types_function_new(rbs_node_list_t *required_positiona
 rbs_types_function_param_t *rbs_types_function_param_new(rbs_node_t *type, rbs_ast_symbol_t *name, rbs_location_t *location);
 rbs_types_interface_t *rbs_types_interface_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_types_intersection_t *rbs_types_intersection_new(rbs_node_list_t *types, rbs_location_t *location);
-rbs_types_literal_t *rbs_types_literal_new(VALUE literal, rbs_location_t *location);
+rbs_types_literal_t *rbs_types_literal_new(rbs_node_t *literal, rbs_location_t *location);
 rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, rbs_location_t *location);
 rbs_types_proc_t *rbs_types_proc_new(rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type);
 rbs_types_record_t *rbs_types_record_new(rbs_hash_t *all_fields, rbs_location_t *location);

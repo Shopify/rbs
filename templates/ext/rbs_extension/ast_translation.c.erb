@@ -51,6 +51,7 @@ VALUE rbs_struct_to_ruby_value(rbs_translation_context_t ctx, rbs_node_t *instan
             <%- case node.ruby_full_name -%>
             <%- when "RBS::AST::Bool" -%>
             return ((rbs_ast_bool_t *) instance)->value ? Qtrue : Qfalse;
+
             <%- when "RBS::Types::Record::FieldType" -%>
             rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
 
@@ -58,6 +59,7 @@ VALUE rbs_struct_to_ruby_value(rbs_translation_context_t ctx, rbs_node_t *instan
             rb_ary_push(array, rbs_struct_to_ruby_value(ctx, record_fieldtype->type));
             rb_ary_push(array, record_fieldtype->required ? Qtrue : Qfalse);
             return array;
+
             <%- when "RBS::Signature" -%>
             rbs_signature_t *signature = (rbs_signature_t *) instance;
 
@@ -106,6 +108,7 @@ VALUE rbs_struct_to_ruby_value(rbs_translation_context_t ctx, rbs_node_t *instan
               rb_hash_lookup(h, ID2SYM(rb_intern("type_params")))
             );
             <%- end -%>
+
             return CLASS_NEW_INSTANCE(
                 <%= node.c_constant_name %>,
                 1,
