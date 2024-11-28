@@ -2,15 +2,13 @@
 #define RBS__RBS_STRING_H
 
 #include <stddef.h>
-#include "ruby.h" // Temporary, just for the `VALUE cached_ruby_string`
+#include <stdbool.h>
 
 typedef bool rbs_encoding_placeholder_t;
 
 typedef struct {
   const char *start;
   const char *end;
-
-  VALUE cached_ruby_string;
 
   enum rbs_string_type {
     /** This string is a constant string, and should not be freed. */
@@ -28,7 +26,6 @@ typedef struct {
 #define RBS_STRING_NULL ((rbs_string_t) { \
     .start = NULL,                        \
     .end = NULL,                          \
-    .cached_ruby_string = Qnil,           \
     .type = RBS_STRING_CONSTANT,          \
     .encoding = false,                    \
   })
