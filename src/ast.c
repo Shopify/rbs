@@ -1011,10 +1011,9 @@ rbs_types_intersection_t *rbs_types_intersection_new(rbs_allocator_t *allocator,
     return instance;
 }
 
-rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, VALUE literal, rbs_location_t *location) {
+rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, rbs_node_t *literal, rbs_location_t *location) {
     rbs_types_literal_t *instance = rbs_allocator_alloc(allocator, rbs_types_literal_t);
 
-    rb_gc_register_mark_object(literal);
 
     *instance = (rbs_types_literal_t) {
         .base = (rbs_node_t) {
