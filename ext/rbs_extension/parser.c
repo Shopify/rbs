@@ -812,8 +812,7 @@ static rbs_hash_t *parse_record_attributes(parserstate *state) {
       case tINTEGER:
       case kTRUE:
       case kFALSE: {
-        VALUE literal = ((rbs_types_literal_t *) parse_simple(state))->literal;
-        key = (rbs_node_t *) rbs_other_ruby_value_new(literal);
+        key = (rbs_node_t *) ((rbs_types_literal_t *) parse_simple(state))->literal;
         break;
       }
       default:
@@ -879,11 +878,7 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, rbs_location_t *loc
     rbs_abort();
   }
 
-  rbs_translation_context_t ctx = {
-    .constant_pool = &state->constant_pool,
-  };
-
-  return rbs_types_literal_new(&state->allocator, rbs_struct_to_ruby_value(ctx, (rbs_node_t *)literal), location);
+  return rbs_types_literal_new(&state->allocator, (rbs_node_t *) literal, location);
 }
 
 /*
@@ -1035,21 +1030,23 @@ static rbs_node_t *parse_simple(parserstate *state) {
       rb_intern("to_i"),
       0
     );
-    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, literal, loc);
+    rbs_node_t *box = (rbs_node_t *) rbs_other_ruby_value_new(literal);
+    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, box, loc);
   }
   case kTRUE: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, Qtrue, loc);
+    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, (rbs_node_t *) rbs_ast_bool_new(&state->allocator, true), loc);
   }
   case kFALSE: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, Qfalse, loc);
+    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, (rbs_node_t *) rbs_ast_bool_new(&state->allocator, false), loc);
   }
   case tSQSTRING:
   case tDQSTRING: {
     rbs_location_t *loc = rbs_location_current_token(state);
     VALUE literal = rbs_unquote_string(state, state->current_token.range, 0);
-    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, literal, loc);
+    rbs_node_t *box = (rbs_node_t *) rbs_other_ruby_value_new(literal);
+    return (rbs_node_t *) rbs_types_literal_new(&state->allocator, box, loc);
   }
   case tSYMBOL:
   case tSQSYMBOL:
