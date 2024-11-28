@@ -49,18 +49,6 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
     list->length++;
 }
 
-VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
-    VALUE array = rb_ary_new();
-
-    rbs_node_list_node_t *current = list->head;
-    while (current != NULL) {
-        rb_ary_push(array, rbs_struct_to_ruby_value(current->node));
-        current = current->next;
-    }
-
-    return array;
-}
-
 /* rbs_hash */
 
 rbs_hash_t* rbs_hash_new(void) {
@@ -119,18 +107,6 @@ void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
 rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
     rbs_hash_node_t *node = rbs_hash_find(hash, key);
     return node ? node->value : NULL;
-}
-
-VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
-    VALUE ruby_hash = rb_hash_new();
-
-    rbs_hash_node_t *current = hash->head;
-    while (current != NULL) {
-        rb_hash_aset(ruby_hash, rbs_struct_to_ruby_value(current->key), rbs_struct_to_ruby_value(current->value));
-        current = current->next;
-    }
-
-    return ruby_hash;
 }
 
 rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
