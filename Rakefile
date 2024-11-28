@@ -58,6 +58,8 @@ end
 task :templates do
   sh "#{ruby} templates/template.rb ext/rbs_extension/class_constants.h"
   sh "#{ruby} templates/template.rb ext/rbs_extension/class_constants.c"
+  sh "#{ruby} templates/template.rb ext/rbs_extension/ast_translation.h"
+  sh "#{ruby} templates/template.rb ext/rbs_extension/ast_translation.c"
   sh "#{ruby} templates/template.rb include/rbs/ast.h"
   sh "#{ruby} templates/template.rb src/ast.c"
 end
