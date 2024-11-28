@@ -44,10 +44,10 @@ task :confirm_annotation do
 end
 
 task :templates do
+  sh "ruby templates/template.rb ext/rbs_extension/class_constants.h"
+  sh "ruby templates/template.rb ext/rbs_extension/class_constants.c"
   sh "ruby templates/template.rb include/rbs/ast.h"
-  sh "ruby templates/template.rb include/rbs/constants.h"
   sh "ruby templates/template.rb src/ast.c"
-  sh "ruby templates/template.rb src/constants.c"
 end
 
 task :compile => "ext/rbs_extension/lexer.c"
