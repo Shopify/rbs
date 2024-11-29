@@ -8,7 +8,6 @@
 #ifndef RBS__AST_H
 #define RBS__AST_H
 
-#include "ruby.h"
 #include "rbs_string.h"
 #include "rbs_location.h"
 #include "rbs/util/rbs_constant_pool.h"
