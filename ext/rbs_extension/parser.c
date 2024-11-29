@@ -102,14 +102,14 @@ static rbs_location_t *rbs_location_current_token(parserstate *state) {
 static bool parse_optional(parserstate *state, rbs_node_t **optional);
 static bool parse_simple(parserstate *state, rbs_node_t **type);
 
-void set_syntax_error(parserstate *state, token tok, const char *fmt, ...) {
+void set_error(parserstate *state, token tok, bool syntax_error, const char *fmt, ...) {
   if (state->error) {
     return;
   }
 
-  va_list args;
   char *message;
 
+  va_list args;
   va_start(args, fmt);
   vasprintf(&message, fmt, args);
   va_end(args);
@@ -117,9 +117,14 @@ void set_syntax_error(parserstate *state, token tok, const char *fmt, ...) {
   state->error = (error *)malloc(sizeof(error));
   state->error->token = tok;
   state->error->message = message;
+  state->error->syntax_error = syntax_error;
 }
 
-NORETURN(void) raise_syntax_error(parserstate *state, error *error) {
+NORETURN(void) raise_error(parserstate *state, error *error) {
+  if (!error->syntax_error) {
+    rb_raise(rb_eRuntimeError, "Unexpected error");
+  }
+
   VALUE location = rbs_new_location(state->buffer, error->token.range);
   VALUE type = rb_str_new_cstr(token_type_str(error->token.type));
 
@@ -145,7 +150,7 @@ void parser_advance_no_gap(parserstate *state) {
   if (state->current_token.range.end.byte_pos == state->next_token.range.start.byte_pos) {
     parser_advance(state);
   } else {
-    set_syntax_error(state, state->next_token, "unexpected token");
+    set_error(state, state->next_token, true, "unexpected token");
   }
 }
 
@@ -222,7 +227,7 @@ static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rb
 
     VALUE string = rb_funcall(ids, rb_intern("join"), 1, rb_str_new_cstr(", "));
 
-    set_syntax_error(state, state->current_token, "expected one of %s", StringValuePtr(string));
+    set_error(state, state->current_token, true, "expected one of %s", StringValuePtr(string));
     return false;
   }
 }
@@ -248,7 +253,7 @@ static bool parse_type_list(parserstate *state, enum TokenType eol, rbs_node_lis
       if (state->next_token.type == eol) {
         break;
       } else {
-        set_syntax_error(state, state->next_token, "comma delimited type list is expected");
+        set_error(state, state->next_token, true, "comma delimited type list is expected");
         return false;
       }
     }
@@ -304,7 +309,7 @@ static bool parse_function_param(parserstate *state, rbs_types_function_param_t 
     param_range.end = name_range.end;
 
     if (!is_keyword_token(state->current_token.type)) {
-      set_syntax_error(state, state->current_token, "unexpected token for function parameter name");
+      set_error(state, state->current_token, true, "unexpected token for function parameter name");
       return false;
     }
 
@@ -357,7 +362,7 @@ static bool parse_keyword(parserstate *state, rbs_hash_t *keywords, rbs_hash_t *
   CHECK_PARSE(parse_keyword_key(state, &key));
 
   if (rbs_hash_find(memo, (rbs_node_t *) key)) {
-    set_syntax_error(state, state->current_token, "duplicated keyword argument");
+    set_error(state, state->current_token, true, "duplicated keyword argument");
     return false;
   } else {
     rbs_hash_set(memo, (rbs_node_t *) key, (rbs_node_t *) rbs_ast_bool_new(true));
@@ -540,7 +545,7 @@ PARSE_KEYWORDS:
       if (is_keyword(state)) {
         CHECK_PARSE(parse_keyword(state, params->optional_keywords, memo));
       } else {
-        set_syntax_error(state, state->next_token, "optional keyword argument type is expected");
+        set_error(state, state->next_token, true, "optional keyword argument type is expected");
         return false;
       }
       break;
@@ -562,7 +567,7 @@ PARSE_KEYWORDS:
       if (is_keyword(state)) {
         CHECK_PARSE(parse_keyword(state, params->required_keywords, memo));
       } else {
-        set_syntax_error(state, state->next_token, "required keyword argument type is expected");
+        set_error(state, state->next_token, true, "required keyword argument type is expected");
         return false;
       }
       break;
@@ -578,7 +583,7 @@ PARSE_KEYWORDS:
 
 EOP:
   if (state->next_token.type != pRPAREN) {
-    set_syntax_error(state, state->next_token, "unexpected token for method type parameters");
+    set_error(state, state->next_token, true, "unexpected token for method type parameters");
     return false;
   }
 
@@ -668,7 +673,7 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
   // Untyped method parameter means it cannot have block
   if (rbs_is_untyped_params(&params)) {
     if (state->next_token.type != pARROW) {
-      set_syntax_error(state, state->next_token2, "A method type with untyped method parameter cannot have block");
+      set_error(state, state->next_token2, true, "A method type with untyped method parameter cannot have block");
       return false;
     }
   }
@@ -767,7 +772,7 @@ static bool parse_proc_type(parserstate *state, rbs_types_proc_t **proc) {
 
 static void check_key_duplication(parserstate *state, rbs_hash_t *fields, rbs_node_t *key) {
   if (rbs_hash_find(fields, ((rbs_node_t *) key))) {
-    set_syntax_error(state, state->current_token, "duplicated record key");
+    set_error(state, state->current_token, true, "duplicated record key");
   }
 }
 
@@ -823,7 +828,7 @@ static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
         break;
       }
       default:
-        set_syntax_error(state, state->next_token, "unexpected record key token");
+        set_error(state, state->next_token, true, "unexpected record key token");
         return false;
       }
       check_key_duplication(state, *fields, (rbs_node_t *) key);
@@ -871,7 +876,7 @@ static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types
     break;
   }
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 
@@ -909,7 +914,7 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
     } else if (state->current_token.type == tLIDENT) {
       kind = ALIAS_NAME;
     } else {
-      state->aborted = true;
+      set_error(state, state->current_token, false, "Unexpected error");
       return false;
     }
 
@@ -1153,7 +1158,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     return true;
   }
   default:
-    set_syntax_error(state, state->current_token, "unexpected token for simple type");
+    set_error(state, state->current_token, true, "unexpected token for simple type");
     return false;
   }
 }
@@ -1275,7 +1280,7 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
             variance = rbs_ast_symbol_new2(rbs_constant_pool_insert_literal(fake_constant_pool, "covariant"));
             break;
           default:
-            state->aborted = true;
+            set_error(state, state->current_token, false, "Unexpected error");
             return false;
           }
 
@@ -1311,7 +1316,7 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
           required_param_allowed = false;
         } else {
           if (!required_param_allowed) {
-            set_syntax_error(state, state->current_token, "required type parameter is not allowed after optional type parameter");
+            set_error(state, state->current_token, true, "required type parameter is not allowed after optional type parameter");
             return false;
           }
         }
@@ -1530,7 +1535,7 @@ static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotati
     close_char = '|';
     break;
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 
@@ -1636,7 +1641,7 @@ static bool parse_method_name(parserstate *state, range *range, rbs_ast_symbol_t
     return true;
 
   default:
-    set_syntax_error(state, state->current_token, "unexpected token for method name");
+    set_error(state, state->current_token, true, "unexpected token for method name");
     return false;
   }
 }
@@ -1750,7 +1755,7 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
   bool overloading = false;
 
   if (state->next_token.type == pDOT && RB_SYM2ID(rbs_struct_to_ruby_value((rbs_node_t *) name)) == rb_intern("self?")) {
-    set_syntax_error(state, state->next_token, "`self?` method cannot have visibility");
+    set_error(state, state->next_token, true, "`self?` method cannot have visibility");
     return false;
   } else {
     parser_advance_assert(state, pCOLON);
@@ -1792,12 +1797,12 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
         member_range.end = overloading_range.end;
         break;
       } else {
-        set_syntax_error(state, state->next_token, "unexpected overloading method definition");
+        set_error(state, state->next_token, true, "unexpected overloading method definition");
         return false;
       }
 
     default:
-      set_syntax_error(state, state->next_token, "unexpected token for method type");
+      set_error(state, state->next_token, true, "unexpected token for method type");
       return false;
     }
 
@@ -1822,7 +1827,7 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
     k = rbs_ast_symbol_new2(rbs_constant_pool_insert_literal(fake_constant_pool, "singleton_instance"));
     break;
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 
@@ -1899,13 +1904,13 @@ static bool parse_mixin_member(parserstate *state, bool from_interface, position
     reset_typevar_scope = false;
     break;
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 
   if (from_interface) {
     if (state->current_token.type != kINCLUDE) {
-      set_syntax_error(state, state->current_token, "unexpected mixin in interface declaration");
+      set_error(state, state->current_token, true, "unexpected mixin in interface declaration");
       return false;
     }
   }
@@ -1943,7 +1948,7 @@ static bool parse_mixin_member(parserstate *state, bool from_interface, position
     *mixin_member = (rbs_node_t *) rbs_ast_members_prepend_new(name, args, annotations, loc, comment);
     return true;
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 }
@@ -2019,7 +2024,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
   range kind_range = NULL_RANGE;
 
   if (annotations->length > 0) {
-    set_syntax_error(state, state->current_token, "annotation cannot be given to variable members");
+    set_error(state, state->current_token, true, "annotation cannot be given to variable members");
     return false;
   }
 
@@ -2103,7 +2108,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
     return true;
   }
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 }
@@ -2115,7 +2120,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
 NODISCARD
 static bool parse_visibility_member(parserstate *state, rbs_node_list_t *annotations, rbs_node_t **visibility_member) {
   if (annotations->length > 0) {
-    set_syntax_error(state, state->current_token, "annotation cannot be given to visibility members");
+    set_error(state, state->current_token, true, "annotation cannot be given to visibility members");
     return false;
   }
 
@@ -2130,7 +2135,7 @@ static bool parse_visibility_member(parserstate *state, rbs_node_list_t *annotat
     *visibility_member = (rbs_node_t *) rbs_ast_members_private_new(location);
     return true;
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 }
@@ -2247,7 +2252,7 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
     *attribute_member = (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, loc, comment, visibility);
     return true;
   default:
-    state->aborted = true;
+    set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
 }
@@ -2291,7 +2296,7 @@ static bool parse_interface_members(parserstate *state, rbs_node_list_t **member
       break;
     }
     default:
-      set_syntax_error(state, state->current_token, "unexpected token for interface declaration member");
+      set_error(state, state->current_token, true, "unexpected token for interface declaration member");
       return false;
     }
 
@@ -2470,7 +2475,7 @@ static bool parse_module_members(parserstate *state, rbs_node_list_t **members) 
           break;
         }
         default:
-          set_syntax_error(state, state->next_token, "method or attribute definition is expected after visibility modifier");
+          set_error(state, state->next_token, true, "method or attribute definition is expected after visibility modifier");
           return false;
         }
       } else {
@@ -2764,7 +2769,7 @@ static bool parse_nested_decl(parserstate *state, const char *nested_in, positio
     break;
   }
   default:
-    set_syntax_error(state, state->current_token, "unexpected token for class/module declaration member");
+    set_error(state, state->current_token, true, "unexpected token for class/module declaration member");
     return false;
   }
 
@@ -2820,7 +2825,7 @@ static bool parse_decl(parserstate *state, rbs_node_t **decl) {
     return true;
   }
   default:
-    set_syntax_error(state, state->current_token, "cannot start a declaration");
+    set_error(state, state->current_token, true, "cannot start a declaration");
     return false;
   }
 }
@@ -2946,7 +2951,7 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         break;
       }
       default:
-        set_syntax_error(state, state->next_token, "use clause is expected");
+        set_error(state, state->next_token, true, "use clause is expected");
         return false;
     }
 
@@ -3033,12 +3038,8 @@ parse_type_try(VALUE a) {
   rbs_node_t *type;
   parse_type(arg->parser, &type);
 
-  if (arg->parser->aborted) {
-    rb_raise(rb_eRuntimeError, "Unexpected error");
-  }
-
   if (arg->parser->error) {
-    raise_syntax_error(arg->parser, arg->parser->error);
+    raise_error(arg->parser, arg->parser->error);
   }
 
   if (RB_TEST(arg->require_eof)) {
@@ -3073,12 +3074,8 @@ parse_method_type_try(VALUE a) {
   rbs_methodtype_t *method_type = NULL;
   parse_method_type(arg->parser, &method_type);
 
-  if (arg->parser->aborted) {
-    rb_raise(rb_eRuntimeError, "Unexpected error");
-  }
-
   if (arg->parser->error) {
-    raise_syntax_error(arg->parser, arg->parser->error);
+    raise_error(arg->parser, arg->parser->error);
   }
 
   if (RB_TEST(arg->require_eof)) {
@@ -3109,12 +3106,8 @@ parse_signature_try(VALUE a) {
   rbs_signature_t *signature = NULL;
   parse_signature(parser, &signature);
 
-  if (parser->aborted) {
-    rb_raise(rb_eRuntimeError, "Unexpected error");
-  }
-
   if (parser->error) {
-    raise_syntax_error(parser, parser->error);
+    raise_error(parser, parser->error);
   }
 
   return rbs_struct_to_ruby_value((rbs_node_t *) signature);
