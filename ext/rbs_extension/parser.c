@@ -90,7 +90,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type);
 static rbs_string_t rbs_parser_get_current_token(parserstate *state) {
   range rg = state->current_token.range;
 
-  rbs_string_t string = rbs_string_from_ruby_string(state->lexstate->string);
+  rbs_string_t string = state->lexstate->string;
   rbs_string_drop_first(&string, rg.start.byte_pos);
   rbs_string_limit_length(&string, rg.end.byte_pos - rg.start.byte_pos);
   rbs_string_ensure_owned(&string);
@@ -834,7 +834,7 @@ static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
 */
 NODISCARD
 static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types_literal_t **symbol) {
-  VALUE string = state->lexstate->string;
+  VALUE string = rbs_string_to_ruby_string(&state->lexstate->string);
   rb_encoding *enc = rb_enc_get(string);
 
   int offset_bytes = rb_enc_codelen(':', enc);
@@ -1486,8 +1486,8 @@ static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotati
   int offset_bytes = rb_enc_codelen('%', enc) + rb_enc_codelen('a', enc);
 
   unsigned int open_char = rb_enc_mbc_to_codepoint(
-    RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes,
-    RSTRING_END(state->lexstate->string),
+    state->lexstate->string.start + rg.start.byte_pos + offset_bytes,
+    state->lexstate->string.end,
     enc
   );
 
@@ -1578,7 +1578,7 @@ static bool parse_method_name(parserstate *state, range *range, rbs_ast_symbol_t
 
       rbs_constant_id_t constant_id = rbs_constant_pool_insert_constant(
         fake_constant_pool,
-        RSTRING_PTR(state->lexstate->string) + range->start.byte_pos,
+        state->lexstate->string.start + range->start.byte_pos,
         range->end.byte_pos - range->start.byte_pos//,
         // rb_enc_get(state->lexstate->string) // FIXME: Add encoding back
       );

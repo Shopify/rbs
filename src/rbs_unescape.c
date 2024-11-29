@@ -104,7 +104,7 @@ rbs_string_t unescape_string(const rbs_string_t string, bool is_double_quote) {
         }
     }
     output[j] = '\0';
-    rbs_string_t str = rbs_string_shared_new(output, output + j);
+    rbs_string_t str = rbs_string_shared_new(output, output + j, string.encoding);
     rbs_string_ensure_owned(&str);
     return str;
 }
