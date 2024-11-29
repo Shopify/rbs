@@ -295,6 +295,10 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
   lexer->start = lexer->current;
   lexer->first_token_of_line = lexer->current.column == 0;
 
+  rb_encoding *encoding = rb_enc_get(string);
+  const char *encoding_name = rb_enc_name(encoding);
+  lexer->encoding = rbs_encoding_find((const uint8_t *) encoding_name, (const uint8_t *) (encoding_name + strlen(encoding_name)));
+
   return lexer;
 }
 
