@@ -7,13 +7,6 @@
 #include "ast_translation.h"
 #include "rbs_string_bridging.h"
 
-#define INTERN_TOKEN_ID(parserstate, tok) \
-  rb_intern3(\
-    peek_token(parserstate->lexstate, tok),\
-    token_bytes(tok),\
-    rb_enc_get(parserstate->lexstate->string)\
-  )
-
 #define INTERN_TOKEN(parserstate, tok) \
   rbs_constant_pool_insert_constant(\
     fake_constant_pool, \
@@ -1074,7 +1067,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     return true;
   }
   case tUIDENT: {
-    ID name = INTERN_TOKEN_ID(state, state->current_token);
+    rbs_constant_id_t name = INTERN_TOKEN(state, state->current_token);
     if (parser_typevar_member(state, name)) {
       rbs_location_t *loc = rbs_location_current_token(state);
       // TODO: deduplicate this INTERN macro
@@ -1265,7 +1258,7 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
       rbs_constant_id_t constant_id = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(state->lexstate->string) + state->current_token.range.start.byte_pos, state->current_token.range.end.byte_pos - state->current_token.range.start.byte_pos);
       rbs_ast_symbol_t *name = rbs_ast_symbol_new(constant_id);
 
-      ID id = INTERN_TOKEN_ID(state, state->current_token);
+      rbs_constant_id_t id = INTERN_TOKEN(state, state->current_token);
       parser_insert_typevar(state, id);
 
       range upper_bound_range = NULL_RANGE;
@@ -1297,7 +1290,7 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
       param_range.end = state->current_token.range.end;
 
       rbs_location_t *loc = rbs_location_new(param_range);
-      rbs_loc_alloc_children(loc, 4);
+      rbs_loc_alloc_children(loc, 5);
       rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
       rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "variance"), variance_range);
       rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "unchecked"), unchecked_range);

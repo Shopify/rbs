@@ -6,6 +6,7 @@
 #include "lexer.h"
 #include "location.h"
 #include "rbs/ast.h"
+#include "rbs/rbs_constant_pool.h"
 
 /**
  * id_table represents a set of IDs.
@@ -14,7 +15,7 @@
 typedef struct id_table {
   size_t size;
   size_t count;
-  ID *ids;
+  rbs_constant_id_t *ids;
   struct id_table *next;
 } id_table;
 
@@ -93,14 +94,14 @@ void parser_pop_typevar_table(parserstate *state);
 /**
  * Insert new type variable into the latest table.
  * */
-void parser_insert_typevar(parserstate *state, ID id);
+void parser_insert_typevar(parserstate *state, rbs_constant_id_t id);
 
 /**
  * Returns true if given type variable is recorded in the table.
  * If not found, it goes one table up, if it's not a reset table.
  * Or returns false, if it's a reset table.
  * */
-bool parser_typevar_member(parserstate *state, ID id);
+bool parser_typevar_member(parserstate *state, rbs_constant_id_t id);
 
 /**
  * Allocate new lexstate object.

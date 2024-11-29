@@ -11,7 +11,7 @@ id_table *alloc_empty_table(void) {
   *table = (id_table) {
     .size = 10,
     .count = 0,
-    .ids = calloc(10, sizeof(ID)),
+    .ids = calloc(10, sizeof(rbs_constant_id_t)),
     .next = NULL,
   };
 
@@ -64,7 +64,7 @@ void parser_pop_typevar_table(parserstate *state) {
   }
 }
 
-void parser_insert_typevar(parserstate *state, ID id) {
+void parser_insert_typevar(parserstate *state, rbs_constant_id_t id) {
   id_table *table = state->vars;
 
   if (RESET_TABLE_P(table)) {
@@ -73,22 +73,22 @@ void parser_insert_typevar(parserstate *state, ID id) {
 
   if (table->size == table->count) {
     // expand
-    ID *ptr = table->ids;
+    rbs_constant_id_t *ptr = table->ids;
     table->size += 10;
-    table->ids = calloc(table->size, sizeof(ID));
-    memcpy(table->ids, ptr, sizeof(ID) * table->count);
+    table->ids = calloc(table->size, sizeof(rbs_constant_id_t));
+    memcpy(table->ids, ptr, sizeof(rbs_constant_id_t) * table->count);
     free(ptr);
   }
 
   table->ids[table->count++] = id;
 }
 
-bool parser_typevar_member(parserstate *state, ID id) {
+bool parser_typevar_member(parserstate *state, rbs_constant_id_t id) {
   id_table *table = state->vars;
 
   while (table && !RESET_TABLE_P(table)) {
     for (size_t i = 0; i < table->count; i++) {
-      if (table->ids[i] == id) {
+      if (rbs_constant_id_equal(fake_constant_pool, table->ids[i], id)) {
         return true;
       }
     }
@@ -359,7 +359,11 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     for (long i = 0; i < rb_array_len(variables); i++) {
       VALUE index = INT2FIX(i);
       VALUE symbol = rb_ary_aref(1, &index, variables);
-      parser_insert_typevar(parser, SYM2ID(symbol));
+
+      VALUE name_str = rb_sym2str(symbol);
+      rbs_constant_id_t key = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
+
+      parser_insert_typevar(parser, key);
     }
   }
 
