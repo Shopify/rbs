@@ -45,6 +45,7 @@ typedef struct comment {
 typedef struct error {
   char *message;
   token token;
+  bool syntax_error;
 } error;
 
 /**
@@ -63,7 +64,6 @@ typedef struct {
   comment *last_comment;  /* Last read comment */
 
   rbs_constant_pool_t constant_pool;
-  bool aborted;
   error *error;
 } parserstate;
 
