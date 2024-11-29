@@ -1,13 +1,15 @@
 #ifndef RBS__RBS_LOCATION_INTERNALS_H
 #define RBS__RBS_LOCATION_INTERNALS_H
 
+#include "rbs/rbs_constant_pool.h"
+
 typedef struct {
   int start;
   int end;
 } rbs_loc_range;
 
 typedef struct {
-  ID name;
+  rbs_constant_id_t name;
   rbs_loc_range rg;
 } rbs_loc_entry;
 

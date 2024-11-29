@@ -56,21 +56,22 @@ static void check_children_cap(rbs_loc *loc) {
   }
 }
 
-void rbs_loc_legacy_add_required_child(rbs_loc *loc, ID name, range r) {
-  rbs_loc_legacy_add_optional_child(loc, name, r);
+void rbs_loc_legacy_add_optional_child(rbs_loc *loc, VALUE name_sym, range r) {
+  check_children_cap(loc);
+
+  VALUE name_str = rb_sym2str(name_sym);
+  rbs_constant_id_t key = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
+
+  unsigned short i = loc->children->len++;
+  loc->children->entries[i].name = key;
+  loc->children->entries[i].rg = rbs_new_loc_range(r);
+}
+
+void rbs_loc_legacy_add_required_child(rbs_loc *loc, VALUE name_sym, range r) {
+  rbs_loc_legacy_add_optional_child(loc, name_sym, r);
 
   unsigned short last_index = loc->children->len - 1;
   loc->children->required_p |= 1 << last_index;
-}
-
-void rbs_loc_legacy_add_optional_child(rbs_loc *loc, ID name, range r) {
-  check_children_cap(loc);
-
-  unsigned short i = loc->children->len++;
-  loc->children->entries[i] = (rbs_loc_entry) {
-    .name = name,
-    .rg = rbs_new_loc_range(r),
-  };
 }
 
 void rbs_loc_init(rbs_loc *loc, VALUE buffer, rbs_loc_range rg) {
@@ -175,7 +176,7 @@ static VALUE location_add_required_child(VALUE self, VALUE name, VALUE start, VA
   rg.start = rbs_loc_position(FIX2INT(start));
   rg.end = rbs_loc_position(FIX2INT(end));
 
-  rbs_loc_legacy_add_required_child(loc, SYM2ID(name), rg);
+  rbs_loc_legacy_add_required_child(loc, name, rg);
 
   return Qnil;
 }
@@ -187,7 +188,7 @@ static VALUE location_add_optional_child(VALUE self, VALUE name, VALUE start, VA
   rg.start = rbs_loc_position(FIX2INT(start));
   rg.end = rbs_loc_position(FIX2INT(end));
 
-  rbs_loc_legacy_add_optional_child(loc, SYM2ID(name), rg);
+  rbs_loc_legacy_add_optional_child(loc, name, rg);
 
   return Qnil;
 }
@@ -195,7 +196,7 @@ static VALUE location_add_optional_child(VALUE self, VALUE name, VALUE start, VA
 static VALUE location_add_optional_no_child(VALUE self, VALUE name) {
   rbs_loc *loc = rbs_check_location(self);
 
-  rbs_loc_legacy_add_optional_child(loc, SYM2ID(name), NULL_RANGE);
+  rbs_loc_legacy_add_optional_child(loc, name, NULL_RANGE);
 
   return Qnil;
 }
@@ -221,11 +222,12 @@ static VALUE rbs_new_location_from_loc_range(VALUE buffer, rbs_loc_range rg) {
 static VALUE location_aref(VALUE self, VALUE name) {
   rbs_loc *loc = rbs_check_location(self);
 
-  ID id = SYM2ID(name);
+  VALUE name_str = rb_sym2str(name);
+  rbs_constant_id_t key = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
 
   if (loc->children != NULL) {
     for (unsigned short i = 0; i < loc->children->len; i++) {
-      if (loc->children->entries[i].name == id) {
+      if (rbs_constant_id_equal(fake_constant_pool, loc->children->entries[i].name, key)) {
         rbs_loc_range result = loc->children->entries[i].rg;
 
         if (RBS_LOC_OPTIONAL_P(loc, i) && NULL_LOC_RANGE_P(result)) {
@@ -252,8 +254,10 @@ static VALUE location_optional_keys(VALUE self) {
 
   for (unsigned short i = 0; i < children->len; i++) {
     if (RBS_LOC_OPTIONAL_P(loc, i)) {
-      rb_ary_push(keys, ID2SYM(children->entries[i].name));
+      rbs_constant_id_t name_id = children->entries[i].name;
+      rbs_constant_t *name = rbs_constant_pool_id_to_constant(fake_constant_pool, name_id);
 
+      rb_ary_push(keys, rb_id2sym(rb_intern(name->start)));
     }
   }
 
@@ -271,7 +275,10 @@ static VALUE location_required_keys(VALUE self) {
 
   for (unsigned short i = 0; i < children->len; i++) {
     if (RBS_LOC_REQUIRED_P(loc, i)) {
-      rb_ary_push(keys, ID2SYM(children->entries[i].name));
+      rbs_constant_id_t name_id = children->entries[i].name;
+      rbs_constant_t *name = rbs_constant_pool_id_to_constant(fake_constant_pool, name_id);
+
+      rb_ary_push(keys, rb_id2sym(rb_intern(name->start)));
     }
   }
 
