@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
+#include <stdbool.h>
 
 // TODO: Use a more compact integer type.
 /**
@@ -48,5 +49,14 @@ rbs_constant_id_t rbs_constant_pool_insert_constant(rbs_constant_pool_t *pool, c
 
 // Convenience function for `rbs_constant_pool_insert_constant()` which calculates the length internally.
 rbs_constant_id_t rbs_constant_pool_insert_literal(rbs_constant_pool_t *pool, const char *start);
+
+/**
+ * Check if two constants IDs are equal.
+ *
+ * This shouldn't be necessary, because the whole point of the constant pool is to have a unique ID for each constant,
+ * which can just be compared directly. Since we haven't implemented any real pooling yet, we need a fallback
+ * to a value-based comparison for non-equal IDs.
+ */
+bool rbs_constant_id_equal(rbs_constant_pool_t *pool, rbs_constant_id_t lhs, rbs_constant_id_t rhs);
 
 #endif
