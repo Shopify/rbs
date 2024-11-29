@@ -274,7 +274,7 @@ static bool parse_function_param(parserstate *state, rbs_types_function_param_t 
 
     rbs_location_t *loc = rbs_location_new(param_range);
     rbs_loc_alloc_children(loc, 1);
-    rbs_loc_add_optional_child(loc, rb_intern("name"), NULL_RANGE);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), NULL_RANGE);
 
     *function_param = rbs_types_function_param_new(type, NULL, loc);
     return true;
@@ -297,7 +297,7 @@ static bool parse_function_param(parserstate *state, rbs_types_function_param_t 
 
     rbs_location_t *loc = rbs_location_new(param_range);
     rbs_loc_alloc_children(loc, 1);
-    rbs_loc_add_optional_child(loc, rb_intern("name"), name_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
 
     *function_param = rbs_types_function_param_new(type, name, loc);
     return true;
@@ -911,8 +911,8 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
 
     rbs_location_t *loc = rbs_location_new(type_range);
     rbs_loc_alloc_children(loc, 2);
-    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-    rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "args"), args_range);
 
     if (kind == CLASS_NAME) {
       *type = (rbs_node_t *) rbs_types_classinstance_new(typename, types, loc);
@@ -947,7 +947,7 @@ static bool parse_singleton_type(parserstate *state, rbs_types_classsingleton_t 
 
   rbs_location_t *loc = rbs_location_new(type_range);
   rbs_loc_alloc_children(loc, 1);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
 
   *singleton = rbs_types_classsingleton_new(typename, loc);
   return true;
@@ -1304,11 +1304,11 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
 
       rbs_location_t *loc = rbs_location_new(param_range);
       rbs_loc_alloc_children(loc, 4);
-      rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-      rbs_loc_add_optional_child(loc, rb_intern("variance"), variance_range);
-      rbs_loc_add_optional_child(loc, rb_intern("unchecked"), unchecked_range);
-      rbs_loc_add_optional_child(loc, rb_intern("upper_bound"), upper_bound_range);
-      rbs_loc_add_optional_child(loc, rb_intern("default"), default_type_range);
+      rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+      rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "variance"), variance_range);
+      rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "unchecked"), unchecked_range);
+      rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "upper_bound"), upper_bound_range);
+      rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "default"), default_type_range);
 
       rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(name, variance, upper_bound, unchecked, default_type, loc);
 
@@ -1359,8 +1359,8 @@ bool parse_method_type(parserstate *state, rbs_methodtype_t **method_type) {
 
   rbs_location_t *loc = rbs_location_new(rg);
   rbs_loc_alloc_children(loc, 2);
-  rbs_loc_add_required_child(loc, rb_intern("type"), type_range);
-  rbs_loc_add_optional_child(loc, rb_intern("type_params"), params_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type"), type_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type_params"), params_range);
 
   *method_type = rbs_methodtype_new(type_params, result->function, result->block, loc);
   return true;
@@ -1392,8 +1392,8 @@ static bool parse_global_decl(parserstate *state, rbs_ast_declarations_global_t 
 
   rbs_location_t *loc = rbs_location_new(decl_range);
   rbs_loc_alloc_children(loc, 2);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
 
   *global = rbs_ast_declarations_global_new(typename, type, loc, comment);
   return true;
@@ -1424,8 +1424,8 @@ static bool parse_const_decl(parserstate *state, rbs_ast_declarations_constant_t
 
   rbs_location_t *loc = rbs_location_new(decl_range);
   rbs_loc_alloc_children(loc, 2);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
 
   *constant = rbs_ast_declarations_constant_new(typename, type, loc, comment);
   return true;
@@ -1463,10 +1463,10 @@ static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_l
 
   rbs_location_t *loc = rbs_location_new(decl_range);
   rbs_loc_alloc_children(loc, 4);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_optional_child(loc, rb_intern("type_params"), params_range);
-  rbs_loc_add_required_child(loc, rb_intern("eq"), eq_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type_params"), params_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "eq"), eq_range);
 
   parser_pop_typevar_table(state);
 
@@ -1812,11 +1812,11 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
 
   rbs_location_t *loc = rbs_location_new(member_range);
   rbs_loc_alloc_children(loc, 5);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
-  rbs_loc_add_optional_child(loc, rb_intern("overloading"), overloading_range);
-  rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "overloading"), overloading_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "visibility"), visibility_range);
 
   *method_definition = rbs_ast_members_methoddefinition_new(name, k, overloads, annotations, loc, comment, overloading, visibility);
   return true;
@@ -1910,9 +1910,9 @@ static bool parse_mixin_member(parserstate *state, bool from_interface, position
 
   rbs_location_t *loc = rbs_location_new(member_range);
   rbs_loc_alloc_children(loc, 3);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "args"), args_range);
 
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
   switch (type)
@@ -1981,11 +1981,11 @@ static bool parse_alias_member(parserstate *state, bool instance_only, position 
   member_range.end = state->current_token.range.end;
   rbs_location_t *loc = rbs_location_new(member_range);
   rbs_loc_alloc_children(loc, 5);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_required_child(loc, rb_intern("new_name"), new_name_range);
-  rbs_loc_add_required_child(loc, rb_intern("old_name"), old_name_range);
-  rbs_loc_add_optional_child(loc, rb_intern("new_kind"), new_kind_range);
-  rbs_loc_add_optional_child(loc, rb_intern("old_kind"), old_kind_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "new_name"), new_name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "old_name"), old_name_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "new_kind"), new_kind_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "old_kind"), old_kind_range);
 
   *alias_member = rbs_ast_members_alias_new(new_name, old_name, kind, annotations, loc, comment);
   return true;
@@ -2029,9 +2029,9 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
 
     loc = rbs_location_new(member_range);
     rbs_loc_alloc_children(loc, 3);
-    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-    rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
-    rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
 
     *variable_member = (rbs_node_t *)rbs_ast_members_instancevariable_new(name, type, loc, comment);
     return true;
@@ -2051,9 +2051,9 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
 
     loc = rbs_location_new(member_range);
     rbs_loc_alloc_children(loc, 3);
-    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-    rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
-    rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
 
     *variable_member = (rbs_node_t *) rbs_ast_members_classvariable_new(name, type, loc, comment);
     return true;
@@ -2079,9 +2079,9 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
 
     loc = rbs_location_new(member_range);
     rbs_loc_alloc_children(loc, 3);
-    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-    rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
-    rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
 
     *variable_member = (rbs_node_t *)rbs_ast_members_classinstancevariable_new(name, type, loc, comment);
     return true;
@@ -2211,13 +2211,13 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
 
   rbs_location_t *loc = rbs_location_new(member_range);
   rbs_loc_alloc_children(loc, 7);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("colon"), colon_range);
-  rbs_loc_add_optional_child(loc, rb_intern("kind"), kind_range);
-  rbs_loc_add_optional_child(loc, rb_intern("ivar"), ivar_range);
-  rbs_loc_add_optional_child(loc, rb_intern("ivar_name"), ivar_name_range);
-  rbs_loc_add_optional_child(loc, rb_intern("visibility"), visibility_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "ivar"), ivar_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "ivar_name"), ivar_name_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "visibility"), visibility_range);
 
   switch (attr_type)
   {
@@ -2318,10 +2318,10 @@ static bool parse_interface_decl(parserstate *state, position comment_pos, rbs_n
 
   rbs_location_t *loc = rbs_location_new(member_range);
   rbs_loc_alloc_children(loc, 4);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("end"), end_range);
-  rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "end"), end_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type_params"), type_params_range);
 
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
@@ -2362,8 +2362,8 @@ static bool parse_module_self_types(parserstate *state, rbs_node_list_t *array) 
 
     rbs_location_t *loc = rbs_location_new(self_range);
     rbs_loc_alloc_children(loc, 2);
-    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-    rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "args"), args_range);
 
     rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(module_name, args, loc);
     rbs_node_list_append(array, (rbs_node_t *)self_type);
@@ -2514,12 +2514,12 @@ static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_type
 
   rbs_location_t *loc = rbs_location_new(decl_range);
   rbs_loc_alloc_children(loc, 6);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("end"), end_range);
-  rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
-  rbs_loc_add_optional_child(loc, rb_intern("colon"), colon_range);
-  rbs_loc_add_optional_child(loc, rb_intern("self_types"), self_types_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "end"), end_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type_params"), type_params_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "self_types"), self_types_range);
 
   parser_pop_typevar_table(state);
 
@@ -2559,10 +2559,10 @@ static bool parse_module_decl(parserstate *state, position comment_pos, rbs_node
 
     rbs_location_t *loc = rbs_location_new(decl_range);
     rbs_loc_alloc_children(loc, 4);
-    rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-    rbs_loc_add_required_child(loc, rb_intern("new_name"), module_name_range);
-    rbs_loc_add_required_child(loc, rb_intern("eq"), eq_range);
-    rbs_loc_add_optional_child(loc, rb_intern("old_name"), old_name_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "new_name"), module_name_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "eq"), eq_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "old_name"), old_name_range);
 
     *module_decl = (rbs_node_t *) rbs_ast_declarations_modulealias_new(module_name, old_name, loc, comment);
   } else {
@@ -2598,8 +2598,8 @@ static bool parse_class_decl_super(parserstate *state, range *lt_range, rbs_ast_
 
     rbs_location_t *loc = rbs_location_new(super_range);
     rbs_loc_alloc_children(loc, 2);
-    rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-    rbs_loc_add_optional_child(loc, rb_intern("args"), args_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "args"), args_range);
 
 
     *super = rbs_ast_declarations_class_super_new(name, args, loc);
@@ -2642,11 +2642,11 @@ static bool parse_class_decl0(parserstate *state, range keyword_range, rbs_typen
 
   rbs_location_t *loc = rbs_location_new(decl_range);
   rbs_loc_alloc_children(loc, 5);
-  rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-  rbs_loc_add_required_child(loc, rb_intern("name"), name_range);
-  rbs_loc_add_required_child(loc, rb_intern("end"), end_range);
-  rbs_loc_add_optional_child(loc, rb_intern("type_params"), type_params_range);
-  rbs_loc_add_optional_child(loc, rb_intern("lt"), lt_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
+  rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "end"), end_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type_params"), type_params_range);
+  rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "lt"), lt_range);
 
   *class_decl = rbs_ast_declarations_class_new(name, type_params, super, members, annotations, loc, comment);
   return true;
@@ -2683,10 +2683,10 @@ static bool parse_class_decl(parserstate *state, position comment_pos, rbs_node_
 
     rbs_location_t *loc = rbs_location_new(decl_range);
     rbs_loc_alloc_children(loc, 4);
-    rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
-    rbs_loc_add_required_child(loc, rb_intern("new_name"), class_name_range);
-    rbs_loc_add_required_child(loc, rb_intern("eq"), eq_range);
-    rbs_loc_add_optional_child(loc, rb_intern("old_name"), old_name_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "new_name"), class_name_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "eq"), eq_range);
+    rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "old_name"), old_name_range);
 
     *class_decl = (rbs_node_t *) rbs_ast_declarations_classalias_new(class_name, old_name, loc, comment);
   } else {
@@ -2903,9 +2903,9 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
 
         rbs_location_t *loc = rbs_location_new(clause_range);
         rbs_loc_alloc_children(loc, 3);
-        rbs_loc_add_required_child(loc, rb_intern("type_name"), type_name_range);
-        rbs_loc_add_optional_child(loc, rb_intern("keyword"), keyword_range);
-        rbs_loc_add_optional_child(loc, rb_intern("new_name"), new_name_range);
+        rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type_name"), type_name_range);
+        rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
+        rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "new_name"), new_name_range);
 
         rbs_ast_directives_use_singleclause_t *clause = rbs_ast_directives_use_singleclause_new(type_name, new_name, loc);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
@@ -2921,8 +2921,8 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
 
         rbs_location_t *loc = rbs_location_new(clause_range);
         rbs_loc_alloc_children(loc, 2);
-        rbs_loc_add_required_child(loc, rb_intern("namespace"), namespace_range);
-        rbs_loc_add_required_child(loc, rb_intern("star"), star_range);
+        rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "namespace"), namespace_range);
+        rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "star"), star_range);
 
         rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(namespace, loc);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
@@ -2962,7 +2962,7 @@ static bool parse_use_directive(parserstate *state, rbs_ast_directives_use_t **u
 
     rbs_location_t *loc = rbs_location_new(directive_range);
     rbs_loc_alloc_children(loc, 1);
-    rbs_loc_add_required_child(loc, rb_intern("keyword"), keyword_range);
+    rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
 
     *use_directive = rbs_ast_directives_use_new(clauses, loc);
   }

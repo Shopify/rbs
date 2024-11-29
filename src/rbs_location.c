@@ -56,14 +56,14 @@ void rbs_loc_alloc_children(rbs_location_t *loc, int capacity) {
   loc->children->cap = capacity;
 }
 
-void rbs_loc_add_required_child(rbs_location_t *loc, ID name, range r) {
+void rbs_loc_add_required_child(rbs_location_t *loc, rbs_constant_id_t name, range r) {
   rbs_loc_add_optional_child(loc, name, r);
 
   unsigned short last_index = loc->children->len - 1;
   loc->children->required_p |= 1 << last_index;
 }
 
-void rbs_loc_add_optional_child(rbs_location_t *loc, ID name, range r) {
+void rbs_loc_add_optional_child(rbs_location_t *loc, rbs_constant_id_t name, range r) {
   check_children_cap(loc);
 
   unsigned short i = loc->children->len++;
