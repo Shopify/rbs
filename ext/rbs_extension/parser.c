@@ -88,6 +88,23 @@ static rbs_location_t *rbs_location_current_token(parserstate *state) {
 static bool parse_optional(parserstate *state, rbs_node_t **optional);
 static bool parse_simple(parserstate *state, rbs_node_t **type);
 
+static rbs_string_t rbs_parser_get_current_token(parserstate *state) {
+  range rg = state->current_token.range;
+
+  rbs_string_t string = rbs_string_from_ruby_string(state->lexstate->string);
+  rbs_string_drop_first(&string, rg.start.byte_pos);
+  rbs_string_limit_length(&string, rg.end.byte_pos - rg.start.byte_pos);
+  rbs_string_ensure_owned(&string);
+
+  return string;
+}
+
+static rbs_constant_id_t rbs_constant_pool_insert_string(rbs_constant_pool_t *self, rbs_string_t string) {
+    assert(self == fake_constant_pool);
+
+    return rbs_constant_pool_insert_constant(self, string.start, rbs_string_len(string));
+}
+
 void set_error(parserstate *state, token tok, bool syntax_error, const char *fmt, ...) {
   if (state->error) {
     return;
@@ -280,8 +297,8 @@ static bool parse_function_param(parserstate *state, rbs_types_function_param_t 
       return false;
     }
 
-    VALUE name_str = rbs_unquote_string(state, state->current_token.range, 0);
-    rbs_constant_id_t constant_id = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
+    rbs_string_t unquoted_str = rbs_unquote_string(rbs_parser_get_current_token(state));
+    rbs_constant_id_t constant_id = rbs_constant_pool_insert_string(fake_constant_pool, unquoted_str);
     rbs_ast_symbol_t *name = rbs_ast_symbol_new(constant_id);
 
     rbs_location_t *loc = rbs_location_new(param_range);
@@ -843,8 +860,11 @@ static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types
   }
   case tDQSYMBOL:
   case tSQSYMBOL: {
-    VALUE ruby_str = rbs_unquote_string(state, state->current_token.range, offset_bytes);
-    literal = rbs_ast_symbol_new(rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(ruby_str), RSTRING_LEN(ruby_str)));
+    rbs_string_t string = rbs_parser_get_current_token(state);
+    rbs_string_drop_first(&string, offset_bytes);
+
+    rbs_string_t unquoted_str = rbs_unquote_string(string);
+    literal = rbs_ast_symbol_new(rbs_constant_pool_insert_string(fake_constant_pool, unquoted_str));
     break;
   }
   default:
@@ -1045,14 +1065,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
   case tDQSTRING: {
     rbs_location_t *loc = rbs_location_current_token(state);
 
-    rbs_string_t string = rbs_string_from_ruby_string(state->lexstate->string);
-    rbs_string_drop_first(&string, state->current_token.range.start.byte_pos);
-    rbs_string_limit_length(&string, state->current_token.range.end.byte_pos - state->current_token.range.start.byte_pos);
-    rbs_string_ensure_owned(&string);
-
-    rbs_string_t unquoted_str = rbs_unquote_string2(string);
-    rbs_string_ensure_owned(&unquoted_str);
-
+    rbs_string_t unquoted_str = rbs_unquote_string(rbs_parser_get_current_token(state));
     rbs_node_t *literal = (rbs_node_t *) rbs_ast_string_new(unquoted_str);
     *type = (rbs_node_t *) rbs_types_literal_new(literal, loc);
     return true;
@@ -1583,8 +1596,10 @@ static bool parse_method_name(parserstate *state, range *range, rbs_ast_symbol_t
     return true;
 
   case tQIDENT: {
-    VALUE ruby_str = rbs_unquote_string(state, state->current_token.range, 0);
-    *symbol = rbs_ast_symbol_new(rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(ruby_str), RSTRING_LEN(ruby_str)));
+    rbs_string_t string = rbs_parser_get_current_token(state);
+    rbs_string_t unquoted_str = rbs_unquote_string(string);
+    rbs_constant_id_t constant_id = rbs_constant_pool_insert_string(fake_constant_pool, unquoted_str);
+    *symbol = rbs_ast_symbol_new(constant_id);
     return true;
   }
 
