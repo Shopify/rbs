@@ -63,11 +63,36 @@ void rbs_hash_free(rbs_hash_t *hash) {
     free(hash);
 }
 
+bool rbs_node_equal(rbs_node_t *lhs, rbs_node_t *rhs) {
+    if (lhs == rhs) return true;
+    if (lhs->type != rhs->type) return false;
+
+    switch (lhs->type) {
+        case RBS_AST_BOOL:
+            return ((rbs_ast_bool_t *)lhs)->value == ((rbs_ast_bool_t *) rhs)->value;
+        case RBS_AST_SYMBOL: {
+            return rbs_constant_id_equal(
+                fake_constant_pool,
+                ((rbs_ast_symbol_t *) lhs)->constant_id,
+                ((rbs_ast_symbol_t *) rhs)->constant_id
+            );
+        }
+        case RBS_AST_STRING: {
+            return rbs_string_equal(((rbs_ast_string_t *) lhs)->string, ((rbs_ast_string_t *) rhs)->string);
+        }
+        case RBS_OTHER_RUBY_VALUE:
+            return rb_equal(((rbs_other_ruby_value_t *) lhs)->ruby_value, ((rbs_other_ruby_value_t *) rhs)->ruby_value);
+        default:
+            printf("Unhandled node type: %d\n", lhs->type);
+            return false;
+    }
+}
+
 rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key) {
     rbs_hash_node_t *current = hash->head;
 
     while (current != NULL) {
-        if (rb_equal(rbs_struct_to_ruby_value(key), rbs_struct_to_ruby_value(current->key))) {
+        if (rbs_node_equal(key, current->key)) {
             return current;
         }
         current = current->next;
