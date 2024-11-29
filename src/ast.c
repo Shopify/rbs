@@ -191,10 +191,9 @@ rbs_ast_bool_t *rbs_ast_bool_new(bool value) {
     return instance;
 }
 
-rbs_ast_comment_t *rbs_ast_comment_new(VALUE string, rbs_location_t *location) {
+rbs_ast_comment_t *rbs_ast_comment_new(rbs_string_t string, rbs_location_t *location) {
     rbs_ast_comment_t *instance = (rbs_ast_comment_t *)calloc(1, sizeof(rbs_ast_comment_t));
 
-    rb_gc_register_mark_object(string);
 
     *instance = (rbs_ast_comment_t) {
         .base = (rbs_node_t) {
