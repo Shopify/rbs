@@ -54,13 +54,10 @@ static void check_children_cap(rbs_loc *loc) {
 }
 
 void rbs_loc_legacy_add_required_child(rbs_loc *loc, ID name, range r) {
-  check_children_cap(loc);
+  rbs_loc_legacy_add_optional_child(loc, name, r);
 
-  unsigned short i = loc->children->len++;
-  loc->children->entries[i].name = name;
-  loc->children->entries[i].rg = rbs_new_loc_range(r);
-
-  loc->children->required_p |= 1 << i;
+  unsigned short last_index = loc->children->len - 1;
+  loc->children->required_p |= 1 << last_index;
 }
 
 void rbs_loc_legacy_add_optional_child(rbs_loc *loc, ID name, range r) {
