@@ -34,23 +34,24 @@ static VALUE ensure_free_parser(VALUE parser) {
 
 static VALUE parse_type_try(VALUE a) {
   struct parse_type_arg *arg = (struct parse_type_arg *)a;
+  parserstate *parser = arg->parser;
 
-  if (arg->parser->next_token.type == pEOF) {
+  if (parser->next_token.type == pEOF) {
     return Qnil;
   }
 
   rbs_node_t *type;
-  parse_type(arg->parser, &type);
+  parse_type(parser, &type);
 
-  if (arg->parser->error) {
-    raise_error(arg->parser, arg->parser->error);
+  if (parser->error) {
+    raise_error(parser, parser->error);
   }
 
   if (RB_TEST(arg->require_eof)) {
-    parser_advance_assert(arg->parser, pEOF);
+    parser_advance_assert(parser, pEOF);
   }
 
-  return rbs_struct_to_ruby_value(type);
+  return rbs_struct_to_ruby_value(parser, type);
 }
 
 static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
@@ -67,23 +68,24 @@ static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VAL
 
 static VALUE parse_method_type_try(VALUE a) {
   struct parse_type_arg *arg = (struct parse_type_arg *)a;
+  parserstate *parser = arg->parser;
 
-  if (arg->parser->next_token.type == pEOF) {
+  if (parser->next_token.type == pEOF) {
     return Qnil;
   }
 
   rbs_methodtype_t *method_type = NULL;
-  parse_method_type(arg->parser, &method_type);
+  parse_method_type(parser, &method_type);
 
-  if (arg->parser->error) {
-    raise_error(arg->parser, arg->parser->error);
+  if (parser->error) {
+    raise_error(parser, parser->error);
   }
 
   if (RB_TEST(arg->require_eof)) {
-    parser_advance_assert(arg->parser, pEOF);
+    parser_advance_assert(parser, pEOF);
   }
 
-  return rbs_struct_to_ruby_value((rbs_node_t *) method_type);
+  return rbs_struct_to_ruby_value(parser, (rbs_node_t *) method_type);
 }
 
 static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
@@ -108,7 +110,7 @@ static VALUE parse_signature_try(VALUE a) {
     raise_error(parser, parser->error);
   }
 
-  return rbs_struct_to_ruby_value((rbs_node_t *) signature);
+  return rbs_struct_to_ruby_value(parser, (rbs_node_t *) signature);
 }
 
 static VALUE rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE end_pos) {
