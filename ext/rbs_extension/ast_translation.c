@@ -5,7 +5,7 @@
 /* templates/ext/rbs_extension/ast_translation.c.erb                          */
 /*----------------------------------------------------------------------------*/
 
-#include "rbs/ast.h"
+#include "ast_translation.h"
 
 #include "ruby/encoding.h"
 

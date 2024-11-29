@@ -104,8 +104,6 @@ void rbs_node_list_free(rbs_node_list_t *list);
 
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
-VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list);
-
 /* rbs_hash */
 
 typedef struct rbs_hash_node {
@@ -129,8 +127,6 @@ void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value);
 rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key);
 
 rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key);
-
-VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash);
 
 /* rbs_ast_node */
 
@@ -730,7 +726,5 @@ rbs_types_tuple_t *rbs_types_tuple_new(rbs_node_list_t *types, rbs_location_t *l
 rbs_types_union_t *rbs_types_union_new(rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_node_t *return_type);
 rbs_types_variable_t *rbs_types_variable_new(rbs_ast_symbol_t *name, rbs_location_t *location);
-
-VALUE rbs_struct_to_ruby_value(rbs_node_t *instance);
 
 #endif
