@@ -5,24 +5,30 @@
 #include "class_constants.h"
 #include "rbs_string_bridging.h"
 
-VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
+VALUE rbs_node_list_to_ruby_array(parserstate *parser, rbs_node_list_t *list) {
     VALUE a = rb_ary_new();
 
     for (rbs_node_list_node_t *n = list->head; n != NULL; n = n->next) {
-        rb_ary_push(a, rbs_struct_to_ruby_value(n->node));
+        rb_ary_push(a, rbs_struct_to_ruby_value(parser, n->node));
     }
 
     return a;
 }
 
-VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
+VALUE rbs_hash_to_ruby_hash(parserstate *parser, rbs_hash_t *hash) {
     VALUE h = rb_hash_new();
 
     for (rbs_hash_node_t *n = hash->head; n != NULL; n = n->next) {
-        rb_hash_aset(h, rbs_struct_to_ruby_value(n->key), rbs_struct_to_ruby_value(n->value));
+        VALUE key = rbs_struct_to_ruby_value(parser, n->key);
+        VALUE value = rbs_struct_to_ruby_value(parser, n->value);
+        rb_hash_aset(h, key, value);
     }
 
     return h;
+}
+
+VALUE rbs_loc_to_ruby_location(parserstate *parser, rbs_location_t *loc) {
+  return loc->cached_ruby_value;
 }
 
 #ifdef RB_PASS_KEYWORDS
@@ -35,7 +41,7 @@ VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
+VALUE rbs_struct_to_ruby_value(parserstate *parser, rbs_node_t *instance) {
     if (instance == NULL) {
         return Qnil;
     }
@@ -65,7 +71,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
 
             VALUE array = rb_ary_new();
-            rb_ary_push(array, rbs_struct_to_ruby_value(record_fieldtype->type));
+            rb_ary_push(array, rbs_struct_to_ruby_value(parser, record_fieldtype->type));
             rb_ary_push(array, record_fieldtype->required ? Qtrue : Qfalse);
             return array;
 
@@ -73,8 +79,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rbs_signature_t *signature = (rbs_signature_t *) instance;
 
             VALUE array = rb_ary_new();
-            rb_ary_push(array, rbs_node_list_to_ruby_array(signature->directives));
-            rb_ary_push(array, rbs_node_list_to_ruby_array(signature->declarations));
+            rb_ary_push(array, rbs_node_list_to_ruby_array(parser, signature->directives));
+            rb_ary_push(array, rbs_node_list_to_ruby_array(parser, signature->declarations));
             return array;
             <%- else -%>
             <%- if node.fields.any? -%> <%# This prevents "warning: unused variable 'node'" %>
@@ -87,11 +93,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             <%- when "VALUE" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %>);
             <%- when "rbs_node_list" -%>
-            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_node_list_to_ruby_array(node-><%= field.name %>));
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_node_list_to_ruby_array(parser, node-><%= field.name %>));
             <%- when "rbs_hash" -%>
-            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_hash_to_ruby_hash(node-><%= field.name %>));
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_hash_to_ruby_hash(parser, node-><%= field.name %>));
             <%- when "rbs_location" -%>
-            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(node-><%= field.name %>));
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(parser, node-><%= field.name %>));
             <%- when "rbs_string" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_string_to_ruby_string(&node-><%= field.name %>));
             <%- when "bool" -%>
@@ -100,7 +106,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             <%- unless field.ast_node? -%>
             #warning unexpected type <%= field.c_type -%>
             <%- end -%>
-            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value((rbs_node_t *) node-><%= field.name %>)); // <%= field.c_type %>
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value(parser, (rbs_node_t *) node-><%= field.name %>)); // <%= field.c_type %>
             <%- end -%>
             <%- end -%>
 
