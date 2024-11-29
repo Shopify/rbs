@@ -1717,7 +1717,8 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
   rbs_ast_symbol_t *name = NULL;
   CHECK_PARSE(parse_method_name(state, &name_range, &name));
 
-  if (state->next_token.type == pDOT && RB_SYM2ID(rbs_struct_to_ruby_value((rbs_node_t *) name)) == rb_intern("self?")) {
+  rbs_constant_t *constant = rbs_constant_pool_id_to_constant(fake_constant_pool, name->constant_id);
+  if (state->next_token.type == pDOT && strcmp(constant->start, "self?") == 0) {
     set_error(state, state->next_token, true, "`self?` method cannot have visibility");
     return false;
   } else {
