@@ -77,6 +77,8 @@ bool rbs_node_equal(rbs_node_t *lhs, rbs_node_t *rhs) {
     switch (lhs->type) {
         case RBS_AST_BOOL:
             return ((rbs_ast_bool_t *)lhs)->value == ((rbs_ast_bool_t *) rhs)->value;
+        case RBS_AST_INTEGER:
+            return rbs_string_equal(((rbs_ast_integer_t *) lhs)->string_representation, ((rbs_ast_integer_t *) rhs)->string_representation);
         case RBS_AST_SYMBOL: {
             return rbs_constant_id_equal(
                 fake_constant_pool,
