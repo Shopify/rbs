@@ -12,6 +12,8 @@
 #include "class_constants.h"
 #include "rbs_string_bridging.h"
 
+#define RBS_LOC_CHILDREN_SIZE(cap) (sizeof(rbs_loc_children) + sizeof(rbs_loc_entry) * ((cap) - 1))
+
 VALUE rbs_node_list_to_ruby_array(parserstate *parser, rbs_node_list_t *list) {
     VALUE a = rb_ary_new();
 
@@ -34,10 +36,18 @@ VALUE rbs_hash_to_ruby_hash(parserstate *parser, rbs_hash_t *hash) {
     return h;
 }
 
-VALUE rbs_loc_to_ruby_location(parserstate *parser, rbs_location_t *loc) {
-  VALUE ruby_loc = loc->cached_ruby_value;
-  rbs_check_location(ruby_loc)->buffer = parser->buffer;
-  return ruby_loc;
+VALUE rbs_loc_to_ruby_location(parserstate *parser, rbs_location_t *source_loc) {
+  VALUE buffer = parser->buffer;
+
+  VALUE new_loc = rbs_new_location(buffer, source_loc->rg);
+  rbs_loc *new_loc_struct = rbs_check_location(new_loc);
+
+  if (source_loc->children != NULL) {
+    rbs_loc_legacy_alloc_children(new_loc_struct, source_loc->children->cap);
+    memcpy(new_loc_struct->children, source_loc->children, RBS_LOC_CHILDREN_SIZE(source_loc->children->cap));
+  }
+
+  return new_loc;
 }
 
 #ifdef RB_PASS_KEYWORDS
