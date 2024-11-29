@@ -3,6 +3,7 @@
 #include "rbs/rbs_string.h"
 #include "rbs/rbs_constant_pool.h"
 #include "rbs/rbs_unescape.h"
+#include "ast_translation.h"
 #include "rbs_string_bridging.h"
 
 #define INTERN_TOKEN_ID(parserstate, tok) \

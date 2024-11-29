@@ -37,8 +37,6 @@ void rbs_node_list_free(rbs_node_list_t *list);
 
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
-VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list);
-
 /* rbs_hash */
 
 typedef struct rbs_hash_node {
@@ -62,8 +60,6 @@ void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value);
 rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key);
 
 rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key);
-
-VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash);
 
 /* rbs_ast_node */
 
@@ -95,7 +91,5 @@ rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value);
 <%- nodes.each do |node| -%>
 <%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>);
 <%- end -%>
-
-VALUE rbs_struct_to_ruby_value(rbs_node_t *instance);
 
 #endif
