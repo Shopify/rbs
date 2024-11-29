@@ -211,7 +211,7 @@ static rbs_ast_comment_t *parse_comment_lines(comment *com, VALUE buffer) {
   }
 
   return rbs_ast_comment_new(
-    rbs_buffer_to_string(&rbs_buffer),
+    rbs_buffer_to_string(&rbs_buffer, enc),
     rbs_location_pp(&com->start, &com->end)
   );
 }
@@ -309,7 +309,7 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
   };
 
   *lexer = (lexstate) {
-    .string = string,
+    .string = rbs_string_from_ruby_string(string),
     .start_pos = start_pos,
     .end_pos = end_pos,
     .current = start_position,

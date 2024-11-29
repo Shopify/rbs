@@ -3,8 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-
-typedef bool rbs_encoding_placeholder_t;
+#include "ruby/encoding.h"
 
 typedef struct {
   const char *start;
@@ -19,8 +18,8 @@ typedef struct {
     RBS_STRING_OWNED,
   } type;
 
-  // Not a real value, just looking a placeholder for when we eventually wire it up.
-  rbs_encoding_placeholder_t encoding;
+  // TODO: Wire this up with `rbs_encoding`.
+  rb_encoding *encoding;
 } rbs_string_t;
 
 #define RBS_STRING_NULL ((rbs_string_t) { \
@@ -33,12 +32,12 @@ typedef struct {
 /**
  * Returns a new `rbs_string_t` struct that points to the given C string without owning it.
  */
-rbs_string_t rbs_string_shared_new(const char *start, const char *end);
+rbs_string_t rbs_string_shared_new(const char *start, const char *end, rb_encoding *encoding);
 
 /**
  * Returns a new `rbs_string_t` struct that owns its memory.
  */
-rbs_string_t rbs_string_owned_new(const char *start, const char *end);
+rbs_string_t rbs_string_owned_new(const char *start, const char *end, rb_encoding *encoding);
 
 /**
  * Ensures that the given string is owned, so that it manages its own memory, uncoupled from its original source.

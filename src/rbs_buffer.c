@@ -55,8 +55,8 @@ void rbs_buffer_append_string(rbs_buffer_t *buffer, const char *value, size_t le
     rbs_buffer_append(buffer, value, length);
 }
 
-rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer) {
-    return rbs_string_owned_new(buffer->value, buffer->value + buffer->length);
+rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer, rb_encoding *encoding) {
+    return rbs_string_owned_new(buffer->value, buffer->value + buffer->length, encoding);
 }
 
 void rbs_buffer_free(rbs_buffer_t *buffer) {
