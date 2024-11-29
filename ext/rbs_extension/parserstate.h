@@ -45,6 +45,7 @@ typedef struct comment {
 typedef struct error {
   char *message;
   token token;
+  bool syntax_error;
 } error;
 
 /**
@@ -62,7 +63,6 @@ typedef struct {
   id_table *vars;         /* Known type variables */
   comment *last_comment;  /* Last read comment */
 
-  bool aborted;
   error *error;
 } parserstate;
 

@@ -144,13 +144,14 @@ bool parser_advance_if(parserstate *state, enum TokenType type) {
 
 void parser_assert(parserstate *state, enum TokenType type) {
   if (state->current_token.type != type) {
-    set_syntax_error(
+    set_error(
       state,
       state->current_token,
+      true,
       "expected a token `%s`",
       token_type_str(type)
     );
-    raise_syntax_error(state, state->error);
+    raise_error(state, state->error);
   }
 }
 
@@ -334,7 +335,7 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     .vars = NULL,
     .last_comment = NULL,
 
-    .aborted = false,
+    .error = NULL,
   };
 
   parser_advance(parser);
