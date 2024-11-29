@@ -28,7 +28,9 @@ VALUE rbs_hash_to_ruby_hash(parserstate *parser, rbs_hash_t *hash) {
 }
 
 VALUE rbs_loc_to_ruby_location(parserstate *parser, rbs_location_t *loc) {
-  return loc->cached_ruby_value;
+  VALUE ruby_loc = loc->cached_ruby_value;
+  rbs_check_location(ruby_loc)->buffer = parser->buffer;
+  return ruby_loc;
 }
 
 #ifdef RB_PASS_KEYWORDS
