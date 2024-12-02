@@ -305,6 +305,12 @@ parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos, VALUE var
   for (long i = 0; i < rb_array_len(variables); i++) {
     VALUE symbol = rb_ary_entry(variables, i);
 
+    if (!RB_TYPE_P(symbol, T_SYMBOL)) {
+      rb_raise(rb_eTypeError,
+        "Type variables Array contains invalid value %"PRIsVALUE" of type %"PRIsVALUE" (must be an Array of Symbols or nil)",
+        rb_inspect(symbol), rb_obj_class(symbol));
+    }
+
     VALUE name_str = rb_sym2str(symbol);
     rbs_constant_id_t key = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
 
