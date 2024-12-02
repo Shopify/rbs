@@ -114,7 +114,6 @@ unsigned int peek(lexstate *state) {
       .start = state->string.start + state->current.byte_pos,
       .end = state->string.end,
       .type = RBS_STRING_SHARED,
-      .encoding = state->string.encoding
     };
     unsigned int c = utf8_to_codepoint(str);
     state->last_char = c;

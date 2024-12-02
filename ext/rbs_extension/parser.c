@@ -832,7 +832,7 @@ static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
 */
 NODISCARD
 static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types_literal_t **symbol) {
-  VALUE string = rbs_string_to_ruby_string(&state->lexstate->string);
+  VALUE string = rbs_string_to_ruby_string(&state->lexstate->string, state->encoding);
   rb_encoding *enc = rb_enc_get(string);
 
   int offset_bytes = rb_enc_codelen(':', enc);

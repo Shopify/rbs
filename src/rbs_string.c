@@ -5,21 +5,19 @@
 #include <stdio.h>
 #include <ctype.h>
 
-rbs_string_t rbs_string_shared_new(const char *start, const char *end, rb_encoding *encoding) {
+rbs_string_t rbs_string_shared_new(const char *start, const char *end) {
     return (rbs_string_t) {
         .start = start,
         .end = end,
         .type = RBS_STRING_SHARED,
-        .encoding = encoding,
     };
 }
 
-rbs_string_t rbs_string_owned_new(const char *start, const char *end, rb_encoding *encoding) {
+rbs_string_t rbs_string_owned_new(const char *start, const char *end) {
     return (rbs_string_t) {
         .start = start,
         .end = end,
         .type = RBS_STRING_OWNED,
-        .encoding = encoding,
     };
 }
 
@@ -32,11 +30,11 @@ void rbs_string_ensure_owned(rbs_string_t *self) {
     strncpy(buffer, self->start, length);
     buffer[length] = '\0';
 
-    *self = rbs_string_owned_new(buffer, buffer + length, self->encoding);
+    *self = rbs_string_owned_new(buffer, buffer + length);
 }
 
 rbs_string_t rbs_string_offset(const rbs_string_t self, const size_t offset) {
-    return rbs_string_shared_new(self.start + offset, self.end, self.encoding);
+    return rbs_string_shared_new(self.start + offset, self.end);
 }
 
 // // Ensure the given string is shared, so that we can slice it without needing to free the old string.
@@ -78,7 +76,7 @@ rbs_string_t rbs_string_slice(const rbs_string_t self, size_t start_inset, size_
 
     const char *new_start = self.start + start_inset;
 
-    return rbs_string_shared_new(new_start, new_start + length, self.encoding);
+    return rbs_string_shared_new(new_start, new_start + length);
 }
 
 void rbs_string_strip_whitespace(rbs_string_t *self) {

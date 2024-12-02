@@ -111,7 +111,7 @@ VALUE rbs_struct_to_ruby_value(parserstate *parser, rbs_node_t *instance) {
             <%- when "rbs_location" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(parser, node-><%= field.name %>));
             <%- when "rbs_string" -%>
-            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_string_to_ruby_string(&node-><%= field.name %>));
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_string_to_ruby_string(&node-><%= field.name %>, parser->encoding));
             <%- when "bool" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %> ? Qtrue : Qfalse);
             <%- else -%>
