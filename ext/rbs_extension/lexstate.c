@@ -1,6 +1,7 @@
 #include "rbs_extension.h"
 #include "ruby.h"
 #include "rbs_string_bridging.h"
+#include "rbs/encoding.h"
 
 static const char *RBS_TOKENTYPE_NAMES[] = {
   "NullType",
@@ -111,7 +112,13 @@ unsigned int peek(lexstate *state) {
     state->last_char = '\0';
     return 0;
   } else {
-    unsigned int c = rb_enc_mbc_to_codepoint(state->string.start + state->current.byte_pos, state->string.end, state->string.encoding);
+    rbs_string_t str = {
+      .start = state->string.start + state->current.byte_pos,
+      .end = state->string.end,
+      .type = RBS_STRING_SHARED,
+      .encoding = state->string.encoding
+    };
+    unsigned int c = utf8_to_codepoint(str);
     state->last_char = c;
     return c;
   }
