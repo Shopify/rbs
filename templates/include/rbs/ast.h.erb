@@ -79,11 +79,6 @@ typedef struct rbs_ast_symbol {
 
 rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id);
 
-typedef struct rbs_other_ruby_value {
-    rbs_node_t base;
-    VALUE ruby_value;
-} rbs_other_ruby_value_t;
-
 <%- nodes.each do |node| -%>
 <%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>);
 <%- end -%>
