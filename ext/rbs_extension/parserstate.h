@@ -3,6 +3,9 @@
 
 #include <stdbool.h>
 
+#include "ruby.h" // TODO: remove this
+#include "ruby/encoding.h" // TODO: remove this
+
 #include "lexer.h"
 #include "rbs/ast.h"
 #include "rbs/rbs_constant_pool.h"
@@ -59,6 +62,7 @@ typedef struct {
   token next_token2;      /* The second lookahead token */
   token next_token3;      /* The third lookahead token */
   VALUE buffer;
+  rb_encoding *encoding; // TODO: remove this
 
   id_table *vars;         /* Known type variables */
   comment *last_comment;  /* Last read comment */

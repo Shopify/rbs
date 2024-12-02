@@ -77,7 +77,7 @@ void rbs_buffer_append_string(rbs_buffer_t *buffer, const char *value, size_t le
  * @param buffer The buffer to convert.
  * @returns The converted rbs_string_t.
  */
-rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer, rb_encoding *encoding);
+rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer);
 
 /**
  * Free the memory associated with the buffer.

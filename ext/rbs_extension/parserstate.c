@@ -211,7 +211,7 @@ static rbs_ast_comment_t *parse_comment_lines(comment *com, VALUE buffer) {
   }
 
   return rbs_ast_comment_new(
-    rbs_buffer_to_string(&rbs_buffer, enc),
+    rbs_buffer_to_string(&rbs_buffer),
     rbs_location_pp(&com->start, &com->end)
   );
 }
@@ -340,6 +340,7 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     .next_token2 = NullToken,
     .next_token3 = NullToken,
     .buffer = buffer,
+    .encoding = rb_enc_get(buffer),
 
     .vars = NULL,
     .last_comment = NULL,

@@ -3,7 +3,6 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include "ruby/encoding.h" // TODO: remove this
 
 typedef struct {
   const char *start;
@@ -17,27 +16,23 @@ typedef struct {
     /** This string owns its memory, and should be freed using `rbs_string_free`. */
     RBS_STRING_OWNED,
   } type;
-
-  // TODO: Wire this up with `rbs_encoding`.
-  rb_encoding *encoding;
 } rbs_string_t;
 
 #define RBS_STRING_NULL ((rbs_string_t) { \
     .start = NULL,                        \
     .end = NULL,                          \
     .type = RBS_STRING_CONSTANT,          \
-    .encoding = false,                    \
   })
 
 /**
  * Returns a new `rbs_string_t` struct that points to the given C string without owning it.
  */
-rbs_string_t rbs_string_shared_new(const char *start, const char *end, rb_encoding *encoding);
+rbs_string_t rbs_string_shared_new(const char *start, const char *end);
 
 /**
  * Returns a new `rbs_string_t` struct that owns its memory.
  */
-rbs_string_t rbs_string_owned_new(const char *start, const char *end, rb_encoding *encoding);
+rbs_string_t rbs_string_owned_new(const char *start, const char *end);
 
 /**
  * Ensures that the given string is owned, so that it manages its own memory, uncoupled from its original source.

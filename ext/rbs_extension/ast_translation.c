@@ -71,7 +71,7 @@ VALUE rbs_struct_to_ruby_value(parserstate *parser, rbs_node_t *instance) {
             rbs_ast_annotation_t *node = (rbs_ast_annotation_t *)instance;
             // [#<RBS::Template::Field name="string" c_type="rbs_string">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&node->string));
+            rb_hash_aset(h, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&node->string, parser->encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(parser, node->location));
 
 
@@ -90,7 +90,7 @@ VALUE rbs_struct_to_ruby_value(parserstate *parser, rbs_node_t *instance) {
             rbs_ast_comment_t *node = (rbs_ast_comment_t *)instance;
             // [#<RBS::Template::Field name="string" c_type="rbs_string">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&node->string));
+            rb_hash_aset(h, ID2SYM(rb_intern("string")), rbs_string_to_ruby_string(&node->string, parser->encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(parser, node->location));
 
 
