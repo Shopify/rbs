@@ -654,11 +654,6 @@ typedef struct rbs_ast_symbol {
 
 rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id);
 
-typedef struct rbs_other_ruby_value {
-    rbs_node_t base;
-    VALUE ruby_value;
-} rbs_other_ruby_value_t;
-
 rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_string_t string, rbs_location_t *location);
 rbs_ast_bool_t *rbs_ast_bool_new(bool value);
 rbs_ast_comment_t *rbs_ast_comment_new(rbs_string_t string, rbs_location_t *location);

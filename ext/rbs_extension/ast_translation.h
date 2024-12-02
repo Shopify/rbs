@@ -8,7 +8,6 @@
 #ifndef RBS_EXTENSION_AST_TRANSLATION_H
 #define RBS_EXTENSION_AST_TRANSLATION_H
 
-#include "ruby.h"
 #include "rbs/ast.h"
 #include "location.h"
 #include "parserstate.h"
