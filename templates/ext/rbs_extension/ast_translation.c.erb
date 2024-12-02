@@ -150,8 +150,5 @@ VALUE rbs_struct_to_ruby_value(parserstate *parser, rbs_node_t *instance) {
 
             return ruby_symbol;
         }
-        case RBS_OTHER_RUBY_VALUE: {
-            return ((rbs_other_ruby_value_t *) instance)->ruby_value;
-        }
     }
 }
