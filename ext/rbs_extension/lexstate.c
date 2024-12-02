@@ -158,7 +158,14 @@ void rbs_skip(lexstate *state) {
   if (!state->last_char) {
     peek(state);
   }
-  int byte_len = rb_enc_codelen(state->last_char, state->string.encoding);
+
+  size_t byte_len;
+
+  if (state->last_char == '\0') {
+    byte_len = 1;
+  } else {
+    byte_len = state->encoding->char_width((const uint8_t *) (state->string.start + state->current.byte_pos), (ptrdiff_t) (state->string.end - (state->string.start + state->current.byte_pos)));
+  }
 
   state->current.char_pos += 1;
   state->current.byte_pos += byte_len;
