@@ -303,8 +303,7 @@ parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos, VALUE var
   parser_push_typevar_table(parser, true);
 
   for (long i = 0; i < rb_array_len(variables); i++) {
-    VALUE index = INT2FIX(i);
-    VALUE symbol = rb_ary_aref(1, &index, variables);
+    VALUE symbol = rb_ary_entry(variables, i);
 
     VALUE name_str = rb_sym2str(symbol);
     rbs_constant_id_t key = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
