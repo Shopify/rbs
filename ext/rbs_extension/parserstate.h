@@ -4,7 +4,6 @@
 #include <stdbool.h>
 
 #include "lexer.h"
-#include "location.h"
 #include "rbs/ast.h"
 #include "rbs/rbs_constant_pool.h"
 

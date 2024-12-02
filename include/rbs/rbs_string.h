@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdbool.h>
-#include "ruby/encoding.h"
+#include "ruby/encoding.h" // TODO: remove this
 
 typedef struct {
   const char *start;

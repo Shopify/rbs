@@ -10,7 +10,7 @@
 
 #include "ruby.h"
 #include "rbs/ast.h"
-
+#include "location.h"
 #include "parserstate.h"
 
 VALUE rbs_node_list_to_ruby_array(parserstate *parser, rbs_node_list_t *list);
