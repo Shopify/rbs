@@ -10,36 +10,41 @@ module RBS
       attr_reader :name
       attr_reader :c_type
 
-      def initialize(name:, c_type:)
+      def initialize(name:, c_type:, c_name:)
         @name = name
         @c_type = c_type
+        @c_name = c_name
       end
 
       def self.from_hash(hash)
-        new(name: hash["name"], c_type: hash.fetch("c_type", "VALUE"))
+        new(name: hash["name"], c_type: hash.fetch("c_type", "VALUE"), c_name: hash["c_name"])
+      end
+
+      def c_name
+        @c_name || @name
       end
 
       def parameter_decl
         case @c_type
         when "VALUE", "bool"
-          "#{@c_type} #{@name}"
+          "#{@c_type} #{c_name}"
         when "rbs_string"
-          "rbs_string_t #{@name}"
+          "rbs_string_t #{c_name}"
         else
-          "#{@c_type}_t *#{@name}"
+          "#{@c_type}_t *#{c_name}"
         end
       end
 
       def stored_field_decl
         case @c_type
         when "VALUE"
-          "VALUE #{@name}"
+          "VALUE #{c_name}"
         when "bool"
-          "bool #{@name}"
+          "bool #{c_name}"
         when "rbs_string"
-          "rbs_string_t #{@name}"
+          "rbs_string_t #{c_name}"
         else
-          "struct #{@c_type} *#{@name}"
+          "struct #{@c_type} *#{c_name}"
         end
       end
 
