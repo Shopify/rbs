@@ -9,6 +9,8 @@
 #define RBS_EXTENSION_AST_TRANSLATION_H
 
 #include "rbs/ast.h"
+#include "ruby.h"
+#include "ruby/encoding.h"
 #include "location.h"
 #include "parserstate.h"
 
