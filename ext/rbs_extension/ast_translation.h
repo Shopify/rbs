@@ -12,9 +12,9 @@
 #include "location.h"
 #include "parserstate.h"
 
-VALUE rbs_node_list_to_ruby_array(parserstate *parser, rbs_node_list_t *list);
-VALUE rbs_hash_to_ruby_hash(parserstate *parser, rbs_hash_t *hash);
-VALUE rbs_loc_to_ruby_location(parserstate *parser, rbs_location_t *loc);
-VALUE rbs_struct_to_ruby_value(parserstate *parser, rbs_node_t *instance);
+VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list, VALUE buffer, rb_encoding *encoding);
+VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash, VALUE buffer, rb_encoding *encoding);
+VALUE rbs_loc_to_ruby_location(rbs_location_t *loc, VALUE buffer);
+VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *encoding);
 
 #endif

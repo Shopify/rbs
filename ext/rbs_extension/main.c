@@ -52,7 +52,7 @@ static VALUE parse_type_try(VALUE a) {
     parser_advance_assert(parser, pEOF);
   }
 
-  return rbs_struct_to_ruby_value(parser, type);
+  return rbs_struct_to_ruby_value(type, parser->buffer, parser->encoding);
 }
 
 static lexstate *alloc_lexer_from_buffer(VALUE buffer, int start_pos, int end_pos) {
@@ -103,7 +103,7 @@ static VALUE parse_method_type_try(VALUE a) {
     parser_advance_assert(parser, pEOF);
   }
 
-  return rbs_struct_to_ruby_value(parser, (rbs_node_t *) method_type);
+  return rbs_struct_to_ruby_value((rbs_node_t *) method_type, parser->buffer, parser->encoding);
 }
 
 static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
@@ -126,7 +126,7 @@ static VALUE parse_signature_try(VALUE a) {
     raise_error(parser, parser->error);
   }
 
-  return rbs_struct_to_ruby_value(parser, (rbs_node_t *) signature);
+  return rbs_struct_to_ruby_value((rbs_node_t *) signature, parser->buffer, parser->encoding);
 }
 
 static VALUE rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE end_pos) {
