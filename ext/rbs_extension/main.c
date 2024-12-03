@@ -82,7 +82,8 @@ static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VAL
   rb_encoding *encoding = rb_enc_get(string);
 
   lexstate *lexer = alloc_lexer_from_buffer(string, encoding, FIX2INT(start_pos), FIX2INT(end_pos));
-  parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos), variables);
+  parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos));
+  rbs_parser_declare_type_variables_from_ruby_array(parser, variables);
   struct parse_type_arg arg = {
     .buffer = buffer,
     .encoding = encoding,
@@ -124,7 +125,8 @@ static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_p
   rb_encoding *encoding = rb_enc_get(string);
 
   lexstate *lexer = alloc_lexer_from_buffer(string, encoding, FIX2INT(start_pos), FIX2INT(end_pos));
-  parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos), variables);
+  parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos));
+  rbs_parser_declare_type_variables_from_ruby_array(parser, variables);
   struct parse_type_arg arg = {
     .buffer = buffer,
     .encoding = encoding,
@@ -154,7 +156,7 @@ static VALUE rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE end_pos) 
   rb_encoding *encoding = rb_enc_get(string);
 
   lexstate *lexer = alloc_lexer_from_buffer(string, encoding, 0, FIX2INT(end_pos));
-  parserstate *parser = alloc_parser(lexer, 0, FIX2INT(end_pos), Qnil);
+  parserstate *parser = alloc_parser(lexer, 0, FIX2INT(end_pos));
     struct parse_type_arg arg = {
     .buffer = buffer,
     .encoding = encoding,

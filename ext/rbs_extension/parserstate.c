@@ -307,7 +307,7 @@ lexstate *alloc_lexer(rbs_string_t string, const rbs_encoding_t *encoding, int s
   return lexer;
 }
 
-parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos, VALUE variables) {
+parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos) {
   parserstate *parser = malloc(sizeof(parserstate));
 
   *parser = (parserstate) {
@@ -328,11 +328,26 @@ parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos, VALUE var
   parser_advance(parser);
   parser_advance(parser);
 
-  if (NIL_P(variables)) return parser;
+  return parser;
+}
+
+void rbs_parser_declare_type_variables(parserstate *parser, size_t count, const char *variables[count]) {
+  if (variables == NULL) return; // Nothing to do.
+
+  parser_push_typevar_table(parser, true);
+
+  for (size_t i = 0; i < count; i++) {
+    rbs_constant_id_t name = rbs_constant_pool_insert_literal(fake_constant_pool, variables[i]);
+    parser_insert_typevar(parser, name);
+  }
+}
+
+void rbs_parser_declare_type_variables_from_ruby_array(parserstate *parser, VALUE variables) {
+  if (NIL_P(variables)) return; // Nothing to do.
 
   if (!RB_TYPE_P(variables, T_ARRAY)) {
     rb_raise(rb_eTypeError,
-      "wrong argument type %"PRIsVALUE" (must be array or nil)",
+      "wrong argument type %"PRIsVALUE" (must be an Array of Symbols or nil)",
       rb_obj_class(variables));
   }
 
@@ -348,12 +363,10 @@ parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos, VALUE var
     }
 
     VALUE name_str = rb_sym2str(symbol);
-    rbs_constant_id_t key = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
+    rbs_constant_id_t name = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
 
-    parser_insert_typevar(parser, key);
+    parser_insert_typevar(parser, name);
   }
-
-  return parser;
 }
 
 void free_parser(parserstate *parser) {
