@@ -6,7 +6,7 @@
 #include "ruby.h" // TODO: remove this
 #include "ruby/encoding.h" // TODO: remove this
 
-#include "lexer.h"
+#include "rbs/lexer.h"
 #include "rbs/ast.h"
 #include "rbs/rbs_constant_pool.h"
 
