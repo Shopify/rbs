@@ -54,10 +54,14 @@ static VALUE parse_type_try(VALUE a) {
   return rbs_struct_to_ruby_value(parser, type);
 }
 
-static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
+static lexstate *alloc_lexer_from_buffer(VALUE buffer, int start_pos, int end_pos) {
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
-  lexstate *lexer = alloc_lexer(string, FIX2INT(start_pos), FIX2INT(end_pos));
+  return alloc_lexer(string, start_pos, end_pos);
+}
+
+static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
+  lexstate *lexer = alloc_lexer_from_buffer(buffer, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(buffer, lexer, FIX2INT(start_pos), FIX2INT(end_pos), variables);
   struct parse_type_arg arg = {
     parser,
@@ -89,9 +93,7 @@ static VALUE parse_method_type_try(VALUE a) {
 }
 
 static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
-  VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
-  StringValue(string);
-  lexstate *lexer = alloc_lexer(string, FIX2INT(start_pos), FIX2INT(end_pos));
+  lexstate *lexer = alloc_lexer_from_buffer(buffer, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(buffer, lexer, FIX2INT(start_pos), FIX2INT(end_pos), variables);
   struct parse_type_arg arg = {
     parser,
@@ -114,17 +116,13 @@ static VALUE parse_signature_try(VALUE a) {
 }
 
 static VALUE rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE end_pos) {
-  VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
-  StringValue(string);
-  lexstate *lexer = alloc_lexer(string, 0, FIX2INT(end_pos));
+  lexstate *lexer = alloc_lexer_from_buffer(buffer, 0, FIX2INT(end_pos));
   parserstate *parser = alloc_parser(buffer, lexer, 0, FIX2INT(end_pos), Qnil);
   return rb_ensure(parse_signature_try, (VALUE)parser, ensure_free_parser, (VALUE)parser);
 }
 
 static VALUE rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
-  VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
-  StringValue(string);
-  lexstate *lexer = alloc_lexer(string, 0, FIX2INT(end_pos));
+  lexstate *lexer = alloc_lexer_from_buffer(buffer, 0, FIX2INT(end_pos));
   VALUE results = rb_ary_new();
 
   token token = NullToken;
