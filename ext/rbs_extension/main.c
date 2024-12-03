@@ -1,5 +1,6 @@
 #include "rbs_extension.h"
 
+#include "rbs_string_bridging.h"
 #include "ast_translation.h"
 
 NORETURN(void) raise_error(parserstate *state, error *error) {
@@ -55,9 +56,22 @@ static VALUE parse_type_try(VALUE a) {
 }
 
 static lexstate *alloc_lexer_from_buffer(VALUE buffer, int start_pos, int end_pos) {
+  if (start_pos < 0 || end_pos < 0) {
+    rb_raise(rb_eArgError, "negative position range: %d...%d", start_pos, end_pos);
+  }
+
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
-  return alloc_lexer(string, start_pos, end_pos);
+
+  rb_encoding *encoding = rb_enc_get(string);
+  const char *encoding_name = rb_enc_name(encoding);
+
+  return alloc_lexer(
+    rbs_string_from_ruby_string(string),
+    rbs_encoding_find((const uint8_t *) encoding_name, (const uint8_t *) (encoding_name + strlen(encoding_name))),
+    start_pos,
+    end_pos
+  );
 }
 
 static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {

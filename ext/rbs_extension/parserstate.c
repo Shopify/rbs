@@ -281,21 +281,13 @@ comment *comment_get_comment(comment *com, int line) {
   return comment_get_comment(com->next_comment, line);
 }
 
-lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
-  if (start_pos < 0 || end_pos < 0) {
-    rb_raise(rb_eArgError, "negative position range: %d...%d", start_pos, end_pos);
-  }
-
+lexstate *alloc_lexer(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
   lexstate *lexer = calloc(1, sizeof(lexstate));
-  lexer->string = rbs_string_from_ruby_string(string);
+  lexer->string = string;
+  lexer->encoding = encoding;
   lexer->current.line = 1;
   lexer->start_pos = start_pos;
   lexer->end_pos = end_pos;
-
-  rb_encoding *encoding = rb_enc_get(string);
-  const char *encoding_name = rb_enc_name(encoding);
-  lexer->encoding = rbs_encoding_find((const uint8_t *) encoding_name, (const uint8_t *) (encoding_name + strlen(encoding_name)));
-
   skipn(lexer, start_pos);
   lexer->start = lexer->current;
   lexer->first_token_of_line = lexer->current.column == 0;

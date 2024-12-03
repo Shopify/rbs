@@ -114,7 +114,7 @@ bool parser_typevar_member(parserstate *state, rbs_constant_id_t id);
  * alloc_lexer(string, 0, 31)    // New lexstate with buffer content
  * ```
  * */
-lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos);
+lexstate *alloc_lexer(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos);
 
 /**
  * Allocate new parserstate object.
