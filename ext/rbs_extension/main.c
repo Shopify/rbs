@@ -51,7 +51,11 @@ static VALUE parse_type_try(VALUE a) {
   }
 
   if (RB_TEST(arg->require_eof)) {
-    parser_advance_assert(parser, pEOF);
+    parser_advance(parser);
+    if (parser->current_token.type != pEOF) {
+      set_error(parser, parser->current_token, true, "expected a token `%s`", token_type_str(pEOF));
+      raise_error(parser, parser->error);
+    }
   }
 
   return rbs_struct_to_ruby_value(type, arg->buffer, arg->encoding);
@@ -104,7 +108,11 @@ static VALUE parse_method_type_try(VALUE a) {
   }
 
   if (RB_TEST(arg->require_eof)) {
-    parser_advance_assert(parser, pEOF);
+    parser_advance(parser);
+    if (parser->current_token.type != pEOF) {
+      set_error(parser, parser->current_token, true, "expected a token `%s`", token_type_str(pEOF));
+      raise_error(parser, parser->error);
+    }
   }
 
   return rbs_struct_to_ruby_value((rbs_node_t *) method_type, arg->buffer, arg->encoding);
