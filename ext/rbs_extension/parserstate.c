@@ -307,7 +307,7 @@ lexstate *alloc_lexer(rbs_string_t string, const rbs_encoding_t *encoding, int s
   return lexer;
 }
 
-parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_pos, VALUE variables) {
+parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos, VALUE variables) {
   parserstate *parser = malloc(sizeof(parserstate));
 
   *parser = (parserstate) {
@@ -317,7 +317,6 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     .next_token = NullToken,
     .next_token2 = NullToken,
     .next_token3 = NullToken,
-    .buffer = buffer,
 
     .vars = NULL,
     .last_comment = NULL,
