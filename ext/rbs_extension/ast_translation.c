@@ -336,7 +336,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
             rbs_ast_directives_use_wildcardclause_t *node = (rbs_ast_directives_use_wildcardclause_t *)instance;
             // [#<RBS::Template::Field name="namespace" c_type="rbs_namespace">, #<RBS::Template::Field name="location" c_type="rbs_location">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("namespace")), rbs_struct_to_ruby_value((rbs_node_t *) node->namespace, buffer, encoding)); // rbs_namespace
+            rb_hash_aset(h, ID2SYM(rb_intern("namespace")), rbs_struct_to_ruby_value((rbs_node_t *) node->rbs_namespace, buffer, encoding)); // rbs_namespace
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location, buffer));
 
 
@@ -683,7 +683,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
             rbs_typename_t *node = (rbs_typename_t *)instance;
             // [#<RBS::Template::Field name="namespace" c_type="rbs_namespace">, #<RBS::Template::Field name="name" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
-            rb_hash_aset(h, ID2SYM(rb_intern("namespace")), rbs_struct_to_ruby_value((rbs_node_t *) node->namespace, buffer, encoding)); // rbs_namespace
+            rb_hash_aset(h, ID2SYM(rb_intern("namespace")), rbs_struct_to_ruby_value((rbs_node_t *) node->rbs_namespace, buffer, encoding)); // rbs_namespace
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_ast_symbol
 
 

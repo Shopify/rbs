@@ -398,7 +398,7 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(r
     return instance;
 }
 
-rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_namespace_t *namespace, rbs_location_t *location) {
+rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_namespace_t *rbs_namespace, rbs_location_t *location) {
     rbs_ast_directives_use_wildcardclause_t *instance = (rbs_ast_directives_use_wildcardclause_t *)calloc(1, sizeof(rbs_ast_directives_use_wildcardclause_t));
 
 
@@ -406,7 +406,7 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
         .base = (rbs_node_t) {
             .type = RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE
         },
-        .namespace = namespace,
+        .rbs_namespace = rbs_namespace,
         .location = location,
     };
 
@@ -758,7 +758,7 @@ rbs_signature_t *rbs_signature_new(rbs_node_list_t *directives, rbs_node_list_t 
     return instance;
 }
 
-rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *name) {
+rbs_typename_t *rbs_typename_new(rbs_namespace_t *rbs_namespace, rbs_ast_symbol_t *name) {
     rbs_typename_t *instance = (rbs_typename_t *)calloc(1, sizeof(rbs_typename_t));
 
 
@@ -766,7 +766,7 @@ rbs_typename_t *rbs_typename_new(rbs_namespace_t *namespace, rbs_ast_symbol_t *n
         .base = (rbs_node_t) {
             .type = RBS_TYPENAME
         },
-        .namespace = namespace,
+        .rbs_namespace = rbs_namespace,
         .name = name,
     };
 
