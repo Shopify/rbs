@@ -5,7 +5,7 @@
 
 #include "ruby/encoding.h" // TODO: remove this
 
-#include "lexer.h"
+#include "rbs/lexer.h"
 #include "rbs/ast.h"
 
 /**
