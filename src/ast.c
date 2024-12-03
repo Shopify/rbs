@@ -7,10 +7,8 @@
 
 #include "rbs/ast.h"
 
+#include <stdio.h>
 #include <stdlib.h>
-#include "class_constants.h"
-#include "rbs_string_bridging.h"
-#include "ruby/encoding.h"
 
 /* rbs_node_list */
 
