@@ -21,4 +21,4 @@ extern VALUE RBS_Parser;
  * foo.rbs:11:21...11:25: Syntax error: {message}, token=`{tok source}` ({tok type})
  * ```
  * */
-NORETURN(void) raise_error(parserstate *state, error *error);
+NORETURN(void) raise_error(VALUE buffer, error *error);
