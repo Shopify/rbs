@@ -22,6 +22,7 @@ typedef struct {
 
 typedef struct {
     // TODO: Implement this.
+    bool todo;
 } rbs_constant_pool_t;
 
 // A temporary stand-in for the constant pool until we implement it.
