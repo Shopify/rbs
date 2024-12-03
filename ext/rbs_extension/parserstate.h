@@ -59,7 +59,6 @@ typedef struct {
   token next_token;       /* The first lookahead token */
   token next_token2;      /* The second lookahead token */
   token next_token3;      /* The third lookahead token */
-  VALUE buffer;
 
   id_table *vars;         /* Known type variables */
   comment *last_comment;  /* Last read comment */
@@ -121,7 +120,7 @@ lexstate *alloc_lexer(rbs_string_t string, const rbs_encoding_t *encoding, int s
  * alloc_parser(buffer, lexer, 3, 5, Qnil)         // New parserstate without variables
  * ```
  * */
-parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_pos, VALUE variables);
+parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos, VALUE variables);
 void free_parser(parserstate *parser);
 /**
  * Advance one token.
