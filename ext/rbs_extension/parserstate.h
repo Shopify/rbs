@@ -4,7 +4,6 @@
 #include <stdbool.h>
 
 #include "ruby.h" // TODO: remove this
-#include "ruby/encoding.h" // TODO: remove this
 
 #include "rbs/lexer.h"
 #include "rbs/ast.h"
