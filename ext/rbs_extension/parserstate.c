@@ -299,7 +299,6 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
   parserstate *parser = calloc(1, sizeof(parserstate));
   parser->lexstate = lexer;
   parser->buffer = buffer;
-  parser->encoding = rb_enc_get(buffer);
   parser->current_token = NullToken;
   parser->next_token = NullToken;
   parser->next_token2 = NullToken;
