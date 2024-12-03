@@ -62,7 +62,6 @@ typedef struct {
   token next_token2;      /* The second lookahead token */
   token next_token3;      /* The third lookahead token */
   VALUE buffer;
-  rb_encoding *encoding; // TODO: remove this
 
   id_table *vars;         /* Known type variables */
   comment *last_comment;  /* Last read comment */
