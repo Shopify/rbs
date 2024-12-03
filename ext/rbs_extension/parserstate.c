@@ -1,7 +1,7 @@
 #include "rbs_extension.h"
 #include "rbs/util/rbs_constant_pool.h"
 
-#include "rbs_string_bridging.h"
+#include "rbs/encoding.h"
 #include "rbs/rbs_buffer.h"
 
 #define RESET_TABLE_P(table) (table->size == 0)
@@ -167,12 +167,9 @@ void insert_comment_line(parserstate *state, token tok) {
   }
 }
 
-static rbs_ast_comment_t *parse_comment_lines(comment *com, VALUE buffer) {
-  VALUE content = rb_funcall(buffer, rb_intern("content"), 0);
-  rb_encoding *enc = rb_enc_get(content);
-
-  int hash_bytes = rb_enc_codelen('#', enc);
-  int space_bytes = rb_enc_codelen(' ', enc);
+static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) {
+  size_t hash_bytes = state->lexstate->encoding->char_width((const uint8_t *) "#", (size_t) 1);
+  size_t space_bytes = state->lexstate->encoding->char_width((const uint8_t *) " ", (size_t) 1);
 
   rbs_buffer_t rbs_buffer;
   rbs_buffer_init(&rbs_buffer);
@@ -180,9 +177,15 @@ static rbs_ast_comment_t *parse_comment_lines(comment *com, VALUE buffer) {
   for (size_t i = 0; i < com->line_count; i++) {
     token tok = com->tokens[i];
 
-    char *comment_start = RSTRING_PTR(content) + tok.range.start.byte_pos + hash_bytes;
-    int comment_bytes = RANGE_BYTES(tok.range) - hash_bytes;
-    unsigned char c = rb_enc_mbc_to_codepoint(comment_start, RSTRING_END(content), enc);
+    const char *comment_start = state->lexstate->string.start + tok.range.start.byte_pos + hash_bytes;
+    size_t comment_bytes = RANGE_BYTES(tok.range) - hash_bytes;
+
+    rbs_string_t str = {
+      .start = comment_start,
+      .end = state->lexstate->string.end,
+      .type = RBS_STRING_SHARED,
+    };
+    unsigned char c = utf8_to_codepoint(str);
 
     if (c == ' ') {
       comment_start += space_bytes;
@@ -205,7 +208,7 @@ rbs_ast_comment_t *get_comment(parserstate *state, int subject_line) {
   comment *com = comment_get_comment(state->last_comment, comment_line);
 
   if (com) {
-    return parse_comment_lines(com, state->buffer);
+    return parse_comment_lines(state, com);
   } else {
     return NULL;
   }
