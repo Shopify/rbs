@@ -3,7 +3,16 @@
 #include "rbs_string_bridging.h"
 #include "ast_translation.h"
 
-NORETURN(void) raise_error(VALUE buffer, error *error) {
+/**
+ * Raises `RBS::ParsingError` or `RuntimeError` on `tok` with message constructed with given `fmt`.
+ *
+ * ```
+ * foo.rbs:11:21...11:25: Syntax error: {message}, token=`{tok source}` ({tok type})
+ * ```
+ * */
+NORETURN(void) raise_error(error *error, VALUE buffer) {
+  assert(error != NULL);
+
   if (!error->syntax_error) {
     rb_raise(rb_eRuntimeError, "Unexpected error");
   }
@@ -21,6 +30,12 @@ NORETURN(void) raise_error(VALUE buffer, error *error) {
   );
 
   rb_exc_raise(rb_error);
+}
+
+void raise_error_if_any(parserstate *parser, VALUE buffer) {
+  if (parser->error != NULL) {
+    raise_error(parser->error, buffer);
+  }
 }
 
 /**
@@ -52,8 +67,7 @@ static void declare_type_variables(parserstate *parser, VALUE variables, VALUE b
     rbs_constant_id_t name = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
 
     if (!parser_insert_typevar(parser, name)) {
-      assert(parser->error != NULL);
-      raise_error(buffer, parser->error);
+      raise_error(parser->error, buffer);
     }
   }
 }
@@ -81,15 +95,13 @@ static VALUE parse_type_try(VALUE a) {
   rbs_node_t *type;
   parse_type(parser, &type);
 
-  if (parser->error) {
-    raise_error(arg->buffer, parser->error);
-  }
+  raise_error_if_any(parser, arg->buffer);
 
   if (RB_TEST(arg->require_eof)) {
     parser_advance(parser);
     if (parser->current_token.type != pEOF) {
       set_error(parser, parser->current_token, true, "expected a token `%s`", token_type_str(pEOF));
-      raise_error(arg->buffer, parser->error);
+      raise_error(parser->error, arg->buffer);
     }
   }
 
@@ -139,15 +151,13 @@ static VALUE parse_method_type_try(VALUE a) {
   rbs_methodtype_t *method_type = NULL;
   parse_method_type(parser, &method_type);
 
-  if (parser->error) {
-    raise_error(arg->buffer, parser->error);
-  }
+  raise_error_if_any(parser, arg->buffer);
 
   if (RB_TEST(arg->require_eof)) {
     parser_advance(parser);
     if (parser->current_token.type != pEOF) {
       set_error(parser, parser->current_token, true, "expected a token `%s`", token_type_str(pEOF));
-      raise_error(arg->buffer, parser->error);
+      raise_error(parser->error, arg->buffer);
     }
   }
 
@@ -178,9 +188,7 @@ static VALUE parse_signature_try(VALUE a) {
   rbs_signature_t *signature = NULL;
   parse_signature(parser, &signature);
 
-  if (parser->error) {
-    raise_error(arg->buffer, parser->error);
-  }
+  raise_error_if_any(parser, arg->buffer);
 
   return rbs_struct_to_ruby_value((rbs_node_t *) signature, arg->buffer, arg->encoding);
 }
