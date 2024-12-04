@@ -28,7 +28,7 @@ NORETURN(void) raise_error(VALUE buffer, error *error) {
  * @param parser
  * @param variables A Ruby Array of Symbols, or nil.
  */
-static void declare_type_variables(parserstate *parser, VALUE variables) {
+static void declare_type_variables(parserstate *parser, VALUE variables, VALUE buffer) {
   if (NIL_P(variables)) return; // Nothing to do.
 
   if (!RB_TYPE_P(variables, T_ARRAY)) {
@@ -51,7 +51,10 @@ static void declare_type_variables(parserstate *parser, VALUE variables) {
     VALUE name_str = rb_sym2str(symbol);
     rbs_constant_id_t name = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
 
-    parser_insert_typevar(parser, name);
+    if (!parser_insert_typevar(parser, name)) {
+      assert(parser->error != NULL);
+      raise_error(buffer, parser->error);
+    }
   }
 }
 
@@ -115,7 +118,7 @@ static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VAL
 
   lexstate *lexer = alloc_lexer_from_buffer(string, encoding, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos));
-  declare_type_variables(parser, variables);
+  declare_type_variables(parser, variables, buffer);
   struct parse_type_arg arg = {
     .buffer = buffer,
     .encoding = encoding,
@@ -158,7 +161,7 @@ static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_p
 
   lexstate *lexer = alloc_lexer_from_buffer(string, encoding, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos));
-  declare_type_variables(parser, variables);
+  declare_type_variables(parser, variables, buffer);
   struct parse_type_arg arg = {
     .buffer = buffer,
     .encoding = encoding,
