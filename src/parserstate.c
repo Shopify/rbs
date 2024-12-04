@@ -1,3 +1,5 @@
+#include "rbs/parserstate.h"
+
 #include "rbs_extension.h"
 #include "rbs/util/rbs_constant_pool.h"
 
