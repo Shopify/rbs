@@ -5,7 +5,7 @@
 #include "ruby.h"
 #include "ruby/encoding.h"
 #include "location.h"
-#include "parserstate.h"
+#include "rbs/parserstate.h"
 
 VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list, VALUE buffer, rb_encoding *encoding);
 VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash, VALUE buffer, rb_encoding *encoding);
