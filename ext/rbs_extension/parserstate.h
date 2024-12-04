@@ -115,9 +115,12 @@ lexstate *alloc_lexer(rbs_string_t string, const rbs_encoding_t *encoding, int s
 /**
  * Allocate new parserstate object.
  *
+ * Once allocated, optionally call `rbs_parser_declare_type_variables_from_ruby_array` if you'd like to declare
+ * any type variables to be used during the parsing.
+ *
  * ```
- * alloc_parser(buffer, lexer, 0, 1, variables)    // New parserstate with variables
- * alloc_parser(buffer, lexer, 3, 5, Qnil)         // New parserstate without variables
+ * alloc_parser(buffer, lexer, 0, 1)
+ * alloc_parser(buffer, lexer, 3, 5)
  * ```
  * */
 parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos);
