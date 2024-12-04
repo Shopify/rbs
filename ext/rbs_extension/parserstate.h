@@ -3,8 +3,6 @@
 
 #include <stdbool.h>
 
-#include "ruby.h" // TODO: remove this
-
 #include "rbs/lexer.h"
 #include "rbs/ast.h"
 #include "rbs/rbs_constant_pool.h"
