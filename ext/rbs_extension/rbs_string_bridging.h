@@ -3,6 +3,7 @@
 
 #include "ruby.h"
 #include "ruby/encoding.h"
+
 #include "rbs/rbs_string.h"
 
 /**

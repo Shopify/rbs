@@ -1,7 +1,7 @@
 #ifndef RBS__RBS_LOCATION_INTERNALS_H
 #define RBS__RBS_LOCATION_INTERNALS_H
 
-#include "rbs/rbs_constant_pool.h"
+#include "rbs_constant_pool.h"
 
 typedef struct {
   int start;
