@@ -23,6 +23,38 @@ NORETURN(void) raise_error(VALUE buffer, error *error) {
   rb_exc_raise(rb_error);
 }
 
+/**
+ * Inserts the given array of type variables names into the parser's type variable table.
+ * @param parser
+ * @param variables A Ruby Array of Symbols, or nil.
+ */
+static void declare_type_variables(parserstate *parser, VALUE variables) {
+  if (NIL_P(variables)) return; // Nothing to do.
+
+  if (!RB_TYPE_P(variables, T_ARRAY)) {
+    rb_raise(rb_eTypeError,
+      "wrong argument type %"PRIsVALUE" (must be an Array of Symbols or nil)",
+      rb_obj_class(variables));
+  }
+
+  parser_push_typevar_table(parser, true);
+
+  for (long i = 0; i < rb_array_len(variables); i++) {
+    VALUE symbol = rb_ary_entry(variables, i);
+
+    if (!RB_TYPE_P(symbol, T_SYMBOL)) {
+      rb_raise(rb_eTypeError,
+        "Type variables Array contains invalid value %"PRIsVALUE" of type %"PRIsVALUE" (must be an Array of Symbols or nil)",
+        rb_inspect(symbol), rb_obj_class(symbol));
+    }
+
+    VALUE name_str = rb_sym2str(symbol);
+    rbs_constant_id_t name = rbs_constant_pool_insert_constant(fake_constant_pool, RSTRING_PTR(name_str), RSTRING_LEN(name_str));
+
+    parser_insert_typevar(parser, name);
+  }
+}
+
 struct parse_type_arg {
   VALUE buffer;
   rb_encoding *encoding;
@@ -83,7 +115,7 @@ static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VAL
 
   lexstate *lexer = alloc_lexer_from_buffer(string, encoding, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos));
-  rbs_parser_declare_type_variables_from_ruby_array(parser, variables);
+  declare_type_variables(parser, variables);
   struct parse_type_arg arg = {
     .buffer = buffer,
     .encoding = encoding,
@@ -126,7 +158,7 @@ static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_p
 
   lexstate *lexer = alloc_lexer_from_buffer(string, encoding, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(lexer, FIX2INT(start_pos), FIX2INT(end_pos));
-  rbs_parser_declare_type_variables_from_ruby_array(parser, variables);
+  declare_type_variables(parser, variables);
   struct parse_type_arg arg = {
     .buffer = buffer,
     .encoding = encoding,
