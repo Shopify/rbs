@@ -1,12 +1,12 @@
 #ifndef RBS__PARSERSTATE_H
 #define RBS__PARSERSTATE_H
 
-#include <stdbool.h>
+#include "defines.h"
+#include "ast.h"
+#include "lexer.h"
 
-#include "rbs/defines.h"
-#include "rbs/lexer.h"
-#include "rbs/ast.h"
-#include "rbs/rbs_constant_pool.h"
+#include <stdbool.h>
+#include <stddef.h>
 
 /**
  * id_table represents a set of IDs.

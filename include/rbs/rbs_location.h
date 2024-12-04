@@ -2,8 +2,7 @@
 #define RBS__RBS_LOCATION_H
 
 #include "lexer.h"
-#include "rbs/rbs_location_internals.h"
-#include "rbs/rbs_constant_pool.h"
+#include "rbs_location_internals.h"
 
 typedef struct rbs_location {
     range rg;
