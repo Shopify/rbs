@@ -1,4 +1,11 @@
 #include "parser.h"
+
+#include <stdlib.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
 #include "rbs/encoding.h"
 #include "rbs/rbs_string.h"
 #include "rbs/rbs_constant_pool.h"
