@@ -14,6 +14,10 @@ module RBS
         @name = yaml["name"]
         @c_type = "VALUE"
       end
+
+      def inspect
+        "#<RBS::Template::Field name=#{@name.inspect} c_type=#{@c_type.inspect}>"
+      end
     end
 
     class Type
