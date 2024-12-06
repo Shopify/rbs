@@ -175,6 +175,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: ivar_name
+        c_type: rbs_node # rbs_ast_symbol_t, NULL or rbs_ast_bool_new(false)
       - name: kind
         c_type: rbs_ast_symbol
       - name: annotations
@@ -191,6 +192,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: ivar_name
+        c_type: rbs_node # rbs_ast_symbol_t, NULL or rbs_ast_bool_new(false)
       - name: kind
         c_type: rbs_ast_symbol
       - name: annotations
@@ -207,6 +209,7 @@ nodes:
       - name: type
         c_type: rbs_node
       - name: ivar_name
+        c_type: rbs_node # rbs_ast_symbol_t, NULL or rbs_ast_bool_new(false)
       - name: kind
         c_type: rbs_ast_symbol
       - name: annotations
