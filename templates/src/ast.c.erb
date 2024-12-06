@@ -135,12 +135,13 @@ rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
     return node ? node->value : NULL;
 }
 
-rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
+rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_location_t *location, rbs_constant_id_t constant_id) {
     rbs_ast_symbol_t *instance = (rbs_ast_symbol_t *)calloc(1, sizeof(rbs_ast_symbol_t));
 
     *instance = (rbs_ast_symbol_t) {
         .base = (rbs_node_t) {
-            .type = RBS_AST_SYMBOL
+            .type = RBS_AST_SYMBOL,
+            .location = location,
         },
         .constant_id = constant_id,
     };
