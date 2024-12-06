@@ -42,6 +42,11 @@ typedef struct comment {
   struct comment *next_comment;
 } comment;
 
+typedef struct error {
+  char *message;
+  token token;
+} error;
+
 /**
  * An RBS parser is a LL(3) parser.
  * */
@@ -58,6 +63,7 @@ typedef struct {
   comment *last_comment;  /* Last read comment */
 
   bool aborted;
+  error *error;
 } parserstate;
 
 comment *alloc_comment(token comment_token, comment *last_comment);
