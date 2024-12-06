@@ -2093,17 +2093,17 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   range name_range;
   rbs_ast_symbol_t *attr_name = parse_method_name(state, &name_range);
 
-  VALUE ivar_name;
+  rbs_node_t *ivar_name; // rbs_ast_symbol_t, NULL or rbs_ast_bool_new(false)
   range ivar_range, ivar_name_range;
   if (state->next_token.type == pLPAREN) {
     parser_advance_assert(state, pLPAREN);
     ivar_range.start = state->current_token.range.start;
 
     if (parser_advance_if(state, tAIDENT)) {
-      ivar_name = ID2SYM(INTERN_TOKEN(state, state->current_token));
+      ivar_name = (rbs_node_t *) rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
       ivar_name_range = state->current_token.range;
     } else {
-      ivar_name = Qfalse;
+      ivar_name = (rbs_node_t *) rbs_ast_bool_new(false);
       ivar_name_range = NULL_RANGE;
     }
 
@@ -2111,7 +2111,7 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
     ivar_range.end = state->current_token.range.end;
   } else {
     ivar_range = NULL_RANGE;
-    ivar_name = Qnil;
+    ivar_name = NULL;
     ivar_name_range = NULL_RANGE;
   }
 
