@@ -118,6 +118,10 @@ module RBS
       def expose_to_ruby?
         @expose_to_ruby
       end
+
+      def expose_location?
+        @expose_location
+      end
     end
 
     class << self
