@@ -104,6 +104,7 @@ module RBS
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
         @expose_to_ruby = yaml.fetch("expose_to_ruby", true)
+        @expose_location = yaml.fetch("expose_location", true)
       end
 
       # The name of the C function which constructs new instances of this C structure.
@@ -116,6 +117,10 @@ module RBS
       # If this is true, then we will also create a Ruby class for it, otherwise we'll skip that.
       def expose_to_ruby?
         @expose_to_ruby
+      end
+
+      def expose_location?
+        @expose_location
       end
     end
 

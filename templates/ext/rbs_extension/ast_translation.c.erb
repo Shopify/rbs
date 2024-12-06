@@ -93,11 +93,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
             rb_ary_push(array, rbs_node_list_to_ruby_array(signature->declarations, buffer, encoding));
             return array;
             <%- else -%>
-            <%- if node.fields.any? -%> <%# This prevents "warning: unused variable 'node'" %>
             <%= node.c_type_name %> *node = (<%= node.c_type_name %> *)instance;
-            <%- end -%>
+
             // <%= node.fields.inspect %>
             VALUE h = rb_hash_new();
+            <%- if node.expose_location? -%>
+            rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
+            <%- end -%>
             <%- node.fields.each do |field| -%>
             <%- case field.c_type -%>
             <%- when "VALUE" -%>
@@ -106,8 +108,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_node_list_to_ruby_array(node-><%= field.c_name %>, buffer, encoding));
             <%- when "rbs_hash" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_hash_to_ruby_hash(node-><%= field.c_name %>, buffer, encoding));
-            <%- when "rbs_location" -%>
-            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(node-><%= field.c_name %>, buffer));
             <%- when "rbs_string" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_string_to_ruby_string(&node-><%= field.c_name %>, encoding));
             <%- when "bool" -%>
