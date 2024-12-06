@@ -154,7 +154,7 @@ void parser_advance_no_gap(parserstate *state) {
               | {<tXIDENT>}
 */
 NODISCARD
-static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rbs_typename_t **typename) {
+static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rbs_type_name_t **typename) {
   bool absolute = false;
   rbs_node_list_t *path = rbs_node_list_new();
 
@@ -211,7 +211,7 @@ static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rb
     rbs_constant_id_t name = INTERN_TOKEN(state, state->current_token);
     rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbolLoc, name);
     rbs_location_t *loc = rbs_location_new(*rg);
-    *typename = rbs_typename_new(loc, namespace, symbol);
+    *typename = rbs_type_name_new(loc, namespace, symbol);
     return true;
   }
 
@@ -718,7 +718,7 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
     function_range.end = state->current_token.range.end;
     rbs_location_t *loc = rbs_location_new(function_range);
     if (rbs_is_untyped_params(&block_params)) {
-      block_function = (rbs_node_t *) rbs_types_untypedfunction_new(loc, block_return_type);
+      block_function = (rbs_node_t *) rbs_types_untyped_function_new(loc, block_return_type);
     } else {
       block_function = (rbs_node_t *) rbs_types_function_new(
         loc,
@@ -746,7 +746,7 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
   rbs_location_t *loc = rbs_location_new(function_range);
 
   if (rbs_is_untyped_params(&params)) {
-    function = (rbs_node_t *) rbs_types_untypedfunction_new(loc, type);
+    function = (rbs_node_t *) rbs_types_untyped_function_new(loc, type);
   } else {
     function = (rbs_node_t *) rbs_types_function_new(
       loc,
@@ -857,7 +857,7 @@ static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
     field_range.end = state->current_token.range.end;
     rbs_location_t *loc = rbs_location_new(field_range);
 
-    rbs_hash_set(*fields, (rbs_node_t *) key, (rbs_node_t *) rbs_types_record_fieldtype_new(loc, type, required));
+    rbs_hash_set(*fields, (rbs_node_t *) key, (rbs_node_t *) rbs_types_record_field_type_new(loc, type, required));
 
     if (parser_advance_if(state, pCOMMA)) {
       if (state->next_token.type == pRBRACE) {
@@ -923,7 +923,7 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
       expected_kind |= ALIAS_NAME;
     }
 
-    rbs_typename_t *typename = NULL;
+    rbs_type_name_t *typename = NULL;
     CHECK_PARSE(parse_type_name(state, expected_kind, &name_range, &typename));
 
     rbs_node_list_t *types = rbs_node_list_new();
@@ -959,7 +959,7 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
     rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "args"), args_range);
 
     if (kind == CLASS_NAME) {
-      *type = (rbs_node_t *) rbs_types_classinstance_new(loc, typename, types);
+      *type = (rbs_node_t *) rbs_types_class_instance_new(loc, typename, types);
     } else if (kind == INTERFACE_NAME) {
       *type = (rbs_node_t *) rbs_types_interface_new(loc, typename, types);
     } else if (kind == ALIAS_NAME) {
@@ -973,7 +973,7 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
   singleton_type ::= {`singleton`} `(` type_name <`)`>
 */
 NODISCARD
-static bool parse_singleton_type(parserstate *state, rbs_types_classsingleton_t **singleton) {
+static bool parse_singleton_type(parserstate *state, rbs_types_class_singleton_t **singleton) {
   range name_range;
   range type_range;
 
@@ -983,7 +983,7 @@ static bool parse_singleton_type(parserstate *state, rbs_types_classsingleton_t 
   ADVANCE_ASSERT(state, pLPAREN);
   parser_advance(state);
 
-  rbs_typename_t *typename = NULL;
+  rbs_type_name_t *typename = NULL;
   CHECK_PARSE(parse_type_name(state, CLASS_NAME, &name_range, &typename));
 
   ADVANCE_ASSERT(state, pRPAREN);
@@ -993,7 +993,7 @@ static bool parse_singleton_type(parserstate *state, rbs_types_classsingleton_t 
   rbs_loc_alloc_children(loc, 1);
   rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "name"), name_range);
 
-  *singleton = rbs_types_classsingleton_new(loc, typename);
+  *singleton = rbs_types_class_singleton_new(loc, typename);
   return true;
 }
 
@@ -1130,7 +1130,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     return true;
   }
   case kSINGLETON: {
-    rbs_types_classsingleton_t *singleton = NULL;
+    rbs_types_class_singleton_t *singleton = NULL;
     CHECK_PARSE(parse_singleton_type(state, &singleton));
     *type = (rbs_node_t *) singleton;
     return true;
@@ -1353,7 +1353,7 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
       rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "default"), default_type_range);
 
-      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(loc, name, variance, upper_bound, unchecked, default_type);
+      rbs_ast_type_param_t *param = rbs_ast_type_param_new(loc, name, variance, upper_bound, unchecked, default_type);
 
       rbs_node_list_append(*params, (rbs_node_t *) param);
 
@@ -1378,7 +1378,7 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
 /*
   method_type ::= {} type_params <function>
   */
-bool parse_method_type(parserstate *state, rbs_methodtype_t **method_type) {
+bool parse_method_type(parserstate *state, rbs_method_type_t **method_type) {
   range rg;
   range params_range = NULL_RANGE;
   range type_range;
@@ -1405,7 +1405,7 @@ bool parse_method_type(parserstate *state, rbs_methodtype_t **method_type) {
   rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type"), type_range);
   rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "type_params"), params_range);
 
-  *method_type = rbs_methodtype_new(loc, type_params, result->function, result->block);
+  *method_type = rbs_method_type_new(loc, type_params, result->function, result->block);
   return true;
 }
 
@@ -1457,7 +1457,7 @@ static bool parse_const_decl(parserstate *state, rbs_ast_declarations_constant_t
   decl_range.start = state->current_token.range.start;
   comment = get_comment(state, decl_range.start.line);
 
-  rbs_typename_t *typename = NULL;
+  rbs_type_name_t *typename = NULL;
   CHECK_PARSE(parse_type_name(state, CLASS_NAME, &name_range, &typename));
 
   ADVANCE_ASSERT(state, pCOLON);
@@ -1479,7 +1479,7 @@ static bool parse_const_decl(parserstate *state, rbs_ast_declarations_constant_t
   type_decl ::= {kTYPE} alias_name `=` <type>
 */
 NODISCARD
-static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_typealias_t **typealias) {
+static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_type_alias_t **typealias) {
   range decl_range;
   range keyword_range, name_range, params_range, eq_range;
 
@@ -1491,7 +1491,7 @@ static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_l
   keyword_range = state->current_token.range;
 
   parser_advance(state);
-  rbs_typename_t *typename = NULL;
+  rbs_type_name_t *typename = NULL;
   CHECK_PARSE(parse_type_name(state, ALIAS_NAME, &name_range, &typename));
 
   rbs_node_list_t *type_params;
@@ -1516,7 +1516,7 @@ static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_l
 
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
-  *typealias = rbs_ast_declarations_typealias_new(loc, typename, type_params, type, annotations, comment);
+  *typealias = rbs_ast_declarations_type_alias_new(loc, typename, type_params, type, annotations, comment);
   return true;
 }
 
@@ -1731,7 +1731,7 @@ static InstanceSingletonKind parse_instance_singleton_kind(parserstate *state, b
  * @param accept_overload `true` to accept overloading (...) definition.
  * */
 NODISCARD
-static bool parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_methoddefinition_t **method_definition) {
+static bool parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_method_definition_t **method_definition) {
   range member_range;
   range visibility_range;
   range keyword_range;
@@ -1813,13 +1813,13 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
     case pLBRACKET:
     case pQUESTION:
       {
-        rbs_methodtype_t *method_type = NULL;
+        rbs_method_type_t *method_type = NULL;
         CHECK_PARSE(parse_method_type(state, &method_type));
 
         overload_range.end = state->current_token.range.end;
         rbs_location_t *loc = rbs_location_new(overload_range);
 
-        rbs_node_t *overload = (rbs_node_t *) rbs_ast_members_methoddefinition_overload_new(loc, annotations, (rbs_node_t *) method_type);
+        rbs_node_t *overload = (rbs_node_t *) rbs_ast_members_method_definition_overload_new(loc, annotations, (rbs_node_t *) method_type);
         rbs_node_list_append(overloads, overload);
         member_range.end = state->current_token.range.end;
         break;
@@ -1882,7 +1882,7 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
   rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "visibility"), visibility_range);
 
-  *method_definition = rbs_ast_members_methoddefinition_new(loc, name, k, overloads, annotations, comment, overloading, visibility);
+  *method_definition = rbs_ast_members_method_definition_new(loc, name, k, overloads, annotations, comment, overloading, visibility);
   return true;
 }
 
@@ -1893,10 +1893,10 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
  * @param kind
  * */
 NODISCARD
-static bool class_instance_name(parserstate *state, TypeNameKind kind, rbs_node_list_t *args, range *name_range, range *args_range, rbs_typename_t **name) {
+static bool class_instance_name(parserstate *state, TypeNameKind kind, rbs_node_list_t *args, range *name_range, range *args_range, rbs_type_name_t **name) {
   parser_advance(state);
 
-  rbs_typename_t *typename = NULL;
+  rbs_type_name_t *typename = NULL;
   CHECK_PARSE(parse_type_name(state, kind, name_range, &typename));
   *name = typename;
 
@@ -1961,7 +1961,7 @@ static bool parse_mixin_member(parserstate *state, bool from_interface, position
   parser_push_typevar_table(state, reset_typevar_scope);
 
   rbs_node_list_t *args = rbs_node_list_new();
-  rbs_typename_t *name = NULL;
+  rbs_type_name_t *name = NULL;
   CHECK_PARSE(class_instance_name(
     state,
     from_interface ? INTERFACE_NAME : (INTERFACE_NAME | CLASS_NAME),
@@ -2100,7 +2100,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
     rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
 
-    *variable_member = (rbs_node_t *)rbs_ast_members_instancevariable_new(loc, name, type, comment);
+    *variable_member = (rbs_node_t *)rbs_ast_members_instance_variable_new(loc, name, type, comment);
     return true;
   }
   case tA2IDENT: {
@@ -2124,7 +2124,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
     rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
 
-    *variable_member = (rbs_node_t *) rbs_ast_members_classvariable_new(loc, name, type, comment);
+    *variable_member = (rbs_node_t *) rbs_ast_members_class_variable_new(loc, name, type, comment);
     return true;
   }
   case kSELF: {
@@ -2154,7 +2154,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
     rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "colon"), colon_range);
     rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "kind"), kind_range);
 
-    *variable_member = (rbs_node_t *)rbs_ast_members_classinstancevariable_new(loc, name, type, comment);
+    *variable_member = (rbs_node_t *)rbs_ast_members_class_instance_variable_new(loc, name, type, comment);
     return true;
   }
   default:
@@ -2305,13 +2305,13 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
   switch (attr_type)
   {
   case kATTRREADER:
-    *attribute_member = (rbs_node_t *) rbs_ast_members_attrreader_new(loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
+    *attribute_member = (rbs_node_t *) rbs_ast_members_attr_reader_new(loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
     return true;
   case kATTRWRITER:
-    *attribute_member = (rbs_node_t *) rbs_ast_members_attrwriter_new(loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
+    *attribute_member = (rbs_node_t *) rbs_ast_members_attr_writer_new(loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
     return true;
   case kATTRACCESSOR:
-    *attribute_member = (rbs_node_t *) rbs_ast_members_attraccessor_new(loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
+    *attribute_member = (rbs_node_t *) rbs_ast_members_attr_accessor_new(loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
     return true;
   default:
     set_error(state, state->current_token, false, "Unexpected error");
@@ -2340,7 +2340,7 @@ static bool parse_interface_members(parserstate *state, rbs_node_list_t **member
     rbs_node_t *member;
     switch (state->current_token.type) {
     case kDEF: {
-      rbs_ast_members_methoddefinition_t *method_definition = NULL;
+      rbs_ast_members_method_definition_t *method_definition = NULL;
       CHECK_PARSE(parse_member_def(state, true, true, annot_pos, annotations, &method_definition));
       member = (rbs_node_t *) method_definition;
       break;
@@ -2385,7 +2385,7 @@ static bool parse_interface_decl(parserstate *state, position comment_pos, rbs_n
 
   parser_advance(state);
 
-  rbs_typename_t *name = NULL;
+  rbs_type_name_t *name = NULL;
   CHECK_PARSE(parse_type_name(state, INTERFACE_NAME, &name_range, &name));
 
   rbs_node_list_t *type_params;
@@ -2429,7 +2429,7 @@ static bool parse_module_self_types(parserstate *state, rbs_node_list_t *array) 
 
     self_range.start = state->current_token.range.start;
 
-    rbs_typename_t *module_name = NULL;
+    rbs_type_name_t *module_name = NULL;
     CHECK_PARSE(parse_type_name(state, CLASS_NAME | INTERFACE_NAME, &name_range, &module_name));
 
     self_range.end = name_range.end;
@@ -2490,7 +2490,7 @@ static bool parse_module_members(parserstate *state, rbs_node_list_t **members) 
     switch (state->current_token.type)
     {
     case kDEF: {
-      rbs_ast_members_methoddefinition_t *method_definition;
+      rbs_ast_members_method_definition_t *method_definition;
       CHECK_PARSE(parse_member_def(state, false, true, annot_pos, annotations, &method_definition));
       member = (rbs_node_t *) method_definition;
       break;
@@ -2525,7 +2525,7 @@ static bool parse_module_members(parserstate *state, rbs_node_list_t **members) 
         switch (state->next_token.type)
         {
         case kDEF: {
-          rbs_ast_members_methoddefinition_t *method_definition = NULL;
+          rbs_ast_members_method_definition_t *method_definition = NULL;
           CHECK_PARSE(parse_member_def(state, false, true, annot_pos, annotations, &method_definition));
           member = (rbs_node_t *) method_definition;
           break;
@@ -2561,7 +2561,7 @@ static bool parse_module_members(parserstate *state, rbs_node_list_t **members) 
                 | {module_name} module_name module_type_params `:` module_self_types module_members <kEND>
 */
 NODISCARD
-static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_typename_t *module_name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_module_t **module_decl) {
+static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_type_name_t *module_name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_module_t **module_decl) {
   range decl_range;
   range end_range;
   range type_params_range;
@@ -2624,7 +2624,7 @@ static bool parse_module_decl(parserstate *state, position comment_pos, rbs_node
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   parser_advance(state);
-  rbs_typename_t *module_name = NULL;
+  rbs_type_name_t *module_name = NULL;
   CHECK_PARSE(parse_type_name(state, CLASS_NAME, &module_name_range, &module_name));
 
   if (state->next_token.type == pEQ) {
@@ -2633,7 +2633,7 @@ static bool parse_module_decl(parserstate *state, position comment_pos, rbs_node
     parser_advance(state);
 
     range old_name_range;
-    rbs_typename_t *old_name = NULL;
+    rbs_type_name_t *old_name = NULL;
     CHECK_PARSE(parse_type_name(state, CLASS_NAME, &old_name_range, &old_name));
 
     range decl_range;
@@ -2647,7 +2647,7 @@ static bool parse_module_decl(parserstate *state, position comment_pos, rbs_node
     rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "eq"), eq_range);
     rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "old_name"), old_name_range);
 
-    *module_decl = (rbs_node_t *) rbs_ast_declarations_modulealias_new(loc, module_name, old_name, comment);
+    *module_decl = (rbs_node_t *) rbs_ast_declarations_module_alias_new(loc, module_name, old_name, comment);
   } else {
     rbs_ast_declarations_module_t *module_decl0 = NULL;
     CHECK_PARSE(parse_module_decl0(state, keyword_range, module_name, module_name_range, comment, annotations, &module_decl0));
@@ -2674,7 +2674,7 @@ static bool parse_class_decl_super(parserstate *state, range *lt_range, rbs_ast_
     super_range.start = state->next_token.range.start;
 
     args = rbs_node_list_new();
-    rbs_typename_t *name = NULL;
+    rbs_type_name_t *name = NULL;
     CHECK_PARSE(class_instance_name(state, CLASS_NAME, args, &name_range, &args_range, &name));
 
     super_range.end = state->current_token.range.end;
@@ -2697,7 +2697,7 @@ static bool parse_class_decl_super(parserstate *state, range *lt_range, rbs_ast_
   class_decl ::= {class_name} type_params class_decl_super class_members <`end`>
 */
 NODISCARD
-static bool parse_class_decl0(parserstate *state, range keyword_range, rbs_typename_t *name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_class_t **class_decl) {
+static bool parse_class_decl0(parserstate *state, range keyword_range, rbs_type_name_t *name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_class_t **class_decl) {
   range decl_range;
   range end_range;
   range type_params_range;
@@ -2748,7 +2748,7 @@ static bool parse_class_decl(parserstate *state, position comment_pos, rbs_node_
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   parser_advance(state);
-  rbs_typename_t *class_name = NULL;
+  rbs_type_name_t *class_name = NULL;
   CHECK_PARSE(parse_type_name(state, CLASS_NAME, &class_name_range, &class_name));
 
   if (state->next_token.type == pEQ) {
@@ -2757,7 +2757,7 @@ static bool parse_class_decl(parserstate *state, position comment_pos, rbs_node_
     parser_advance(state);
 
     range old_name_range;
-    rbs_typename_t *old_name = NULL;
+    rbs_type_name_t *old_name = NULL;
     CHECK_PARSE(parse_type_name(state, CLASS_NAME, &old_name_range, &old_name));
 
     range decl_range;
@@ -2771,7 +2771,7 @@ static bool parse_class_decl(parserstate *state, position comment_pos, rbs_node_
     rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "eq"), eq_range);
     rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "old_name"), old_name_range);
 
-    *class_decl = (rbs_node_t *) rbs_ast_declarations_classalias_new(loc, class_name, old_name, comment);
+    *class_decl = (rbs_node_t *) rbs_ast_declarations_class_alias_new(loc, class_name, old_name, comment);
   } else {
     rbs_ast_declarations_class_t *class_decl0 = NULL;
     CHECK_PARSE(parse_class_decl0(state, keyword_range, class_name, class_name_range, comment, annotations, &class_decl0));
@@ -2807,7 +2807,7 @@ static bool parse_nested_decl(parserstate *state, const char *nested_in, positio
     break;
   }
   case kTYPE: {
-    rbs_ast_declarations_typealias_t *typealias = NULL;
+    rbs_ast_declarations_type_alias_t *typealias = NULL;
     CHECK_PARSE(parse_type_decl(state, annot_pos, annotations, &typealias));
     *decl = (rbs_node_t *) typealias;
     break;
@@ -2863,7 +2863,7 @@ static bool parse_decl(parserstate *state, rbs_node_t **decl) {
     return true;
   }
   case kTYPE: {
-    rbs_ast_declarations_typealias_t *typealias = NULL;
+    rbs_ast_declarations_type_alias_t *typealias = NULL;
     CHECK_PARSE(parse_type_decl(state, annot_pos, annotations, &typealias));
     *decl = (rbs_node_t *) typealias;
     return true;
@@ -2970,7 +2970,7 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(symbolLoc, INTERN_TOKEN(state, state->current_token));
 
         rbs_location_t *clause_loc = rbs_location_new(clause_range);
-        rbs_typename_t *type_name = rbs_typename_new(clause_loc, namespace, symbol);
+        rbs_type_name_t *type_name = rbs_type_name_new(clause_loc, namespace, symbol);
 
         range keyword_range = NULL_RANGE;
         range new_name_range = NULL_RANGE;
@@ -3004,7 +3004,7 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "keyword"), keyword_range);
         rbs_loc_add_optional_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "new_name"), new_name_range);
 
-        rbs_ast_directives_use_singleclause_t *clause = rbs_ast_directives_use_singleclause_new(loc, type_name, new_name);
+        rbs_ast_directives_use_single_clause_t *clause = rbs_ast_directives_use_single_clause_new(loc, type_name, new_name);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;
@@ -3021,7 +3021,7 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "namespace"), namespace_range);
         rbs_loc_add_required_child(loc, rbs_constant_pool_insert_literal(fake_constant_pool, "star"), star_range);
 
-        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(loc, namespace);
+        rbs_ast_directives_use_wildcard_clause_t *clause = rbs_ast_directives_use_wildcard_clause_new(loc, namespace);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;

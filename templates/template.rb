@@ -4,6 +4,12 @@ require "erb"
 require "fileutils"
 require "yaml"
 
+class String
+  def underscore
+    gsub(/(?<=[A-Z])(?=[A-Z][a-z])|(?<=[a-z\d])(?=[A-Z])/, "_").downcase
+  end
+end
+
 module RBS
   class Template
     class Field
@@ -50,7 +56,7 @@ module RBS
 
       def ast_node?
         @c_type == "rbs_node" ||
-          @c_type == "rbs_typename" ||
+          @c_type == "rbs_type_name" ||
           @c_type == "rbs_namespace" ||
           @c_type.include?("_ast_") ||
           @c_type.include?("_decl_") ||
@@ -96,7 +102,7 @@ module RBS
         @ruby_class_name = @ruby_full_name[/[^:]+\z/] # demodulize-like
         @c_constant_name = @ruby_full_name.gsub("::", "_")
         @c_parent_constant_name = @ruby_full_name.split("::")[0..-2].join("::").gsub("::", "_")
-        @c_base_name = @c_constant_name.downcase
+        @c_base_name = @ruby_full_name.underscore.gsub("::", "_")
         @c_type_name = @c_base_name + "_t"
 
         @c_type_enum_name = @c_base_name.upcase

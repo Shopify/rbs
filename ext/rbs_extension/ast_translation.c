@@ -105,12 +105,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_DECLARATIONS_CLASS: {
             rbs_ast_declarations_class_t *node = (rbs_ast_declarations_class_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="super_class" c_type="rbs_ast_declarations_class_super">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="super_class" c_type="rbs_ast_declarations_class_super">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("super_class")), rbs_struct_to_ruby_value((rbs_node_t *) node->super_class, buffer, encoding)); // rbs_ast_declarations_class_super
             rb_hash_aset(h, ID2SYM(rb_intern("members")), rbs_node_list_to_ruby_array(node->members, buffer, encoding));
@@ -133,12 +133,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_DECLARATIONS_CLASS_SUPER: {
             rbs_ast_declarations_class_super_t *node = (rbs_ast_declarations_class_super_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
 
 
@@ -148,16 +148,16 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_DECLARATIONS_CLASSALIAS: {
-            rbs_ast_declarations_classalias_t *node = (rbs_ast_declarations_classalias_t *)instance;
+        case RBS_AST_DECLARATIONS_CLASS_ALIAS: {
+            rbs_ast_declarations_class_alias_t *node = (rbs_ast_declarations_class_alias_t *)instance;
 
-            // [#<RBS::Template::Field name="new_name" c_type="rbs_typename">, #<RBS::Template::Field name="old_name" c_type="rbs_typename">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="new_name" c_type="rbs_type_name">, #<RBS::Template::Field name="old_name" c_type="rbs_type_name">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("new_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->new_name, buffer, encoding)); // rbs_typename
-            rb_hash_aset(h, ID2SYM(rb_intern("old_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->old_name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("new_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->new_name, buffer, encoding)); // rbs_type_name
+            rb_hash_aset(h, ID2SYM(rb_intern("old_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->old_name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment, buffer, encoding)); // rbs_ast_comment
 
 
@@ -170,12 +170,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_DECLARATIONS_CONSTANT: {
             rbs_ast_declarations_constant_t *node = (rbs_ast_declarations_constant_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type, buffer, encoding)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment, buffer, encoding)); // rbs_ast_comment
 
@@ -208,12 +208,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_DECLARATIONS_INTERFACE: {
             rbs_ast_declarations_interface_t *node = (rbs_ast_declarations_interface_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("members")), rbs_node_list_to_ruby_array(node->members, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations, buffer, encoding));
@@ -235,12 +235,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_DECLARATIONS_MODULE: {
             rbs_ast_declarations_module_t *node = (rbs_ast_declarations_module_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="self_types" c_type="rbs_node_list">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="self_types" c_type="rbs_node_list">, #<RBS::Template::Field name="members" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("self_types")), rbs_node_list_to_ruby_array(node->self_types, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("members")), rbs_node_list_to_ruby_array(node->members, buffer, encoding));
@@ -263,12 +263,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_DECLARATIONS_MODULE_SELF: {
             rbs_ast_declarations_module_self_t *node = (rbs_ast_declarations_module_self_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
 
 
@@ -278,16 +278,16 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_DECLARATIONS_MODULEALIAS: {
-            rbs_ast_declarations_modulealias_t *node = (rbs_ast_declarations_modulealias_t *)instance;
+        case RBS_AST_DECLARATIONS_MODULE_ALIAS: {
+            rbs_ast_declarations_module_alias_t *node = (rbs_ast_declarations_module_alias_t *)instance;
 
-            // [#<RBS::Template::Field name="new_name" c_type="rbs_typename">, #<RBS::Template::Field name="old_name" c_type="rbs_typename">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="new_name" c_type="rbs_type_name">, #<RBS::Template::Field name="old_name" c_type="rbs_type_name">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("new_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->new_name, buffer, encoding)); // rbs_typename
-            rb_hash_aset(h, ID2SYM(rb_intern("old_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->old_name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("new_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->new_name, buffer, encoding)); // rbs_type_name
+            rb_hash_aset(h, ID2SYM(rb_intern("old_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->old_name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment, buffer, encoding)); // rbs_ast_comment
 
 
@@ -297,15 +297,15 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_DECLARATIONS_TYPEALIAS: {
-            rbs_ast_declarations_typealias_t *node = (rbs_ast_declarations_typealias_t *)instance;
+        case RBS_AST_DECLARATIONS_TYPE_ALIAS: {
+            rbs_ast_declarations_type_alias_t *node = (rbs_ast_declarations_type_alias_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("type_params")), rbs_node_list_to_ruby_array(node->type_params, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type, buffer, encoding)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations, buffer, encoding));
@@ -341,15 +341,15 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_DIRECTIVES_USE_SINGLECLAUSE: {
-            rbs_ast_directives_use_singleclause_t *node = (rbs_ast_directives_use_singleclause_t *)instance;
+        case RBS_AST_DIRECTIVES_USE_SINGLE_CLAUSE: {
+            rbs_ast_directives_use_single_clause_t *node = (rbs_ast_directives_use_single_clause_t *)instance;
 
-            // [#<RBS::Template::Field name="type_name" c_type="rbs_typename">, #<RBS::Template::Field name="new_name" c_type="rbs_ast_symbol">]
+            // [#<RBS::Template::Field name="type_name" c_type="rbs_type_name">, #<RBS::Template::Field name="new_name" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("type_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->type_name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("type_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->type_name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("new_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->new_name, buffer, encoding)); // rbs_ast_symbol
 
 
@@ -359,8 +359,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE: {
-            rbs_ast_directives_use_wildcardclause_t *node = (rbs_ast_directives_use_wildcardclause_t *)instance;
+        case RBS_AST_DIRECTIVES_USE_WILDCARD_CLAUSE: {
+            rbs_ast_directives_use_wildcard_clause_t *node = (rbs_ast_directives_use_wildcard_clause_t *)instance;
 
             // [#<RBS::Template::Field name="namespace" c_type="rbs_namespace">]
             VALUE h = rb_hash_new();
@@ -406,8 +406,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_ATTRACCESSOR: {
-            rbs_ast_members_attraccessor_t *node = (rbs_ast_members_attraccessor_t *)instance;
+        case RBS_AST_MEMBERS_ATTR_ACCESSOR: {
+            rbs_ast_members_attr_accessor_t *node = (rbs_ast_members_attr_accessor_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="ivar_name" c_type="rbs_node">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
@@ -429,8 +429,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_ATTRREADER: {
-            rbs_ast_members_attrreader_t *node = (rbs_ast_members_attrreader_t *)instance;
+        case RBS_AST_MEMBERS_ATTR_READER: {
+            rbs_ast_members_attr_reader_t *node = (rbs_ast_members_attr_reader_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="ivar_name" c_type="rbs_node">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
@@ -452,8 +452,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_ATTRWRITER: {
-            rbs_ast_members_attrwriter_t *node = (rbs_ast_members_attrwriter_t *)instance;
+        case RBS_AST_MEMBERS_ATTR_WRITER: {
+            rbs_ast_members_attr_writer_t *node = (rbs_ast_members_attr_writer_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="ivar_name" c_type="rbs_node">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
@@ -475,8 +475,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE: {
-            rbs_ast_members_classinstancevariable_t *node = (rbs_ast_members_classinstancevariable_t *)instance;
+        case RBS_AST_MEMBERS_CLASS_INSTANCE_VARIABLE: {
+            rbs_ast_members_class_instance_variable_t *node = (rbs_ast_members_class_instance_variable_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
@@ -494,8 +494,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_CLASSVARIABLE: {
-            rbs_ast_members_classvariable_t *node = (rbs_ast_members_classvariable_t *)instance;
+        case RBS_AST_MEMBERS_CLASS_VARIABLE: {
+            rbs_ast_members_class_variable_t *node = (rbs_ast_members_class_variable_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
@@ -516,12 +516,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_MEMBERS_EXTEND: {
             rbs_ast_members_extend_t *node = (rbs_ast_members_extend_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment, buffer, encoding)); // rbs_ast_comment
@@ -536,12 +536,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_MEMBERS_INCLUDE: {
             rbs_ast_members_include_t *node = (rbs_ast_members_include_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment, buffer, encoding)); // rbs_ast_comment
@@ -553,8 +553,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_INSTANCEVARIABLE: {
-            rbs_ast_members_instancevariable_t *node = (rbs_ast_members_instancevariable_t *)instance;
+        case RBS_AST_MEMBERS_INSTANCE_VARIABLE: {
+            rbs_ast_members_instance_variable_t *node = (rbs_ast_members_instance_variable_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
@@ -572,8 +572,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_METHODDEFINITION: {
-            rbs_ast_members_methoddefinition_t *node = (rbs_ast_members_methoddefinition_t *)instance;
+        case RBS_AST_MEMBERS_METHOD_DEFINITION: {
+            rbs_ast_members_method_definition_t *node = (rbs_ast_members_method_definition_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="kind" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="overloads" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">, #<RBS::Template::Field name="overloading" c_type="bool">, #<RBS::Template::Field name="visibility" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
@@ -595,8 +595,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD: {
-            rbs_ast_members_methoddefinition_overload_t *node = (rbs_ast_members_methoddefinition_overload_t *)instance;
+        case RBS_AST_MEMBERS_METHOD_DEFINITION_OVERLOAD: {
+            rbs_ast_members_method_definition_overload_t *node = (rbs_ast_members_method_definition_overload_t *)instance;
 
             // [#<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="method_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
@@ -615,12 +615,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_AST_MEMBERS_PREPEND: {
             rbs_ast_members_prepend_t *node = (rbs_ast_members_prepend_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">, #<RBS::Template::Field name="annotations" c_type="rbs_node_list">, #<RBS::Template::Field name="comment" c_type="rbs_ast_comment">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations, buffer, encoding));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment, buffer, encoding)); // rbs_ast_comment
@@ -671,8 +671,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
             return rb_enc_str_new(s.start, rbs_string_len(s), rb_utf8_encoding());
 
         }
-        case RBS_AST_TYPEPARAM: {
-            rbs_ast_typeparam_t *node = (rbs_ast_typeparam_t *)instance;
+        case RBS_AST_TYPE_PARAM: {
+            rbs_ast_type_param_t *node = (rbs_ast_type_param_t *)instance;
 
             // [#<RBS::Template::Field name="name" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="variance" c_type="rbs_ast_symbol">, #<RBS::Template::Field name="upper_bound" c_type="rbs_node">, #<RBS::Template::Field name="unchecked" c_type="bool">, #<RBS::Template::Field name="default_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
@@ -692,8 +692,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_METHODTYPE: {
-            rbs_methodtype_t *node = (rbs_methodtype_t *)instance;
+        case RBS_METHOD_TYPE: {
+            rbs_method_type_t *node = (rbs_method_type_t *)instance;
 
             // [#<RBS::Template::Field name="type_params" c_type="rbs_node_list">, #<RBS::Template::Field name="type" c_type="rbs_node">, #<RBS::Template::Field name="block" c_type="rbs_types_block">]
             VALUE h = rb_hash_new();
@@ -742,8 +742,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
             rb_ary_push(array, rbs_node_list_to_ruby_array(signature->declarations, buffer, encoding));
             return array;
         }
-        case RBS_TYPENAME: {
-            rbs_typename_t *node = (rbs_typename_t *)instance;
+        case RBS_TYPE_NAME: {
+            rbs_type_name_t *node = (rbs_type_name_t *)instance;
 
             // [#<RBS::Template::Field name="namespace" c_type="rbs_namespace">, #<RBS::Template::Field name="name" c_type="rbs_ast_symbol">]
             VALUE h = rb_hash_new();
@@ -762,12 +762,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_TYPES_ALIAS: {
             rbs_types_alias_t *node = (rbs_types_alias_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
 
 
@@ -940,15 +940,15 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_TYPES_CLASSINSTANCE: {
-            rbs_types_classinstance_t *node = (rbs_types_classinstance_t *)instance;
+        case RBS_TYPES_CLASS_INSTANCE: {
+            rbs_types_class_instance_t *node = (rbs_types_class_instance_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
 
 
@@ -958,15 +958,15 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_TYPES_CLASSSINGLETON: {
-            rbs_types_classsingleton_t *node = (rbs_types_classsingleton_t *)instance;
+        case RBS_TYPES_CLASS_SINGLETON: {
+            rbs_types_class_singleton_t *node = (rbs_types_class_singleton_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
 
 
             return CLASS_NEW_INSTANCE(
@@ -1019,12 +1019,12 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
         case RBS_TYPES_INTERFACE: {
             rbs_types_interface_t *node = (rbs_types_interface_t *)instance;
 
-            // [#<RBS::Template::Field name="name" c_type="rbs_typename">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
+            // [#<RBS::Template::Field name="name" c_type="rbs_type_name">, #<RBS::Template::Field name="args" c_type="rbs_node_list">]
             VALUE h = rb_hash_new();
 
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->base.location, buffer));
 
-            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_typename
+            rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name, buffer, encoding)); // rbs_type_name
             rb_hash_aset(h, ID2SYM(rb_intern("args")), rbs_node_list_to_ruby_array(node->args, buffer, encoding));
 
 
@@ -1121,8 +1121,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_TYPES_RECORD_FIELDTYPE: {
-            rbs_types_record_fieldtype_t *record_fieldtype = (rbs_types_record_fieldtype_t *) instance;
+        case RBS_TYPES_RECORD_FIELD_TYPE: {
+            rbs_types_record_field_type_t *record_fieldtype = (rbs_types_record_field_type_t *) instance;
 
             VALUE array = rb_ary_new();
             rb_ary_push(array, rbs_struct_to_ruby_value(record_fieldtype->type, buffer, encoding));
@@ -1164,8 +1164,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance, VALUE buffer, rb_encoding *
                 &h
             );
         }
-        case RBS_TYPES_UNTYPEDFUNCTION: {
-            rbs_types_untypedfunction_t *node = (rbs_types_untypedfunction_t *)instance;
+        case RBS_TYPES_UNTYPED_FUNCTION: {
+            rbs_types_untyped_function_t *node = (rbs_types_untyped_function_t *)instance;
 
             // [#<RBS::Template::Field name="return_type" c_type="rbs_node">]
             VALUE h = rb_hash_new();
