@@ -1,0 +1,30 @@
+Needed replacements
+1. `rbs_ast_declarations_classalias` -> `rbs_ast_declarations_class_alias`
+2. `rbs_ast_declarations_modulealias` -> `rbs_ast_declarations_module_alias`
+3. `rbs_ast_declarations_typealias` -> `rbs_ast_declarations_type_alias`
+4. `rbs_ast_directives_use_singleclause` -> `rbs_ast_directives_use_single_clause`
+5. `rbs_ast_directives_use_wildcardclause` -> `rbs_ast_directives_use_wildcard_clause`
+6. `rbs_ast_members_attraccessor` -> `rbs_ast_members_attr_accessor`
+7. `rbs_ast_members_attrreader` -> `rbs_ast_members_attr_reader`
+8. `rbs_ast_members_attrwriter` -> `rbs_ast_members_attr_writer`
+9. `rbs_ast_members_classinstancevariable` -> `rbs_ast_members_class_instance_variable`
+10. `rbs_ast_members_classvariable` -> `rbs_ast_members_class_variable`
+11. `rbs_ast_members_instancevariable` -> `rbs_ast_members_instance_variable`
+12. `rbs_ast_members_methoddefinition` -> `rbs_ast_members_method_definition`
+13. `rbs_ast_members_methoddefinition_overload` -> `rbs_ast_members_method_definition_overload`
+14. `rbs_ast_typeparam` -> `rbs_ast_type_param`
+15. `rbs_methodtype` -> `rbs_method_type`
+16. `rbs_typename` -> `rbs_type_name`
+17. `rbs_types_classinstance` -> `rbs_types_class_instance`
+18. `rbs_types_classsingleton` -> `rbs_types_class_singleton`
+19. `rbs_types_record_fieldtype` -> `rbs_types_record_field_type`
+20. `rbs_types_untypedfunction` -> `rbs_types_untyped_function`
+
+
+| Ruby Name | Original C Name | Proposed C Name |
+| --- | --- | --- |
+<%- nodes.each do |node| -%>
+<%- if node.original_c_type_name != node.c_type_name -%>
+| `<%= node.ruby_full_name %>` | `<%= node.original_c_type_name %>` | `<%= node.c_type_name %>` |
+<%- end -%>
+<%- end -%>

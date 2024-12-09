@@ -83,6 +83,7 @@ module RBS
 
       # The name of the typedef of the auto-generated C struct for this type,
       # e.g. `rbs_ast_declarations_typealias_t`
+      attr_reader :original_c_type_name #: String
       attr_reader :c_type_name #: String
 
       # The name of the C constant which stores the Ruby VALUE pointing to the generated class.
@@ -103,7 +104,14 @@ module RBS
         @c_constant_name = @ruby_full_name.gsub("::", "_")
         @c_parent_constant_name = @ruby_full_name.split("::")[0..-2].join("::").gsub("::", "_")
         @c_base_name = @ruby_full_name.underscore.gsub("::", "_")
+        @original_c_type_name = @c_constant_name.downcase + "_t"
         @c_type_name = @c_base_name + "_t"
+
+        # if @original_c_type_name != @c_type_name
+        #   $counter ||= 0
+        #   $counter += 1
+        #   puts "#{$counter}. `#{@original_c_type_name.delete_suffix("_t")}` -> `#{@c_type_name.delete_suffix("_t")}`"
+        # end
 
         @c_type_enum_name = @c_base_name.upcase
 
