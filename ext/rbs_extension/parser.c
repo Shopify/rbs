@@ -1977,7 +1977,7 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
                     | {kSELF} `.` tAIDENT `:` <type>
                     | {tA2IDENT} `:` <type>
 */
-static VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE annotations) {
+static rbs_node_t *parse_variable_member(parserstate *state, position comment_pos, VALUE annotations) {
   if (rb_array_len(annotations) > 0) {
     raise_syntax_error(
       state,
@@ -2010,7 +2010,8 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), NULL_RANGE);
 
-    return rbs_ast_members_instance_variable(name, type->cached_ruby_value, location, comment);
+    VALUE value = rbs_ast_members_instance_variable(name, type->cached_ruby_value, location, comment);
+    return (rbs_node_t *)rbs_ast_members_instancevariable_new(value, name, type->cached_ruby_value, location, comment);
   }
   case tA2IDENT: {
     range name_range = state->current_token.range;
@@ -2031,9 +2032,10 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), NULL_RANGE);
 
-    return rbs_ast_members_class_variable(name, type->cached_ruby_value, location, comment);
+    VALUE value = rbs_ast_members_class_variable(name, type->cached_ruby_value, location, comment);
+    return (rbs_node_t *)rbs_ast_members_classvariable_new(value, name, type->cached_ruby_value, location, comment);
   }
-  case kSELF:{
+  case kSELF: {
     range kind_range = {
       .start = state->current_token.range.start,
       .end = state->next_token.range.end
@@ -2060,7 +2062,8 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), kind_range);
 
-    return rbs_ast_members_class_instance_variable(name, type->cached_ruby_value, location, comment);
+    VALUE value = rbs_ast_members_class_instance_variable(name, type->cached_ruby_value, location, comment);
+    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(value, name, type->cached_ruby_value, location, comment);
   }
   default:
     rbs_abort();
@@ -2385,7 +2388,7 @@ static VALUE parse_module_members(parserstate *state) {
     case tAIDENT:
     case tA2IDENT:
     case kSELF: {
-      member = parse_variable_member(state, annot_pos, annotations);
+      member = parse_variable_member(state, annot_pos, annotations)->cached_ruby_value;
       break;
     }
 
