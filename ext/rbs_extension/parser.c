@@ -2261,6 +2261,8 @@ static rbs_node_list_t *parse_interface_members(parserstate *state) {
   interface_decl ::= {`interface`} interface_name module_type_params interface_members <kEND>
 */
 static rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations) {
+  parser_push_typevar_table(state, true);
+
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
