@@ -17,6 +17,8 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
+
+
 VALUE rbs_ast_annotation(VALUE string, rbs_location_t *location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("string")), string);

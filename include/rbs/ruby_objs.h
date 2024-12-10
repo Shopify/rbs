@@ -10,6 +10,8 @@
 
 #include "ruby.h"
 
+
+
 VALUE rbs_ast_annotation(VALUE string, rbs_location_t *location);
 VALUE rbs_ast_comment(VALUE string, rbs_location_t *location);
 VALUE rbs_ast_decl_class(rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);

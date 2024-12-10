@@ -10,6 +10,20 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
+<%# VALUE rbs_ast_symbol(rbs_constant_t constant) {
+  rb_encoding *fake_encoding = NULL;
+  VALUE ruby_symbol = ID2SYM(rb_intern3(constant.start, constant.length, fake_encoding));
+
+  VALUE _init_kwargs = rb_hash_new();
+  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("constant")), ruby_symbol);
+
+  return CLASS_NEW_INSTANCE(
+    RBS_AST_Symbol,
+    1,
+    &_init_kwargs
+  );
+} %>
+
 <%- nodes.filter(&:expose_to_ruby?).each do |node| -%>
 VALUE <%= node.c_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>) {
   VALUE _init_kwargs = rb_hash_new();

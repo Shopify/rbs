@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include "rbs/ruby_objs.h"
 #include "rbs/constants.h"
+#include "ruby/encoding.h"
 
 /* rbs_node_list */
 
@@ -128,6 +129,40 @@ rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
 
 VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
     return hash->cached_ruby_value;
+}
+
+rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_constant_id_t constant_id) {
+    rbs_ast_symbol_t *instance = (rbs_ast_symbol_t *)calloc(1, sizeof(rbs_ast_symbol_t));
+
+
+    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(fake_constant_pool, constant_id);
+    assert(constant != NULL);
+
+    rb_encoding *fake_encoding = rb_utf8_encoding();
+    VALUE ruby_symbol = ID2SYM(rb_intern3(constant->start, constant->length, fake_encoding));
+
+    *instance = (rbs_ast_symbol_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_symbol,
+            .type = RBS_AST_SYMBOL
+        },
+        .constant_id = constant_id,
+    };
+
+    return instance;
+}
+
+rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
+    rbs_other_ruby_value_t *instance = (rbs_other_ruby_value_t *)calloc(1, sizeof(rbs_other_ruby_value_t));
+
+    *instance = (rbs_other_ruby_value_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_OTHER_RUBY_VALUE
+        },
+    };
+
+    return instance;
 }
 
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location) {
@@ -983,27 +1018,6 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
             .type = RBS_AST_MEMBERS_PUBLIC
         },
         .location = location,
-    };
-
-    return instance;
-}
-
-rbs_ast_symbol_t *rbs_ast_symbol_new(VALUE ruby_value, VALUE symbol) {
-    rbs_ast_symbol_t *instance = (rbs_ast_symbol_t *)calloc(1, sizeof(rbs_ast_symbol_t));
-
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(ruby_value);
-    rb_gc_register_mark_object(symbol);
-
-
-    rb_gc_register_mark_object(ruby_value);
-
-    *instance = (rbs_ast_symbol_t) {
-        .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
-            .type = RBS_AST_SYMBOL
-        },
-        .symbol = symbol,
     };
 
     return instance;
@@ -2397,9 +2411,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 &h
             );
         }
-        case RBS_AST_SYMBOL: {
-            return instance->cached_ruby_value;
-        }
         case RBS_AST_TYPEPARAM: {
             if (strcmp(class_name, "RBS::AST::TypeParam") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::TypeParam, got %s\n", class_name);
@@ -2937,6 +2948,17 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_AST_SYMBOL: {
+           if (strcmp(class_name, "Symbol") != 0) {
+               fprintf(stderr, "Expected class name: Symbol, got %s\n", class_name);
+               exit(1);
+           }
+
+           return instance->cached_ruby_value;
+        }
+        case RBS_OTHER_RUBY_VALUE: {
+          return instance->cached_ruby_value;
         }
     }
 }
