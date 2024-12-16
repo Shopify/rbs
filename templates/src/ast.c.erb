@@ -205,7 +205,8 @@ void rbs_node_destroy(rbs_node_t *any_node) {
     }
     <%- end -%>
     case RBS_AST_SYMBOL: {
-        // TODO: Delete symbol from constant pool? Or just free the whole constant pool?
+        rbs_ast_symbol_t *node = (rbs_ast_symbol_t *) any_node;
+        pm_constant_pool_destroy_constant(fake_constant_pool, node->constant_id);
         break;
     }
     }

@@ -56,3 +56,11 @@ bool rbs_constant_id_equal(rbs_constant_pool_t *self, rbs_constant_id_t lhs, rbs
 
     return strncmp(lhs_constant->start, rhs_constant->start, lhs_constant->length) == 0;
 }
+
+void pm_constant_pool_destroy_constant(rbs_constant_pool_t *pool, rbs_constant_id_t constant_id) {
+    assert(pool == fake_constant_pool);
+
+    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(pool, constant_id);
+    free((void *) constant->start);
+    free(constant);
+}

@@ -60,4 +60,7 @@ rbs_constant_id_t rbs_constant_pool_insert_literal(rbs_constant_pool_t *pool, co
  */
 bool rbs_constant_id_equal(rbs_constant_pool_t *pool, rbs_constant_id_t lhs, rbs_constant_id_t rhs);
 
+// Temporary function until we implement real pooling. In reality, we would free the whole pool at once.
+void pm_constant_pool_destroy_constant(rbs_constant_pool_t *pool, rbs_constant_id_t constant_id);
+
 #endif
