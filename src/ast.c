@@ -5,6 +5,7 @@
 /* templates/src/ast.c.erb                                                    */
 /*----------------------------------------------------------------------------*/
 
+#line 2 "prism/templates/src/ast.c.erb"
 #include "rbs/ast.h"
 
 #include <stdio.h>
@@ -216,6 +217,7 @@ rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_location_t *location, rbs_constant_id_t
     return instance;
 }
 
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_location_t *location, rbs_string_t string) {
     rbs_ast_annotation_t *instance = (rbs_ast_annotation_t *)calloc(1, sizeof(rbs_ast_annotation_t));
 
@@ -230,7 +232,7 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_location_t *location, rbs_strin
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_bool_t *rbs_ast_bool_new(rbs_location_t *location, bool value) {
     rbs_ast_bool_t *instance = (rbs_ast_bool_t *)calloc(1, sizeof(rbs_ast_bool_t));
 
@@ -245,7 +247,7 @@ rbs_ast_bool_t *rbs_ast_bool_new(rbs_location_t *location, bool value) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_comment_t *rbs_ast_comment_new(rbs_location_t *location, rbs_string_t string) {
     rbs_ast_comment_t *instance = (rbs_ast_comment_t *)calloc(1, sizeof(rbs_ast_comment_t));
 
@@ -260,7 +262,7 @@ rbs_ast_comment_t *rbs_ast_comment_new(rbs_location_t *location, rbs_string_t st
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_ast_declarations_class_super_t *super_class, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_class_t *instance = (rbs_ast_declarations_class_t *)calloc(1, sizeof(rbs_ast_declarations_class_t));
 
@@ -280,7 +282,7 @@ rbs_ast_declarations_class_t *rbs_ast_declarations_class_new(rbs_location_t *loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args) {
     rbs_ast_declarations_class_super_t *instance = (rbs_ast_declarations_class_super_t *)calloc(1, sizeof(rbs_ast_declarations_class_super_t));
 
@@ -296,7 +298,7 @@ rbs_ast_declarations_class_super_t *rbs_ast_declarations_class_super_new(rbs_loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_location_t *location, rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_classalias_t *instance = (rbs_ast_declarations_classalias_t *)calloc(1, sizeof(rbs_ast_declarations_classalias_t));
 
@@ -313,7 +315,7 @@ rbs_ast_declarations_classalias_t *rbs_ast_declarations_classalias_new(rbs_locat
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_t *type, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_constant_t *instance = (rbs_ast_declarations_constant_t *)calloc(1, sizeof(rbs_ast_declarations_constant_t));
 
@@ -330,7 +332,7 @@ rbs_ast_declarations_constant_t *rbs_ast_declarations_constant_new(rbs_location_
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_global_t *instance = (rbs_ast_declarations_global_t *)calloc(1, sizeof(rbs_ast_declarations_global_t));
 
@@ -347,7 +349,7 @@ rbs_ast_declarations_global_t *rbs_ast_declarations_global_new(rbs_location_t *l
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_interface_t *instance = (rbs_ast_declarations_interface_t *)calloc(1, sizeof(rbs_ast_declarations_interface_t));
 
@@ -366,7 +368,7 @@ rbs_ast_declarations_interface_t *rbs_ast_declarations_interface_new(rbs_locatio
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_list_t *self_types, rbs_node_list_t *members, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_module_t *instance = (rbs_ast_declarations_module_t *)calloc(1, sizeof(rbs_ast_declarations_module_t));
 
@@ -386,7 +388,7 @@ rbs_ast_declarations_module_t *rbs_ast_declarations_module_new(rbs_location_t *l
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args) {
     rbs_ast_declarations_module_self_t *instance = (rbs_ast_declarations_module_self_t *)calloc(1, sizeof(rbs_ast_declarations_module_self_t));
 
@@ -402,7 +404,7 @@ rbs_ast_declarations_module_self_t *rbs_ast_declarations_module_self_new(rbs_loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_location_t *location, rbs_typename_t *new_name, rbs_typename_t *old_name, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_modulealias_t *instance = (rbs_ast_declarations_modulealias_t *)calloc(1, sizeof(rbs_ast_declarations_modulealias_t));
 
@@ -419,7 +421,7 @@ rbs_ast_declarations_modulealias_t *rbs_ast_declarations_modulealias_new(rbs_loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *type_params, rbs_node_t *type, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_declarations_typealias_t *instance = (rbs_ast_declarations_typealias_t *)calloc(1, sizeof(rbs_ast_declarations_typealias_t));
 
@@ -438,7 +440,7 @@ rbs_ast_declarations_typealias_t *rbs_ast_declarations_typealias_new(rbs_locatio
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_location_t *location, rbs_node_list_t *clauses) {
     rbs_ast_directives_use_t *instance = (rbs_ast_directives_use_t *)calloc(1, sizeof(rbs_ast_directives_use_t));
 
@@ -453,7 +455,7 @@ rbs_ast_directives_use_t *rbs_ast_directives_use_new(rbs_location_t *location, r
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(rbs_location_t *location, rbs_typename_t *type_name, rbs_ast_symbol_t *new_name) {
     rbs_ast_directives_use_singleclause_t *instance = (rbs_ast_directives_use_singleclause_t *)calloc(1, sizeof(rbs_ast_directives_use_singleclause_t));
 
@@ -469,7 +471,7 @@ rbs_ast_directives_use_singleclause_t *rbs_ast_directives_use_singleclause_new(r
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_new(rbs_location_t *location, rbs_namespace_t *rbs_namespace) {
     rbs_ast_directives_use_wildcardclause_t *instance = (rbs_ast_directives_use_wildcardclause_t *)calloc(1, sizeof(rbs_ast_directives_use_wildcardclause_t));
 
@@ -484,7 +486,7 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_integer_t *rbs_ast_integer_new(rbs_location_t *location, rbs_string_t string_representation) {
     rbs_ast_integer_t *instance = (rbs_ast_integer_t *)calloc(1, sizeof(rbs_ast_integer_t));
 
@@ -499,7 +501,7 @@ rbs_ast_integer_t *rbs_ast_integer_new(rbs_location_t *location, rbs_string_t st
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_location_t *location, rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_members_alias_t *instance = (rbs_ast_members_alias_t *)calloc(1, sizeof(rbs_ast_members_alias_t));
 
@@ -518,7 +520,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_location_t *location, rbs
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attraccessor_t *instance = (rbs_ast_members_attraccessor_t *)calloc(1, sizeof(rbs_ast_members_attraccessor_t));
 
@@ -539,7 +541,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_location_t 
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attrreader_t *instance = (rbs_ast_members_attrreader_t *)calloc(1, sizeof(rbs_ast_members_attrreader_t));
 
@@ -560,7 +562,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_location_t *loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_attrwriter_t *instance = (rbs_ast_members_attrwriter_t *)calloc(1, sizeof(rbs_ast_members_attrwriter_t));
 
@@ -581,7 +583,7 @@ rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_location_t *loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_ast_comment_t *comment) {
     rbs_ast_members_classinstancevariable_t *instance = (rbs_ast_members_classinstancevariable_t *)calloc(1, sizeof(rbs_ast_members_classinstancevariable_t));
 
@@ -598,7 +600,7 @@ rbs_ast_members_classinstancevariable_t *rbs_ast_members_classinstancevariable_n
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_ast_comment_t *comment) {
     rbs_ast_members_classvariable_t *instance = (rbs_ast_members_classvariable_t *)calloc(1, sizeof(rbs_ast_members_classvariable_t));
 
@@ -615,7 +617,7 @@ rbs_ast_members_classvariable_t *rbs_ast_members_classvariable_new(rbs_location_
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_members_extend_t *instance = (rbs_ast_members_extend_t *)calloc(1, sizeof(rbs_ast_members_extend_t));
 
@@ -633,7 +635,7 @@ rbs_ast_members_extend_t *rbs_ast_members_extend_new(rbs_location_t *location, r
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_members_include_t *instance = (rbs_ast_members_include_t *)calloc(1, sizeof(rbs_ast_members_include_t));
 
@@ -651,7 +653,7 @@ rbs_ast_members_include_t *rbs_ast_members_include_new(rbs_location_t *location,
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_ast_comment_t *comment) {
     rbs_ast_members_instancevariable_t *instance = (rbs_ast_members_instancevariable_t *)calloc(1, sizeof(rbs_ast_members_instancevariable_t));
 
@@ -668,7 +670,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_ast_comment_t *comment, bool overloading, rbs_ast_symbol_t *visibility) {
     rbs_ast_members_methoddefinition_t *instance = (rbs_ast_members_methoddefinition_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_t));
 
@@ -689,7 +691,7 @@ rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_overload_new(rbs_location_t *location, rbs_node_list_t *annotations, rbs_node_t *method_type) {
     rbs_ast_members_methoddefinition_overload_t *instance = (rbs_ast_members_methoddefinition_overload_t *)calloc(1, sizeof(rbs_ast_members_methoddefinition_overload_t));
 
@@ -705,7 +707,7 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_ast_comment_t *comment) {
     rbs_ast_members_prepend_t *instance = (rbs_ast_members_prepend_t *)calloc(1, sizeof(rbs_ast_members_prepend_t));
 
@@ -723,7 +725,7 @@ rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_location_t *location,
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location) {
     rbs_ast_members_private_t *instance = (rbs_ast_members_private_t *)calloc(1, sizeof(rbs_ast_members_private_t));
 
@@ -737,7 +739,7 @@ rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location)
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
     rbs_ast_members_public_t *instance = (rbs_ast_members_public_t *)calloc(1, sizeof(rbs_ast_members_public_t));
 
@@ -751,7 +753,7 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_string_t *rbs_ast_string_new(rbs_location_t *location, rbs_string_t string) {
     rbs_ast_string_t *instance = (rbs_ast_string_t *)calloc(1, sizeof(rbs_ast_string_t));
 
@@ -766,7 +768,7 @@ rbs_ast_string_t *rbs_ast_string_new(rbs_location_t *location, rbs_string_t stri
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_location_t *location, rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type) {
     rbs_ast_typeparam_t *instance = (rbs_ast_typeparam_t *)calloc(1, sizeof(rbs_ast_typeparam_t));
 
@@ -785,7 +787,7 @@ rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_location_t *location, rbs_ast_sym
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_methodtype_t *rbs_methodtype_new(rbs_location_t *location, rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block) {
     rbs_methodtype_t *instance = (rbs_methodtype_t *)calloc(1, sizeof(rbs_methodtype_t));
 
@@ -802,7 +804,7 @@ rbs_methodtype_t *rbs_methodtype_new(rbs_location_t *location, rbs_node_list_t *
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_namespace_t *rbs_namespace_new(rbs_location_t *location, rbs_node_list_t *path, bool absolute) {
     rbs_namespace_t *instance = (rbs_namespace_t *)calloc(1, sizeof(rbs_namespace_t));
 
@@ -818,7 +820,7 @@ rbs_namespace_t *rbs_namespace_new(rbs_location_t *location, rbs_node_list_t *pa
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_signature_t *rbs_signature_new(rbs_location_t *location, rbs_node_list_t *directives, rbs_node_list_t *declarations) {
     rbs_signature_t *instance = (rbs_signature_t *)calloc(1, sizeof(rbs_signature_t));
 
@@ -834,7 +836,7 @@ rbs_signature_t *rbs_signature_new(rbs_location_t *location, rbs_node_list_t *di
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_typename_t *rbs_typename_new(rbs_location_t *location, rbs_namespace_t *rbs_namespace, rbs_ast_symbol_t *name) {
     rbs_typename_t *instance = (rbs_typename_t *)calloc(1, sizeof(rbs_typename_t));
 
@@ -850,7 +852,7 @@ rbs_typename_t *rbs_typename_new(rbs_location_t *location, rbs_namespace_t *rbs_
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_alias_t *rbs_types_alias_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args) {
     rbs_types_alias_t *instance = (rbs_types_alias_t *)calloc(1, sizeof(rbs_types_alias_t));
 
@@ -866,7 +868,7 @@ rbs_types_alias_t *rbs_types_alias_new(rbs_location_t *location, rbs_typename_t 
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_location_t *location, bool todo) {
     rbs_types_bases_any_t *instance = (rbs_types_bases_any_t *)calloc(1, sizeof(rbs_types_bases_any_t));
 
@@ -881,7 +883,7 @@ rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_location_t *location, bool to
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_bool_t *rbs_types_bases_bool_new(rbs_location_t *location) {
     rbs_types_bases_bool_t *instance = (rbs_types_bases_bool_t *)calloc(1, sizeof(rbs_types_bases_bool_t));
 
@@ -895,7 +897,7 @@ rbs_types_bases_bool_t *rbs_types_bases_bool_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(rbs_location_t *location) {
     rbs_types_bases_bottom_t *instance = (rbs_types_bases_bottom_t *)calloc(1, sizeof(rbs_types_bases_bottom_t));
 
@@ -909,7 +911,7 @@ rbs_types_bases_bottom_t *rbs_types_bases_bottom_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_class_t *rbs_types_bases_class_new(rbs_location_t *location) {
     rbs_types_bases_class_t *instance = (rbs_types_bases_class_t *)calloc(1, sizeof(rbs_types_bases_class_t));
 
@@ -923,7 +925,7 @@ rbs_types_bases_class_t *rbs_types_bases_class_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_instance_t *rbs_types_bases_instance_new(rbs_location_t *location) {
     rbs_types_bases_instance_t *instance = (rbs_types_bases_instance_t *)calloc(1, sizeof(rbs_types_bases_instance_t));
 
@@ -937,7 +939,7 @@ rbs_types_bases_instance_t *rbs_types_bases_instance_new(rbs_location_t *locatio
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_nil_t *rbs_types_bases_nil_new(rbs_location_t *location) {
     rbs_types_bases_nil_t *instance = (rbs_types_bases_nil_t *)calloc(1, sizeof(rbs_types_bases_nil_t));
 
@@ -951,7 +953,7 @@ rbs_types_bases_nil_t *rbs_types_bases_nil_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_location_t *location) {
     rbs_types_bases_self_t *instance = (rbs_types_bases_self_t *)calloc(1, sizeof(rbs_types_bases_self_t));
 
@@ -965,7 +967,7 @@ rbs_types_bases_self_t *rbs_types_bases_self_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_location_t *location) {
     rbs_types_bases_top_t *instance = (rbs_types_bases_top_t *)calloc(1, sizeof(rbs_types_bases_top_t));
 
@@ -979,7 +981,7 @@ rbs_types_bases_top_t *rbs_types_bases_top_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_location_t *location) {
     rbs_types_bases_void_t *instance = (rbs_types_bases_void_t *)calloc(1, sizeof(rbs_types_bases_void_t));
 
@@ -993,7 +995,7 @@ rbs_types_bases_void_t *rbs_types_bases_void_new(rbs_location_t *location) {
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_block_t *rbs_types_block_new(rbs_location_t *location, rbs_node_t *type, bool required, rbs_node_t *self_type) {
     rbs_types_block_t *instance = (rbs_types_block_t *)calloc(1, sizeof(rbs_types_block_t));
 
@@ -1010,7 +1012,7 @@ rbs_types_block_t *rbs_types_block_new(rbs_location_t *location, rbs_node_t *typ
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args) {
     rbs_types_classinstance_t *instance = (rbs_types_classinstance_t *)calloc(1, sizeof(rbs_types_classinstance_t));
 
@@ -1026,7 +1028,7 @@ rbs_types_classinstance_t *rbs_types_classinstance_new(rbs_location_t *location,
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_location_t *location, rbs_typename_t *name) {
     rbs_types_classsingleton_t *instance = (rbs_types_classsingleton_t *)calloc(1, sizeof(rbs_types_classsingleton_t));
 
@@ -1041,7 +1043,7 @@ rbs_types_classsingleton_t *rbs_types_classsingleton_new(rbs_location_t *locatio
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_function_t *rbs_types_function_new(rbs_location_t *location, rbs_node_list_t *required_positionals, rbs_node_list_t *optional_positionals, rbs_node_t *rest_positionals, rbs_node_list_t *trailing_positionals, rbs_hash_t *required_keywords, rbs_hash_t *optional_keywords, rbs_node_t *rest_keywords, rbs_node_t *return_type) {
     rbs_types_function_t *instance = (rbs_types_function_t *)calloc(1, sizeof(rbs_types_function_t));
 
@@ -1063,7 +1065,7 @@ rbs_types_function_t *rbs_types_function_new(rbs_location_t *location, rbs_node_
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_function_param_t *rbs_types_function_param_new(rbs_location_t *location, rbs_node_t *type, rbs_ast_symbol_t *name) {
     rbs_types_function_param_t *instance = (rbs_types_function_param_t *)calloc(1, sizeof(rbs_types_function_param_t));
 
@@ -1079,7 +1081,7 @@ rbs_types_function_param_t *rbs_types_function_param_new(rbs_location_t *locatio
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_interface_t *rbs_types_interface_new(rbs_location_t *location, rbs_typename_t *name, rbs_node_list_t *args) {
     rbs_types_interface_t *instance = (rbs_types_interface_t *)calloc(1, sizeof(rbs_types_interface_t));
 
@@ -1095,7 +1097,7 @@ rbs_types_interface_t *rbs_types_interface_new(rbs_location_t *location, rbs_typ
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_intersection_t *rbs_types_intersection_new(rbs_location_t *location, rbs_node_list_t *types) {
     rbs_types_intersection_t *instance = (rbs_types_intersection_t *)calloc(1, sizeof(rbs_types_intersection_t));
 
@@ -1110,7 +1112,7 @@ rbs_types_intersection_t *rbs_types_intersection_new(rbs_location_t *location, r
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_literal_t *rbs_types_literal_new(rbs_location_t *location, rbs_node_t *literal) {
     rbs_types_literal_t *instance = (rbs_types_literal_t *)calloc(1, sizeof(rbs_types_literal_t));
 
@@ -1125,7 +1127,7 @@ rbs_types_literal_t *rbs_types_literal_new(rbs_location_t *location, rbs_node_t 
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_optional_t *rbs_types_optional_new(rbs_location_t *location, rbs_node_t *type) {
     rbs_types_optional_t *instance = (rbs_types_optional_t *)calloc(1, sizeof(rbs_types_optional_t));
 
@@ -1140,7 +1142,7 @@ rbs_types_optional_t *rbs_types_optional_new(rbs_location_t *location, rbs_node_
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_proc_t *rbs_types_proc_new(rbs_location_t *location, rbs_node_t *type, rbs_types_block_t *block, rbs_node_t *self_type) {
     rbs_types_proc_t *instance = (rbs_types_proc_t *)calloc(1, sizeof(rbs_types_proc_t));
 
@@ -1157,7 +1159,7 @@ rbs_types_proc_t *rbs_types_proc_new(rbs_location_t *location, rbs_node_t *type,
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_record_t *rbs_types_record_new(rbs_location_t *location, rbs_hash_t *all_fields) {
     rbs_types_record_t *instance = (rbs_types_record_t *)calloc(1, sizeof(rbs_types_record_t));
 
@@ -1172,7 +1174,7 @@ rbs_types_record_t *rbs_types_record_new(rbs_location_t *location, rbs_hash_t *a
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(rbs_location_t *location, rbs_node_t *type, bool required) {
     rbs_types_record_fieldtype_t *instance = (rbs_types_record_fieldtype_t *)calloc(1, sizeof(rbs_types_record_fieldtype_t));
 
@@ -1188,7 +1190,7 @@ rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(rbs_location_t *loc
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_location_t *location, rbs_node_list_t *types) {
     rbs_types_tuple_t *instance = (rbs_types_tuple_t *)calloc(1, sizeof(rbs_types_tuple_t));
 
@@ -1203,7 +1205,7 @@ rbs_types_tuple_t *rbs_types_tuple_new(rbs_location_t *location, rbs_node_list_t
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_union_t *rbs_types_union_new(rbs_location_t *location, rbs_node_list_t *types) {
     rbs_types_union_t *instance = (rbs_types_union_t *)calloc(1, sizeof(rbs_types_union_t));
 
@@ -1218,7 +1220,7 @@ rbs_types_union_t *rbs_types_union_new(rbs_location_t *location, rbs_node_list_t
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_location_t *location, rbs_node_t *return_type) {
     rbs_types_untypedfunction_t *instance = (rbs_types_untypedfunction_t *)calloc(1, sizeof(rbs_types_untypedfunction_t));
 
@@ -1233,7 +1235,7 @@ rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_location_t *locat
 
     return instance;
 }
-
+#line 155 "prism/templates/src/ast.c.erb"
 rbs_types_variable_t *rbs_types_variable_new(rbs_location_t *location, rbs_ast_symbol_t *name) {
     rbs_types_variable_t *instance = (rbs_types_variable_t *)calloc(1, sizeof(rbs_types_variable_t));
 
@@ -1249,3 +1251,709 @@ rbs_types_variable_t *rbs_types_variable_new(rbs_location_t *location, rbs_ast_s
     return instance;
 }
 
+#line 179 "prism/templates/src/ast.c.erb"
+void rbs_node_destroy(rbs_node_t *any_node) {
+    switch (any_node->type) {
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_ANNOTATION: {
+        rbs_ast_annotation_t *node = (rbs_ast_annotation_t *)any_node;
+
+        rbs_string_free(&node->string);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_BOOL: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_COMMENT: {
+        rbs_ast_comment_t *node = (rbs_ast_comment_t *)any_node;
+
+        rbs_string_free(&node->string);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_CLASS: {
+        rbs_ast_declarations_class_t *node = (rbs_ast_declarations_class_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->type_params);
+        if (node->super_class != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->super_class);
+        }
+        rbs_node_list_free(node->members);
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_CLASS_SUPER: {
+        rbs_ast_declarations_class_super_t *node = (rbs_ast_declarations_class_super_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_CLASSALIAS: {
+        rbs_ast_declarations_classalias_t *node = (rbs_ast_declarations_classalias_t *)any_node;
+
+        if (node->new_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->new_name);
+        }
+        if (node->old_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->old_name);
+        }
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_CONSTANT: {
+        rbs_ast_declarations_constant_t *node = (rbs_ast_declarations_constant_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_GLOBAL: {
+        rbs_ast_declarations_global_t *node = (rbs_ast_declarations_global_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_INTERFACE: {
+        rbs_ast_declarations_interface_t *node = (rbs_ast_declarations_interface_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->type_params);
+        rbs_node_list_free(node->members);
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_MODULE: {
+        rbs_ast_declarations_module_t *node = (rbs_ast_declarations_module_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->type_params);
+        rbs_node_list_free(node->self_types);
+        rbs_node_list_free(node->members);
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_MODULE_SELF: {
+        rbs_ast_declarations_module_self_t *node = (rbs_ast_declarations_module_self_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_MODULEALIAS: {
+        rbs_ast_declarations_modulealias_t *node = (rbs_ast_declarations_modulealias_t *)any_node;
+
+        if (node->new_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->new_name);
+        }
+        if (node->old_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->old_name);
+        }
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DECLARATIONS_TYPEALIAS: {
+        rbs_ast_declarations_typealias_t *node = (rbs_ast_declarations_typealias_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->type_params);
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DIRECTIVES_USE: {
+        rbs_ast_directives_use_t *node = (rbs_ast_directives_use_t *)any_node;
+
+        rbs_node_list_free(node->clauses);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DIRECTIVES_USE_SINGLECLAUSE: {
+        rbs_ast_directives_use_singleclause_t *node = (rbs_ast_directives_use_singleclause_t *)any_node;
+
+        if (node->type_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type_name);
+        }
+        if (node->new_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->new_name);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_DIRECTIVES_USE_WILDCARDCLAUSE: {
+        rbs_ast_directives_use_wildcardclause_t *node = (rbs_ast_directives_use_wildcardclause_t *)any_node;
+
+        if (node->rbs_namespace != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->rbs_namespace);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_INTEGER: {
+        rbs_ast_integer_t *node = (rbs_ast_integer_t *)any_node;
+
+        rbs_string_free(&node->string_representation);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_ALIAS: {
+        rbs_ast_members_alias_t *node = (rbs_ast_members_alias_t *)any_node;
+
+        if (node->new_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->new_name);
+        }
+        if (node->old_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->old_name);
+        }
+        if (node->kind != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->kind);
+        }
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_ATTRACCESSOR: {
+        rbs_ast_members_attraccessor_t *node = (rbs_ast_members_attraccessor_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->ivar_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->ivar_name);
+        }
+        if (node->kind != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->kind);
+        }
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        if (node->visibility != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->visibility);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_ATTRREADER: {
+        rbs_ast_members_attrreader_t *node = (rbs_ast_members_attrreader_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->ivar_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->ivar_name);
+        }
+        if (node->kind != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->kind);
+        }
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        if (node->visibility != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->visibility);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_ATTRWRITER: {
+        rbs_ast_members_attrwriter_t *node = (rbs_ast_members_attrwriter_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->ivar_name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->ivar_name);
+        }
+        if (node->kind != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->kind);
+        }
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        if (node->visibility != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->visibility);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_CLASSINSTANCEVARIABLE: {
+        rbs_ast_members_classinstancevariable_t *node = (rbs_ast_members_classinstancevariable_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_CLASSVARIABLE: {
+        rbs_ast_members_classvariable_t *node = (rbs_ast_members_classvariable_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_EXTEND: {
+        rbs_ast_members_extend_t *node = (rbs_ast_members_extend_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_INCLUDE: {
+        rbs_ast_members_include_t *node = (rbs_ast_members_include_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_INSTANCEVARIABLE: {
+        rbs_ast_members_instancevariable_t *node = (rbs_ast_members_instancevariable_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_METHODDEFINITION: {
+        rbs_ast_members_methoddefinition_t *node = (rbs_ast_members_methoddefinition_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->kind != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->kind);
+        }
+        rbs_node_list_free(node->overloads);
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        // overloading is a bool, so we don't need to free it.
+        if (node->visibility != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->visibility);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_METHODDEFINITION_OVERLOAD: {
+        rbs_ast_members_methoddefinition_overload_t *node = (rbs_ast_members_methoddefinition_overload_t *)any_node;
+
+        rbs_node_list_free(node->annotations);
+        if (node->method_type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->method_type);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_PREPEND: {
+        rbs_ast_members_prepend_t *node = (rbs_ast_members_prepend_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        rbs_node_list_free(node->annotations);
+        if (node->comment != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->comment);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_PRIVATE: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_MEMBERS_PUBLIC: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_STRING: {
+        rbs_ast_string_t *node = (rbs_ast_string_t *)any_node;
+
+        rbs_string_free(&node->string);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_AST_TYPEPARAM: {
+        rbs_ast_typeparam_t *node = (rbs_ast_typeparam_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        if (node->variance != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->variance);
+        }
+        if (node->upper_bound != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->upper_bound);
+        }
+        // unchecked is a bool, so we don't need to free it.
+        if (node->default_type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->default_type);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_METHODTYPE: {
+        rbs_methodtype_t *node = (rbs_methodtype_t *)any_node;
+
+        rbs_node_list_free(node->type_params);
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->block != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->block);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_NAMESPACE: {
+        rbs_namespace_t *node = (rbs_namespace_t *)any_node;
+
+        rbs_node_list_free(node->path);
+        // absolute is a bool, so we don't need to free it.
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_SIGNATURE: {
+        rbs_signature_t *node = (rbs_signature_t *)any_node;
+
+        rbs_node_list_free(node->directives);
+        rbs_node_list_free(node->declarations);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPENAME: {
+        rbs_typename_t *node = (rbs_typename_t *)any_node;
+
+        if (node->rbs_namespace != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->rbs_namespace);
+        }
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_ALIAS: {
+        rbs_types_alias_t *node = (rbs_types_alias_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_ANY: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_BOOL: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_BOTTOM: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_CLASS: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_INSTANCE: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_NIL: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_SELF: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_TOP: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BASES_VOID: {
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_BLOCK: {
+        rbs_types_block_t *node = (rbs_types_block_t *)any_node;
+
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        // required is a bool, so we don't need to free it.
+        if (node->self_type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->self_type);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_CLASSINSTANCE: {
+        rbs_types_classinstance_t *node = (rbs_types_classinstance_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_CLASSSINGLETON: {
+        rbs_types_classsingleton_t *node = (rbs_types_classsingleton_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_FUNCTION: {
+        rbs_types_function_t *node = (rbs_types_function_t *)any_node;
+
+        rbs_node_list_free(node->required_positionals);
+        rbs_node_list_free(node->optional_positionals);
+        if (node->rest_positionals != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->rest_positionals);
+        }
+        rbs_node_list_free(node->trailing_positionals);
+        rbs_hash_free(node->required_keywords);
+        rbs_hash_free(node->optional_keywords);
+        if (node->rest_keywords != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->rest_keywords);
+        }
+        if (node->return_type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->return_type);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_FUNCTION_PARAM: {
+        rbs_types_function_param_t *node = (rbs_types_function_param_t *)any_node;
+
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_INTERFACE: {
+        rbs_types_interface_t *node = (rbs_types_interface_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        rbs_node_list_free(node->args);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_INTERSECTION: {
+        rbs_types_intersection_t *node = (rbs_types_intersection_t *)any_node;
+
+        rbs_node_list_free(node->types);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_LITERAL: {
+        rbs_types_literal_t *node = (rbs_types_literal_t *)any_node;
+
+        if (node->literal != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->literal);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_OPTIONAL: {
+        rbs_types_optional_t *node = (rbs_types_optional_t *)any_node;
+
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_PROC: {
+        rbs_types_proc_t *node = (rbs_types_proc_t *)any_node;
+
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        if (node->block != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->block);
+        }
+        if (node->self_type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->self_type);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_RECORD: {
+        rbs_types_record_t *node = (rbs_types_record_t *)any_node;
+
+        rbs_hash_free(node->all_fields);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_RECORD_FIELDTYPE: {
+        rbs_types_record_fieldtype_t *node = (rbs_types_record_fieldtype_t *)any_node;
+
+        if (node->type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->type);
+        }
+        // required is a bool, so we don't need to free it.
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_TUPLE: {
+        rbs_types_tuple_t *node = (rbs_types_tuple_t *)any_node;
+
+        rbs_node_list_free(node->types);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_UNION: {
+        rbs_types_union_t *node = (rbs_types_union_t *)any_node;
+
+        rbs_node_list_free(node->types);
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_UNTYPEDFUNCTION: {
+        rbs_types_untypedfunction_t *node = (rbs_types_untypedfunction_t *)any_node;
+
+        if (node->return_type != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->return_type);
+        }
+        break;
+    }
+#line 183 "prism/templates/src/ast.c.erb"
+    case RBS_TYPES_VARIABLE: {
+        rbs_types_variable_t *node = (rbs_types_variable_t *)any_node;
+
+        if (node->name != NULL) {
+            rbs_node_destroy((rbs_node_t *) node->name);
+        }
+        break;
+    }
+    case RBS_AST_SYMBOL: {
+        // TODO: Delete symbol from constant pool? Or just free the whole constant pool?
+        break;
+    }
+    }
+
+    free(any_node);
+}

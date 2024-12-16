@@ -33,6 +33,12 @@ void rbs_string_ensure_owned(rbs_string_t *self) {
     *self = rbs_string_owned_new(buffer, buffer + length);
 }
 
+void rbs_string_free(rbs_string_t *self) {
+    if (self->type == RBS_STRING_OWNED) {
+        free((void *) self->start);
+    }
+}
+
 rbs_string_t rbs_string_offset(const rbs_string_t self, const size_t offset) {
     return rbs_string_shared_new(self.start + offset, self.end);
 }

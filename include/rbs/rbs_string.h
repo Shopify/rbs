@@ -40,6 +40,14 @@ rbs_string_t rbs_string_owned_new(const char *start, const char *end);
 void rbs_string_ensure_owned(rbs_string_t *self);
 
 /**
+ * Free the associated memory of the given string.
+ *
+ * @param string The string to free.
+ * \public \memberof rbs_string_t
+ */
+void rbs_string_free(rbs_string_t *string);
+
+/**
  * Returns a new `rbs_string_t` with its start shifted forward by the given amount.
  * This returns a shared string which points to the same memory as the original string.
  */
