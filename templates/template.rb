@@ -57,6 +57,10 @@ module RBS
           @c_type.include?("_types_")
       end
 
+      def needs_to_be_freed?
+        !["VALUE", "bool"].include?(@c_type)
+      end
+
       def inspect
         "#<RBS::Template::Field name=#{@name.inspect} c_type=#{@c_type.inspect}>"
       end
@@ -121,6 +125,10 @@ module RBS
 
       def expose_location?
         @expose_location
+      end
+
+      def has_children_to_free?
+        @fields.any?(&:needs_to_be_freed?)
       end
     end
 
