@@ -1103,9 +1103,9 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     rbs_location_t *loc = rbs_location_current_token(state);
 
     rbs_string_t string = rbs_parser_get_current_token(state);
-    rbs_string_strip_whitespace(&string);
+    rbs_string_t stripped_string = rbs_string_strip_whitespace(&string);
 
-    rbs_node_t *literal = (rbs_node_t *) rbs_ast_integer_new(loc, string);
+    rbs_node_t *literal = (rbs_node_t *) rbs_ast_integer_new(loc, stripped_string);
     *type = (rbs_node_t *) rbs_types_literal_new(loc, literal);
     return true;
   }
@@ -1588,9 +1588,10 @@ static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotati
     total_offset,
     rbs_string_len(current_token) - total_offset - close_bytes
   );
-  rbs_string_strip_whitespace(&annotation_str);
 
-  *annotation = rbs_ast_annotation_new(rbs_location_new(rg), annotation_str);
+  rbs_string_t stripped_annotation_str = rbs_string_strip_whitespace(&annotation_str);
+
+  *annotation = rbs_ast_annotation_new(rbs_location_new(rg), stripped_annotation_str);
   return true;
 }
 
