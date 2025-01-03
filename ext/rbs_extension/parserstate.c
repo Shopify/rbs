@@ -335,6 +335,7 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     .last_comment = NULL,
 
     .constant_pool = {},
+    .aborted = false,
   };
 
   // The parser's constant pool is mainly used for storing the names of type variables, which usually aren't many.

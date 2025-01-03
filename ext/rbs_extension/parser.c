@@ -88,16 +88,6 @@ static rbs_location_t *rbs_location_current_token(parserstate *state) {
 static rbs_node_t *parse_optional(parserstate *state);
 static rbs_node_t *parse_simple(parserstate *state);
 
-/**
- * Raises RuntimeError with "Unexpected error " message.
- * */
-static NORETURN(void) rbs_abort(void) {
-  rb_raise(
-    rb_eRuntimeError,
-    "Unexpected error"
-  );
-}
-
 NORETURN(void) raise_syntax_error(parserstate *state, token tok, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
@@ -865,7 +855,8 @@ static rbs_types_literal_t *parse_symbol(parserstate *state, rbs_location_t *loc
     break;
   }
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 
   return rbs_types_literal_new((rbs_node_t *) literal, location);
@@ -895,7 +886,8 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
     } else if (state->current_token.type == tLIDENT) {
       kind = ALIAS_NAME;
     } else {
-      rbs_abort();
+      state->aborted = true;
+      return NULL;
     }
 
     range args_range;
@@ -1212,7 +1204,8 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
             variance = rbs_keyword_new(INTERN("covariant"));
             break;
           default:
-            rbs_abort();
+            state->aborted = true;
+            return NULL;
           }
 
           parser_advance(state);
@@ -1451,7 +1444,8 @@ static rbs_ast_annotation_t *parse_annotation(parserstate *state) {
     close_char = '|';
     break;
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 
   int open_bytes = rb_enc_codelen(open_char, enc);
@@ -1747,7 +1741,8 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
     break;
   }
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 
   rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
@@ -1813,7 +1808,8 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
     reset_typevar_scope = false;
     break;
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 
   if (from_interface) {
@@ -1857,7 +1853,8 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
   case kPREPEND:
     return (rbs_node_t *) rbs_ast_members_prepend_new(name, args, annotations, loc, comment);
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 }
 
@@ -2004,7 +2001,8 @@ static rbs_node_t *parse_variable_member(parserstate *state, position comment_po
     return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(name, type, loc, comment);
   }
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 }
 
@@ -2030,7 +2028,8 @@ static rbs_node_t *parse_visibility_member(parserstate *state, rbs_node_list_t *
   case kPRIVATE:
     return (rbs_node_t *) rbs_ast_members_private_new(location);
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 }
 
@@ -2136,7 +2135,8 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   case kATTRACCESSOR:
     return (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, loc, comment, visibility);
   default:
-    rbs_abort();
+    state->aborted = true;
+    return NULL;
   }
 }
 
@@ -2842,6 +2842,10 @@ parse_type_try(VALUE a) {
 
   rbs_node_t *type = parse_type(parser);
 
+  if (parser->aborted) {
+    rb_raise(rb_eRuntimeError, "Unexpected error");
+  }
+
   if (RB_TEST(arg->require_eof)) {
     parser_advance_assert(parser, pEOF);
   }
@@ -2878,6 +2882,10 @@ parse_method_type_try(VALUE a) {
 
   rbs_methodtype_t *method_type = parse_method_type(parser);
 
+  if (parser->aborted) {
+    rb_raise(rb_eRuntimeError, "Unexpected error");
+  }
+
   if (RB_TEST(arg->require_eof)) {
     parser_advance_assert(parser, pEOF);
   }
@@ -2908,6 +2916,10 @@ parse_signature_try(VALUE a) {
   parserstate *parser = (parserstate *)a;
 
   rbs_signature_t *signature = parse_signature(parser);
+
+  if (parser->aborted) {
+    rb_raise(rb_eRuntimeError, "Unexpected error");
+  }
 
   rbs_translation_context_t ctx = {
     .constant_pool = &parser->constant_pool,

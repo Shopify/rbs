@@ -58,6 +58,7 @@ typedef struct {
   comment *last_comment;  /* Last read comment */
 
   rbs_constant_pool_t constant_pool;
+  bool aborted;
 } parserstate;
 
 comment *alloc_comment(token comment_token, comment *last_comment);
