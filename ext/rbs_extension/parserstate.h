@@ -7,6 +7,7 @@
 #include "rbs/util/rbs_constant_pool.h"
 #include "lexer.h"
 #include "location.h"
+#include "rbs/ast.h"
 
 /**
  * id_table represents a set of RBS constant IDs.
