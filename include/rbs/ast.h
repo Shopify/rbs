@@ -82,9 +82,13 @@ enum rbs_node_type {
 };
 
 typedef struct rbs_node {
-    VALUE cached_ruby_value;
     enum rbs_node_type type;
 } rbs_node_t;
+
+/// A bag of values needed when copying RBS C structs into Ruby objects.
+typedef struct rbs_translation_context {
+    rbs_constant_pool_t *constant_pool;
+} rbs_translation_context_t;
 
 /* rbs_node_list_node */
 
@@ -98,7 +102,6 @@ typedef struct rbs_node_list {
     rbs_node_list_node_t *head;
     rbs_node_list_node_t *tail;
     size_t length;
-    VALUE cached_ruby_value;
 } rbs_node_list_t;
 
 rbs_node_list_t* rbs_node_list_new(rbs_allocator_t *);
@@ -658,6 +661,7 @@ rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_allocator_t *, rbs_constant_pool_t *, r
 
 typedef struct rbs_other_ruby_value {
     rbs_node_t base;
+    VALUE ruby_value;
 } rbs_other_ruby_value_t;
 
 rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value);
@@ -695,7 +699,7 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_allocator_t *allocator,
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_keyword_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, bool unchecked, rbs_location_t *location);
 rbs_methodtype_t *rbs_methodtype_new(rbs_allocator_t *allocator, rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location);
 rbs_namespace_t *rbs_namespace_new(rbs_allocator_t *allocator, rbs_node_list_t *path, bool absolute);
-rbs_signature_t *rbs_signature_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_list_t *directives, rbs_node_list_t *declarations);
+rbs_signature_t *rbs_signature_new(rbs_allocator_t *allocator, rbs_node_list_t *directives, rbs_node_list_t *declarations);
 rbs_typename_t *rbs_typename_new(rbs_allocator_t *allocator, rbs_namespace_t *namespace, rbs_ast_symbol_t *name);
 rbs_types_alias_t *rbs_types_alias_new(rbs_allocator_t *allocator, rbs_typename_t *name, rbs_node_list_t *args, rbs_location_t *location);
 rbs_types_bases_any_t *rbs_types_bases_any_new(rbs_allocator_t *allocator, bool todo, rbs_location_t *location);
@@ -718,7 +722,7 @@ rbs_types_literal_t *rbs_types_literal_new(rbs_allocator_t *allocator, VALUE lit
 rbs_types_optional_t *rbs_types_optional_new(rbs_allocator_t *allocator, rbs_node_t *type, rbs_location_t *location);
 rbs_types_proc_t *rbs_types_proc_new(rbs_allocator_t *allocator, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location, rbs_node_t *self_type);
 rbs_types_record_t *rbs_types_record_new(rbs_allocator_t *allocator, rbs_hash_t *all_fields, rbs_location_t *location);
-rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(rbs_allocator_t *allocator, VALUE ruby_value, rbs_node_t *type, bool required);
+rbs_types_record_fieldtype_t *rbs_types_record_fieldtype_new(rbs_allocator_t *allocator, rbs_node_t *type, bool required);
 rbs_types_tuple_t *rbs_types_tuple_new(rbs_allocator_t *allocator, rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_union_t *rbs_types_union_new(rbs_allocator_t *allocator, rbs_node_list_t *types, rbs_location_t *location);
 rbs_types_untypedfunction_t *rbs_types_untypedfunction_new(rbs_allocator_t *allocator, rbs_node_t *return_type);
