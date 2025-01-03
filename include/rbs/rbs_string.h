@@ -77,4 +77,9 @@ void rbs_string_strip_whitespace(rbs_string_t *self);
  */
 size_t rbs_string_len(const rbs_string_t self);
 
+/**
+ * Compares two strings for equality.
+ */
+bool rbs_string_equal(const rbs_string_t lhs, const rbs_string_t rhs);
+
 #endif

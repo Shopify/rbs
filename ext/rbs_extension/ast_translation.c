@@ -335,6 +335,15 @@ VALUE rbs_struct_to_ruby_value(rbs_translation_context_t ctx, rbs_node_t *instan
                 &h
             );
         }
+        case RBS_AST_INTEGER: {
+            rbs_ast_integer_t *integer_node = (rbs_ast_integer_t *) instance;
+            rbs_string_t string_repr = integer_node->string_representation;
+
+            VALUE str = rb_enc_str_new(string_repr.start, rbs_string_len(string_repr), rb_utf8_encoding());
+
+            return rb_funcall(str, rb_intern("to_i"), 0);
+
+        }
         case RBS_AST_MEMBERS_ALIAS: {
  
             rbs_ast_members_alias_t *node = (rbs_ast_members_alias_t *)instance;
