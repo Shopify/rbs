@@ -87,14 +87,6 @@ static rbs_location_t *rbs_location_current_token(parserstate *state) {
 static rbs_node_t *parse_optional(parserstate *state);
 static rbs_node_t *parse_simple(parserstate *state);
 
-static VALUE string_of_loc(parserstate *state, position start, position end) {
-  return rb_enc_str_new(
-    RSTRING_PTR(state->lexstate->string) + start.byte_pos,
-      end.byte_pos - start.byte_pos,
-      rb_enc_get(state->lexstate->string)
-  );
-}
-
 /**
  * Raises RuntimeError with "Unexpected error " message.
  * */
@@ -1022,13 +1014,15 @@ static rbs_node_t *parse_simple(parserstate *state) {
   }
   case tINTEGER: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    VALUE literal = rb_funcall(
-      string_of_loc(state, state->current_token.range.start, state->current_token.range.end),
-      rb_intern("to_i"),
-      0
-    );
-    rbs_node_t *box = (rbs_node_t *) rbs_other_ruby_value_new(literal);
-    return (rbs_node_t *) rbs_types_literal_new(box, loc);
+
+    rbs_string_t string = rbs_string_from_ruby_string(state->lexstate->string);
+    rbs_string_drop_first(&string, state->current_token.range.start.byte_pos);
+    rbs_string_limit_length(&string, state->current_token.range.end.byte_pos - state->current_token.range.start.byte_pos);
+    rbs_string_strip_whitespace(&string);
+    rbs_string_ensure_owned(&string);
+
+    rbs_node_t *literal = (rbs_node_t *) rbs_ast_integer_new(string);
+    return (rbs_node_t *) rbs_types_literal_new(literal, loc);
   }
   case kTRUE: {
     rbs_location_t *loc = rbs_location_current_token(state);
