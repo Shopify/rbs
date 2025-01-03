@@ -72,6 +72,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 &h
             );
         }
+        case RBS_AST_BOOL: {
+            if (strcmp(class_name, "RBS::AST::Bool") != 0) {
+                fprintf(stderr, "Expected class name: RBS::AST::Bool, got %s\n", class_name);
+                exit(1);
+            }
+            return instance->cached_ruby_value;
+        }
         case RBS_AST_COMMENT: {
             if (strcmp(class_name, "RBS::AST::Comment") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::Comment, got %s\n", class_name);

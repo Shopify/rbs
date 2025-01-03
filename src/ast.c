@@ -68,7 +68,12 @@ bool rbs_node_equal(rbs_node_t *lhs, rbs_node_t *rhs) {
     if (lhs == rhs) return true;
     if (lhs->type != rhs->type) return false;
 
-    return rb_equal(lhs->cached_ruby_value, rhs->cached_ruby_value);
+    switch (lhs->type) {
+    case RBS_AST_BOOL:
+        return ((rbs_ast_bool_t *)lhs)->value == ((rbs_ast_bool_t *) rhs)->value;
+    default:
+        return rb_equal(lhs->cached_ruby_value, rhs->cached_ruby_value);
+    }
 }
 
 rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key) {
@@ -134,6 +139,28 @@ rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_allocator_t *allocator, VALUE s
         },
         .string = string,
         .location = location,
+    };
+
+    return instance;
+}
+
+rbs_ast_bool_t *rbs_ast_bool_new(rbs_allocator_t *allocator, bool value) {
+    rbs_ast_bool_t *instance = rbs_allocator_alloc(allocator, rbs_ast_bool_t);
+
+    // Disable GC for all these Ruby objects.
+    rb_gc_register_mark_object(value ? Qtrue : Qfalse);
+
+    // Generate our own Ruby VALUE here, rather than accepting it from a parameter.
+    VALUE ruby_value = value ? Qtrue : Qfalse;
+
+    rb_gc_register_mark_object(ruby_value);
+
+    *instance = (rbs_ast_bool_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_AST_BOOL
+        },
+        .value = value,
     };
 
     return instance;

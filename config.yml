@@ -4,6 +4,11 @@ nodes:
       - name: string
       - name: location
         c_type: rbs_location
+  - name: RBS::AST::Bool
+    expose_to_ruby: false
+    fields:
+      - name: value
+        c_type: bool
   - name: RBS::AST::Comment
     builds_ruby_object_internally: false
     fields:
