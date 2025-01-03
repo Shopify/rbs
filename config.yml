@@ -331,6 +331,11 @@ nodes:
         c_type: bool
       - name: location
         c_type: rbs_location
+  - name: RBS::AST::Integer
+    expose_to_ruby: false
+    fields:
+      - name: string_representation
+        c_type: rbs_string
   - name: RBS::MethodType
     fields:
       - name: type_params
