@@ -9,6 +9,10 @@ VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
     return list->cached_ruby_value;
 }
 
+VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
+    return hash->cached_ruby_value;
+}
+
 VALUE rbs_loc_to_ruby_location(rbs_location_t *loc) {
   return loc->cached_ruby_value;
 }
@@ -70,6 +74,8 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %>);
             <%- when "rbs_node_list" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_node_list_to_ruby_array(node-><%= field.name %>));
+            <%- when "rbs_hash" -%>
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_hash_to_ruby_hash(node-><%= field.name %>));
             <%- when "rbs_location" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(node-><%= field.name %>));
             <%- when "comment" -%>

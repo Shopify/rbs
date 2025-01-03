@@ -9,6 +9,8 @@
 
 #include "rbs/ruby_objs.h"
 
+/* rbs_node_list */
+
 rbs_node_list_t* rbs_node_list_new(void) {
     rbs_node_list_t *list = (rbs_node_list_t *)malloc(sizeof(rbs_node_list_t));
     list->head = NULL;
@@ -48,6 +50,81 @@ void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node) {
     list->length++;
 
     rb_ary_push(list->cached_ruby_value, node->cached_ruby_value);
+}
+
+/* rbs_hash */
+
+rbs_hash_t* rbs_hash_new(void) {
+    rbs_hash_t *hash = (rbs_hash_t *)malloc(sizeof(rbs_hash_t));
+    hash->head = NULL;
+    hash->tail = NULL;
+    hash->length = 0;
+    hash->cached_ruby_value = rb_hash_new();
+
+    rb_gc_register_mark_object(hash->cached_ruby_value);
+
+    return hash;
+}
+
+void rbs_hash_free(rbs_hash_t *hash) {
+    rbs_hash_node_t *current = hash->head;
+    while (current != NULL) {
+        rbs_hash_node_t *next = current->next;
+        free(current);
+        current = next;
+    }
+    free(hash);
+}
+
+bool rbs_node_equal(rbs_node_t *lhs, rbs_node_t *rhs) {
+    if (lhs == rhs) return true;
+    if (lhs->type != rhs->type) return false;
+
+    return rb_equal(lhs->cached_ruby_value, rhs->cached_ruby_value);
+}
+
+rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key) {
+    rbs_hash_node_t *current = hash->head;
+
+    while (current != NULL) {
+        if (rbs_node_equal(key, current->key)) {
+            return current;
+        }
+        current = current->next;
+    }
+
+    return NULL;
+}
+
+void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
+    rb_gc_register_mark_object(key->cached_ruby_value);
+    rb_gc_register_mark_object(value->cached_ruby_value);
+
+    rbs_hash_node_t *existing_node = rbs_hash_find(hash, key);
+    if (existing_node != NULL) {
+        existing_node->value = value;
+        return;
+    }
+
+    rb_hash_aset(hash->cached_ruby_value, key->cached_ruby_value, value->cached_ruby_value);
+
+    rbs_hash_node_t *new_node = (rbs_hash_node_t *)malloc(sizeof(rbs_hash_node_t));
+    new_node->key = key;
+    new_node->value = value;
+    new_node->next = NULL;
+
+    if (hash->tail == NULL) {
+        hash->head = new_node;
+        hash->tail = new_node;
+    } else {
+        hash->tail->next = new_node;
+        hash->tail = new_node;
+    }
+}
+
+rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
+    rbs_hash_node_t *node = rbs_hash_find(hash, key);
+    return node ? node->value : NULL;
 }
 
 rbs_ast_annotation_t *rbs_ast_annotation_new(VALUE string, rbs_location_t *location) {
