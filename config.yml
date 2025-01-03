@@ -336,6 +336,11 @@ nodes:
     fields:
       - name: string_representation
         c_type: rbs_string
+  - name: RBS::AST::String
+    expose_to_ruby: false
+    fields:
+      - name: string
+        c_type: rbs_string
   - name: RBS::MethodType
     fields:
       - name: type_params

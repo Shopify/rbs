@@ -46,37 +46,38 @@ enum rbs_node_type {
     RBS_AST_MEMBERS_PREPEND = 29,
     RBS_AST_MEMBERS_PRIVATE = 30,
     RBS_AST_MEMBERS_PUBLIC = 31,
-    RBS_AST_TYPEPARAM = 32,
-    RBS_METHODTYPE = 33,
-    RBS_NAMESPACE = 34,
-    RBS_SIGNATURE = 35,
-    RBS_TYPENAME = 36,
-    RBS_TYPES_ALIAS = 37,
-    RBS_TYPES_BASES_ANY = 38,
-    RBS_TYPES_BASES_BOOL = 39,
-    RBS_TYPES_BASES_BOTTOM = 40,
-    RBS_TYPES_BASES_CLASS = 41,
-    RBS_TYPES_BASES_INSTANCE = 42,
-    RBS_TYPES_BASES_NIL = 43,
-    RBS_TYPES_BASES_SELF = 44,
-    RBS_TYPES_BASES_TOP = 45,
-    RBS_TYPES_BASES_VOID = 46,
-    RBS_TYPES_BLOCK = 47,
-    RBS_TYPES_CLASSINSTANCE = 48,
-    RBS_TYPES_CLASSSINGLETON = 49,
-    RBS_TYPES_FUNCTION = 50,
-    RBS_TYPES_FUNCTION_PARAM = 51,
-    RBS_TYPES_INTERFACE = 52,
-    RBS_TYPES_INTERSECTION = 53,
-    RBS_TYPES_LITERAL = 54,
-    RBS_TYPES_OPTIONAL = 55,
-    RBS_TYPES_PROC = 56,
-    RBS_TYPES_RECORD = 57,
-    RBS_TYPES_RECORD_FIELDTYPE = 58,
-    RBS_TYPES_TUPLE = 59,
-    RBS_TYPES_UNION = 60,
-    RBS_TYPES_UNTYPEDFUNCTION = 61,
-    RBS_TYPES_VARIABLE = 62,
+    RBS_AST_STRING = 32,
+    RBS_AST_TYPEPARAM = 33,
+    RBS_METHODTYPE = 34,
+    RBS_NAMESPACE = 35,
+    RBS_SIGNATURE = 36,
+    RBS_TYPENAME = 37,
+    RBS_TYPES_ALIAS = 38,
+    RBS_TYPES_BASES_ANY = 39,
+    RBS_TYPES_BASES_BOOL = 40,
+    RBS_TYPES_BASES_BOTTOM = 41,
+    RBS_TYPES_BASES_CLASS = 42,
+    RBS_TYPES_BASES_INSTANCE = 43,
+    RBS_TYPES_BASES_NIL = 44,
+    RBS_TYPES_BASES_SELF = 45,
+    RBS_TYPES_BASES_TOP = 46,
+    RBS_TYPES_BASES_VOID = 47,
+    RBS_TYPES_BLOCK = 48,
+    RBS_TYPES_CLASSINSTANCE = 49,
+    RBS_TYPES_CLASSSINGLETON = 50,
+    RBS_TYPES_FUNCTION = 51,
+    RBS_TYPES_FUNCTION_PARAM = 52,
+    RBS_TYPES_INTERFACE = 53,
+    RBS_TYPES_INTERSECTION = 54,
+    RBS_TYPES_LITERAL = 55,
+    RBS_TYPES_OPTIONAL = 56,
+    RBS_TYPES_PROC = 57,
+    RBS_TYPES_RECORD = 58,
+    RBS_TYPES_RECORD_FIELDTYPE = 59,
+    RBS_TYPES_TUPLE = 60,
+    RBS_TYPES_UNION = 61,
+    RBS_TYPES_UNTYPEDFUNCTION = 62,
+    RBS_TYPES_VARIABLE = 63,
     RBS_KEYWORD,
     RBS_AST_SYMBOL,
 };
@@ -420,6 +421,12 @@ typedef struct rbs_ast_members_public {
     struct rbs_location *location;
 } rbs_ast_members_public_t;
 
+typedef struct rbs_ast_string {
+    rbs_node_t base;
+
+    rbs_string_t string;
+} rbs_ast_string_t;
+
 typedef struct rbs_ast_typeparam {
     rbs_node_t base;
 
@@ -705,6 +712,7 @@ rbs_ast_members_methoddefinition_overload_t *rbs_ast_members_methoddefinition_ov
 rbs_ast_members_prepend_t *rbs_ast_members_prepend_new(rbs_typename_t *name, rbs_node_list_t *args, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment);
 rbs_ast_members_private_t *rbs_ast_members_private_new(rbs_location_t *location);
 rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location);
+rbs_ast_string_t *rbs_ast_string_new(rbs_string_t string);
 rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_ast_symbol_t *name, rbs_keyword_t *variance, rbs_node_t *upper_bound, bool unchecked, rbs_node_t *default_type, rbs_location_t *location);
 rbs_methodtype_t *rbs_methodtype_new(rbs_node_list_t *type_params, rbs_node_t *type, rbs_types_block_t *block, rbs_location_t *location);
 rbs_namespace_t *rbs_namespace_new(rbs_node_list_t *path, bool absolute);

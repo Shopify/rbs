@@ -78,6 +78,8 @@ bool rbs_node_equal(rbs_node_t *lhs, rbs_node_t *rhs) {
         return ((rbs_ast_bool_t *)lhs)->value == ((rbs_ast_bool_t *) rhs)->value;
     case RBS_AST_INTEGER:
         return rbs_string_equal(((rbs_ast_integer_t *) lhs)->string_representation, ((rbs_ast_integer_t *) rhs)->string_representation);
+    case RBS_AST_STRING:
+        return rbs_string_equal(((rbs_ast_string_t *) lhs)->string, ((rbs_ast_string_t *) rhs)->string);
     case RBS_OTHER_RUBY_VALUE:
         return rb_equal(((rbs_other_ruby_value_t *) lhs)->ruby_value, ((rbs_other_ruby_value_t *) rhs)->ruby_value);
     default:
@@ -695,6 +697,20 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_location_t *location) {
             .type = RBS_AST_MEMBERS_PUBLIC
         },
         .location = location,
+    };
+
+    return instance;
+}
+
+rbs_ast_string_t *rbs_ast_string_new(rbs_string_t string) {
+    rbs_ast_string_t *instance = malloc(sizeof(rbs_ast_string_t));
+
+
+    *instance = (rbs_ast_string_t) {
+        .base = (rbs_node_t) {
+            .type = RBS_AST_STRING
+        },
+        .string = string,
     };
 
     return instance;

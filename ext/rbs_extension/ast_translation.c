@@ -595,6 +595,13 @@ VALUE rbs_struct_to_ruby_value(rbs_translation_context_t ctx, rbs_node_t *instan
                 &h
             );
         }
+        case RBS_AST_STRING: {
+            rbs_ast_string_t *string_node = (rbs_ast_string_t *) instance;
+            rbs_string_t s = string_node->string;
+
+            return rb_enc_str_new(s.start, rbs_string_len(s), rb_utf8_encoding());
+
+        }
         case RBS_AST_TYPEPARAM: {
  
             rbs_ast_typeparam_t *node = (rbs_ast_typeparam_t *)instance;
