@@ -383,8 +383,7 @@ static bool parse_keyword(parserstate *state, rbs_hash_t *keywords, rbs_hash_t *
     set_error(state, state->current_token, true, "duplicated keyword argument");
     return false;
   } else {
-    rbs_location_t *loc = rbs_location_new(state->current_token.range);
-    rbs_hash_set(memo, (rbs_node_t *) key, (rbs_node_t *) rbs_ast_bool_new(loc, true));
+    rbs_hash_set(memo, (rbs_node_t *) key, NULL);
   }
 
   ADVANCE_ASSERT(state, pCOLON);
