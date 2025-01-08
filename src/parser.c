@@ -226,6 +226,8 @@ static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rb
   }
 
   error: {
+    rbs_node_destroy((rbs_node_t *) namespace);
+
     const char *ids;
     if (kind & ALIAS_NAME) {
       ids = "alias name";
