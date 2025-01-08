@@ -646,6 +646,16 @@ static void initialize_method_params(method_params *params){
   };
 }
 
+static void method_params_free(method_params *params) {
+  if (params->rest_positionals != NULL) rbs_node_list_free(params->required_positionals);
+  rbs_node_list_free(params->optional_positionals);
+  if (params->rest_positionals != NULL) rbs_node_destroy(params->rest_positionals);
+  rbs_node_list_free(params->trailing_positionals);
+  rbs_hash_free(params->required_keywords);
+  rbs_hash_free(params->optional_keywords);
+  if (params->rest_keywords != NULL) rbs_node_destroy(params->rest_keywords);
+}
+
 /*
   self_type_binding ::= {} <>
                       | {} `[` `self` `:` type <`]`>
@@ -691,13 +701,17 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
 
   if (state->next_token.type == pLPAREN) {
     parser_advance(state);
-    CHECK_PARSE(parse_params(state, &params));
+    if (!parse_params(state, &params)) {
+      method_params_free(&params);
+      return false;
+    }
     ADVANCE_ASSERT(state, pRPAREN);
   }
 
   // Untyped method parameter means it cannot have block
   if (rbs_is_untyped_params(&params)) {
     if (state->next_token.type != pARROW) {
+      method_params_free(&params);
       set_error(state, state->next_token2, true, "A method type with untyped method parameter cannot have block");
       return false;
     }
@@ -705,7 +719,10 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
 
   // Passing NULL to function_self_type means the function itself doesn't accept self type binding. (== method type)
   if (accept_type_binding) {
-    CHECK_PARSE(parse_self_type_binding(state, &function_self_type));
+    if (!parse_self_type_binding(state, &function_self_type)) {
+      method_params_free(&params);
+      return false;
+    }
   }
 
   bool required = true;
@@ -722,21 +739,34 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
 
     if (state->next_token.type == pLPAREN) {
       parser_advance(state);
-      CHECK_PARSE(parse_params(state, &block_params));
+      if (!parse_params(state, &block_params)) {
+        method_params_free(&params);
+        method_params_free(&block_params);
+        return false;
+      }
       ADVANCE_ASSERT(state, pRPAREN);
     }
 
     rbs_node_t *self_type = NULL;
-    CHECK_PARSE(parse_self_type_binding(state, &self_type));
+    if (!parse_self_type_binding(state, &self_type)) {
+      method_params_free(&params);
+      method_params_free(&block_params);
+      return false;
+    }
 
     ADVANCE_ASSERT(state, pARROW);
     rbs_node_t *block_return_type = NULL;
-    CHECK_PARSE(parse_optional(state, &block_return_type));
+    if (!parse_optional(state, &block_return_type)) {
+      method_params_free(&params);
+      method_params_free(&block_params);
+      return false;
+    }
 
     rbs_node_t *block_function = NULL;
     function_range.end = state->current_token.range.end;
     rbs_location_t *loc = rbs_location_new(function_range);
     if (rbs_is_untyped_params(&block_params)) {
+      method_params_free(&block_params);
       block_function = (rbs_node_t *) rbs_types_untypedfunction_new(loc, block_return_type);
     } else {
       block_function = (rbs_node_t *) rbs_types_function_new(
@@ -759,11 +789,15 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
 
   ADVANCE_ASSERT(state, pARROW);
   rbs_node_t *type = NULL;
-  CHECK_PARSE(parse_optional(state, &type));
+  if (!parse_optional(state, &type)) {
+    method_params_free(&params);
+    return false;
+  }
 
   function_range.end = state->current_token.range.end;
   rbs_location_t *loc = rbs_location_new(function_range);
   if (rbs_is_untyped_params(&params)) {
+    method_params_free(&params);
     function = (rbs_node_t *) rbs_types_untypedfunction_new(loc, type);
   } else {
     function = (rbs_node_t *) rbs_types_function_new(
@@ -860,6 +894,7 @@ static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
         CHECK_PARSE(parse_simple(state, &type));
 
         key = (rbs_ast_symbol_t *) ((rbs_types_literal_t *) type)->literal;
+        // FIXME: Need to free type, but not its children
         break;
       }
       default:
