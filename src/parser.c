@@ -601,6 +601,8 @@ PARSE_KEYWORDS:
   }
 
 EOP:
+  rbs_hash_shallow_free(memo);
+
   if (state->next_token.type != pRPAREN) {
     set_error(state, state->next_token, true, "unexpected token for method type parameters");
     return false;

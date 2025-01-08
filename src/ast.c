@@ -139,6 +139,10 @@ void rbs_hash_free(rbs_hash_t *hash) {
         free(current);
         current = next;
     }
+    rbs_hash_shallow_free(hash);
+}
+
+void rbs_hash_shallow_free(rbs_hash_t *hash) {
     free(hash);
 }
 

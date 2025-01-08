@@ -124,6 +124,9 @@ rbs_hash_t* rbs_hash_new(void);
 
 void rbs_hash_free(rbs_hash_t *hash);
 
+// Frees the hash, but not the keys and values.
+void rbs_hash_shallow_free(rbs_hash_t *hash);
+
 void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value);
 
 rbs_hash_node_t* rbs_hash_find(rbs_hash_t *hash, rbs_node_t *key);
