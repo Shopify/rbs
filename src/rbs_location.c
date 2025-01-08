@@ -36,13 +36,18 @@ rbs_location_t *rbs_location_pp(const position *start_pos, const position *end_p
 }
 
 rbs_location_t *rbs_location_new(range rg) {
-    rbs_location_t *location = (rbs_location_t *)malloc(sizeof(rbs_location_t));
+    rbs_location_t *location = (rbs_location_t *) malloc(sizeof(rbs_location_t));
     *location = (rbs_location_t) {
       .rg = rg,
       .children = NULL,
     };
 
     return location;
+}
+
+void rbs_location_free(rbs_location_t *loc) {
+  if (loc->children != NULL) free(loc->children);
+  free(loc);
 }
 
 void rbs_loc_alloc_children(rbs_location_t *loc, int capacity) {

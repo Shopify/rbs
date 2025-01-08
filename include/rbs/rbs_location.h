@@ -16,6 +16,8 @@ void rbs_loc_alloc_children(rbs_location_t *loc, int size);
 void rbs_loc_add_required_child(rbs_location_t *loc, rbs_constant_id_t name, range r);
 void rbs_loc_add_optional_child(rbs_location_t *loc, rbs_constant_id_t name, range r);
 
+void rbs_location_free(rbs_location_t *loc);
+
 /**
  * Returns rbs_location_t struct with start/end positions.
  *
