@@ -994,8 +994,6 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
     rbs_typename_t *typename = NULL;
     CHECK_PARSE(parse_type_name(state, expected_kind, &name_range, &typename));
 
-    rbs_node_list_t *types = rbs_node_list_new();
-
     TypeNameKind kind;
     if (state->current_token.type == tUIDENT) {
       kind = CLASS_NAME;
@@ -1009,10 +1007,14 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
     }
 
     range args_range;
+    rbs_node_list_t *types = rbs_node_list_new();
     if (state->next_token.type == pLBRACKET) {
       parser_advance(state);
       args_range.start = state->current_token.range.start;
-      CHECK_PARSE(parse_type_list(state, pRBRACKET, types));
+      if (!parse_type_list(state, pRBRACKET, types)) {
+        rbs_node_list_free(types);
+        return false;
+      }
       ADVANCE_ASSERT(state, pRBRACKET);
       args_range.end = state->current_token.range.end;
     } else {
@@ -1211,7 +1213,10 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     rg.start = state->current_token.range.start;
     rbs_node_list_t *types = rbs_node_list_new();
     if (state->next_token.type != pRBRACKET) {
-      CHECK_PARSE(parse_type_list(state, pRBRACKET, types));
+      if (!parse_type_list(state, pRBRACKET, types)) {
+        rbs_node_list_free(types);
+        return false;
+      }
     }
     ADVANCE_ASSERT(state, pRBRACKET);
     rg.end = state->current_token.range.end;
@@ -1267,7 +1272,10 @@ static bool parse_intersection(parserstate *state, rbs_node_t **type) {
   while (state->next_token.type == pAMP) {
     parser_advance(state);
     rbs_node_t *type = NULL;
-    CHECK_PARSE(parse_optional(state, &type));
+    if (!parse_optional(state, &type)) {
+      rbs_node_list_shallow_free(intersection_types);
+      return false;
+    }
     rbs_node_list_append(intersection_types, type);
   }
 
@@ -1276,6 +1284,8 @@ static bool parse_intersection(parserstate *state, rbs_node_t **type) {
   if (intersection_types->length > 1) {
     rbs_location_t *location = rbs_location_new(rg);
     *type = (rbs_node_t *) rbs_types_intersection_new(location, intersection_types);
+  } else {
+    rbs_node_list_shallow_free(intersection_types);
   }
 
   return true;

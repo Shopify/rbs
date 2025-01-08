@@ -100,6 +100,10 @@ void rbs_node_list_free(rbs_node_list_t *list) {
         free(current);
         current = next;
     }
+    rbs_node_list_shallow_free(list);
+}
+
+void rbs_node_list_shallow_free(rbs_node_list_t *list) {
     free(list);
 }
 

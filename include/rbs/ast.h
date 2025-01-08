@@ -104,6 +104,9 @@ rbs_node_list_t* rbs_node_list_new(void);
 
 void rbs_node_list_free(rbs_node_list_t *list);
 
+// Frees the list, but not its nodes.
+void rbs_node_list_shallow_free(rbs_node_list_t *list);
+
 void rbs_node_list_append(rbs_node_list_t *list, rbs_node_t *node);
 
 /* rbs_hash */
