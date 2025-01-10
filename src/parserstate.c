@@ -207,10 +207,11 @@ static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) 
     rbs_buffer_append_cstr(&rbs_buffer, "\n");
   }
 
-  return rbs_ast_comment_new(
-    rbs_location_pp(&com->start, &com->end),
-    rbs_buffer_to_string(&rbs_buffer)
-  );
+  rbs_string_t str = rbs_buffer_to_string(&rbs_buffer);
+  // Don't call `rbs_buffer_free` because `rbs_buffer_to_string` moves ownership of the buffer to the string.
+  // rbs_buffer_free(&rbs_buffer);
+
+  return rbs_ast_comment_new(rbs_location_pp(&com->start, &com->end), str);
 }
 
 rbs_ast_comment_t *get_comment(parserstate *state, int subject_line) {
