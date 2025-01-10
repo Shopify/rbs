@@ -123,7 +123,7 @@ VALUE rbs_struct_to_ruby_value(rbs_translation_context_t ctx, rbs_node_t *instan
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.c_name %> ? Qtrue : Qfalse);
             <%- else -%>
             <%- unless field.ast_node? -%>
-            #warning unexpected type <%= field.c_type -%>
+            #warning unexpected type <%= field.c_type %>
             <%- end -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value(ctx, (rbs_node_t *) node-><%= field.c_name %>)); // <%= field.c_type %>
             <%- end -%>

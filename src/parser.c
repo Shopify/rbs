@@ -1309,7 +1309,10 @@ bool parse_type(parserstate *state, rbs_node_t **type) {
   while (state->next_token.type == pBAR) {
     parser_advance(state);
     rbs_node_t *intersection = NULL;
-    CHECK_PARSE(parse_intersection(state, &intersection));
+    if (!parse_intersection(state, &intersection)) {
+      rbs_node_list_shallow_free(union_types);
+      return false;
+    }
     rbs_node_list_append(union_types, intersection);
   }
 
@@ -1318,6 +1321,8 @@ bool parse_type(parserstate *state, rbs_node_t **type) {
   if (union_types->length > 1) {
     rbs_location_t *location = rbs_location_new(rg);
     *type = (rbs_node_t *) rbs_types_union_new(location, union_types);
+  } else {
+    rbs_node_list_shallow_free(union_types);
   }
 
   return true;
