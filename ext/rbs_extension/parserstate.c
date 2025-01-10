@@ -315,7 +315,7 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
   };
 
   *lexer = (lexstate) {
-    .string = string,
+    .string = rbs_string_from_ruby_string(string),
     .start_pos = start_pos,
     .end_pos = end_pos,
     .current = start_position,
@@ -343,6 +343,7 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     .next_token2 = NullToken,
     .next_token3 = NullToken,
     .buffer = buffer,
+    .encoding = rb_enc_get(buffer),
 
     .vars = NULL,
     .last_comment = NULL,
