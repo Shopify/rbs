@@ -281,12 +281,11 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
   if (state->next_token.type == pCOMMA || state->next_token.type == pRPAREN) {
     range param_range = type_range;
 
-    rbs_location_t *location = rbs_location_new(state->buffer, param_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, param_range);
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, INTERN("name"), NULL_RANGE);
 
-    return rbs_types_function_param_new(type, NULL, location);
+    return rbs_types_function_param_new(type, NULL, loc);
   } else {
     range name_range = state->next_token.range;
 
@@ -306,12 +305,11 @@ static rbs_types_function_param_t *parse_function_param(parserstate *state) {
     }
 
     rbs_ast_symbol_t *name = rbs_ast_symbol_new(rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0)));
-    rbs_location_t *location = rbs_location_new(state->buffer, param_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, param_range);
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_optional_child(loc, INTERN("name"), name_range);
 
-    return rbs_types_function_param_new(type, name, location);
+    return rbs_types_function_param_new(type, name, loc);
   }
 }
 
@@ -934,18 +932,17 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
       .end = nonnull_pos_or(args_range.end, name_range.end),
     };
 
-    rbs_location_t *location = rbs_location_new(state->buffer, type_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, type_range);
     rbs_loc_alloc_children(loc, 2);
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
     if (kind == CLASS_NAME) {
-      return (rbs_node_t *) rbs_types_classinstance_new(typename, types, location);
+      return (rbs_node_t *) rbs_types_classinstance_new(typename, types, loc);
     } else if (kind == INTERFACE_NAME) {
-      return (rbs_node_t *) rbs_types_interface_new(typename, types, location);
+      return (rbs_node_t *) rbs_types_interface_new(typename, types, loc);
     } else if (kind == ALIAS_NAME) {
-      return (rbs_node_t *) rbs_types_alias_new(typename, types, location);
+      return (rbs_node_t *) rbs_types_alias_new(typename, types, loc);
     } else {
       return NULL;
     }
@@ -968,12 +965,11 @@ static rbs_types_classsingleton_t *parse_singleton_type(parserstate *state) {
   parser_advance_assert(state, pRPAREN);
   type_range.end = state->current_token.range.end;
 
-  rbs_location_t *location = rbs_location_new(state->buffer, type_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, type_range);
   rbs_loc_alloc_children(loc, 1);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
 
-  return rbs_types_classsingleton_new(typename, location);
+  return rbs_types_classsingleton_new(typename, loc);
 }
 
 /*
@@ -1278,8 +1274,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
 
       param_range.end = state->current_token.range.end;
 
-      rbs_location_t *location = rbs_location_new(state->buffer, param_range);
-      rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+      rbs_location_t *loc = rbs_location_new(state->buffer, param_range);
       rbs_loc_alloc_children(loc, 5);
       rbs_loc_add_required_child(loc, INTERN("name"), name_range);
       rbs_loc_add_optional_child(loc, INTERN("variance"), variance_range);
@@ -1287,7 +1282,7 @@ static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool mo
       rbs_loc_add_optional_child(loc, INTERN("upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, INTERN("default"), default_type_range);
 
-      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(name, variance, upper_bound, default_type, location);
+      rbs_ast_typeparam_t *param = rbs_ast_typeparam_new(name, variance, upper_bound, default_type, loc);
 
       if (unchecked) {
         rb_funcall(((rbs_node_t *) param)->cached_ruby_value, rb_intern("unchecked!"), 0);
@@ -1344,13 +1339,12 @@ rbs_methodtype_t *parse_method_type(parserstate *state) {
 
   parser_pop_typevar_table(state);
 
-  rbs_location_t *location = rbs_location_new(state->buffer, rg);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, rg);
   rbs_loc_alloc_children(loc, 2);
   rbs_loc_add_required_child(loc, INTERN("type"), type_range);
   rbs_loc_add_optional_child(loc, INTERN("type_params"), params_range);
 
-  return rbs_methodtype_new(type_params, function, block, location);
+  return rbs_methodtype_new(type_params, function, block, loc);
 }
 
 /*
@@ -1370,13 +1364,12 @@ static rbs_ast_declarations_global_t *parse_global_decl(parserstate *state) {
   rbs_node_t *type = parse_type(state);
   decl_range.end = state->current_token.range.end;
 
-  rbs_location_t *location = rbs_location_new(state->buffer, decl_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, decl_range);
   rbs_loc_alloc_children(loc, 2);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
   rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
 
-  return rbs_ast_declarations_global_new(typename, type, location, comment);
+  return rbs_ast_declarations_global_new(typename, type, loc, comment);
 }
 
 /*
@@ -1397,13 +1390,12 @@ static rbs_ast_declarations_constant_t *parse_const_decl(parserstate *state) {
   rbs_node_t *type = parse_type(state);
   decl_range.end = state->current_token.range.end;
 
-  rbs_location_t *location = rbs_location_new(state->buffer, decl_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, decl_range);
   rbs_loc_alloc_children(loc, 2);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
   rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
 
-  return rbs_ast_declarations_constant_new(typename, type, location, comment);
+  return rbs_ast_declarations_constant_new(typename, type, loc, comment);
 }
 
 /*
@@ -1432,8 +1424,7 @@ static rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, pos
   rbs_node_t *type = parse_type(state);
   decl_range.end = state->current_token.range.end;
 
-  rbs_location_t *location = rbs_location_new(state->buffer, decl_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, decl_range);
   rbs_loc_alloc_children(loc, 4);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
@@ -1443,7 +1434,7 @@ static rbs_ast_declarations_typealias_t *parse_type_decl(parserstate *state, pos
   parser_pop_typevar_table(state);
 
   VALUE comment = get_comment(state, comment_pos.line);
-  return rbs_ast_declarations_typealias_new(typename, type_params, type, annotations, location, comment);
+  return rbs_ast_declarations_typealias_new(typename, type_params, type, annotations, loc, comment);
 }
 
 /*
@@ -1496,8 +1487,8 @@ static rbs_ast_annotation_t *parse_annotation(parserstate *state) {
   );
   rb_funcall(string, rb_intern("strip!"), 0);
 
-  rbs_location_t *location = rbs_location_new(state->buffer, rg);
-  return rbs_ast_annotation_new(string, location);
+  rbs_location_t *loc = rbs_location_new(state->buffer, rg);
+  return rbs_ast_annotation_new(string, loc);
 }
 
 /*
@@ -1769,8 +1760,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
     rbs_abort();
   }
 
-  rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
   rbs_loc_alloc_children(loc, 5);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
@@ -1778,7 +1768,7 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
   rbs_loc_add_optional_child(loc, INTERN("overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, INTERN("visibility"), visibility_range);
 
-  return rbs_ast_members_methoddefinition_new(name, k, overloads, annotations, location, comment, overloading, visibility);
+  return rbs_ast_members_methoddefinition_new(name, k, overloads, annotations, loc, comment, overloading, visibility);
 }
 
 /**
@@ -1861,8 +1851,7 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
 
   member_range.end = state->current_token.range.end;
 
-  rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
   rbs_loc_alloc_children(loc, 3);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
@@ -1872,11 +1861,11 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
   switch (type)
   {
   case kINCLUDE:
-    return (rbs_node_t *) rbs_ast_members_include_new(name, args, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_include_new(name, args, annotations, loc, comment);
   case kEXTEND:
-    return (rbs_node_t *) rbs_ast_members_extend_new(name, args, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_extend_new(name, args, annotations, loc, comment);
   case kPREPEND:
-    return (rbs_node_t *) rbs_ast_members_prepend_new(name, args, annotations, location, comment);
+    return (rbs_node_t *) rbs_ast_members_prepend_new(name, args, annotations, loc, comment);
   default:
     rbs_abort();
   }
@@ -1925,8 +1914,7 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
   }
 
   member_range.end = state->current_token.range.end;
-  rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
   rbs_loc_alloc_children(loc, 5);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
   rbs_loc_add_required_child(loc, INTERN("new_name"), new_name_range);
@@ -1934,7 +1922,7 @@ static rbs_ast_members_alias_t *parse_alias_member(parserstate *state, bool inst
   rbs_loc_add_optional_child(loc, INTERN("new_kind"), new_kind_range);
   rbs_loc_add_optional_child(loc, INTERN("old_kind"), old_kind_range);
 
-  return rbs_ast_members_alias_new(new_name, old_name, kind, annotations, location, comment);
+  return rbs_ast_members_alias_new(new_name, old_name, kind, annotations, loc, comment);
 }
 
 /*
@@ -1968,18 +1956,17 @@ static rbs_node_t *parse_variable_member(parserstate *state, position comment_po
     rbs_node_t *type = parse_type(state);
     member_range.end = state->current_token.range.end;
 
-    rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
     rbs_loc_alloc_children(loc, 3);
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), NULL_RANGE);
 
-    return (rbs_node_t *)rbs_ast_members_instancevariable_new(name, type, location, comment);
+    return (rbs_node_t *)rbs_ast_members_instancevariable_new(name, type, loc, comment);
   }
   case tA2IDENT: {
     range name_range = state->current_token.range;
-    rbs_ast_symbol_t *name =  rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    rbs_ast_symbol_t *name = rbs_ast_symbol_new(ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
     parser_advance_assert(state, pCOLON);
     range colon_range = state->current_token.range;
@@ -1989,16 +1976,14 @@ static rbs_node_t *parse_variable_member(parserstate *state, position comment_po
     parser_pop_typevar_table(state);
     member_range.end = state->current_token.range.end;
 
-    rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
     rbs_loc_alloc_children(loc, 3);
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), NULL_RANGE);
 
-    return (rbs_node_t *) rbs_ast_members_classvariable_new(name, type, location, comment);
+    return (rbs_node_t *) rbs_ast_members_classvariable_new(name, type, loc, comment);
   }
-
   case kSELF: {
     range kind_range = {
       .start = state->current_token.range.start,
@@ -2019,14 +2004,13 @@ static rbs_node_t *parse_variable_member(parserstate *state, position comment_po
     parser_pop_typevar_table(state);
     member_range.end = state->current_token.range.end;
 
-    rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
     rbs_loc_alloc_children(loc, 3);
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), kind_range);
 
-    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(name, type, location, comment);
+    return (rbs_node_t *)rbs_ast_members_classinstancevariable_new(name, type, loc, comment);
   }
   default:
     rbs_abort();
@@ -2140,8 +2124,7 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   parser_pop_typevar_table(state);
   member_range.end = state->current_token.range.end;
 
-  rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
   rbs_loc_alloc_children(loc, 7);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
@@ -2154,11 +2137,11 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
   switch (attr_type)
   {
   case kATTRREADER:
-    return (rbs_node_t *) rbs_ast_members_attrreader_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attrreader_new(attr_name, type, ivar_name, kind, annotations, loc, comment, visibility);
   case kATTRWRITER:
-    return (rbs_node_t *) rbs_ast_members_attrwriter_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attrwriter_new(attr_name, type, ivar_name, kind, annotations, loc, comment, visibility);
   case kATTRACCESSOR:
-    return (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *) rbs_ast_members_attraccessor_new(attr_name, type, ivar_name, kind, annotations, loc, comment, visibility);
   default:
     rbs_abort();
   }
@@ -2243,8 +2226,7 @@ static rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state
 
   parser_pop_typevar_table(state);
 
-  rbs_location_t *location = rbs_location_new(state->buffer, member_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, member_range);
   rbs_loc_alloc_children(loc, 4);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
@@ -2253,7 +2235,7 @@ static rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state
 
   VALUE comment = get_comment(state, comment_pos.line);
 
-  return rbs_ast_declarations_interface_new(name, type_params, members, annotations, location, comment);
+  return rbs_ast_declarations_interface_new(name, type_params, members, annotations, loc, comment);
 }
 
 /*
@@ -2282,13 +2264,12 @@ static void parse_module_self_types(parserstate *state, rbs_node_list_t *array) 
       self_range.end = args_range.end = state->current_token.range.end;
     }
 
-    rbs_location_t *location = rbs_location_new(state->buffer, self_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, self_range);
     rbs_loc_alloc_children(loc, 2);
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(module_name, args, location);
+    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(module_name, args, loc);
     rbs_node_list_append(array, (rbs_node_t *)self_type);
 
     if (state->next_token.type == pCOMMA) {
@@ -2424,8 +2405,7 @@ static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, ran
   range end_range = state->current_token.range;
   decl_range.end = state->current_token.range.end;
 
-  rbs_location_t *location = rbs_location_new(state->buffer, decl_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, decl_range);
   rbs_loc_alloc_children(loc, 6);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
@@ -2436,7 +2416,7 @@ static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, ran
 
   parser_pop_typevar_table(state);
 
-  return rbs_ast_declarations_module_new(module_name, type_params, self_types, members, annotations, location, comment);
+  return rbs_ast_declarations_module_new(module_name, type_params, self_types, members, annotations, loc, comment);
 }
 
 /*
@@ -2467,15 +2447,14 @@ static rbs_node_t *parse_module_decl(parserstate *state, position comment_pos, r
       .end = old_name_range.end
     };
 
-    rbs_location_t *location = rbs_location_new(state->buffer, decl_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, decl_range);
     rbs_loc_alloc_children(loc, 4);
     rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
     rbs_loc_add_required_child(loc, INTERN("new_name"), module_name_range);
     rbs_loc_add_required_child(loc, INTERN("eq"), eq_range);
     rbs_loc_add_optional_child(loc, INTERN("old_name"), old_name_range);
 
-    return (rbs_node_t *) rbs_ast_declarations_modulealias_new(module_name, old_name, location, comment);
+    return (rbs_node_t *) rbs_ast_declarations_modulealias_new(module_name, old_name, loc, comment);
   } else {
     return (rbs_node_t *) parse_module_decl0(state, keyword_range, module_name, module_name_range, comment, annotations);
   }
@@ -2498,14 +2477,13 @@ static rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *s
 
     super_range.end = state->current_token.range.end;
 
-    rbs_location_t *location = rbs_location_new(state->buffer, super_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, super_range);
     rbs_loc_alloc_children(loc, 2);
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
 
-    return rbs_ast_declarations_class_super_new(name, args, location);
+    return rbs_ast_declarations_class_super_new(name, args, loc);
   } else {
     *lt_range = NULL_RANGE;
     return NULL;
@@ -2537,8 +2515,7 @@ static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range
 
   parser_pop_typevar_table(state);
 
-  rbs_location_t *location = rbs_location_new(state->buffer, decl_range);
-  rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+  rbs_location_t *loc = rbs_location_new(state->buffer, decl_range);
   rbs_loc_alloc_children(loc, 5);
   rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
   rbs_loc_add_required_child(loc, INTERN("name"), name_range);
@@ -2546,7 +2523,7 @@ static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range
   rbs_loc_add_optional_child(loc, INTERN("type_params"), type_params_range);
   rbs_loc_add_optional_child(loc, INTERN("lt"), lt_range);
 
-  return rbs_ast_declarations_class_new(name, type_params, super, members, annotations, location, comment);
+  return rbs_ast_declarations_class_new(name, type_params, super, members, annotations, loc, comment);
 }
 
 /*
@@ -2576,8 +2553,7 @@ static rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, rb
       .end = old_name_range.end,
     };
 
-    rbs_location_t *location = rbs_location_new(state->buffer, decl_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, decl_range);
     rbs_loc_alloc_children(loc, 4);
     rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
     rbs_loc_add_required_child(loc, INTERN("new_name"), class_name_range);
@@ -2585,7 +2561,7 @@ static rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, rb
     rbs_loc_add_optional_child(loc, INTERN("old_name"), old_name_range);
 
 
-    return (rbs_node_t *) rbs_ast_declarations_classalias_new(class_name, old_name, location, comment);
+    return (rbs_node_t *) rbs_ast_declarations_classalias_new(class_name, old_name, loc, comment);
   } else {
     return (rbs_node_t *) parse_class_decl0(state, keyword_range, class_name, class_name_range, comment, annotations);
   }
@@ -2760,14 +2736,13 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
           clause_range.end = new_name_range.end;
         }
 
-        rbs_location_t *location = rbs_location_new(state->buffer, clause_range);
-        rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+        rbs_location_t *loc = rbs_location_new(state->buffer, clause_range);
         rbs_loc_alloc_children(loc, 3);
         rbs_loc_add_required_child(loc, INTERN("type_name"), type_name_range);
         rbs_loc_add_optional_child(loc, INTERN("keyword"), keyword_range);
         rbs_loc_add_optional_child(loc, INTERN("new_name"), new_name_range);
 
-        rbs_ast_directives_use_singleclause_t *clause = rbs_ast_directives_use_singleclause_new(type_name, new_name, location);
+        rbs_ast_directives_use_singleclause_t *clause = rbs_ast_directives_use_singleclause_new(type_name, new_name, loc);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;
@@ -2780,13 +2755,12 @@ static void parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
         range star_range = state->current_token.range;
         clause_range.end = star_range.end;
 
-        rbs_location_t *location = rbs_location_new(state->buffer, clause_range);
-        rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+        rbs_location_t *loc = rbs_location_new(state->buffer, clause_range);
         rbs_loc_alloc_children(loc, 2);
         rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
         rbs_loc_add_required_child(loc, INTERN("star"), star_range);
 
-        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(namespace, location);
+        rbs_ast_directives_use_wildcardclause_t *clause = rbs_ast_directives_use_wildcardclause_new(namespace, loc);
         rbs_node_list_append(clauses, (rbs_node_t *)clause);
 
         break;
@@ -2824,12 +2798,11 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
     range directive_range = keyword_range;
     directive_range.end = state->current_token.range.end;
 
-    rbs_location_t *location = rbs_location_new(state->buffer, directive_range);
-    rbs_loc *loc = rbs_check_location(location->cached_ruby_value);
+    rbs_location_t *loc = rbs_location_new(state->buffer, directive_range);
     rbs_loc_alloc_children(loc, 1);
     rbs_loc_add_required_child(loc, INTERN("keyword"), keyword_range);
 
-    return rbs_ast_directives_use_new(clauses, location);
+    return rbs_ast_directives_use_new(clauses, loc);
   } else {
     return NULL;
   }
