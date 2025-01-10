@@ -84,6 +84,6 @@ rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer);
  *
  * @param buffer The buffer to free.
  */
-void pm_buffer_free(rbs_buffer_t *buffer);
+void rbs_buffer_free(rbs_buffer_t *buffer);
 
 #endif
