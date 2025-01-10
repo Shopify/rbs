@@ -1236,7 +1236,10 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
   case pLBRACE: {
     position start = state->current_token.range.start;
     rbs_hash_t *fields = NULL;
-    CHECK_PARSE(parse_record_attributes(state, &fields));
+    if (!parse_record_attributes(state, &fields)) {
+      rbs_hash_free(fields);
+      return false;
+    }
     ADVANCE_ASSERT(state, pRBRACE);
     position end = state->current_token.range.end;
     rbs_location_t *loc = rbs_location_pp(&start, &end);
@@ -1368,12 +1371,15 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
         if (state->next_token.type == kIN || state->next_token.type == kOUT) {
           switch (state->next_token.type) {
           case kIN:
+            rbs_node_destroy((rbs_node_t *) variance);
             variance = rbs_keyword_new(rbs_location_new(state->current_token.range), INTERN("contravariant"));
             break;
           case kOUT:
+            rbs_node_destroy((rbs_node_t *) variance);
             variance = rbs_keyword_new(rbs_location_new(state->current_token.range), INTERN("covariant"));
             break;
           default:
+            rbs_node_destroy((rbs_node_t *) variance);
             set_error(state, state->current_token, false, "Unexpected error");
             return false;
           }
@@ -1391,13 +1397,21 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
       rbs_constant_id_t id = rbs_constant_pool_insert_string(&state->constant_pool, string);
       rbs_ast_symbol_t *name = rbs_ast_symbol_new(nameSymbolLoc, &state->constant_pool, id);
 
-      CHECK_PARSE(parser_insert_typevar(state, id));
+      if (!parser_insert_typevar(state, id)) {
+        rbs_node_destroy((rbs_node_t *) variance);
+        rbs_node_destroy((rbs_node_t *) name);
+        return false;
+      }
 
       range upper_bound_range = NULL_RANGE;
       if (state->next_token.type == pLT) {
         parser_advance(state);
         upper_bound_range.start = state->current_token.range.start;
-        CHECK_PARSE(parse_type(state, &upper_bound));
+        if (!parse_type(state, &upper_bound)) {
+          rbs_node_destroy((rbs_node_t *) variance);
+          rbs_node_destroy((rbs_node_t *) name);
+          return false;
+        }
         upper_bound_range.end = state->current_token.range.end;
       }
 
@@ -1407,12 +1421,18 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
           parser_advance(state);
 
           default_type_range.start = state->current_token.range.start;
-          CHECK_PARSE(parse_type(state, &default_type));
+          if (!parse_type(state, &default_type)) {
+            rbs_node_destroy((rbs_node_t *) variance);
+            rbs_node_destroy((rbs_node_t *) name);
+            return false;
+          }
           default_type_range.end = state->current_token.range.end;
 
           required_param_allowed = false;
         } else {
           if (!required_param_allowed) {
+            rbs_node_destroy((rbs_node_t *) variance);
+            rbs_node_destroy((rbs_node_t *) name);
             set_error(state, state->current_token, true, "required type parameter is not allowed after optional type parameter");
             return false;
           }
@@ -1463,7 +1483,10 @@ bool parse_method_type(parserstate *state, rbs_methodtype_t **method_type) {
 
   range params_range = NULL_RANGE;
   rbs_node_list_t *type_params;
-  CHECK_PARSE(parse_type_params(state, &params_range, false, &type_params));
+  if (!parse_type_params(state, &params_range, false, &type_params)) {
+    rbs_node_list_free(type_params);
+    return false;
+  }
 
   range type_range;
   type_range.start = state->next_token.range.start;
@@ -1568,7 +1591,10 @@ static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_l
 
   range params_range;
   rbs_node_list_t *type_params;
-  CHECK_PARSE(parse_type_params(state, &params_range, true, &type_params));
+  if (!parse_type_params(state, &params_range, true, &type_params)) {
+    rbs_node_list_free(type_params);
+    return false;
+  }
 
   ADVANCE_ASSERT(state, pEQ);
   range eq_range = state->current_token.range;
@@ -1854,12 +1880,16 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
 
   range name_range;
   rbs_ast_symbol_t *name = NULL;
-  CHECK_PARSE(parse_method_name(state, &name_range, &name));
+  if (!parse_method_name(state, &name_range, &name)) {
+    if (visibility != NULL) rbs_node_destroy((rbs_node_t *) visibility);
+    return false;
+  }
 
   #define SELF_ID rbs_constant_pool_insert_constant(&state->constant_pool, (const unsigned char *) "self?", strlen("self?"))
 
   if (state->next_token.type == pDOT && name->constant_id == SELF_ID) {
     set_error(state, state->next_token, true, "`self?` method cannot have visibility");
+    if (visibility != NULL) rbs_node_destroy((rbs_node_t *) visibility);
     return false;
   } else {
     ADVANCE_ASSERT(state, pCOLON);
@@ -1909,11 +1939,15 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
         member_range.end = overloading_range.end;
         break;
       } else {
+        if (visibility != NULL) rbs_node_destroy((rbs_node_t *) visibility);
+        rbs_node_list_free(overloads);
         set_error(state, state->next_token, true, "unexpected overloading method definition");
         return false;
       }
 
     default:
+      if (visibility != NULL) rbs_node_destroy((rbs_node_t *) visibility);
+      rbs_node_list_free(overloads);
       set_error(state, state->next_token, true, "unexpected token for method type");
       return false;
     }
@@ -1925,7 +1959,11 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
     }
   }
 
-  CHECK_PARSE(parser_pop_typevar_table(state));
+  if (!parser_pop_typevar_table(state)) {
+    if (visibility != NULL) rbs_node_destroy((rbs_node_t *) visibility);
+    rbs_node_list_free(overloads);
+    return false;
+  }
 
   rbs_keyword_t *k;
   switch (kind) {
@@ -1942,6 +1980,9 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
     break;
   }
   default:
+    if (visibility != NULL) rbs_node_destroy((rbs_node_t *) visibility);
+    rbs_node_list_free(overloads);
+    rbs_node_destroy((rbs_node_t *) k);
     set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
@@ -2093,17 +2134,26 @@ static bool parse_alias_member(parserstate *state, bool instance_only, position 
     new_kind_range.end = state->next_token2.range.end;
     ADVANCE_ASSERT(state, kSELF);
     ADVANCE_ASSERT(state, pDOT);
-    CHECK_PARSE(parse_method_name(state, &new_name_range, &new_name));
+    if (!parse_method_name(state, &new_name_range, &new_name)) {
+      rbs_node_destroy((rbs_node_t *) kind);
+      return false;
+    }
 
     old_kind_range.start = state->next_token.range.start;
     old_kind_range.end = state->next_token2.range.end;
     ADVANCE_ASSERT(state, kSELF);
     ADVANCE_ASSERT(state, pDOT);
-    CHECK_PARSE(parse_method_name(state, &old_name_range, &old_name));
+    if (!parse_method_name(state, &old_name_range, &old_name)) {
+      rbs_node_destroy((rbs_node_t *) kind);
+      return false;
+    }
   } else {
     kind = rbs_keyword_new(rbs_location_new(state->current_token.range), INTERN("instance"));
-    CHECK_PARSE(parse_method_name(state, &new_name_range, &new_name));
-    CHECK_PARSE(parse_method_name(state, &old_name_range, &old_name));
+    if (!parse_method_name(state, &new_name_range, &new_name)
+      || !parse_method_name(state, &old_name_range, &old_name)) {
+      rbs_node_destroy((rbs_node_t *) kind);
+      return false;
+    }
     new_kind_range = NULL_RANGE;
     old_kind_range = NULL_RANGE;
   }
@@ -2313,7 +2363,10 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
 
   range name_range;
   rbs_ast_symbol_t *attr_name;
-  CHECK_PARSE(parse_method_name(state, &name_range, &attr_name));
+  if (!parse_method_name(state, &name_range, &attr_name)) {
+    rbs_node_destroy((rbs_node_t *) kind);
+    return false;
+  }
 
   rbs_node_t *ivar_name; // rbs_ast_symbol_t, NULL or rbs_ast_bool_new(false)
   range ivar_range, ivar_name_range;
@@ -2348,9 +2401,16 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
   parser_push_typevar_table(state, is_kind == SINGLETON_KIND);
 
   rbs_node_t *type;
-  CHECK_PARSE(parse_type(state, &type));
+  if (!parse_type(state, &type)) {
+    rbs_node_destroy((rbs_node_t *) kind);
+    return false;
+  }
 
-  CHECK_PARSE(parser_pop_typevar_table(state));
+  if (!parser_pop_typevar_table(state)) {
+    rbs_node_destroy((rbs_node_t *) kind);
+    rbs_node_destroy((rbs_node_t *) type);
+    return false;
+  }
 
   member_range.end = state->current_token.range.end;
 
@@ -2376,6 +2436,8 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
     *attribute_member = (rbs_node_t *) rbs_ast_members_attraccessor_new(loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
     return true;
   default:
+    rbs_node_destroy((rbs_node_t *) kind);
+    rbs_node_destroy((rbs_node_t *) type);
     set_error(state, state->current_token, false, "Unexpected error");
     return false;
   }
@@ -2454,7 +2516,10 @@ static bool parse_interface_decl(parserstate *state, position comment_pos, rbs_n
 
   range type_params_range;
   rbs_node_list_t *type_params;
-  CHECK_PARSE(parse_type_params(state, &type_params_range, true, &type_params));
+  if (!parse_type_params(state, &type_params_range, true, &type_params)) {
+    rbs_node_list_free(type_params);
+    return false;
+  }
 
   rbs_node_list_t *members = NULL;
   CHECK_PARSE(parse_interface_members(state, &members));
@@ -2636,7 +2701,10 @@ static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_type
 
   range type_params_range;
   rbs_node_list_t *type_params;
-  CHECK_PARSE(parse_type_params(state, &type_params_range, true, &type_params));
+  if (!parse_type_params(state, &type_params_range, true, &type_params)) {
+    rbs_node_list_free(type_params);
+    return false;
+  }
 
   rbs_node_list_t *self_types = rbs_node_list_new();
   range colon_range;
@@ -2645,7 +2713,10 @@ static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_type
     parser_advance(state);
     colon_range = state->current_token.range;
     self_types_range.start = state->next_token.range.start;
-    CHECK_PARSE(parse_module_self_types(state, self_types));
+    if (!parse_module_self_types(state, self_types)) {
+      rbs_node_list_free(self_types);
+      return false;
+    }
     self_types_range.end = state->current_token.range.end;
   } else {
     colon_range = NULL_RANGE;
@@ -2738,7 +2809,10 @@ static bool parse_class_decl_super(parserstate *state, range *lt_range, rbs_ast_
     rbs_node_list_t *args = rbs_node_list_new();
     rbs_typename_t *name = NULL;
     range name_range, args_range;
-    CHECK_PARSE(class_instance_name(state, CLASS_NAME, args, &name_range, &args_range, &name));
+    if (!class_instance_name(state, CLASS_NAME, args, &name_range, &args_range, &name)) {
+      rbs_node_list_free(args);
+      return false;
+    }
 
     super_range.end = state->current_token.range.end;
 
@@ -2768,7 +2842,10 @@ static bool parse_class_decl0(parserstate *state, range keyword_range, rbs_typen
 
   range type_params_range;
   rbs_node_list_t *type_params;
-  CHECK_PARSE(parse_type_params(state, &type_params_range, true, &type_params));
+  if (!parse_type_params(state, &type_params_range, true, &type_params)) {
+    rbs_node_list_free(type_params);
+    return false;
+  }
 
   range lt_range;
   rbs_ast_declarations_class_super_t *super = NULL;
@@ -2908,48 +2985,70 @@ static bool parse_decl(parserstate *state, rbs_node_t **decl) {
   rbs_node_list_t *annotations = rbs_node_list_new();
   position annot_pos = NullPosition;
 
-  CHECK_PARSE(parse_annotations(state, annotations, &annot_pos));
+  if (!parse_annotations(state, annotations, &annot_pos)) {
+    rbs_node_list_free(annotations);
+    return false;
+  }
   parser_advance(state);
 
   switch (state->current_token.type) {
   case tUIDENT:
   case pCOLON2: {
     rbs_ast_declarations_constant_t *constant = NULL;
-    CHECK_PARSE(parse_const_decl(state, &constant));
+    if (!parse_const_decl(state, &constant)) {
+      rbs_node_list_free(annotations);
+      return false;
+    }
     *decl = (rbs_node_t *) constant;
     return true;
   }
   case tGIDENT: {
     rbs_ast_declarations_global_t *global = NULL;
-    CHECK_PARSE(parse_global_decl(state, &global));
+    if (!parse_global_decl(state, &global)) {
+      rbs_node_list_free(annotations);
+      return false;
+    }
     *decl = (rbs_node_t *) global;
     return true;
   }
   case kTYPE: {
     rbs_ast_declarations_typealias_t *typealias = NULL;
-    CHECK_PARSE(parse_type_decl(state, annot_pos, annotations, &typealias));
+    if (!parse_type_decl(state, annot_pos, annotations, &typealias)) {
+      rbs_node_list_free(annotations);
+      return false;
+    }
     *decl = (rbs_node_t *) typealias;
     return true;
   }
   case kINTERFACE: {
     rbs_ast_declarations_interface_t *interface_decl = NULL;
-    CHECK_PARSE(parse_interface_decl(state, annot_pos, annotations, &interface_decl));
+    if (!parse_interface_decl(state, annot_pos, annotations, &interface_decl)) {
+      rbs_node_list_free(annotations);
+      return false;
+    }
     *decl = (rbs_node_t *) interface_decl;
     return true;
   }
   case kMODULE: {
     rbs_node_t *module_decl = NULL;
-    CHECK_PARSE(parse_module_decl(state, annot_pos, annotations, &module_decl));
+    if (!parse_module_decl(state, annot_pos, annotations, &module_decl)) {
+      rbs_node_list_free(annotations);
+      return false;
+    }
     *decl = module_decl;
     return true;
   }
   case kCLASS: {
     rbs_node_t *class_decl = NULL;
-    CHECK_PARSE(parse_class_decl(state, annot_pos, annotations, &class_decl));
+    if (!parse_class_decl(state, annot_pos, annotations, &class_decl)) {
+      rbs_node_list_free(annotations);
+      return false;
+    }
     *decl = class_decl;
     return true;
   }
   default:
+    rbs_node_list_free(annotations);
     set_error(state, state->current_token, true, "cannot start a declaration");
     return false;
   }
@@ -3099,7 +3198,10 @@ static bool parse_use_directive(parserstate *state, rbs_ast_directives_use_t **u
     range keyword_range = state->current_token.range;
 
     rbs_node_list_t *clauses = rbs_node_list_new();
-    CHECK_PARSE(parse_use_clauses(state, clauses));
+    if (!parse_use_clauses(state, clauses)) {
+      rbs_node_list_free(clauses);
+      return false;
+    }
 
     range directive_range = keyword_range;
     directive_range.end = state->current_token.range.end;
@@ -3123,7 +3225,11 @@ bool parse_signature(parserstate *state, rbs_signature_t **signature) {
 
   while (state->next_token.type == kUSE) {
     rbs_ast_directives_use_t *use_node;
-    CHECK_PARSE(parse_use_directive(state, &use_node));
+    if (!parse_use_directive(state, &use_node)) {
+      rbs_node_list_free(dirs);
+      rbs_node_list_free(decls);
+      return false;
+    }
 
     if (use_node == NULL) {
       rbs_node_list_append(dirs, NULL);
@@ -3134,7 +3240,11 @@ bool parse_signature(parserstate *state, rbs_signature_t **signature) {
 
   while (state->next_token.type != pEOF) {
     rbs_node_t *decl = NULL;
-    CHECK_PARSE(parse_decl(state, &decl));
+    if (!parse_decl(state, &decl)) {
+      rbs_node_list_free(dirs);
+      rbs_node_list_free(decls);
+      return false;
+    }
     rbs_node_list_append(decls, decl);
   }
 
