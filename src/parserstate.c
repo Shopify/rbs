@@ -35,6 +35,19 @@ id_table *alloc_reset_table(void) {
   return table;
 }
 
+static void free_one_table(id_table *table) {
+  if (table->ids) free(table->ids);
+  free(table);
+}
+
+// Free the full stack of typevar tables.
+static void free_tables(id_table *table) {
+  if (table->next) {
+    free_tables(table->next);
+  }
+  free_one_table(table);
+}
+
 id_table *parser_push_typevar_table(parserstate *state, bool reset) {
   if (reset) {
     id_table *table = alloc_reset_table();
@@ -56,8 +69,7 @@ bool parser_pop_typevar_table(parserstate *state) {
   if (state->vars) {
     table = state->vars;
     state->vars = table->next;
-    free(table->ids);
-    free(table);
+    free_one_table(table);
   } else {
     set_error(state, state->current_token, false, "Cannot pop empty table");
     return false;
@@ -404,6 +416,9 @@ void free_parser(parserstate *parser) {
   os_signpost_interval_end(RBS_PARSERSTATE_LOG, parser->signpost_id, "RBS parser lifetime");
 
   free(parser->lexstate);
+  if (parser->vars) {
+    free_tables(parser->vars);
+  }
   if (parser->last_comment) {
     free_comment(parser->last_comment);
   }
