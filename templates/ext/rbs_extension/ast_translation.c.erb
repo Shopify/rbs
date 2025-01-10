@@ -10,8 +10,16 @@ VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
     return list->cached_ruby_value;
 }
 
-VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
-    return hash->cached_ruby_value;
+VALUE rbs_hash_to_ruby_hash(rbs_hash_t *rbs_hash) {
+    VALUE ruby_hash = rb_hash_new();
+
+    for (rbs_hash_node_t *n = rbs_hash->head; n != NULL; n = n->next) {
+        VALUE key = rbs_struct_to_ruby_value(n->key);
+        VALUE value = rbs_struct_to_ruby_value(n->value);
+        rb_hash_aset(ruby_hash, key, value);
+    }
+
+    return ruby_hash;
 }
 
 VALUE rbs_loc_to_ruby_location(rbs_location_t *loc) {

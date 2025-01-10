@@ -54,9 +54,6 @@ rbs_hash_t* rbs_hash_new(void) {
     hash->head = NULL;
     hash->tail = NULL;
     hash->length = 0;
-    hash->cached_ruby_value = rb_hash_new();
-
-    rb_gc_register_mark_object(hash->cached_ruby_value);
 
     return hash;
 }
@@ -111,8 +108,6 @@ void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
         existing_node->value = value;
         return;
     }
-
-    rb_hash_aset(hash->cached_ruby_value, key->cached_ruby_value, value->cached_ruby_value);
 
     rbs_hash_node_t *new_node = (rbs_hash_node_t *)malloc(sizeof(rbs_hash_node_t));
     new_node->key = key;
@@ -194,7 +189,7 @@ parameters = node.constructor_parameters
     <%= node.c_type_name %> *instance = malloc(sizeof(<%= node.c_type_name %>));
 
     // Disable GC for all these Ruby objects.
-    <%- parameters.each do |parameter| -%>
+    <%- parameters.filter { |parameter| parameter.c_type == "VALUE" }.each do |parameter| -%>
     rb_gc_register_mark_object(<%= parameter.cached_ruby_value_expr %>);
     <%- end -%>
 
