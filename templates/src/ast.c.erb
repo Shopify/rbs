@@ -2,6 +2,8 @@
 
 #include "rbs/ruby_objs.h"
 
+#include <ruby/encoding.h>
+
 /* rbs_node_list */
 
 rbs_node_list_t* rbs_node_list_new(rbs_allocator_t *allocator) {
@@ -62,8 +64,14 @@ bool rbs_node_equal(rbs_node_t *lhs, rbs_node_t *rhs) {
     if (lhs->type != rhs->type) return false;
 
     switch (lhs->type) {
+    case RBS_AST_SYMBOL:
+        return ((rbs_ast_symbol_t *)lhs)->constant_id == ((rbs_ast_symbol_t *) rhs)->constant_id;
+    case RBS_KEYWORD:
+        return ((rbs_keyword_t *)lhs)->constant_id == ((rbs_keyword_t *) rhs)->constant_id;
     case RBS_AST_BOOL:
         return ((rbs_ast_bool_t *)lhs)->value == ((rbs_ast_bool_t *) rhs)->value;
+    case RBS_OTHER_RUBY_VALUE:
+        return rb_equal(((rbs_other_ruby_value_t *) lhs)->base.cached_ruby_value, ((rbs_other_ruby_value_t *) rhs)->base.cached_ruby_value);
     default:
         return rb_equal(lhs->cached_ruby_value, rhs->cached_ruby_value);
     }
@@ -112,6 +120,59 @@ rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
     rbs_hash_node_t *node = rbs_hash_find(hash, key);
     return node ? node->value : NULL;
 }
+
+rbs_keyword_t *rbs_keyword_new(rbs_allocator_t *allocator, rbs_constant_id_t constant_id) {
+    rbs_keyword_t *instance = rbs_allocator_alloc(allocator, rbs_keyword_t);
+
+    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(RBS_GLOBAL_CONSTANT_POOL, constant_id);
+    assert(constant != NULL && "constant is NULL");
+    assert(constant->start != NULL && "constant->start is NULL");
+
+    *instance = (rbs_keyword_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ID2SYM(rb_intern2((const char *) constant->start, constant->length)),
+            .type = RBS_KEYWORD,
+        },
+        .constant_id = constant_id,
+    };
+
+    return instance;
+}
+
+rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_allocator_t *allocator, rbs_constant_pool_t *constant_pool, rbs_constant_id_t constant_id) {
+    rbs_ast_symbol_t *instance = rbs_allocator_alloc(allocator, rbs_ast_symbol_t);
+
+    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(constant_pool, constant_id);
+    assert(constant != NULL && "constant is NULL");
+    assert(constant->start != NULL && "constant->start is NULL");
+
+    // FIXME: Replace this with the encoding used by the input buffer.
+    rb_encoding *encoding = rb_usascii_encoding();
+
+    *instance = (rbs_ast_symbol_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ID2SYM(rb_intern3((const char *) constant->start, constant->length, encoding)),
+            .type = RBS_AST_SYMBOL,
+        },
+        .constant_id = constant_id,
+    };
+
+    return instance;
+}
+
+rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
+    rbs_other_ruby_value_t *instance = malloc(sizeof(rbs_other_ruby_value_t));
+
+    *instance = (rbs_other_ruby_value_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_OTHER_RUBY_VALUE
+        },
+    };
+
+    return instance;
+}
+
 
 <%- nodes.each do |node| -%>
 <%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.constructor_params.map(&:parameter_decl).join(", ") %>) {

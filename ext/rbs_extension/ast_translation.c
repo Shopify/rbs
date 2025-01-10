@@ -367,7 +367,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("new_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->new_name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("old_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->old_name)); // rbs_ast_symbol
-            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_keyword
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
@@ -390,11 +390,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("ivar_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->ivar_name)); // rbs_node
-            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_keyword
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
-            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_keyword
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_AttrAccessor,
@@ -414,11 +414,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("ivar_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->ivar_name)); // rbs_node
-            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_keyword
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
-            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_keyword
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_AttrReader,
@@ -438,11 +438,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
             rb_hash_aset(h, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value((rbs_node_t *) node->type)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("ivar_name")), rbs_struct_to_ruby_value((rbs_node_t *) node->ivar_name)); // rbs_node
-            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_keyword
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
-            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_keyword
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_AttrWriter,
@@ -562,13 +562,13 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
 
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
-            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("kind")), rbs_struct_to_ruby_value((rbs_node_t *) node->kind)); // rbs_keyword
             rb_hash_aset(h, ID2SYM(rb_intern("overloads")), rbs_node_list_to_ruby_array(node->overloads));
             rb_hash_aset(h, ID2SYM(rb_intern("annotations")), rbs_node_list_to_ruby_array(node->annotations));
             rb_hash_aset(h, ID2SYM(rb_intern("location")), rbs_loc_to_ruby_location(node->location));
             rb_hash_aset(h, ID2SYM(rb_intern("comment")), rbs_struct_to_ruby_value((rbs_node_t *) node->comment)); // rbs_ast_comment
             rb_hash_aset(h, ID2SYM(rb_intern("overloading")), node->overloading ? Qtrue : Qfalse);
-            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("visibility")), rbs_struct_to_ruby_value((rbs_node_t *) node->visibility)); // rbs_keyword
 
             return CLASS_NEW_INSTANCE(
                 RBS_AST_Members_MethodDefinition,
@@ -649,9 +649,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 &h
             );
         }
-        case RBS_AST_SYMBOL: {
-            return instance->cached_ruby_value;
-        }
         case RBS_AST_TYPEPARAM: {
             if (strcmp(class_name, "RBS::AST::TypeParam") != 0) {
                 fprintf(stderr, "Expected class name: RBS::AST::TypeParam, got %s\n", class_name);
@@ -662,7 +659,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
 
             VALUE h = rb_hash_new();
             rb_hash_aset(h, ID2SYM(rb_intern("name")), rbs_struct_to_ruby_value((rbs_node_t *) node->name)); // rbs_ast_symbol
-            rb_hash_aset(h, ID2SYM(rb_intern("variance")), rbs_struct_to_ruby_value((rbs_node_t *) node->variance)); // rbs_ast_symbol
+            rb_hash_aset(h, ID2SYM(rb_intern("variance")), rbs_struct_to_ruby_value((rbs_node_t *) node->variance)); // rbs_keyword
             rb_hash_aset(h, ID2SYM(rb_intern("upper_bound")), rbs_struct_to_ruby_value((rbs_node_t *) node->upper_bound)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("default_type")), rbs_struct_to_ruby_value((rbs_node_t *) node->default_type)); // rbs_node
             rb_hash_aset(h, ID2SYM(rb_intern("unchecked")), node->unchecked ? Qtrue : Qfalse);
@@ -1189,6 +1186,18 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
                 1,
                 &h
             );
+        }
+        case RBS_KEYWORD:
+        case RBS_AST_SYMBOL: {
+            if (strcmp(class_name, "Symbol") != 0) {
+                fprintf(stderr, "Expected class name: Symbol, got %s\n", class_name);
+                exit(1);
+            }
+
+            return instance->cached_ruby_value;
+        }
+        case RBS_OTHER_RUBY_VALUE: {
+            return instance->cached_ruby_value;
         }
     }
 }

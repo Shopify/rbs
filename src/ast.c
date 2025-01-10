@@ -9,6 +9,8 @@
 
 #include "rbs/ruby_objs.h"
 
+#include <ruby/encoding.h>
+
 /* rbs_node_list */
 
 rbs_node_list_t* rbs_node_list_new(rbs_allocator_t *allocator) {
@@ -69,8 +71,14 @@ bool rbs_node_equal(rbs_node_t *lhs, rbs_node_t *rhs) {
     if (lhs->type != rhs->type) return false;
 
     switch (lhs->type) {
+    case RBS_AST_SYMBOL:
+        return ((rbs_ast_symbol_t *)lhs)->constant_id == ((rbs_ast_symbol_t *) rhs)->constant_id;
+    case RBS_KEYWORD:
+        return ((rbs_keyword_t *)lhs)->constant_id == ((rbs_keyword_t *) rhs)->constant_id;
     case RBS_AST_BOOL:
         return ((rbs_ast_bool_t *)lhs)->value == ((rbs_ast_bool_t *) rhs)->value;
+    case RBS_OTHER_RUBY_VALUE:
+        return rb_equal(((rbs_other_ruby_value_t *) lhs)->base.cached_ruby_value, ((rbs_other_ruby_value_t *) rhs)->base.cached_ruby_value);
     default:
         return rb_equal(lhs->cached_ruby_value, rhs->cached_ruby_value);
     }
@@ -119,6 +127,59 @@ rbs_node_t* rbs_hash_get(rbs_hash_t *hash, rbs_node_t *key) {
     rbs_hash_node_t *node = rbs_hash_find(hash, key);
     return node ? node->value : NULL;
 }
+
+rbs_keyword_t *rbs_keyword_new(rbs_allocator_t *allocator, rbs_constant_id_t constant_id) {
+    rbs_keyword_t *instance = rbs_allocator_alloc(allocator, rbs_keyword_t);
+
+    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(RBS_GLOBAL_CONSTANT_POOL, constant_id);
+    assert(constant != NULL && "constant is NULL");
+    assert(constant->start != NULL && "constant->start is NULL");
+
+    *instance = (rbs_keyword_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ID2SYM(rb_intern2((const char *) constant->start, constant->length)),
+            .type = RBS_KEYWORD,
+        },
+        .constant_id = constant_id,
+    };
+
+    return instance;
+}
+
+rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_allocator_t *allocator, rbs_constant_pool_t *constant_pool, rbs_constant_id_t constant_id) {
+    rbs_ast_symbol_t *instance = rbs_allocator_alloc(allocator, rbs_ast_symbol_t);
+
+    rbs_constant_t *constant = rbs_constant_pool_id_to_constant(constant_pool, constant_id);
+    assert(constant != NULL && "constant is NULL");
+    assert(constant->start != NULL && "constant->start is NULL");
+
+    // FIXME: Replace this with the encoding used by the input buffer.
+    rb_encoding *encoding = rb_usascii_encoding();
+
+    *instance = (rbs_ast_symbol_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ID2SYM(rb_intern3((const char *) constant->start, constant->length, encoding)),
+            .type = RBS_AST_SYMBOL,
+        },
+        .constant_id = constant_id,
+    };
+
+    return instance;
+}
+
+rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
+    rbs_other_ruby_value_t *instance = malloc(sizeof(rbs_other_ruby_value_t));
+
+    *instance = (rbs_other_ruby_value_t) {
+        .base = (rbs_node_t) {
+            .cached_ruby_value = ruby_value,
+            .type = RBS_OTHER_RUBY_VALUE
+        },
+    };
+
+    return instance;
+}
+
 
 rbs_ast_annotation_t *rbs_ast_annotation_new(rbs_allocator_t *allocator, VALUE string, rbs_location_t *location) {
     rbs_ast_annotation_t *instance = rbs_allocator_alloc(allocator, rbs_ast_annotation_t);
@@ -560,7 +621,7 @@ rbs_ast_directives_use_wildcardclause_t *rbs_ast_directives_use_wildcardclause_n
     return instance;
 }
 
-rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
+rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *new_name, rbs_ast_symbol_t *old_name, rbs_keyword_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment) {
     rbs_ast_members_alias_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_alias_t);
 
     // Disable GC for all these Ruby objects.
@@ -592,7 +653,7 @@ rbs_ast_members_alias_t *rbs_ast_members_alias_new(rbs_allocator_t *allocator, r
     return instance;
 }
 
-rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_keyword_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_keyword_t *visibility) {
     rbs_ast_members_attraccessor_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_attraccessor_t);
 
     // Disable GC for all these Ruby objects.
@@ -628,7 +689,7 @@ rbs_ast_members_attraccessor_t *rbs_ast_members_attraccessor_new(rbs_allocator_t
     return instance;
 }
 
-rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_keyword_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_keyword_t *visibility) {
     rbs_ast_members_attrreader_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_attrreader_t);
 
     // Disable GC for all these Ruby objects.
@@ -664,7 +725,7 @@ rbs_ast_members_attrreader_t *rbs_ast_members_attrreader_new(rbs_allocator_t *al
     return instance;
 }
 
-rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_ast_symbol_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_attrwriter_t *rbs_ast_members_attrwriter_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_node_t *type, rbs_node_t *ivar_name, rbs_keyword_t *kind, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, rbs_keyword_t *visibility) {
     rbs_ast_members_attrwriter_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_attrwriter_t);
 
     // Disable GC for all these Ruby objects.
@@ -844,7 +905,7 @@ rbs_ast_members_instancevariable_t *rbs_ast_members_instancevariable_new(rbs_all
     return instance;
 }
 
-rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_ast_symbol_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, bool overloading, rbs_ast_symbol_t *visibility) {
+rbs_ast_members_methoddefinition_t *rbs_ast_members_methoddefinition_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_keyword_t *kind, rbs_node_list_t *overloads, rbs_node_list_t *annotations, rbs_location_t *location, rbs_ast_comment_t *comment, bool overloading, rbs_keyword_t *visibility) {
     rbs_ast_members_methoddefinition_t *instance = rbs_allocator_alloc(allocator, rbs_ast_members_methoddefinition_t);
 
     // Disable GC for all these Ruby objects.
@@ -978,27 +1039,7 @@ rbs_ast_members_public_t *rbs_ast_members_public_new(rbs_allocator_t *allocator,
     return instance;
 }
 
-rbs_ast_symbol_t *rbs_ast_symbol_new(rbs_allocator_t *allocator, VALUE ruby_value, VALUE symbol) {
-    rbs_ast_symbol_t *instance = rbs_allocator_alloc(allocator, rbs_ast_symbol_t);
-
-    // Disable GC for all these Ruby objects.
-    rb_gc_register_mark_object(symbol);
-
-
-    rb_gc_register_mark_object(ruby_value);
-
-    *instance = (rbs_ast_symbol_t) {
-        .base = (rbs_node_t) {
-            .cached_ruby_value = ruby_value,
-            .type = RBS_AST_SYMBOL
-        },
-        .symbol = symbol,
-    };
-
-    return instance;
-}
-
-rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_ast_symbol_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, bool unchecked, rbs_location_t *location) {
+rbs_ast_typeparam_t *rbs_ast_typeparam_new(rbs_allocator_t *allocator, rbs_ast_symbol_t *name, rbs_keyword_t *variance, rbs_node_t *upper_bound, rbs_node_t *default_type, bool unchecked, rbs_location_t *location) {
     rbs_ast_typeparam_t *instance = rbs_allocator_alloc(allocator, rbs_ast_typeparam_t);
 
     // Disable GC for all these Ruby objects.
