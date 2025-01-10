@@ -25,8 +25,12 @@ module RBS
       # e.g. `TypeAlias`
       attr_reader :ruby_class_name #: String
 
-      # The name of the auto-generated C struct for this type,
-      # e.g. `rbs_ast_declarations_typealias_t`
+      # The base name of the auto-generated C struct for this type.
+      # e.g. `rbs_ast_declarations_type_alias`
+      attr_reader :c_base_name #: String
+
+      # The name of the typedef of the auto-generated C struct for this type,
+      # e.g. `rbs_ast_declarations_type_alias_t`
       attr_reader :c_type_name #: String
 
       # The name of the pre-existing C function which constructs new Ruby objects of this type.
@@ -41,6 +45,9 @@ module RBS
       # e.g. `RBS_AST_Declarations`
       attr_reader :c_parent_constant_name #: String
 
+      # The name of the C enum for this type, e.g. `RBS_AST_DECLARATIONS_CLASS_SUPER`
+      attr_reader :c_type_enum_name #: String
+
       attr_reader :fields #: Array[RBS::Template::Field]
 
       attr_reader :generate_ruby_obj #: Boolean
@@ -49,15 +56,26 @@ module RBS
         @ruby_full_name = yaml["name"]
         @ruby_class_name = @ruby_full_name[/[^:]+\z/] # demodulize-like
         name = @ruby_full_name.gsub("::", "_")
-        @c_function_name = name.gsub(/(^)?(_)?([A-Z](?:[A-Z]*(?=[A-Z_])|[a-z0-9]*))/) { ($1 || $2 || "_") + $3.downcase } # underscore-like
-        @c_function_name.gsub!(/^rbs_types_/, 'rbs_')
-        @c_function_name.gsub!(/^rbs_ast_declarations_/, 'rbs_ast_decl_')
+
+        @c_base_name = name.gsub(/(^)?(_)?([A-Z](?:[A-Z]*(?=[A-Z_])|[a-z0-9]*))/) { ($1 || $2 || "_") + $3.downcase }
+
+        @c_function_name = @c_base_name
+                             .gsub(/^rbs_types_/, 'rbs_')
+                             .gsub(/^rbs_ast_declarations_/, 'rbs_ast_decl_')
         @c_constant_name = @ruby_full_name.gsub("::", "_")
         @c_parent_constant_name = @ruby_full_name.split("::")[0..-2].join("::").gsub("::", "_")
+        @c_type_name = "#{@c_base_name}_t"
+        @c_type_enum_name = @c_base_name.upcase
 
         @fields = yaml.fetch("fields", []).map { |field| Field.new(field) }.freeze
 
         @generate_ruby_obj = yaml.fetch("generate_ruby_obj", false)
+      end
+
+      # The name of the C function which constructs new instances of this C structure.
+      # e.g. `rbs_ast_declarations_typealias_new`
+      def c_constructor_function_name #: String
+        "#{@c_base_name}_new"
       end
     end
 

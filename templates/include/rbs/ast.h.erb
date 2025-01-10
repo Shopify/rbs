@@ -1,0 +1,60 @@
+#ifndef RBS__AST_H
+#define RBS__AST_H
+
+#include "ruby.h"
+
+/* rbs_node base */
+
+/*
+ * This enum is used to identify the type of a node in the AST.
+ */
+enum rbs_node_type {
+<%- nodes.each_with_index do |node, index| -%>
+    <%= node.c_type_enum_name %> = <%= index + 1 %>,
+<%- end -%>
+    RBS_NODE_INSTANCE_WRAPPER = <%= nodes.size + 1 %>,
+};
+
+/*
+ * Base struct for all nodes. It contains the type of the node.
+ */
+typedef struct rbs_node {
+    enum rbs_node_type type;
+} rbs_node_t;
+
+/* rbs_node_instance_wrapper */
+
+/*
+ * A temporary struct to wrap Ruby objects in the AST.
+ *
+ * It allows us to start handling `rbs_node_t*` structs in the parser and incrementally replace Ruby objects.
+ *
+ * TODO: Remove this once we do not use inner Ruby objects in our nodes.
+ */
+typedef struct {
+    rbs_node_t base;
+    VALUE instance;
+} rbs_node_instance_wrapper_t;
+
+/* rbs_node generated structs */
+
+<%- nodes.each do |node| -%>
+typedef struct <%= node.c_base_name %> {
+    rbs_node_t base;
+
+    <%- node.fields.each do |field| -%>
+    VALUE <%= field.name %>;
+    <%- end -%>
+} <%= node.c_type_name %>;
+
+<%- end -%>
+
+/* rbs_node constructors */
+
+<%- nodes.each do |node| -%>
+<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.fields.map { |field| "VALUE #{field.name}" }.join(", ") %>);
+<%- end -%>
+
+rbs_node_instance_wrapper_t *rbs_node_instance_wrapper_new(VALUE instance);
+
+#endif
