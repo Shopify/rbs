@@ -45,6 +45,17 @@ rbs_location_t *rbs_location_new(range rg) {
     return location;
 }
 
+rbs_location_t *rbs_location_copy(rbs_location_t *source_loc) {
+    rbs_location_t *copy = rbs_location_new(source_loc->rg);
+
+    if (source_loc->children != NULL) {
+      rbs_loc_alloc_children(copy, source_loc->children->cap);
+      memcpy(copy->children, source_loc->children, RBS_LOC_CHILDREN_SIZE(source_loc->children->cap));
+    }
+
+    return copy;
+}
+
 void rbs_location_free(rbs_location_t *loc) {
   if (loc->children != NULL) free(loc->children);
   free(loc);

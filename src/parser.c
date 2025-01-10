@@ -784,7 +784,7 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
       );
     }
 
-    block = rbs_types_block_new(loc, block_function, required, self_type);
+    block = rbs_types_block_new(rbs_location_copy(loc), block_function, required, self_type);
 
     ADVANCE_ASSERT(state, pRBRACE);
   }
@@ -1148,17 +1148,19 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     rbs_string_t stripped_string = rbs_string_strip_whitespace(&string);
 
     rbs_node_t *literal = (rbs_node_t *) rbs_ast_integer_new(loc, stripped_string);
-    *type = (rbs_node_t *) rbs_types_literal_new(loc, literal);
+    *type = (rbs_node_t *) rbs_types_literal_new(rbs_location_copy(loc), literal);
     return true;
   }
   case kTRUE: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    *type = (rbs_node_t *) rbs_types_literal_new(loc, (rbs_node_t *) rbs_ast_bool_new(loc, true));
+    rbs_node_t *true_node = (rbs_node_t *) rbs_ast_bool_new(loc, true);
+    *type = (rbs_node_t *) rbs_types_literal_new(rbs_location_copy(loc), true_node);
     return true;
   }
   case kFALSE: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    *type = (rbs_node_t *) rbs_types_literal_new(loc, (rbs_node_t *) rbs_ast_bool_new(loc, false));
+    rbs_node_t *false_node = (rbs_node_t *) rbs_ast_bool_new(loc, false);
+    *type = (rbs_node_t *) rbs_types_literal_new(rbs_location_copy(loc), false_node);
     return true;
   }
   case tSQSTRING:
@@ -1167,7 +1169,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
 
     rbs_string_t unquoted_str = rbs_unquote_string(rbs_parser_peek_current_token(state));
     rbs_node_t *literal = (rbs_node_t *) rbs_ast_string_new(loc, unquoted_str);
-    *type = (rbs_node_t *) rbs_types_literal_new(loc, literal);
+    *type = (rbs_node_t *) rbs_types_literal_new(rbs_location_copy(loc), literal);
     return true;
   }
   case tSYMBOL:
@@ -1188,7 +1190,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     if (parser_typevar_member(state, name)) {
       rbs_location_t *loc = rbs_location_current_token(state);
       rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(loc, &state->constant_pool, name);
-      *type = (rbs_node_t *) rbs_types_variable_new(loc, symbol);
+      *type = (rbs_node_t *) rbs_types_variable_new(rbs_location_copy(loc), symbol);
       return true;
     }
 
