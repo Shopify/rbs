@@ -79,6 +79,10 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_hash_to_ruby_hash(node-><%= field.name %>));
             <%- when "rbs_location" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_loc_to_ruby_location(node-><%= field.name %>));
+            <%- when "rbs_ast_symbol" -%>
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value((rbs_node_t *) node-><%= field.name %>)); // rbs_ast_symbol
+            <%- when "rbs_keyword" -%>
+            rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value((rbs_node_t *) node-><%= field.name %>)); // rbs_keyword
             <%- when "bool" -%>
             rb_hash_aset(h, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %> ? Qtrue : Qfalse);
             <%- else -%>
@@ -97,5 +101,17 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             <%- end -%>
         }
         <%- end -%>
+        case RBS_KEYWORD:
+        case RBS_AST_SYMBOL: {
+            if (strcmp(class_name, "Symbol") != 0) {
+                fprintf(stderr, "Expected class name: Symbol, got %s\n", class_name);
+                exit(1);
+            }
+
+            return instance->cached_ruby_value;
+        }
+        case RBS_OTHER_RUBY_VALUE: {
+            return instance->cached_ruby_value;
+        }
     }
 }
