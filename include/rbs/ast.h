@@ -118,7 +118,6 @@ typedef struct rbs_hash {
     rbs_hash_node_t *head;
     rbs_hash_node_t *tail;
     size_t length;
-    VALUE cached_ruby_value;
 } rbs_hash_t;
 
 rbs_hash_t* rbs_hash_new(rbs_allocator_t *);

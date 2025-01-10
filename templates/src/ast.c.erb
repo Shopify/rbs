@@ -51,10 +51,7 @@ rbs_hash_t* rbs_hash_new(rbs_allocator_t *allocator) {
         .head = NULL,
         .tail = NULL,
         .length = 0,
-        .cached_ruby_value = rb_hash_new(),
     };
-
-    rb_gc_register_mark_object(hash->cached_ruby_value);
 
     return hash;
 }
@@ -99,8 +96,6 @@ void rbs_hash_set(rbs_hash_t *hash, rbs_node_t *key, rbs_node_t *value) {
         existing_node->value = value;
         return;
     }
-
-    rb_hash_aset(hash->cached_ruby_value, key->cached_ruby_value, value->cached_ruby_value);
 
     rbs_hash_node_t *new_node = rbs_allocator_alloc(hash->allocator, rbs_hash_node_t);
     new_node->key = key;
@@ -179,8 +174,8 @@ rbs_other_ruby_value_t *rbs_other_ruby_value_new(VALUE ruby_value) {
     <%= node.c_type_name %> *instance = rbs_allocator_alloc(allocator, <%= node.c_type_name %>);
 
     // Disable GC for all these Ruby objects.
-    <%- node.fields.each do |field| -%>
-    rb_gc_register_mark_object(<%= field.cached_ruby_value_expr %>);
+    <%- node.fields.filter { |f| f.c_type == "VALUE" }.each do |f| -%>
+    rb_gc_register_mark_object(<%= f.name %>);
     <%- end -%>
 
     <%- if node.builds_ruby_object_internally? -%>
