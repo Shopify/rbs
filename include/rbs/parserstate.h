@@ -65,6 +65,10 @@ typedef struct {
 
   rbs_constant_pool_t constant_pool;
   error *error;
+
+#ifdef RBS_MAC_OS_USE_SIGNPOSTS
+  os_signpost_id_t signpost_id;
+#endif
 } parserstate;
 
 comment *alloc_comment(token comment_token, comment *last_comment);

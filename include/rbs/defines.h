@@ -53,4 +53,25 @@
 
 #define NODISCARD __attribute__((warn_unused_result))
 
+#undef NDEBUG // enable assertions and other debugging features.
+
+#if !defined(NDEBUG) && defined(__APPLE__)
+    #define RBS_MAC_OS_USE_SIGNPOSTS
+
+    #include <os/log.h>
+    #include <os/signpost.h>
+#else // Define no-op stubs for other platforms.
+    typedef void * os_log_t;
+    typedef void * os_signpost_id_t;
+
+    #define os_log_create(subsystem, category) NULL
+    #define OS_LOG_CATEGORY_POINTS_OF_INTEREST ((const char *) 0) NULL
+
+    #define os_signpost_id_generate(log) NULL
+    #define os_signpost_id_make_with_pointer(log, ptr) NULL
+    #define os_signpost_event_emit(log, event_id, name, ...) NULL
+    #define os_signpost_interval_begin(log, interval_id, name, ...) NULL
+    #define os_signpost_interval_end(log, interval_id, name, ...) NULL
+#endif
+
 #endif

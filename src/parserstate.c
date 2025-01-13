@@ -319,7 +319,17 @@ lexstate *alloc_lexer(rbs_string_t string, const rbs_encoding_t *encoding, int s
   return lexer;
 }
 
+#ifdef RBS_MAC_OS_USE_SIGNPOSTS
+  static os_log_t RBS_PARSERSTATE_LOG = NULL;
+#endif
+
 parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos) {
+  #ifdef RBS_MAC_OS_USE_SIGNPOSTS
+    if (RBS_PARSERSTATE_LOG == NULL) {
+      RBS_PARSERSTATE_LOG = os_log_create("org.ruby-lang.rbs.parserstate", OS_LOG_CATEGORY_POINTS_OF_INTEREST);
+    }
+  #endif
+
   parserstate *parser = malloc(sizeof(parserstate));
 
   *parser = (parserstate) {
@@ -335,7 +345,13 @@ parserstate *alloc_parser(lexstate *lexer, int start_pos, int end_pos) {
 
     .constant_pool = {},
     .error = NULL,
+
+    #ifdef RBS_MAC_OS_USE_SIGNPOSTS
+    .signpost_id = os_signpost_id_make_with_pointer(RBS_PARSERSTATE_LOG, parser),
+    #endif
   };
+
+  os_signpost_interval_begin(RBS_PARSERSTATE_LOG, parser->signpost_id, "RBS parser lifetime");
 
   // The parser's constant pool is mainly used for storing the names of type variables, which usually aren't many.
   // Below are some statistics gathered from the current test suite. We can see that 56% of parsers never add to their
@@ -384,6 +400,8 @@ void rbs_parser_declare_type_variables(parserstate *parser, size_t count, const 
 }
 
 void free_parser(parserstate *parser) {
+  os_signpost_interval_end(RBS_PARSERSTATE_LOG, parser->signpost_id, "RBS parser lifetime");
+
   free(parser->lexstate);
   if (parser->last_comment) {
     free_comment(parser->last_comment);

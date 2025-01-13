@@ -1,3 +1,4 @@
+#include "rbs/defines.h"
 #include "rbs_extension.h"
 #include "rbs/util/rbs_constant_pool.h"
 #include "ast_translation.h"
@@ -5,6 +6,11 @@
 #include "rbs_string_bridging.h"
 
 #include "ruby/vm.h"
+
+#ifdef RBS_MAC_OS_USE_SIGNPOSTS
+  static os_log_t RBS_PARSER_METHODS_LOG = NULL;
+  static os_signpost_id_t RBS_PARSER_METHODS_SIGNPOST_ID;
+#endif
 
 /**
  * Raises `RBS::ParsingError` or `RuntimeError` on `tok` with message constructed with given `fmt`.
@@ -141,6 +147,8 @@ static lexstate *alloc_lexer_from_buffer(VALUE string, rb_encoding *encoding, in
 }
 
 static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
+  os_signpost_event_emit(RBS_PARSER_METHODS_LOG, RBS_PARSER_METHODS_SIGNPOST_ID, "RBS::Parser#_parse_type");
+
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
   rb_encoding *encoding = rb_enc_get(string);
@@ -195,6 +203,8 @@ static VALUE parse_method_type_try(VALUE a) {
 }
 
 static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
+  os_signpost_event_emit(RBS_PARSER_METHODS_LOG, RBS_PARSER_METHODS_SIGNPOST_ID, "RBS::Parser#_parse_method_type");
+
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
   rb_encoding *encoding = rb_enc_get(string);
@@ -237,6 +247,8 @@ static VALUE parse_signature_try(VALUE a) {
 }
 
 static VALUE rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE end_pos) {
+  os_signpost_event_emit(RBS_PARSER_METHODS_LOG, RBS_PARSER_METHODS_SIGNPOST_ID, "RBS::Parser#_parse_signature");
+
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
   rb_encoding *encoding = rb_enc_get(string);
@@ -258,6 +270,8 @@ static VALUE rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE end_pos) 
 }
 
 static VALUE rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
+  os_signpost_event_emit(RBS_PARSER_METHODS_LOG, RBS_PARSER_METHODS_SIGNPOST_ID, "RBS::Parser#_lex");
+
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
   rb_encoding *encoding = rb_enc_get(string);
@@ -281,6 +295,12 @@ static VALUE rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
 }
 
 void rbs__init_parser(void) {
+  #ifdef RBS_MAC_OS_USE_SIGNPOSTS
+    RBS_PARSER_METHODS_LOG = os_log_create("org.ruby-lang.rbs.parser.methods", OS_LOG_CATEGORY_POINTS_OF_INTEREST);
+    RBS_PARSER_METHODS_SIGNPOST_ID = os_signpost_id_generate(RBS_PARSER_METHODS_LOG);
+    os_signpost_event_emit(RBS_PARSER_METHODS_LOG, RBS_PARSER_METHODS_SIGNPOST_ID, "Registering RBS::Parser class with Ruby VM");
+  #endif
+
   RBS_Parser = rb_define_class_under(RBS, "Parser", rb_cObject);
   rb_gc_register_mark_object(RBS_Parser);
   VALUE empty_array = rb_obj_freeze(rb_ary_new());
