@@ -121,11 +121,18 @@ void set_error(parserstate *state, token tok, bool syntax_error, const char *fmt
     return;
   }
 
-  char *message;
-
   va_list args;
   va_start(args, fmt);
-  vasprintf(&message, fmt, args);
+
+  va_list args_copy;
+  va_copy(args_copy, args);
+  int size = vsnprintf(NULL, 0, fmt, args_copy);
+  va_end(args_copy);
+  char *message = (char *)malloc(size + 1);
+  if (message) {
+    vsnprintf(message, size + 1, fmt, args);
+  }
+
   va_end(args);
 
   state->error = (error *)malloc(sizeof(error));
