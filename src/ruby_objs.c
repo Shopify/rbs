@@ -502,106 +502,6 @@ VALUE rbs_alias(VALUE name, VALUE args, VALUE location) {
   );
 }
 
-VALUE rbs_bases_any(VALUE todo, VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("todo")), todo);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Any,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_bool(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Bool,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_bottom(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Bottom,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_class(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Class,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_instance(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Instance,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_nil(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Nil,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_self(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Self,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_top(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Top,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_bases_void(VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Bases_Void,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
@@ -734,30 +634,6 @@ VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type) {
   );
 }
 
-VALUE rbs_record(VALUE all_fields, VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("all_fields")), all_fields);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Record,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_tuple(VALUE types, VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Tuple,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_union(VALUE types, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types);
@@ -776,18 +652,6 @@ VALUE rbs_untyped_function(VALUE return_type) {
 
   return CLASS_NEW_INSTANCE(
     RBS_Types_UntypedFunction,
-    1,
-    &_init_kwargs
-  );
-}
-
-VALUE rbs_variable(VALUE name, VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Variable,
     1,
     &_init_kwargs
   );

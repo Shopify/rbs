@@ -247,40 +247,31 @@ nodes:
       - name: args
       - name: location
   - name: RBS::Types::Bases::Any
-    generate_ruby_obj: true
     fields:
       - name: todo
       - name: location
   - name: RBS::Types::Bases::Bool
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Bottom
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Class
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Instance
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Nil
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Self
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Top
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Void
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Block
@@ -346,12 +337,10 @@ nodes:
       - name: location
       - name: self_type
   - name: RBS::Types::Record
-    generate_ruby_obj: true
     fields:
       - name: all_fields
       - name: location
   - name: RBS::Types::Tuple
-    generate_ruby_obj: true
     fields:
       - name: types
       - name: location
@@ -365,7 +354,6 @@ nodes:
     fields:
       - name: return_type
   - name: RBS::Types::Variable
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: location

@@ -44,15 +44,6 @@ VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location
 VALUE rbs_namespace(VALUE path, VALUE absolute);
 VALUE rbs_type_name(VALUE namespace, VALUE name);
 VALUE rbs_alias(VALUE name, VALUE args, VALUE location);
-VALUE rbs_bases_any(VALUE todo, VALUE location);
-VALUE rbs_bases_bool(VALUE location);
-VALUE rbs_bases_bottom(VALUE location);
-VALUE rbs_bases_class(VALUE location);
-VALUE rbs_bases_instance(VALUE location);
-VALUE rbs_bases_nil(VALUE location);
-VALUE rbs_bases_self(VALUE location);
-VALUE rbs_bases_top(VALUE location);
-VALUE rbs_bases_void(VALUE location);
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type);
 VALUE rbs_class_instance(VALUE name, VALUE args, VALUE location);
 VALUE rbs_class_singleton(VALUE name, VALUE location);
@@ -63,10 +54,7 @@ VALUE rbs_intersection(VALUE types, VALUE location);
 VALUE rbs_literal(VALUE literal, VALUE location);
 VALUE rbs_optional(VALUE type, VALUE location);
 VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type);
-VALUE rbs_record(VALUE all_fields, VALUE location);
-VALUE rbs_tuple(VALUE types, VALUE location);
 VALUE rbs_union(VALUE types, VALUE location);
 VALUE rbs_untyped_function(VALUE return_type);
-VALUE rbs_variable(VALUE name, VALUE location);
 
 #endif
