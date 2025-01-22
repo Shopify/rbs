@@ -26,7 +26,11 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
 
             VALUE _init_kwargs = rb_hash_new();
             <%- node.fields.each do |field| -%>
+            <%- if field.c_type == "VALUE" -%>
             rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("<%= field.name %>")), node-><%= field.name %>);
+            <%- else -%>
+            rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("<%= field.name %>")), rbs_struct_to_ruby_value(node-><%= field.name %>));
+            <%- end -%>
             <%- end -%>
 
             VALUE obj = CLASS_NEW_INSTANCE(
@@ -40,7 +44,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             // Now that we have created the Ruby object to hold the inner VALUE objects the GC won't collect them until
             // the Ruby instance is collected.
             <%- node.fields.each do |field| -%>
+            <%- if field.c_type == "VALUE" -%>
             rb_gc_unregister_address(&node-><%= field.name %>);
+            <%- end -%>
             <%- end -%>
 
             free(instance);

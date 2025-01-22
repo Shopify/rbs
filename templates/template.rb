@@ -12,7 +12,23 @@ module RBS
 
       def initialize(yaml)
         @name = yaml["name"]
-        @c_type = "VALUE"
+        @c_type = yaml["c_type"] || "VALUE"
+      end
+
+      def parameter_decl
+        if @c_type == "VALUE"
+          "#{@c_type} #{@name}"
+        else
+          "#{@c_type}_t *#{@name}"
+        end
+      end
+
+      def stored_field_decl
+        if @c_type == "VALUE"
+          "VALUE #{@name}"
+        else
+          "struct #{@c_type} *#{@name}"
+        end
       end
     end
 

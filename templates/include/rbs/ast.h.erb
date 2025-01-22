@@ -25,7 +25,7 @@ typedef struct <%= node.c_base_name %> {
     rbs_node_t base;
 
     <%- node.fields.each do |field| -%>
-    VALUE <%= field.name %>;
+    <%= field.stored_field_decl %>;
     <%- end -%>
 } <%= node.c_type_name %>;
 
@@ -44,7 +44,7 @@ typedef struct {
 } rbs_node_instance_wrapper_t;
 
 <%- nodes.each do |node| -%>
-<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.fields.map { |field| "VALUE #{field.name}" }.join(", ") %>);
+<%= node.c_type_name %> *<%= node.c_constructor_function_name %>(<%= node.fields.map(&:parameter_decl).join(", ") %>);
 <%- end -%>
 
 rbs_node_instance_wrapper_t *rbs_node_instance_wrapper_new(VALUE instance);
