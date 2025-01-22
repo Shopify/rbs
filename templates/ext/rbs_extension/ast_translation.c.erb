@@ -55,7 +55,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
         }
         <%- end -%>
         case RBS_NODE_INSTANCE_WRAPPER: {
-            return ((rbs_node_instance_wrapper_t *)instance)->instance;
+            rbs_node_instance_wrapper_t *wrapper = (rbs_node_instance_wrapper_t *)instance;
+            rb_gc_unregister_address(&wrapper->instance);
+            return wrapper->instance;
         }
     }
 

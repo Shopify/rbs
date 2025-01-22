@@ -284,6 +284,7 @@ nodes:
   - name: RBS::Types::Optional
     fields:
       - name: type
+        c_type: rbs_node
       - name: location
   - name: RBS::Types::Proc
     fields:

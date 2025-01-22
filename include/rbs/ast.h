@@ -520,7 +520,7 @@ typedef struct rbs_types_literal {
 typedef struct rbs_types_optional {
     rbs_node_t base;
 
-    VALUE type;
+    struct rbs_node *type;
     VALUE location;
 } rbs_types_optional_t;
 
@@ -631,7 +631,7 @@ rbs_types_function_param_t *rbs_types_function_param_new(VALUE type, VALUE name,
 rbs_types_interface_t *rbs_types_interface_new(VALUE name, VALUE args, VALUE location);
 rbs_types_intersection_t *rbs_types_intersection_new(VALUE types, VALUE location);
 rbs_types_literal_t *rbs_types_literal_new(VALUE literal, VALUE location);
-rbs_types_optional_t *rbs_types_optional_new(VALUE type, VALUE location);
+rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, VALUE location);
 rbs_types_proc_t *rbs_types_proc_new(VALUE type, VALUE block, VALUE location, VALUE self_type);
 rbs_types_record_t *rbs_types_record_new(VALUE all_fields, VALUE location);
 rbs_types_tuple_t *rbs_types_tuple_new(VALUE types, VALUE location);

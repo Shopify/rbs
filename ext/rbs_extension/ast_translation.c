@@ -1411,7 +1411,7 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             rbs_types_optional_t *node = (rbs_types_optional_t *)instance;
 
             VALUE _init_kwargs = rb_hash_new();
-            rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), node->type);
+            rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), rbs_struct_to_ruby_value(node->type));
             rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), node->location);
 
             VALUE obj = CLASS_NEW_INSTANCE(
@@ -1424,7 +1424,6 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             // Unmark the fields we previously marked as live during the node C struct creation (see `ast.c.erb`).
             // Now that we have created the Ruby object to hold the inner VALUE objects the GC won't collect them until
             // the Ruby instance is collected.
-            rb_gc_unregister_address(&node->type);
             rb_gc_unregister_address(&node->location);
 
             free(instance);
@@ -1578,7 +1577,9 @@ VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
             return obj;
         }
         case RBS_NODE_INSTANCE_WRAPPER: {
-            return ((rbs_node_instance_wrapper_t *)instance)->instance;
+            rbs_node_instance_wrapper_t *wrapper = (rbs_node_instance_wrapper_t *)instance;
+            rb_gc_unregister_address(&wrapper->instance);
+            return wrapper->instance;
         }
     }
 

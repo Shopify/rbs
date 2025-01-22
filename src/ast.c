@@ -1235,7 +1235,7 @@ rbs_types_literal_t *rbs_types_literal_new(VALUE literal, VALUE location) {
     return instance;
 }
 
-rbs_types_optional_t *rbs_types_optional_new(VALUE type, VALUE location) {
+rbs_types_optional_t *rbs_types_optional_new(rbs_node_t *type, VALUE location) {
     rbs_types_optional_t *instance = malloc(sizeof(rbs_types_optional_t));
 
     *instance = (rbs_types_optional_t) {
@@ -1250,7 +1250,6 @@ rbs_types_optional_t *rbs_types_optional_new(VALUE type, VALUE location) {
     // We need to mark the fields as live so that the GC doesn't free them until we actually create the Ruby object
     // that will own them. The fields are unmarked in `rbs_struct_to_ruby_value` where we create the final Ruby object
     // and free the intermediate C struct.
-    rb_gc_register_address(&instance->type);
     rb_gc_register_address(&instance->location);
 
     return instance;
@@ -1394,6 +1393,8 @@ rbs_node_instance_wrapper_t *rbs_node_instance_wrapper_new(VALUE instance) {
         },
         .instance = instance
     };
+
+    rb_gc_register_address(&instance_wrapper->instance);
 
     return instance_wrapper;
 }

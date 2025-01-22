@@ -39,5 +39,7 @@ rbs_node_instance_wrapper_t *rbs_node_instance_wrapper_new(VALUE instance) {
         .instance = instance
     };
 
+    rb_gc_register_address(&instance_wrapper->instance);
+
     return instance_wrapper;
 }

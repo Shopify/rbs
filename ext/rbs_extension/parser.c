@@ -598,15 +598,19 @@ static VALUE parse_optional(parserstate *state) {
   rg.start = state->next_token.range.start;
 
   rbs_node_t *type_node = parse_simple(state);
-  VALUE type = rbs_struct_to_ruby_value(type_node);
 
   if (state->next_token.type == pQUESTION) {
     parser_advance(state);
     rg.end = state->current_token.range.end;
     VALUE location = rbs_new_location(state->buffer, rg);
-    return rbs_optional(type, location);
+    rbs_node_t* optional_node = (rbs_node_t*)rbs_types_optional_new(type_node, location);
+    VALUE value = rbs_struct_to_ruby_value(optional_node);
+    rb_gc_register_mark_object(value);
+    return value;
   } else {
-    return type;
+    VALUE value = rbs_struct_to_ruby_value(type_node);
+    rb_gc_register_mark_object(value);
+    return value;
   }
 }
 
