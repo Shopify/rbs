@@ -11,7 +11,7 @@
 #endif
 
 <%- nodes.each do |node| -%>
-VALUE <%= node.c_function_name %>(<%= node.fields.map { |field| "#{field.c_type} #{field.name}" }.join(", ") %>) {
+VALUE <%= node.c_function_name %>(<%= node.fields.map { |field| "VALUE #{field.name}" }.join(", ") %>) {
   VALUE _init_kwargs = rb_hash_new();
   <%- node.fields.each do |field| -%>
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("<%= field.name %>")), <%= field.name %>);
