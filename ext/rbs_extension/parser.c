@@ -2939,9 +2939,12 @@ static VALUE
 rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
-  lexstate *lexer = alloc_lexer(string, 0, FIX2INT(end_pos));
-  VALUE results = rb_ary_new();
 
+  rbs_allocator_t allocator;
+  rbs_allocator_init(&allocator);
+  lexstate *lexer = alloc_lexer(&allocator, string, 0, FIX2INT(end_pos));
+
+  VALUE results = rb_ary_new();
   token token = NullToken;
   while (token.type != pEOF) {
     token = rbsparser_next_token(lexer);
@@ -2951,7 +2954,7 @@ rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
     rb_ary_push(results, pair);
   }
 
-  free(lexer);
+  rbs_allocator_free(&allocator);
 
   return results;
 }
