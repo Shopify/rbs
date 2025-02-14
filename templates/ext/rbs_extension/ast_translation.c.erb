@@ -1,0 +1,5 @@
+#include "ast_translation.h"
+
+VALUE rbs_struct_to_ruby_value(rbs_node_t *instance) {
+    return instance->cached_ruby_value;
+}
