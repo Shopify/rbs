@@ -25,6 +25,8 @@ module RBS
           "#{@c_type} #{c_name}"
         when "rbs_string"
           "rbs_string_t #{c_name}"
+        when ->(c_type) { c_type.include?("_t") }
+          "#{c_type}#{c_name}"
         else
           "#{@c_type}_t *#{c_name}"
         end
@@ -101,7 +103,10 @@ module RBS
 
         @fields = yaml.fetch("fields", []).map { |field| Field.from_hash(field) }.freeze
 
-        @constructor_params = [Field.new(name: "ruby_value", c_type: "VALUE")]
+        @constructor_params = [
+          Field.new(name: "allocator",  c_type: "rbs_allocator_t *"),
+          Field.new(name: "ruby_value", c_type: "VALUE"),
+        ]
         @constructor_params.concat @fields
         @constructor_params.freeze
       end
