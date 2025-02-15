@@ -16,6 +16,10 @@ VALUE rbs_node_list_to_ruby_array(rbs_node_list_t *list) {
     return list->cached_ruby_value;
 }
 
+VALUE rbs_hash_to_ruby_hash(rbs_hash_t *hash) {
+    return hash->cached_ruby_value;
+}
+
 VALUE rbs_loc_to_ruby_location(rbs_location_t *loc) {
   return loc->cached_ruby_value;
 }
