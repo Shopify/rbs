@@ -158,7 +158,7 @@ static rbs_typename_t *parse_type_name(parserstate *state, TypeNameKind kind, ra
     parser_advance_no_gap(state);
   }
 
-  rbs_node_list_t *path = rbs_node_list_new();
+  rbs_node_list_t *path = rbs_node_list_new(&state->allocator);
 
   while (
     state->current_token.type == tUIDENT
@@ -595,12 +595,12 @@ static rbs_node_t *parse_optional(parserstate *state) {
   }
 }
 
-static void initialize_method_params(method_params *params){
+static void initialize_method_params(method_params *params, rbs_allocator_t *allocator) {
   *params = (method_params) {
-    .required_positionals = rbs_node_list_new(),
-    .optional_positionals = rbs_node_list_new(),
+    .required_positionals = rbs_node_list_new(allocator),
+    .optional_positionals = rbs_node_list_new(allocator),
     .rest_positionals = NULL,
-    .trailing_positionals = rbs_node_list_new(),
+    .trailing_positionals = rbs_node_list_new(allocator),
     .required_keywords = rb_hash_new(),
     .optional_keywords = rb_hash_new(),
     .rest_keywords = NULL,
@@ -642,7 +642,7 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
   rbs_types_block_t *block = NULL;
   rbs_node_t *function_self_type = NULL;
   method_params params;
-  initialize_method_params(&params);
+  initialize_method_params(&params, &state->allocator);
 
   if (state->next_token.type == pLPAREN) {
     parser_advance(state);
@@ -672,7 +672,7 @@ static parse_function_result parse_function(parserstate *state, bool accept_type
     parser_advance(state);
 
     method_params block_params;
-    initialize_method_params(&block_params);
+    initialize_method_params(&block_params, &state->allocator);
 
     if (state->next_token.type == pLPAREN) {
       parser_advance(state);
@@ -907,7 +907,7 @@ static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
 
     range name_range;
     rbs_typename_t *typename = parse_type_name(state, expected_kind, &name_range);
-    rbs_node_list_t *types = rbs_node_list_new();
+    rbs_node_list_t *types = rbs_node_list_new(&state->allocator);
 
     TypeNameKind kind;
     if (state->current_token.type == tUIDENT) {
@@ -1089,7 +1089,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
   case pLBRACKET: {
     range rg;
     rg.start = state->current_token.range.start;
-    rbs_node_list_t *types = rbs_node_list_new();
+    rbs_node_list_t *types = rbs_node_list_new(&state->allocator);
     if (state->next_token.type != pRBRACKET) {
       parse_type_list(state, pRBRACKET, types);
     }
@@ -1101,7 +1101,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
   }
   case pAREF_OPR: {
     rbs_location_t *loc = rbs_location_current_token(state);
-    rbs_node_list_t *types = rbs_node_list_new();
+    rbs_node_list_t *types = rbs_node_list_new(&state->allocator);
     return (rbs_node_t *) rbs_types_tuple_new(&state->allocator, types, loc);
   }
   case pLBRACE: {
@@ -1133,7 +1133,7 @@ static rbs_node_t *parse_intersection(parserstate *state) {
   range rg;
   rg.start = state->next_token.range.start;
   rbs_node_t *type = parse_optional(state);
-  rbs_node_list_t *intersection_types = rbs_node_list_new();
+  rbs_node_list_t *intersection_types = rbs_node_list_new(&state->allocator);
 
   rbs_node_list_append(intersection_types, type);
   while (state->next_token.type == pAMP) {
@@ -1160,7 +1160,7 @@ rbs_node_t *parse_type(parserstate *state) {
   rg.start = state->next_token.range.start;
 
   rbs_node_t *type = parse_intersection(state);
-  rbs_node_list_t *union_types = rbs_node_list_new();
+  rbs_node_list_t *union_types = rbs_node_list_new(&state->allocator);
 
   rbs_node_list_append(union_types, type);
   while (state->next_token.type == pBAR) {
@@ -1187,7 +1187,7 @@ rbs_node_t *parse_type(parserstate *state) {
   type_param ::= tUIDENT upper_bound? default_type?                           (module_type_params == false)
 */
 static rbs_node_list_t *parse_type_params(parserstate *state, range *rg, bool module_type_params) {
-  rbs_node_list_t *params = rbs_node_list_new();
+  rbs_node_list_t *params = rbs_node_list_new(&state->allocator);
 
   bool required_param_allowed = true;
 
@@ -1682,12 +1682,12 @@ static rbs_ast_members_methoddefinition_t *parse_member_def(parserstate *state, 
 
   parser_push_typevar_table(state, kind != INSTANCE_KIND);
 
-  rbs_node_list_t *overloads = rbs_node_list_new();
+  rbs_node_list_t *overloads = rbs_node_list_new(&state->allocator);
   bool overloading = false;
   range overloading_range = NULL_RANGE;
   bool loop = true;
   while (loop) {
-    rbs_node_list_t *annotations = rbs_node_list_new();
+    rbs_node_list_t *annotations = rbs_node_list_new(&state->allocator);
     position overload_annot_pos = NullPosition;
 
     if (state->next_token.type == tANNOTATION) {
@@ -1834,7 +1834,7 @@ static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, p
 
   parser_push_typevar_table(state, reset_typevar_scope);
 
-  rbs_node_list_t *args = rbs_node_list_new();
+  rbs_node_list_t *args = rbs_node_list_new(&state->allocator);
   range name_range;
   range args_range = NULL_RANGE;
   rbs_typename_t *name = class_instance_name(
@@ -2151,10 +2151,10 @@ static rbs_node_t *parse_attribute_member(parserstate *state, position comment_p
                      | alias_member   (instance only)
 */
 static rbs_node_list_t *parse_interface_members(parserstate *state) {
-  rbs_node_list_t *members = rbs_node_list_new();
+  rbs_node_list_t *members = rbs_node_list_new(&state->allocator);
 
   while (state->next_token.type != kEND) {
-    rbs_node_list_t *annotations = rbs_node_list_new();
+    rbs_node_list_t *annotations = rbs_node_list_new(&state->allocator);
     position annot_pos = NullPosition;
 
     parse_annotations(state, annotations, &annot_pos);
@@ -2250,7 +2250,7 @@ static void parse_module_self_types(parserstate *state, rbs_node_list_t *array) 
     rbs_typename_t *module_name = parse_type_name(state, CLASS_NAME | INTERFACE_NAME, &name_range);
     self_range.end = name_range.end;
 
-    rbs_node_list_t *args = rbs_node_list_new();
+    rbs_node_list_t *args = rbs_node_list_new(&state->allocator);
     range args_range = NULL_RANGE;
     if (state->next_token.type == pLBRACKET) {
       parser_advance(state);
@@ -2290,10 +2290,10 @@ static rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, 
                   | `private`
 */
 static rbs_node_list_t *parse_module_members(parserstate *state) {
-  rbs_node_list_t *members = rbs_node_list_new();
+  rbs_node_list_t *members = rbs_node_list_new(&state->allocator);
 
   while (state->next_token.type != kEND) {
-    rbs_node_list_t *annotations = rbs_node_list_new();
+    rbs_node_list_t *annotations = rbs_node_list_new(&state->allocator);
 
     position annot_pos = NullPosition;
     parse_annotations(state, annotations, &annot_pos);
@@ -2381,7 +2381,7 @@ static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, ran
   range type_params_range;
   rbs_node_list_t *type_params = parse_type_params(state, &type_params_range, true);
 
-  rbs_node_list_t *self_types = rbs_node_list_new();
+  rbs_node_list_t *self_types = rbs_node_list_new(&state->allocator);
   range colon_range;
   range self_types_range;
   if (state->next_token.type == pCOLON) {
@@ -2467,7 +2467,7 @@ static rbs_ast_declarations_class_super_t *parse_class_decl_super(parserstate *s
     range super_range;
     super_range.start = state->next_token.range.start;
 
-    rbs_node_list_t *args = rbs_node_list_new();
+    rbs_node_list_t *args = rbs_node_list_new(&state->allocator);
     range name_range, args_range;
     rbs_typename_t *name = class_instance_name(state, CLASS_NAME, args, &name_range, &args_range);
 
@@ -2613,7 +2613,7 @@ static rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, 
 }
 
 static rbs_node_t *parse_decl(parserstate *state) {
-  rbs_node_list_t *annotations = rbs_node_list_new();
+  rbs_node_list_t *annotations = rbs_node_list_new(&state->allocator);
   position annot_pos = NullPosition;
 
   parse_annotations(state, annotations, &annot_pos);
@@ -2665,7 +2665,7 @@ static rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
     parser_advance(state);
   }
 
-  rbs_node_list_t *path = rbs_node_list_new();
+  rbs_node_list_t *path = rbs_node_list_new(&state->allocator);
 
   while (true) {
     if (state->next_token.type == tUIDENT && state->next_token2.type == pCOLON2) {
@@ -2787,7 +2787,7 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
 
     range keyword_range = state->current_token.range;
 
-    rbs_node_list_t *clauses = rbs_node_list_new();
+    rbs_node_list_t *clauses = rbs_node_list_new(&state->allocator);
     parse_use_clauses(state, clauses);
 
     range directive_range = keyword_range;
@@ -2804,10 +2804,10 @@ static rbs_ast_directives_use_t *parse_use_directive(parserstate *state) {
 }
 
 rbs_node_list_t *parse_signature(parserstate *state) {
-  rbs_node_list_t *dir_nodes = rbs_node_list_new();
+  rbs_node_list_t *dir_nodes = rbs_node_list_new(&state->allocator);
   rbs_ast_directives_nodes_t *dirs = rbs_ast_directives_nodes_new(&state->allocator, dir_nodes->cached_ruby_value, dir_nodes);
 
-  rbs_node_list_t *decl_nodes = rbs_node_list_new();
+  rbs_node_list_t *decl_nodes = rbs_node_list_new(&state->allocator);
   rbs_ast_declarations_nodes_t *decls = rbs_ast_declarations_nodes_new(&state->allocator, decl_nodes->cached_ruby_value, decl_nodes);
 
   while (state->next_token.type == kUSE) {
@@ -2824,7 +2824,7 @@ rbs_node_list_t *parse_signature(parserstate *state) {
     rbs_node_list_append(decl_nodes, decl);
   }
 
-  rbs_node_list_t *ret = rbs_node_list_new();
+  rbs_node_list_t *ret = rbs_node_list_new(&state->allocator);
   rbs_node_list_append(ret, (rbs_node_t *)dirs);
   rbs_node_list_append(ret, (rbs_node_t *)decls);
   return ret;

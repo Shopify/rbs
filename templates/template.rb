@@ -61,7 +61,7 @@ module RBS
           @name
         when "bool"
           "#{@name} ? Qtrue : Qfalse"
-        when "rbs_node", "rbs_node_list", "rbs_location"
+        when "rbs_node", "rbs_node_list", "rbs_location", "rbs_hash"
           "#{@name} == NULL ? Qnil : #{@name}->cached_ruby_value"
         else
           "#{@name} == NULL ? Qnil : #{@name}->base.cached_ruby_value"
