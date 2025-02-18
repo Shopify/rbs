@@ -51,7 +51,6 @@ VALUE rbs_function_param(VALUE type, VALUE name, VALUE location);
 VALUE rbs_interface(VALUE name, VALUE args, VALUE location);
 VALUE rbs_intersection(VALUE types, VALUE location);
 VALUE rbs_literal(VALUE literal, VALUE location);
-VALUE rbs_optional(VALUE type, VALUE location);
 VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type);
 VALUE rbs_union(VALUE types, VALUE location);
 VALUE rbs_untyped_function(VALUE return_type);

@@ -88,7 +88,7 @@ static VALUE rbs_location_current_token(parserstate *state) {
   );
 }
 
-static VALUE parse_optional(parserstate *state);
+static rbs_node_t *parse_optional(parserstate *state);
 static rbs_node_t *parse_simple(parserstate *state);
 
 static VALUE string_of_loc(parserstate *state, position start, position end) {
@@ -593,18 +593,18 @@ EOP:
   optional ::= {} <simple_type>
              | {} simple_type <`?`>
 */
-static VALUE parse_optional(parserstate *state) {
+static rbs_node_t *parse_optional(parserstate *state) {
   range rg;
   rg.start = state->next_token.range.start;
 
-  rbs_node_t *type_node = parse_simple(state);
-  VALUE type = rbs_struct_to_ruby_value(type_node);
+  rbs_node_t *type = parse_simple(state);
 
   if (state->next_token.type == pQUESTION) {
     parser_advance(state);
     rg.end = state->current_token.range.end;
     VALUE location = rbs_new_location(state->buffer, rg);
-    return rbs_optional(type, location);
+    VALUE value_type = rbs_struct_to_ruby_value(type);
+    return (rbs_node_t *)rbs_types_optional_new(value_type, location);
   } else {
     return type;
   }
@@ -689,11 +689,11 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
     VALUE block_self_type = parse_self_type_binding(state);
 
     parser_advance_assert(state, pARROW);
-    VALUE block_return_type = parse_optional(state);
+    rbs_node_t *block_return_type = parse_optional(state);
 
     VALUE block_function = Qnil;
     if (rbs_is_untyped_params(&block_params)) {
-      block_function = rbs_untyped_function(block_return_type);
+      block_function = rbs_untyped_function(rbs_struct_to_ruby_value(block_return_type));
     } else {
       block_function = rbs_function(
         block_params.required_positionals,
@@ -703,7 +703,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
         block_params.required_keywords,
         block_params.optional_keywords,
         block_params.rest_keywords,
-        block_return_type
+        rbs_struct_to_ruby_value(block_return_type)
       );
     }
 
@@ -713,10 +713,10 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
   }
 
   parser_advance_assert(state, pARROW);
-  VALUE type = parse_optional(state);
+  rbs_node_t *type = parse_optional(state);
 
   if (rbs_is_untyped_params(&params)) {
-    *function = rbs_untyped_function(type);
+    *function = rbs_untyped_function(rbs_struct_to_ruby_value(type));
   } else {
     *function = rbs_function(
       params.required_positionals,
@@ -726,7 +726,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       params.required_keywords,
       params.optional_keywords,
       params.rest_keywords,
-      type
+      rbs_struct_to_ruby_value(type)
     );
   }
 }
@@ -1112,23 +1112,23 @@ static VALUE parse_intersection(parserstate *state) {
   range rg;
   rg.start = state->next_token.range.start;
 
-  VALUE type = parse_optional(state);
+  rbs_node_t *type = parse_optional(state);
   VALUE intersection_types = rb_ary_new();
 
-  rb_ary_push(intersection_types, type);
+  rb_ary_push(intersection_types, rbs_struct_to_ruby_value(type));
   while (state->next_token.type == pAMP) {
     parser_advance(state);
-    rb_ary_push(intersection_types, parse_optional(state));
+    rb_ary_push(intersection_types, rbs_struct_to_ruby_value(parse_optional(state)));
   }
 
   rg.end = state->current_token.range.end;
 
   if (rb_array_len(intersection_types) > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
-    type = rbs_intersection(intersection_types, location);
+    return rbs_intersection(intersection_types, location);
   }
 
-  return type;
+  return rb_ary_entry(intersection_types, 0);
 }
 
 /*
