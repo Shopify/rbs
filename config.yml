@@ -133,7 +133,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::ClassVariable
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
