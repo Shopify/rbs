@@ -28,7 +28,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Constant
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
