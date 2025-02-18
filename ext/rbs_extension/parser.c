@@ -646,7 +646,7 @@ static VALUE parse_self_type_binding(parserstate *state) {
              | {} self_type_binding? `{` self_type_binding `->` optional `}` `->` <optional>
              | {} self_type_binding? `->` <optional>
 */
-static void parse_function(parserstate *state, VALUE *function, VALUE *block, VALUE *function_self_type) {
+static void parse_function(parserstate *state, VALUE *function, rbs_types_block_t **block, VALUE *function_self_type) {
   method_params params;
   initialize_method_params(&params);
 
@@ -707,7 +707,7 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       );
     }
 
-    *block = rbs_block(block_function, required, block_self_type);
+    *block = rbs_types_block_new(block_function, required, block_self_type);
 
     parser_advance_assert(state, pRBRACE);
   }
@@ -737,13 +737,13 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
 static VALUE parse_proc_type(parserstate *state) {
   position start = state->current_token.range.start;
   VALUE function = Qnil;
-  VALUE block = Qnil;
+  rbs_types_block_t *block = NULL;
   VALUE proc_self = Qnil;
   parse_function(state, &function, &block, &proc_self);
   position end = state->current_token.range.end;
   VALUE loc = rbs_location_pp(state->buffer, &start, &end);
 
-  return rbs_proc(function, block, loc, proc_self);
+  return rbs_proc(function, rbs_struct_to_ruby_value((rbs_node_t *)block), loc, proc_self);
 }
 
 static void check_key_duplication(parserstate *state, VALUE fields, VALUE key) {
@@ -1310,7 +1310,7 @@ rbs_method_type_t *parse_method_type(parserstate *state) {
   type_range.start = state->next_token.range.start;
 
   VALUE function = Qnil;
-  VALUE block = Qnil;
+  rbs_types_block_t *block = NULL;
   parse_function(state, &function, &block, NULL);
 
   rg.end = state->current_token.range.end;
@@ -1327,7 +1327,7 @@ rbs_method_type_t *parse_method_type(parserstate *state) {
   return rbs_method_type_new(
     type_params,
     function,
-    block,
+    rbs_struct_to_ruby_value((rbs_node_t *)block),
     location
   );
 }

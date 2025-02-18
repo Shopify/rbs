@@ -241,7 +241,6 @@ nodes:
     fields:
       - name: location
   - name: RBS::Types::Block
-    generate_ruby_obj: true
     fields:
       - name: type
       - name: required
