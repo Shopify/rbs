@@ -1264,7 +1264,7 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
       rbs_loc_add_optional_child(loc, INTERN("upper_bound"), upper_bound_range);
       rbs_loc_add_optional_child(loc, INTERN("default"), default_type_range);
 
-      VALUE param = rbs_ast_type_param(name, variance, upper_bound, default_type, unchecked, location);
+      VALUE param = rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_type_param_new(name, variance, upper_bound, default_type, unchecked, location));
 
       melt_array(&params);
       rb_ary_push(params, param);

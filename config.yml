@@ -186,7 +186,6 @@ nodes:
     fields:
       - name: location
   - name: RBS::AST::TypeParam
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: variance
