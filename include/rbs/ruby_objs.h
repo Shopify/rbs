@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_ast_directives_use(VALUE clauses, VALUE location);
 VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALUE location);
 VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location);
 VALUE rbs_ast_members_alias(VALUE new_name, VALUE old_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment);

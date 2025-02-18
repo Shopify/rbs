@@ -76,7 +76,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Directives::Use
-    generate_ruby_obj: true
     fields:
       - name: clauses
       - name: location
