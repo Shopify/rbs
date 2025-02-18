@@ -34,7 +34,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Global
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
