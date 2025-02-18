@@ -246,7 +246,6 @@ nodes:
       - name: required
       - name: self_type
   - name: RBS::Types::ClassInstance
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args

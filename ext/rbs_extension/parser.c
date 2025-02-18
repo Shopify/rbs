@@ -918,7 +918,7 @@ static VALUE parse_instance_type(parserstate *state, bool parse_alias) {
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
     if (kind == CLASS_NAME) {
-      return rbs_class_instance(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
+      return rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_class_instance_new(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location));
     } else if (kind == INTERFACE_NAME) {
       return rbs_interface(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
     } else if (kind == ALIAS_NAME) {
