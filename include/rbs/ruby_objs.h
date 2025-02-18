@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_ast_members_method_definition(VALUE name, VALUE kind, VALUE overloads, VALUE annotations, VALUE location, VALUE comment, VALUE overloading, VALUE visibility);
 VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type);
 VALUE rbs_ast_members_prepend(VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_members_private(VALUE location);

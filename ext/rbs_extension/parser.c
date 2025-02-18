@@ -1626,7 +1626,7 @@ static InstanceSingletonKind parse_instance_singleton_kind(parserstate *state, b
  * @param instance_only `true` to reject singleton method definition.
  * @param accept_overload `true` to accept overloading (...) definition.
  * */
-static VALUE parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, VALUE annotations) {
+static rbs_ast_members_method_definition_t *parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, VALUE annotations) {
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
@@ -1765,7 +1765,7 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
   rbs_loc_add_optional_child(loc, INTERN("overloading"), overloading_range);
   rbs_loc_add_optional_child(loc, INTERN("visibility"), visibility_range);
 
-  return rbs_ast_members_method_definition(
+  return rbs_ast_members_method_definition_new(
     name,
     k,
     overloads,
@@ -2184,7 +2184,7 @@ static VALUE parse_interface_members(parserstate *state) {
     VALUE member;
     switch (state->current_token.type) {
     case kDEF: {
-      member = parse_member_def(state, true, true, annot_pos, annotations);
+      member = rbs_struct_to_ruby_value((rbs_node_t *)parse_member_def(state, true, true, annot_pos, annotations));
       break;
     }
 
@@ -2330,7 +2330,7 @@ static VALUE parse_module_members(parserstate *state) {
     switch (state->current_token.type)
     {
     case kDEF: {
-      member = parse_member_def(state, false, true, annot_pos, annotations);
+      member = rbs_struct_to_ruby_value((rbs_node_t *)parse_member_def(state, false, true, annot_pos, annotations));
       break;
     }
 
@@ -2366,7 +2366,7 @@ static VALUE parse_module_members(parserstate *state) {
         switch (state->next_token.type)
         {
         case kDEF: {
-          member = parse_member_def(state, false, true, annot_pos, annotations);
+          member = rbs_struct_to_ruby_value((rbs_node_t *)parse_member_def(state, false, true, annot_pos, annotations));
           break;
         }
         case kATTRREADER:
