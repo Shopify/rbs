@@ -1867,7 +1867,7 @@ static VALUE parse_mixin_member(parserstate *state, bool from_interface, positio
   switch (type)
   {
   case kINCLUDE:
-    return rbs_ast_members_include(name, args, annotations, location, comment);
+    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_include_new(name, args, annotations, location, comment));
   case kEXTEND:
     return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_extend_new(name, args, annotations, location, comment));
   case kPREPEND:

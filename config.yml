@@ -146,7 +146,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Include
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
