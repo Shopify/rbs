@@ -279,7 +279,6 @@ nodes:
       - name: types
       - name: location
   - name: RBS::Types::Literal
-    generate_ruby_obj: true
     fields:
       - name: literal
       - name: location

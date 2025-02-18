@@ -827,7 +827,7 @@ static VALUE parse_record_attributes(parserstate *state) {
 /*
   symbol ::= {<tSYMBOL>}
 */
-static VALUE parse_symbol(parserstate *state) {
+static rbs_types_literal_t *parse_symbol(parserstate *state) {
   VALUE string = state->lexstate->string;
   rb_encoding *enc = rb_enc_get(string);
 
@@ -856,7 +856,7 @@ static VALUE parse_symbol(parserstate *state) {
     rbs_abort();
   }
 
-  return rbs_literal(
+  return rbs_types_literal_new(
     literal,
     rbs_location_current_token(state)
   );
@@ -1034,8 +1034,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
   case tSYMBOL:
   case tSQSYMBOL:
   case tDQSYMBOL: {
-    VALUE symbol = parse_symbol(state);
-    return (rbs_node_t *)rbs_node_instance_wrapper_new(symbol);
+    return (rbs_node_t *)parse_symbol(state);
   }
   case tUIDENT: {
     const char *name_str = peek_token(state->lexstate, state->current_token);
