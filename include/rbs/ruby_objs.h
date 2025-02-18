@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_ast_decl_class_super(VALUE name, VALUE args, VALUE location);
 VALUE rbs_ast_decl_class_alias(VALUE new_name, VALUE old_name, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_constant(VALUE name, VALUE type, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_global(VALUE name, VALUE type, VALUE location, VALUE comment);

@@ -17,7 +17,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Class::Super
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
