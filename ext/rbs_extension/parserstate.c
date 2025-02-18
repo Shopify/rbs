@@ -1,4 +1,6 @@
 #include "rbs_extension.h"
+#include "ast_translation.h"
+#include "rbs/ast.h"
 #include "rbs/util/rbs_constant_pool.h"
 
 #define RESET_TABLE_P(table) (table->size == 0)
@@ -282,10 +284,12 @@ VALUE comment_to_ruby(comment *com, VALUE buffer) {
     rb_str_cat_cstr(string, "\n");
   }
 
-  return rbs_ast_comment(
+  rbs_ast_comment_t *comment = rbs_ast_comment_new(
     string,
     rbs_location_pp(buffer, &com->start, &com->end)
   );
+
+  return rbs_struct_to_ruby_value((rbs_node_t *)comment);
 }
 
 lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {

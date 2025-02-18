@@ -4,7 +4,6 @@ nodes:
       - name: string
       - name: location
   - name: RBS::AST::Comment
-    generate_ruby_obj: true
     fields:
       - name: string
       - name: location
