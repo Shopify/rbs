@@ -85,7 +85,6 @@ nodes:
       - name: new_name
       - name: location
   - name: RBS::AST::Directives::Use::WildcardClause
-    generate_ruby_obj: true
     fields:
       - name: namespace
       - name: location
