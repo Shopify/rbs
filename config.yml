@@ -80,7 +80,6 @@ nodes:
       - name: clauses
       - name: location
   - name: RBS::AST::Directives::Use::SingleClause
-    generate_ruby_obj: true
     fields:
       - name: type_name
       - name: new_name
