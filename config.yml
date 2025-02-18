@@ -275,7 +275,6 @@ nodes:
       - name: args
       - name: location
   - name: RBS::Types::Intersection
-    generate_ruby_obj: true
     fields:
       - name: types
       - name: location

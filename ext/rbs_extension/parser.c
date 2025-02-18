@@ -1117,7 +1117,7 @@ static VALUE parse_intersection(parserstate *state) {
 
   if (rb_array_len(intersection_types) > 1) {
     VALUE location = rbs_new_location(state->buffer, rg);
-    return rbs_intersection(intersection_types, location);
+    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_intersection_new(intersection_types, location));
   }
 
   return rb_ary_entry(intersection_types, 0);
