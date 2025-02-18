@@ -17,20 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_ast_decl_class_alias(VALUE new_name, VALUE old_name, VALUE location, VALUE comment) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("new_name")), new_name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("old_name")), old_name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Declarations_ClassAlias,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_ast_decl_constant(VALUE name, VALUE type, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);

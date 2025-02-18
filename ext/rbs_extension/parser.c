@@ -2572,7 +2572,7 @@ static rbs_ast_declarations_class_t *parse_class_decl0(parserstate *state, range
   class_decl ::= {`class`} class_name `=` <class_name>
                | {`class`} class_name <class_decl0>
 */
-static VALUE parse_class_decl(parserstate *state, position comment_pos, VALUE annotations) {
+static rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, VALUE annotations) {
   range keyword_range = state->current_token.range;
 
   comment_pos = nonnull_pos_or(comment_pos, state->current_token.range.start);
@@ -2603,9 +2603,9 @@ static VALUE parse_class_decl(parserstate *state, position comment_pos, VALUE an
     rbs_loc_add_required_child(loc, INTERN("eq"), eq_range);
     rbs_loc_add_optional_child(loc, INTERN("old_name"), old_name_range);
 
-    return rbs_ast_decl_class_alias(class_name, old_name, location, comment);
+    return (rbs_node_t *)rbs_ast_declarations_class_alias_new(class_name, old_name, location, comment);
   } else {
-    return rbs_struct_to_ruby_value((rbs_node_t *)parse_class_decl0(state, keyword_range, class_name, class_name_range, comment, annotations));
+    return (rbs_node_t *)parse_class_decl0(state, keyword_range, class_name, class_name_range, comment, annotations);
   }
 }
 
@@ -2643,7 +2643,7 @@ static VALUE parse_nested_decl(parserstate *state, const char *nested_in, positi
     break;
   }
   case kCLASS: {
-    decl = parse_class_decl(state, annot_pos, annotations);
+    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_class_decl(state, annot_pos, annotations));
     break;
   }
   default:
@@ -2684,7 +2684,7 @@ static VALUE parse_decl(parserstate *state) {
     return parse_module_decl(state, annot_pos, annotations);
   }
   case kCLASS: {
-    return parse_class_decl(state, annot_pos, annotations);
+    return rbs_struct_to_ruby_value((rbs_node_t *)parse_class_decl(state, annot_pos, annotations));
   }
   default:
     raise_syntax_error(
