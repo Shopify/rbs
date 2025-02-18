@@ -2399,7 +2399,7 @@ static VALUE parse_module_members(parserstate *state) {
   module_decl ::= {module_name} module_type_params module_members <kEND>
                 | {module_name} module_name module_type_params `:` module_self_types module_members <kEND>
 */
-static VALUE parse_module_decl0(parserstate *state, range keyword_range, VALUE module_name, range name_range, VALUE comment, VALUE annotations) {
+static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, range keyword_range, VALUE module_name, range name_range, VALUE comment, VALUE annotations) {
   parser_push_typevar_table(state, true);
 
   range decl_range;
@@ -2439,7 +2439,7 @@ static VALUE parse_module_decl0(parserstate *state, range keyword_range, VALUE m
 
   parser_pop_typevar_table(state);
 
-  return rbs_ast_decl_module(
+  return rbs_ast_declarations_module_new(
     module_name,
     type_params,
     self_types,
@@ -2488,7 +2488,7 @@ static VALUE parse_module_decl(parserstate *state, position comment_pos, VALUE a
 
     return rbs_ast_decl_module_alias(module_name, old_name, location, comment);
   } else {
-    return parse_module_decl0(state, keyword_range, module_name, module_name_range, comment, annotations);
+    return rbs_struct_to_ruby_value((rbs_node_t *)parse_module_decl0(state, keyword_range, module_name, module_name_range, comment, annotations));
   }
 }
 
