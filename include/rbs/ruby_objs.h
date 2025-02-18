@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_function_param(VALUE type, VALUE name, VALUE location);
 VALUE rbs_interface(VALUE name, VALUE args, VALUE location);
 VALUE rbs_intersection(VALUE types, VALUE location);
 VALUE rbs_literal(VALUE literal, VALUE location);
