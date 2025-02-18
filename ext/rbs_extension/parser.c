@@ -2157,7 +2157,7 @@ static VALUE parse_attribute_member(parserstate *state, position comment_pos, VA
   case kATTRWRITER:
     return rbs_ast_members_attr_writer(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRACCESSOR:
-    return rbs_ast_members_attr_accessor(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_attr_accessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility));
   default:
     rbs_abort();
   }

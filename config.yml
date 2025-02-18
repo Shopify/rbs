@@ -97,7 +97,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::AttrAccessor
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: type

@@ -17,24 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_ast_members_attr_accessor(VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("ivar_name")), ivar_name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("kind")), kind);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("comment")), comment);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("visibility")), visibility);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Members_AttrAccessor,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_ast_members_attr_reader(VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
