@@ -204,7 +204,6 @@ nodes:
       - name: path
       - name: absolute
   - name: RBS::TypeName
-    generate_ruby_obj: true
     fields:
       - name: namespace
       - name: name

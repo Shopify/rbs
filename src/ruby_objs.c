@@ -17,18 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_type_name(VALUE namespace, VALUE name) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("namespace")), namespace);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_TypeName,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_alias(VALUE name, VALUE args, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
