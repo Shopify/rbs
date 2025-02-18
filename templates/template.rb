@@ -43,6 +43,8 @@ module RBS
 
       attr_reader :fields #: Array[RBS::Template::Field]
 
+      attr_reader :generate_ruby_obj #: Boolean
+
       def initialize(yaml)
         @ruby_full_name = yaml["name"]
         @ruby_class_name = @ruby_full_name[/[^:]+\z/] # demodulize-like
@@ -54,6 +56,8 @@ module RBS
         @c_parent_constant_name = @ruby_full_name.split("::")[0..-2].join("::").gsub("::", "_")
 
         @fields = yaml.fetch("fields", []).map { |field| Field.new(field) }.freeze
+
+        @generate_ruby_obj = yaml.fetch("generate_ruby_obj", false)
       end
     end
 

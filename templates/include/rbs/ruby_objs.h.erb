@@ -4,6 +4,7 @@
 #include "ruby.h"
 
 <%- nodes.each do |node| -%>
+<%- next unless node.generate_ruby_obj -%>
 VALUE <%= node.c_function_name %>(<%= node.fields.map { |field| "VALUE #{field.name}" }.join(", ") %>);
 <%- end -%>
 

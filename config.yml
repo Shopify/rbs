@@ -1,13 +1,16 @@
 nodes:
   - name: RBS::AST::Annotation
+    generate_ruby_obj: true
     fields:
       - name: string
       - name: location
   - name: RBS::AST::Comment
+    generate_ruby_obj: true
     fields:
       - name: string
       - name: location
   - name: RBS::AST::Declarations::Class
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type_params
@@ -17,29 +20,34 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Class::Super
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
       - name: location
   - name: RBS::AST::Declarations::ClassAlias
+    generate_ruby_obj: true
     fields:
       - name: new_name
       - name: old_name
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Constant
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Global
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Interface
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type_params
@@ -48,6 +56,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type_params
@@ -57,17 +66,20 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module::Self
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
       - name: location
   - name: RBS::AST::Declarations::ModuleAlias
+    generate_ruby_obj: true
     fields:
       - name: new_name
       - name: old_name
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::TypeAlias
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type_params
@@ -76,19 +88,23 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Directives::Use
+    generate_ruby_obj: true
     fields:
       - name: clauses
       - name: location
   - name: RBS::AST::Directives::Use::SingleClause
+    generate_ruby_obj: true
     fields:
       - name: type_name
       - name: new_name
       - name: location
   - name: RBS::AST::Directives::Use::WildcardClause
+    generate_ruby_obj: true
     fields:
       - name: namespace
       - name: location
   - name: RBS::AST::Members::Alias
+    generate_ruby_obj: true
     fields:
       - name: new_name
       - name: old_name
@@ -97,6 +113,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::AttrAccessor
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
@@ -107,6 +124,7 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrReader
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
@@ -117,6 +135,7 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::AttrWriter
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
@@ -127,18 +146,21 @@ nodes:
       - name: comment
       - name: visibility
   - name: RBS::AST::Members::ClassInstanceVariable
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
       - name: location
       - name: comment
   - name: RBS::AST::Members::ClassVariable
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
       - name: location
       - name: comment
   - name: RBS::AST::Members::Extend
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
@@ -146,6 +168,7 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Include
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
@@ -153,12 +176,14 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::InstanceVariable
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: type
       - name: location
       - name: comment
   - name: RBS::AST::Members::MethodDefinition
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: kind
@@ -169,10 +194,12 @@ nodes:
       - name: overloading
       - name: visibility
   - name: RBS::AST::Members::MethodDefinition::Overload
+    generate_ruby_obj: true
     fields:
       - name: annotations
       - name: method_type
   - name: RBS::AST::Members::Prepend
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
@@ -180,12 +207,15 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Private
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::AST::Members::Public
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::AST::TypeParam
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: variance
@@ -194,67 +224,84 @@ nodes:
       - name: unchecked
       - name: location
   - name: RBS::MethodType
+    generate_ruby_obj: true
     fields:
       - name: type_params
       - name: type
       - name: block
       - name: location
   - name: RBS::Namespace
+    generate_ruby_obj: true
     fields:
       - name: path
       - name: absolute
   - name: RBS::TypeName
+    generate_ruby_obj: true
     fields:
       - name: namespace
       - name: name
   - name: RBS::Types::Alias
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
       - name: location
   - name: RBS::Types::Bases::Any
+    generate_ruby_obj: true
     fields:
       - name: todo
       - name: location
   - name: RBS::Types::Bases::Bool
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Bottom
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Class
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Instance
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Nil
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Self
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Top
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Bases::Void
+    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::Types::Block
+    generate_ruby_obj: true
     fields:
       - name: type
       - name: required
       - name: self_type
   - name: RBS::Types::ClassInstance
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
       - name: location
   - name: RBS::Types::ClassSingleton
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: location
   - name: RBS::Types::Function
+    generate_ruby_obj: true
     fields:
       - name: required_positionals
       - name: optional_positionals
@@ -265,49 +312,60 @@ nodes:
       - name: rest_keywords
       - name: return_type
   - name: RBS::Types::Function::Param
+    generate_ruby_obj: true
     fields:
       - name: type
       - name: name
       - name: location
   - name: RBS::Types::Interface
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
       - name: location
   - name: RBS::Types::Intersection
+    generate_ruby_obj: true
     fields:
       - name: types
       - name: location
   - name: RBS::Types::Literal
+    generate_ruby_obj: true
     fields:
       - name: literal
       - name: location
   - name: RBS::Types::Optional
+    generate_ruby_obj: true
     fields:
       - name: type
       - name: location
   - name: RBS::Types::Proc
+    generate_ruby_obj: true
     fields:
       - name: type
       - name: block
       - name: location
       - name: self_type
   - name: RBS::Types::Record
+    generate_ruby_obj: true
     fields:
       - name: all_fields
       - name: location
   - name: RBS::Types::Tuple
+    generate_ruby_obj: true
     fields:
       - name: types
       - name: location
   - name: RBS::Types::Union
+    generate_ruby_obj: true
     fields:
       - name: types
       - name: location
   - name: RBS::Types::UntypedFunction
+    generate_ruby_obj: true
     fields:
       - name: return_type
   - name: RBS::Types::Variable
+    generate_ruby_obj: true
     fields:
       - name: name
       - name: location
