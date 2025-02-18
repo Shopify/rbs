@@ -2026,7 +2026,7 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), kind_range);
 
-    return rbs_ast_members_class_instance_variable(name, type, location, comment);
+    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_class_instance_variable_new(name, type, location, comment));
   }
   default:
     rbs_abort();
