@@ -194,7 +194,6 @@ nodes:
       - name: unchecked
       - name: location
   - name: RBS::MethodType
-    generate_ruby_obj: true
     fields:
       - name: type_params
       - name: type

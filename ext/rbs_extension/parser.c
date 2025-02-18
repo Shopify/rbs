@@ -1297,7 +1297,7 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
 /*
   method_type ::= {} type_params <function>
   */
-VALUE parse_method_type(parserstate *state) {
+rbs_method_type_t *parse_method_type(parserstate *state) {
   parser_push_typevar_table(state, false);
 
   range rg;
@@ -1324,7 +1324,7 @@ VALUE parse_method_type(parserstate *state) {
   rbs_loc_add_required_child(loc, INTERN("type"), type_range);
   rbs_loc_add_optional_child(loc, INTERN("type_params"), params_range);
 
-  return rbs_method_type(
+  return rbs_method_type_new(
     type_params,
     function,
     block,
@@ -1702,8 +1702,9 @@ static rbs_ast_members_method_definition_t *parse_member_def(parserstate *state,
     case pLBRACKET:
     case pQUESTION:
       {
-        VALUE method_type = parse_method_type(state);
-        rb_ary_push(overloads, rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_method_definition_overload_new(annotations, method_type)));
+        rbs_method_type_t *method_type = parse_method_type(state);
+        VALUE method_type_value = rbs_struct_to_ruby_value((rbs_node_t *)method_type);
+        rb_ary_push(overloads, rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_method_definition_overload_new(annotations, method_type_value)));
         member_range.end = state->current_token.range.end;
         break;
       }
@@ -2920,13 +2921,13 @@ parse_method_type_try(VALUE a) {
     return Qnil;
   }
 
-  VALUE method_type = parse_method_type(arg->parser);
+  rbs_method_type_t *method_type = parse_method_type(arg->parser);
 
   if (RB_TEST(arg->require_eof)) {
     parser_advance_assert(arg->parser, pEOF);
   }
 
-  return method_type;
+  return rbs_struct_to_ruby_value((rbs_node_t *)method_type);
 }
 
 static VALUE

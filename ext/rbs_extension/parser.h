@@ -2,6 +2,7 @@
 #define RBS__PARSER_H
 
 #include "ruby.h"
+#include "rbs/ast.h"
 #include "parserstate.h"
 
 /**
@@ -10,7 +11,7 @@
 extern VALUE RBS_Parser;
 
 VALUE parse_type(parserstate *state);
-VALUE parse_method_type(parserstate *state);
+rbs_method_type_t *parse_method_type(parserstate *state);
 VALUE parse_signature(parserstate *state);
 
 void rbs__init_parser();
