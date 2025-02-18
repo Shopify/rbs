@@ -17,14 +17,3 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_untyped_function(VALUE return_type) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("return_type")), return_type);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_UntypedFunction,
-    1,
-    &_init_kwargs
-  );
-}
-

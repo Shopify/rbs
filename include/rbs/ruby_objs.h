@@ -10,6 +10,5 @@
 
 #include "ruby.h"
 
-VALUE rbs_untyped_function(VALUE return_type);
 
 #endif

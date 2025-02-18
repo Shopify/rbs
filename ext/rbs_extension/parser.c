@@ -640,7 +640,7 @@ static VALUE parse_self_type_binding(parserstate *state) {
              | {} self_type_binding? `{` self_type_binding `->` optional `}` `->` <optional>
              | {} self_type_binding? `->` <optional>
 */
-static void parse_function(parserstate *state, VALUE *function, rbs_types_block_t **block, VALUE *function_self_type) {
+static void parse_function(parserstate *state, rbs_node_t **function, rbs_types_block_t **block, VALUE *function_self_type) {
   method_params params;
   initialize_method_params(&params);
 
@@ -685,11 +685,11 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
     parser_advance_assert(state, pARROW);
     rbs_node_t *block_return_type = parse_optional(state);
 
-    VALUE block_function = Qnil;
+    rbs_node_t *block_function = NULL;
     if (rbs_is_untyped_params(&block_params)) {
-      block_function = rbs_untyped_function(rbs_struct_to_ruby_value(block_return_type));
+      block_function = (rbs_node_t *)rbs_types_untyped_function_new(rbs_struct_to_ruby_value(block_return_type));
     } else {
-      block_function = rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_function_new(
+      block_function = (rbs_node_t *)rbs_types_function_new(
         block_params.required_positionals,
         block_params.optional_positionals,
         block_params.rest_positionals,
@@ -698,10 +698,10 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
         block_params.optional_keywords,
         block_params.rest_keywords,
         rbs_struct_to_ruby_value(block_return_type)
-      ));
+      );
     }
 
-    *block = rbs_types_block_new(block_function, required, block_self_type);
+    *block = rbs_types_block_new(rbs_struct_to_ruby_value(block_function), required, block_self_type);
 
     parser_advance_assert(state, pRBRACE);
   }
@@ -710,9 +710,9 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
   rbs_node_t *type = parse_optional(state);
 
   if (rbs_is_untyped_params(&params)) {
-    *function = rbs_untyped_function(rbs_struct_to_ruby_value(type));
+    *function = (rbs_node_t *)rbs_types_untyped_function_new(rbs_struct_to_ruby_value(type));
   } else {
-    *function = rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_function_new(
+    *function = (rbs_node_t *)rbs_types_function_new(
       params.required_positionals,
       params.optional_positionals,
       params.rest_positionals,
@@ -721,7 +721,7 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
       params.optional_keywords,
       params.rest_keywords,
       rbs_struct_to_ruby_value(type)
-    ));
+    );
   }
 }
 
@@ -730,14 +730,14 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
 */
 static rbs_types_proc_t *parse_proc_type(parserstate *state) {
   position start = state->current_token.range.start;
-  VALUE function = Qnil;
+  rbs_node_t *function = NULL;
   rbs_types_block_t *block = NULL;
   VALUE proc_self = Qnil;
   parse_function(state, &function, &block, &proc_self);
   position end = state->current_token.range.end;
   VALUE loc = rbs_location_pp(state->buffer, &start, &end);
 
-  return rbs_types_proc_new(function, rbs_struct_to_ruby_value((rbs_node_t *)block), loc, proc_self);
+  return rbs_types_proc_new(rbs_struct_to_ruby_value(function), rbs_struct_to_ruby_value((rbs_node_t *)block), loc, proc_self);
 }
 
 static void check_key_duplication(parserstate *state, VALUE fields, VALUE key) {
@@ -1299,7 +1299,7 @@ rbs_method_type_t *parse_method_type(parserstate *state) {
   range type_range;
   type_range.start = state->next_token.range.start;
 
-  VALUE function = Qnil;
+  rbs_node_t *function = NULL;
   rbs_types_block_t *block = NULL;
   parse_function(state, &function, &block, NULL);
 
@@ -1316,7 +1316,7 @@ rbs_method_type_t *parse_method_type(parserstate *state) {
 
   return rbs_method_type_new(
     type_params,
-    function,
+    rbs_struct_to_ruby_value(function),
     rbs_struct_to_ruby_value((rbs_node_t *)block),
     location
   );
