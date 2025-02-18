@@ -251,7 +251,6 @@ nodes:
       - name: args
       - name: location
   - name: RBS::Types::ClassSingleton
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: location

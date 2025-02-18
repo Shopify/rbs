@@ -17,18 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_class_singleton(VALUE name, VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_ClassSingleton,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("required_positionals")), required_positionals);
