@@ -2291,9 +2291,9 @@ static void parse_module_self_types(parserstate *state, VALUE *array) {
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    VALUE self_type = rbs_ast_decl_module_self(module_name, args, location);
+    rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(module_name, args, location);
     melt_array(array);
-    rb_ary_push(*array, self_type);
+    rb_ary_push(*array, rbs_struct_to_ruby_value((rbs_node_t *)self_type));
 
     if (state->next_token.type == pCOMMA) {
       parser_advance(state);

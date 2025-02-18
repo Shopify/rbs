@@ -57,7 +57,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::Module::Self
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
