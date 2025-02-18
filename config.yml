@@ -180,7 +180,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Private
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::AST::Members::Public

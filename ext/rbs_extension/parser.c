@@ -2053,7 +2053,7 @@ static VALUE parse_visibility_member(parserstate *state, VALUE annotations) {
   case kPUBLIC:
     return rbs_ast_members_public(location);
   case kPRIVATE:
-    return rbs_ast_members_private(location);
+    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_private_new(location));
   default:
     rbs_abort();
   }
