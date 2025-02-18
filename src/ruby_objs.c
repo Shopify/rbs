@@ -17,20 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("block")), block);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("self_type")), self_type);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Proc,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_union(VALUE types, VALUE location) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types);

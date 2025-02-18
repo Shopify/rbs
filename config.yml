@@ -287,7 +287,6 @@ nodes:
       - name: type
       - name: location
   - name: RBS::Types::Proc
-    generate_ruby_obj: true
     fields:
       - name: type
       - name: block

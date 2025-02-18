@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_proc(VALUE type, VALUE block, VALUE location, VALUE self_type);
 VALUE rbs_union(VALUE types, VALUE location);
 VALUE rbs_untyped_function(VALUE return_type);
 
