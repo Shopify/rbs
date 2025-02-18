@@ -139,7 +139,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Members::Extend
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
