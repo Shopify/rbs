@@ -2073,7 +2073,7 @@ static VALUE parse_visibility_member(parserstate *state, VALUE annotations) {
              | `(` tAIDENT `)`    # Ivar name
              | `(` `)`            # No variable
 */
-static VALUE parse_attribute_member(parserstate *state, position comment_pos, VALUE annotations) {
+static rbs_node_t *parse_attribute_member(parserstate *state, position comment_pos, VALUE annotations) {
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
@@ -2153,11 +2153,11 @@ static VALUE parse_attribute_member(parserstate *state, position comment_pos, VA
   switch (attr_type)
   {
   case kATTRREADER:
-    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_attr_reader_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility));
+    return (rbs_node_t *)rbs_ast_members_attr_reader_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRWRITER:
-    return rbs_ast_members_attr_writer(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
+    return (rbs_node_t *)rbs_ast_members_attr_writer_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRACCESSOR:
-    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_attr_accessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility));
+    return (rbs_node_t *)rbs_ast_members_attr_accessor_new(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   default:
     rbs_abort();
   }
@@ -2356,7 +2356,7 @@ static VALUE parse_module_members(parserstate *state) {
     case kATTRREADER:
     case kATTRWRITER:
     case kATTRACCESSOR: {
-      member = parse_attribute_member(state, annot_pos, annotations);
+      member = rbs_struct_to_ruby_value((rbs_node_t *)parse_attribute_member(state, annot_pos, annotations));
       break;
     }
 
@@ -2372,7 +2372,7 @@ static VALUE parse_module_members(parserstate *state) {
         case kATTRREADER:
         case kATTRWRITER:
         case kATTRACCESSOR: {
-          member = parse_attribute_member(state, annot_pos, annotations);
+          member = rbs_struct_to_ruby_value((rbs_node_t *)parse_attribute_member(state, annot_pos, annotations));
           break;
         }
         default:

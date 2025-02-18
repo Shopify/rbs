@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_ast_members_attr_writer(VALUE name, VALUE type, VALUE ivar_name, VALUE kind, VALUE annotations, VALUE location, VALUE comment, VALUE visibility);
 VALUE rbs_ast_members_class_instance_variable(VALUE name, VALUE type, VALUE location, VALUE comment);
 VALUE rbs_ast_members_class_variable(VALUE name, VALUE type, VALUE location, VALUE comment);
 VALUE rbs_ast_members_extend(VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment);
