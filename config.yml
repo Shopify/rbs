@@ -169,7 +169,6 @@ nodes:
       - name: overloading
       - name: visibility
   - name: RBS::AST::Members::MethodDefinition::Overload
-    generate_ruby_obj: true
     fields:
       - name: annotations
       - name: method_type

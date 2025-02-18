@@ -1703,7 +1703,7 @@ static rbs_ast_members_method_definition_t *parse_member_def(parserstate *state,
     case pQUESTION:
       {
         VALUE method_type = parse_method_type(state);
-        rb_ary_push(overloads, rbs_ast_members_method_definition_overload(annotations, method_type));
+        rb_ary_push(overloads, rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_method_definition_overload_new(annotations, method_type)));
         member_range.end = state->current_token.range.end;
         break;
       }

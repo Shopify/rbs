@@ -17,18 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_ast_members_method_definition_overload(VALUE annotations, VALUE method_type) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("annotations")), annotations);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("method_type")), method_type);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_AST_Members_MethodDefinition_Overload,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_ast_members_prepend(VALUE name, VALUE args, VALUE annotations, VALUE location, VALUE comment) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
