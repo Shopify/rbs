@@ -301,7 +301,6 @@ nodes:
       - name: types
       - name: location
   - name: RBS::Types::Union
-    generate_ruby_obj: true
     fields:
       - name: types
       - name: location

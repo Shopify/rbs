@@ -17,18 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_union(VALUE types, VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("types")), types);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Union,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_untyped_function(VALUE return_type) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("return_type")), return_type);
