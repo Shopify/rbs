@@ -1,6 +1,5 @@
 nodes:
   - name: RBS::AST::Annotation
-    generate_ruby_obj: true
     fields:
       - name: string
       - name: location
