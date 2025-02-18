@@ -8,7 +8,6 @@ nodes:
       - name: string
       - name: location
   - name: RBS::AST::Declarations::Class
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: type_params
