@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_ast_members_public(VALUE location);
 VALUE rbs_ast_type_param(VALUE name, VALUE variance, VALUE upper_bound, VALUE default_type, VALUE unchecked, VALUE location);
 VALUE rbs_method_type(VALUE type_params, VALUE type, VALUE block, VALUE location);
 VALUE rbs_namespace(VALUE path, VALUE absolute);

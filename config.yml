@@ -183,7 +183,6 @@ nodes:
     fields:
       - name: location
   - name: RBS::AST::Members::Public
-    generate_ruby_obj: true
     fields:
       - name: location
   - name: RBS::AST::TypeParam

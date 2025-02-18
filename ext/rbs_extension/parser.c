@@ -2037,7 +2037,7 @@ static rbs_node_t *parse_variable_member(parserstate *state, position comment_po
   visibility_member ::= {<`public`>}
                       | {<`private`>}
 */
-static VALUE parse_visibility_member(parserstate *state, VALUE annotations) {
+static rbs_node_t *parse_visibility_member(parserstate *state, VALUE annotations) {
   if (rb_array_len(annotations) > 0) {
     raise_syntax_error(
       state,
@@ -2051,9 +2051,9 @@ static VALUE parse_visibility_member(parserstate *state, VALUE annotations) {
   switch (state->current_token.type)
   {
   case kPUBLIC:
-    return rbs_ast_members_public(location);
+    return (rbs_node_t *)rbs_ast_members_public_new(location);
   case kPRIVATE:
-    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_private_new(location));
+    return (rbs_node_t *)rbs_ast_members_private_new(location);
   default:
     rbs_abort();
   }
@@ -2379,7 +2379,7 @@ static VALUE parse_module_members(parserstate *state) {
           raise_syntax_error(state, state->next_token, "method or attribute definition is expected after visibility modifier");
         }
       } else {
-        member = parse_visibility_member(state, annotations);
+        member = rbs_struct_to_ruby_value((rbs_node_t *)parse_visibility_member(state, annotations));
       }
       break;
 
