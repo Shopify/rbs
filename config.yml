@@ -208,7 +208,6 @@ nodes:
       - name: namespace
       - name: name
   - name: RBS::Types::Alias
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args

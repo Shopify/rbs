@@ -17,19 +17,6 @@
           rb_class_new_instance(argc, argv, receiver)
 #endif
 
-VALUE rbs_alias(VALUE name, VALUE args, VALUE location) {
-  VALUE _init_kwargs = rb_hash_new();
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("name")), name);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("args")), args);
-  rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("location")), location);
-
-  return CLASS_NEW_INSTANCE(
-    RBS_Types_Alias,
-    1,
-    &_init_kwargs
-  );
-}
-
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type) {
   VALUE _init_kwargs = rb_hash_new();
   rb_hash_aset(_init_kwargs, ID2SYM(rb_intern("type")), type);

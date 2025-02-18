@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_alias(VALUE name, VALUE args, VALUE location);
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type);
 VALUE rbs_class_instance(VALUE name, VALUE args, VALUE location);
 VALUE rbs_class_singleton(VALUE name, VALUE location);

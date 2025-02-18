@@ -922,7 +922,7 @@ static VALUE parse_instance_type(parserstate *state, bool parse_alias) {
     } else if (kind == INTERFACE_NAME) {
       return rbs_interface(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
     } else if (kind == ALIAS_NAME) {
-      return rbs_alias(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
+      return rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_alias_new(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location));
     } else {
       return Qnil;
     }
