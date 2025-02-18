@@ -255,7 +255,6 @@ nodes:
       - name: name
       - name: location
   - name: RBS::Types::Function
-    generate_ruby_obj: true
     fields:
       - name: required_positionals
       - name: optional_positionals

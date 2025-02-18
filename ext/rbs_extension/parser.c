@@ -695,7 +695,7 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
     if (rbs_is_untyped_params(&block_params)) {
       block_function = rbs_untyped_function(rbs_struct_to_ruby_value(block_return_type));
     } else {
-      block_function = rbs_function(
+      block_function = rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_function_new(
         block_params.required_positionals,
         block_params.optional_positionals,
         block_params.rest_positionals,
@@ -704,7 +704,7 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
         block_params.optional_keywords,
         block_params.rest_keywords,
         rbs_struct_to_ruby_value(block_return_type)
-      );
+      ));
     }
 
     *block = rbs_types_block_new(block_function, required, block_self_type);
@@ -718,7 +718,7 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
   if (rbs_is_untyped_params(&params)) {
     *function = rbs_untyped_function(rbs_struct_to_ruby_value(type));
   } else {
-    *function = rbs_function(
+    *function = rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_function_new(
       params.required_positionals,
       params.optional_positionals,
       params.rest_positionals,
@@ -727,7 +727,7 @@ static void parse_function(parserstate *state, VALUE *function, rbs_types_block_
       params.optional_keywords,
       params.rest_keywords,
       rbs_struct_to_ruby_value(type)
-    );
+    ));
   }
 }
 

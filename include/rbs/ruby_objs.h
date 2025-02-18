@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_function(VALUE required_positionals, VALUE optional_positionals, VALUE rest_positionals, VALUE trailing_positionals, VALUE required_keywords, VALUE optional_keywords, VALUE rest_keywords, VALUE return_type);
 VALUE rbs_function_param(VALUE type, VALUE name, VALUE location);
 VALUE rbs_interface(VALUE name, VALUE args, VALUE location);
 VALUE rbs_intersection(VALUE types, VALUE location);
