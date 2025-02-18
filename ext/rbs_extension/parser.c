@@ -868,7 +868,7 @@ static VALUE parse_symbol(parserstate *state) {
  type_args ::= {} <> /empty/
              | {} `[` type_list <`]`>
  */
-static VALUE parse_instance_type(parserstate *state, bool parse_alias) {
+static rbs_node_t *parse_instance_type(parserstate *state, bool parse_alias) {
     TypeNameKind expected_kind = INTERFACE_NAME | CLASS_NAME;
     if (parse_alias) {
       expected_kind |= ALIAS_NAME;
@@ -912,13 +912,13 @@ static VALUE parse_instance_type(parserstate *state, bool parse_alias) {
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
     if (kind == CLASS_NAME) {
-      return rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_class_instance_new(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location));
+      return (rbs_node_t *)rbs_types_class_instance_new(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
     } else if (kind == INTERFACE_NAME) {
-      return rbs_interface(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
+      return (rbs_node_t *)rbs_types_interface_new(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
     } else if (kind == ALIAS_NAME) {
-      return rbs_struct_to_ruby_value((rbs_node_t *)rbs_types_alias_new(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location));
+      return (rbs_node_t *)rbs_types_alias_new(rbs_struct_to_ruby_value((rbs_node_t *)typename), types, location);
     } else {
-      return Qnil;
+      return NULL;
     }
 }
 
@@ -1053,8 +1053,7 @@ static rbs_node_t *parse_simple(parserstate *state) {
   case tULIDENT: // fallthrough
   case tLIDENT: // fallthrough
   case pCOLON2: {
-    VALUE type = parse_instance_type(state, true);
-    return (rbs_node_t *)rbs_node_instance_wrapper_new(type);
+    return parse_instance_type(state, true);
   }
   case kSINGLETON: {
     return (rbs_node_t *)parse_singleton_type(state);

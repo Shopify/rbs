@@ -270,7 +270,6 @@ nodes:
       - name: name
       - name: location
   - name: RBS::Types::Interface
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
