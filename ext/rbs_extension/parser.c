@@ -2218,7 +2218,7 @@ static VALUE parse_interface_members(parserstate *state) {
 /*
   interface_decl ::= {`interface`} interface_name module_type_params interface_members <kEND>
 */
-static VALUE parse_interface_decl(parserstate *state, position comment_pos, VALUE annotations) {
+static rbs_ast_declarations_interface_t *parse_interface_decl(parserstate *state, position comment_pos, VALUE annotations) {
   parser_push_typevar_table(state, true);
 
   range member_range;
@@ -2249,7 +2249,7 @@ static VALUE parse_interface_decl(parserstate *state, position comment_pos, VALU
   rbs_loc_add_required_child(loc, INTERN("end"), end_range);
   rbs_loc_add_optional_child(loc, INTERN("type_params"), type_params_range);
 
-  return rbs_ast_decl_interface(
+  return rbs_ast_declarations_interface_new(
     name,
     params,
     members,
@@ -2635,7 +2635,7 @@ static VALUE parse_nested_decl(parserstate *state, const char *nested_in, positi
     break;
   }
   case kINTERFACE: {
-    decl = parse_interface_decl(state, annot_pos, annotations);
+    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations));
     break;
   }
   case kMODULE: {
@@ -2678,7 +2678,7 @@ static VALUE parse_decl(parserstate *state) {
     return parse_type_decl(state, annot_pos, annotations);
   }
   case kINTERFACE: {
-    return parse_interface_decl(state, annot_pos, annotations);
+    return rbs_struct_to_ruby_value((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations));
   }
   case kMODULE: {
     return parse_module_decl(state, annot_pos, annotations);

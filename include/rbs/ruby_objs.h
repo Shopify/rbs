@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_ast_decl_interface(VALUE name, VALUE type_params, VALUE members, VALUE annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_module(VALUE name, VALUE type_params, VALUE self_types, VALUE members, VALUE annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_decl_module_self(VALUE name, VALUE args, VALUE location);
 VALUE rbs_ast_decl_module_alias(VALUE new_name, VALUE old_name, VALUE location, VALUE comment);
