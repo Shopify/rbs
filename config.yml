@@ -62,7 +62,6 @@ nodes:
       - name: args
       - name: location
   - name: RBS::AST::Declarations::ModuleAlias
-    generate_ruby_obj: true
     fields:
       - name: new_name
       - name: old_name

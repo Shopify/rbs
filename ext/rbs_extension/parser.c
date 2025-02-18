@@ -2455,7 +2455,7 @@ static rbs_ast_declarations_module_t *parse_module_decl0(parserstate *state, ran
                 | {`module`} module_name module_decl0 <kEND>
 
 */
-static VALUE parse_module_decl(parserstate *state, position comment_pos, VALUE annotations) {
+static rbs_node_t *parse_module_decl(parserstate *state, position comment_pos, VALUE annotations) {
   range keyword_range = state->current_token.range;
 
   comment_pos = nonnull_pos_or(comment_pos, state->current_token.range.start);
@@ -2486,9 +2486,9 @@ static VALUE parse_module_decl(parserstate *state, position comment_pos, VALUE a
     rbs_loc_add_required_child(loc, INTERN("eq"), eq_range);
     rbs_loc_add_optional_child(loc, INTERN("old_name"), old_name_range);
 
-    return rbs_ast_decl_module_alias(module_name, old_name, location, comment);
+    return (rbs_node_t *)rbs_ast_declarations_module_alias_new(module_name, old_name, location, comment);
   } else {
-    return rbs_struct_to_ruby_value((rbs_node_t *)parse_module_decl0(state, keyword_range, module_name, module_name_range, comment, annotations));
+    return (rbs_node_t *)parse_module_decl0(state, keyword_range, module_name, module_name_range, comment, annotations);
   }
 }
 
@@ -2639,7 +2639,7 @@ static VALUE parse_nested_decl(parserstate *state, const char *nested_in, positi
     break;
   }
   case kMODULE: {
-    decl = parse_module_decl(state, annot_pos, annotations);
+    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_module_decl(state, annot_pos, annotations));
     break;
   }
   case kCLASS: {
@@ -2681,7 +2681,7 @@ static VALUE parse_decl(parserstate *state) {
     return rbs_struct_to_ruby_value((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations));
   }
   case kMODULE: {
-    return parse_module_decl(state, annot_pos, annotations);
+    return rbs_struct_to_ruby_value((rbs_node_t *)parse_module_decl(state, annot_pos, annotations));
   }
   case kCLASS: {
     return rbs_struct_to_ruby_value((rbs_node_t *)parse_class_decl(state, annot_pos, annotations));
