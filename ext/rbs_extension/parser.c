@@ -1388,7 +1388,7 @@ static rbs_ast_declarations_constant_t *parse_const_decl(parserstate *state) {
 /*
   type_decl ::= {kTYPE} alias_name `=` <type>
 */
-static VALUE parse_type_decl(parserstate *state, position comment_pos, VALUE annotations) {
+static rbs_ast_declarations_type_alias_t *parse_type_decl(parserstate *state, position comment_pos, VALUE annotations) {
   parser_push_typevar_table(state, true);
 
   range decl_range;
@@ -1421,7 +1421,7 @@ static VALUE parse_type_decl(parserstate *state, position comment_pos, VALUE ann
 
   parser_pop_typevar_table(state);
 
-  return rbs_ast_decl_type_alias(
+  return rbs_ast_declarations_type_alias_new(
     typename,
     type_params,
     type,
@@ -2303,7 +2303,7 @@ static void parse_module_self_types(parserstate *state, VALUE *array) {
   }
 }
 
-static VALUE parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations);
+static rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations);
 
 /*
   module_members ::= {} ...<module_member> kEND
@@ -2384,7 +2384,7 @@ static VALUE parse_module_members(parserstate *state) {
       break;
 
     default:
-      member = parse_nested_decl(state, "module", annot_pos, annotations);
+      member = rbs_struct_to_ruby_value((rbs_node_t *)parse_nested_decl(state, "module", annot_pos, annotations));
       break;
     }
 
@@ -2616,34 +2616,34 @@ static rbs_node_t *parse_class_decl(parserstate *state, position comment_pos, VA
                 | {<module_decl>}
                 | {<class_decl>}
 */
-static VALUE parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations) {
+static rbs_node_t *parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, VALUE annotations) {
   parser_push_typevar_table(state, true);
 
-  VALUE decl;
+  rbs_node_t *decl;
   switch (state->current_token.type) {
   case tUIDENT:
   case pCOLON2: {
-    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_const_decl(state));
+    decl = (rbs_node_t *)parse_const_decl(state);
     break;
   }
   case tGIDENT: {
-    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_global_decl(state));
+    decl = (rbs_node_t *)parse_global_decl(state);
     break;
   }
   case kTYPE: {
-    decl = parse_type_decl(state, annot_pos, annotations);
+    decl = (rbs_node_t *)parse_type_decl(state, annot_pos, annotations);
     break;
   }
   case kINTERFACE: {
-    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations));
+    decl = (rbs_node_t *)parse_interface_decl(state, annot_pos, annotations);
     break;
   }
   case kMODULE: {
-    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_module_decl(state, annot_pos, annotations));
+    decl = parse_module_decl(state, annot_pos, annotations);
     break;
   }
   case kCLASS: {
-    decl = rbs_struct_to_ruby_value((rbs_node_t *)parse_class_decl(state, annot_pos, annotations));
+    decl = parse_class_decl(state, annot_pos, annotations);
     break;
   }
   default:
@@ -2675,7 +2675,7 @@ static VALUE parse_decl(parserstate *state) {
     return rbs_struct_to_ruby_value((rbs_node_t *)parse_global_decl(state));
   }
   case kTYPE: {
-    return parse_type_decl(state, annot_pos, annotations);
+    return rbs_struct_to_ruby_value((rbs_node_t *)parse_type_decl(state, annot_pos, annotations));
   }
   case kINTERFACE: {
     return rbs_struct_to_ruby_value((rbs_node_t *)parse_interface_decl(state, annot_pos, annotations));

@@ -68,7 +68,6 @@ nodes:
       - name: location
       - name: comment
   - name: RBS::AST::Declarations::TypeAlias
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: type_params

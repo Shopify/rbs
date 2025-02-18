@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_ast_decl_type_alias(VALUE name, VALUE type_params, VALUE type, VALUE annotations, VALUE location, VALUE comment);
 VALUE rbs_ast_directives_use(VALUE clauses, VALUE location);
 VALUE rbs_ast_directives_use_single_clause(VALUE type_name, VALUE new_name, VALUE location);
 VALUE rbs_ast_directives_use_wildcard_clause(VALUE namespace, VALUE location);
