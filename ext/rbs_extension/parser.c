@@ -1806,7 +1806,7 @@ void class_instance_name(parserstate *state, TypeNameKind kind, VALUE *name, VAL
  *
  * @param from_interface `true` when the member is in an interface.
  * */
-static VALUE parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, VALUE annotations) {
+static rbs_node_t *parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, VALUE annotations) {
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
@@ -1867,11 +1867,11 @@ static VALUE parse_mixin_member(parserstate *state, bool from_interface, positio
   switch (type)
   {
   case kINCLUDE:
-    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_include_new(name, args, annotations, location, comment));
+    return (rbs_node_t *)rbs_ast_members_include_new(name, args, annotations, location, comment);
   case kEXTEND:
-    return rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_members_extend_new(name, args, annotations, location, comment));
+    return (rbs_node_t *)rbs_ast_members_extend_new(name, args, annotations, location, comment);
   case kPREPEND:
-    return rbs_ast_members_prepend(name, args, annotations, location, comment);
+    return (rbs_node_t *)rbs_ast_members_prepend_new(name, args, annotations, location, comment);
   default:
     rbs_abort();
   }
@@ -2191,7 +2191,7 @@ static VALUE parse_interface_members(parserstate *state) {
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND: {
-      member = parse_mixin_member(state, true, annot_pos, annotations);
+      member = rbs_struct_to_ruby_value((rbs_node_t *)parse_mixin_member(state, true, annot_pos, annotations));
       break;
     }
 
@@ -2337,7 +2337,7 @@ static VALUE parse_module_members(parserstate *state) {
     case kINCLUDE:
     case kEXTEND:
     case kPREPEND: {
-      member = parse_mixin_member(state, false, annot_pos, annotations);
+      member = rbs_struct_to_ruby_value((rbs_node_t *)parse_mixin_member(state, false, annot_pos, annotations));
       break;
     }
 

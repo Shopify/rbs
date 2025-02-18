@@ -173,7 +173,6 @@ nodes:
       - name: annotations
       - name: method_type
   - name: RBS::AST::Members::Prepend
-    generate_ruby_obj: true
     fields:
       - name: name
       - name: args
