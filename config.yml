@@ -200,7 +200,6 @@ nodes:
       - name: block
       - name: location
   - name: RBS::Namespace
-    generate_ruby_obj: true
     fields:
       - name: path
       - name: absolute

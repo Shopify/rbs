@@ -10,7 +10,6 @@
 
 #include "ruby.h"
 
-VALUE rbs_namespace(VALUE path, VALUE absolute);
 VALUE rbs_type_name(VALUE namespace, VALUE name);
 VALUE rbs_alias(VALUE name, VALUE args, VALUE location);
 VALUE rbs_block(VALUE type, VALUE required, VALUE self_type);

@@ -179,7 +179,7 @@ static VALUE parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
     parser_advance(state);
   }
 
-  VALUE namespace = rbs_namespace(path, absolute);
+  rbs_namespace_t *namespace = rbs_namespace_new(path, absolute);
 
   switch (state->current_token.type) {
     case tLIDENT:
@@ -200,7 +200,7 @@ static VALUE parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
       rg->end = state->current_token.range.end;
     }
 
-    return rbs_type_name(namespace, ID2SYM(INTERN_TOKEN(state, state->current_token)));
+    return rbs_type_name(rbs_struct_to_ruby_value((rbs_node_t *)namespace), ID2SYM(INTERN_TOKEN(state, state->current_token)));
   }
 
   error: {
@@ -2700,7 +2700,7 @@ static VALUE parse_decl(parserstate *state) {
   namespace ::= {} (`::`)? (`tUIDENT` `::`)* `tUIDENT` <`::`>
               | {} <>                                            (empty -- returns empty namespace)
 */
-static VALUE parse_namespace(parserstate *state, range *rg) {
+static rbs_namespace_t *parse_namespace(parserstate *state, range *rg) {
   bool is_absolute = false;
 
   if (state->next_token.type == pCOLON2) {
@@ -2730,7 +2730,7 @@ static VALUE parse_namespace(parserstate *state, range *rg) {
     }
   }
 
-  return rbs_namespace(path, is_absolute ? Qtrue : Qfalse);
+  return rbs_namespace_new(path, is_absolute ? Qtrue : Qfalse);
 }
 
 /*
@@ -2743,7 +2743,7 @@ static VALUE parse_namespace(parserstate *state, range *rg) {
 static void parse_use_clauses(parserstate *state, VALUE clauses) {
   while (true) {
     range namespace_range = NULL_RANGE;
-    VALUE namespace = parse_namespace(state, &namespace_range);
+    rbs_namespace_t *namespace = parse_namespace(state, &namespace_range);
 
     switch (state->next_token.type)
     {
@@ -2758,7 +2758,7 @@ static void parse_use_clauses(parserstate *state, VALUE clauses) {
           ? state->current_token.range
           : (range) { .start = namespace_range.start, .end = state->current_token.range.end };
 
-        VALUE type_name = rbs_type_name(namespace, ID2SYM(INTERN_TOKEN(state, state->current_token)));
+        VALUE type_name = rbs_type_name(rbs_struct_to_ruby_value((rbs_node_t *)namespace), ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
         range keyword_range = NULL_RANGE;
         range new_name_range = NULL_RANGE;
@@ -2803,7 +2803,7 @@ static void parse_use_clauses(parserstate *state, VALUE clauses) {
         rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
         rbs_loc_add_required_child(loc, INTERN("star"), star_range);
 
-        rb_ary_push(clauses, rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_directives_use_wildcard_clause_new(namespace, location)));
+        rb_ary_push(clauses, rbs_struct_to_ruby_value((rbs_node_t *)rbs_ast_directives_use_wildcard_clause_new(rbs_struct_to_ruby_value((rbs_node_t *)namespace), location)));
 
         break;
       }
