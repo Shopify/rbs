@@ -2,6 +2,7 @@ require "bundler/gem_tasks"
 require "rake/testtask"
 require "rbconfig"
 require 'rake/extensiontask'
+require "ruby_memcheck"
 
 $LOAD_PATH << File.join(__dir__, "test")
 
@@ -11,12 +12,17 @@ bin = File.join(__dir__, "bin")
 
 Rake::ExtensionTask.new("rbs_extension")
 
-Rake::TestTask.new(:test => :compile) do |t|
+test_config = lambda do |t|
   t.libs << "test"
   t.libs << "lib"
   t.test_files = FileList["test/**/*_test.rb"].reject do |path|
     path =~ %r{test/stdlib/}
   end
+end
+
+Rake::TestTask.new(test: :compile, &test_config)
+namespace :test do
+  RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
 end
 
 multitask :default => [:test, :stdlib_test, :typecheck_test, :rubocop, :validate, :test_doc]
