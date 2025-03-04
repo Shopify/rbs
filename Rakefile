@@ -2,7 +2,10 @@ require "bundler/gem_tasks"
 require "rake/testtask"
 require "rbconfig"
 require 'rake/extensiontask'
-require "ruby_memcheck"
+
+on_windows = /mswin|mingw/ =~ RUBY_PLATFORM
+
+require "ruby_memcheck" if !on_windows
 
 $LOAD_PATH << File.join(__dir__, "test")
 
@@ -21,8 +24,11 @@ test_config = lambda do |t|
 end
 
 Rake::TestTask.new(test: :compile, &test_config)
-namespace :test do
-  RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
+
+if !on_windows
+  namespace :test do
+    RubyMemcheck::TestTask.new(valgrind: :compile, &test_config)
+  end
 end
 
 multitask :default => [:test, :stdlib_test, :typecheck_test, :rubocop, :validate, :test_doc]
