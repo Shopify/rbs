@@ -93,6 +93,9 @@ RUBY
   end
 
   def test_test_target
+    # Skip this test if running under valgrind.
+    # Ruby's `RUBY_FREE_AT_EXIT` fails when running this test, which would then fail valgrind incorrectly.
+    omit if ENV["RUBY_MEMCHECK_RUNNING"]
     output = refute_test_success(other_env: { "RBS_TEST_TARGET" => nil })
     assert_match "test/setup handles the following environment variables:", output
   end
