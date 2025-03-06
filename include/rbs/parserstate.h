@@ -116,6 +116,11 @@ bool parser_typevar_member(parserstate *state, rbs_constant_id_t id);
 lexstate *alloc_lexer(rbs_allocator_t *, rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos);
 
 /**
+ * Allocate new rbs_location_t object.
+ * */
+rbs_location_t *alloc_location(rbs_allocator_t *allocator, range rg);
+
+/**
  * Allocate new parserstate object.
  * Optionally call `rbs_parser_declare_type_variables_from_ruby_array()` after, to populate the type variable table.
  *
