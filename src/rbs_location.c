@@ -12,7 +12,7 @@ static void check_children_max(unsigned short n) {
   }
 }
 
-static void check_children_cap(rbs_allocator_t *allocator, rbs_location_t *loc) {
+static void ensure_children_capacity(rbs_allocator_t *allocator, rbs_location_t *loc) {
   if (loc->children == NULL) {
     rbs_loc_alloc_children(allocator, loc, 1);
   } else {
@@ -47,7 +47,7 @@ void rbs_loc_add_required_child(rbs_allocator_t *allocator, rbs_location_t *loc,
 }
 
 void rbs_loc_add_optional_child(rbs_allocator_t *allocator, rbs_location_t *loc, rbs_constant_id_t name, range r) {
-  check_children_cap(allocator, loc);
+  ensure_children_capacity(allocator, loc);
 
   unsigned short i = loc->children->len++;
   loc->children->entries[i].name = name;
