@@ -14,21 +14,25 @@ static void check_children_max(unsigned short n) {
 
 static void check_children_cap(rbs_allocator_t *allocator, rbs_location_t *loc) {
   if (loc->children == NULL) {
-    rbs_loc_alloc_children(loc, 1);
+    rbs_loc_alloc_children(allocator, loc, 1);
   } else {
     if (loc->children->len == loc->children->cap) {
       check_children_max(loc->children->cap + 1);
-      size_t s = RBS_LOC_CHILDREN_SIZE(++loc->children->cap);
-      loc->children = realloc(loc->children, s);
+
+      size_t old_size = RBS_LOC_CHILDREN_SIZE(loc->children->cap);
+      size_t new_size = RBS_LOC_CHILDREN_SIZE(loc->children->cap + 1);
+      rbs_loc_children *new_children = rbs_allocator_malloc_impl(allocator, new_size, alignof(rbs_loc_children));
+      memcpy(new_children, loc->children, old_size);
+      new_children->cap = loc->children->cap + 1;
+      loc->children = new_children;
     }
   }
 }
 
-void rbs_loc_alloc_children(rbs_location_t *loc, int capacity) {
+void rbs_loc_alloc_children(rbs_allocator_t *allocator, rbs_location_t *loc, int capacity) {
   check_children_max(capacity);
 
-  size_t s = RBS_LOC_CHILDREN_SIZE(capacity);
-  loc->children = malloc(s);
+  loc->children = rbs_allocator_malloc_impl(allocator, RBS_LOC_CHILDREN_SIZE(capacity), alignof(rbs_loc_children));
 
   loc->children->len = 0;
   loc->children->required_p = 0;
