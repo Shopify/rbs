@@ -24,11 +24,6 @@ static void check_children_cap(rbs_allocator_t *allocator, rbs_location_t *loc) 
   }
 }
 
-static rbs_loc_range rbs_new_loc_range(range rg) {
-  rbs_loc_range r = { rg.start.char_pos, rg.end.char_pos };
-  return r;
-}
-
 void rbs_loc_alloc_children(rbs_location_t *loc, int capacity) {
   check_children_max(capacity);
 
@@ -52,7 +47,7 @@ void rbs_loc_add_optional_child(rbs_allocator_t *allocator, rbs_location_t *loc,
 
   unsigned short i = loc->children->len++;
   loc->children->entries[i].name = name;
-  loc->children->entries[i].rg = rbs_new_loc_range(r);
+  loc->children->entries[i].rg = (rbs_loc_range) { r.start.char_pos, r.end.char_pos };
 }
 
 rbs_location_t *rbs_location_new(rbs_allocator_t *allocator, range rg) {
