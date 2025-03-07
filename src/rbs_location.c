@@ -54,3 +54,14 @@ void rbs_loc_add_optional_child(rbs_location_t *loc, rbs_constant_id_t name, ran
   loc->children->entries[i].name = name;
   loc->children->entries[i].rg = rbs_new_loc_range(r);
 }
+
+rbs_location_t *rbs_location_new(rbs_allocator_t *allocator, range rg) {
+  rbs_location_t *location = rbs_allocator_alloc(allocator, rbs_location_t);
+  *location = (rbs_location_t) {
+    .rg = rg,
+    .children = NULL,
+  };
+
+  return location;
+}
+

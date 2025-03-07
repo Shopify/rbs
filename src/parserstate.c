@@ -204,7 +204,7 @@ static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) 
 
   return rbs_ast_comment_new(
     &state->allocator,
-    alloc_location(&state->allocator, (range) { .start = com->start, .end = com->end }),
+    rbs_location_new(&state->allocator, (range) { .start = com->start, .end = com->end }),
     rbs_buffer_to_string(&rbs_buffer)
   );
 }
@@ -303,16 +303,6 @@ lexstate *alloc_lexer(rbs_allocator_t *allocator, rbs_string_t string, const rbs
   lexer->first_token_of_line = lexer->current.column == 0;
 
   return lexer;
-}
-
-rbs_location_t *alloc_location(rbs_allocator_t *allocator, range rg) {
-  rbs_location_t *location = rbs_allocator_alloc(allocator, rbs_location_t);
-  *location = (rbs_location_t) {
-    .rg = rg,
-    .children = NULL,
-  };
-
-  return location;
 }
 
 parserstate *alloc_parser(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
