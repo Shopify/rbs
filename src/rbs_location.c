@@ -17,13 +17,13 @@ static void ensure_children_capacity(rbs_allocator_t *allocator, rbs_location_t 
     rbs_loc_alloc_children(allocator, loc, 1);
   } else {
     if (loc->children->len == loc->children->cap) {
-      check_children_max(loc->children->cap + 1);
-
       size_t old_size = RBS_LOC_CHILDREN_SIZE(loc->children->cap);
-      size_t new_size = RBS_LOC_CHILDREN_SIZE(loc->children->cap + 1);
-      rbs_loc_children *new_children = rbs_allocator_malloc_impl(allocator, new_size, alignof(rbs_loc_children));
-      memcpy(new_children, loc->children, old_size);
-      new_children->cap = loc->children->cap + 1;
+      size_t new_size = old_size * 2;
+
+      check_children_max(new_size);
+
+      rbs_loc_children *new_children = rbs_allocator_realloc(allocator, loc->children, old_size, new_size, rbs_loc_children);
+      new_children->cap = new_size;
       loc->children = new_children;
     }
   }
