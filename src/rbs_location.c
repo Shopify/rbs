@@ -16,6 +16,9 @@ void rbs_loc_alloc_children(rbs_allocator_t *allocator, rbs_location_t *loc, int
 }
 
 void rbs_loc_add_optional_child(rbs_location_t *loc, rbs_constant_id_t name, range r) {
+  assert(loc->children != NULL && "All children should have been pre-allocated with rbs_loc_alloc_children()");
+  assert((loc->children->len + 1 <= loc->children->cap) && "Not enough space was pre-allocated for the children.");
+  
   unsigned short i = loc->children->len++;
   loc->children->entries[i].name = name;
   loc->children->entries[i].rg = (rbs_loc_range) { r.start.char_pos, r.end.char_pos };
