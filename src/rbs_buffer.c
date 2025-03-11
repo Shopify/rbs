@@ -3,7 +3,7 @@
 #include <assert.h>
 
 bool rbs_buffer_init(rbs_allocator_t *allocator, rbs_buffer_t *buffer) {
-    size_t capacity = 1024;
+    size_t capacity = RBS_BUFFER_DEFAULT_CAPACITY;
 
     buffer->length = 0;
     buffer->capacity = capacity;
