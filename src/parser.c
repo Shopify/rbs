@@ -131,13 +131,13 @@ void set_error(parserstate *state, token tok, bool syntax_error, const char *fmt
   int length = vsnprintf(NULL, 0, fmt, args);
   va_end(args);
 
-  char *message = (char *) malloc(length + 1);
+  char *message = rbs_allocator_calloc(&state->allocator, length + 1, char);
 
   va_start(args, fmt);
   vsnprintf(message, length + 1, fmt, args);
   va_end(args);
 
-  state->error = (error *)malloc(sizeof(error));
+  state->error = rbs_allocator_alloc(&state->allocator, error);
   state->error->token = tok;
   state->error->message = message;
   state->error->syntax_error = syntax_error;
