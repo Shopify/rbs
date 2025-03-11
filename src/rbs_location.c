@@ -6,9 +6,7 @@
 
 void rbs_loc_alloc_children(rbs_allocator_t *allocator, rbs_location_t *loc, int capacity) {
   size_t max = sizeof(rbs_loc_entry_bitmap) * 8;
-  if (capacity > max) {
-    assert(0 && "Capacity is too large");
-  }
+  assert(capacity <= max && "Capacity is too large");
 
   loc->children = rbs_allocator_malloc_impl(allocator, RBS_LOC_CHILDREN_SIZE(capacity), alignof(rbs_loc_children));
 
