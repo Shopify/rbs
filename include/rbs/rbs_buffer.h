@@ -22,15 +22,6 @@ typedef struct {
 } rbs_buffer_t;
 
 /**
- * Initialize a rbs_buffer_t with the given capacity.
- *
- * @param buffer The buffer to initialize.
- * @param capacity The capacity of the buffer.
- * @returns True if the buffer was initialized successfully, false otherwise.
- */
-bool rbs_buffer_init_capacity(rbs_buffer_t *buffer, size_t capacity);
-
-/**
  * Initialize a rbs_buffer_t with its default values.
  *
  * @param buffer The buffer to initialize.

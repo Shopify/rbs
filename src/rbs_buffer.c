@@ -1,15 +1,13 @@
 #include "rbs/rbs_buffer.h"
 
-bool rbs_buffer_init_capacity(rbs_buffer_t *buffer, size_t capacity) {
+bool rbs_buffer_init(rbs_buffer_t *buffer) {
+    size_t capacity = 1024;
+
     buffer->length = 0;
     buffer->capacity = capacity;
 
     buffer->value = (char *) malloc(capacity);
     return buffer->value != NULL;
-}
-
-bool rbs_buffer_init(rbs_buffer_t *buffer) {
-    return rbs_buffer_init_capacity(buffer, 1024);
 }
 
 char *rbs_buffer_value(const rbs_buffer_t *buffer) {
