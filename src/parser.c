@@ -113,7 +113,7 @@ static rbs_string_t rbs_parser_peek_current_token(parserstate *state) {
   const char *start = state->lexstate->string.start + rg.start.byte_pos;
   size_t length = rg.end.byte_pos - rg.start.byte_pos;
 
-  return rbs_string_shared_new(start, start + length);
+  return rbs_string_new(start, start + length);
 }
 
 static rbs_constant_id_t rbs_constant_pool_insert_string(rbs_constant_pool_t *self, rbs_string_t string) {
@@ -326,7 +326,7 @@ static bool parse_function_param(parserstate *state, rbs_types_function_param_t 
       return false;
     }
 
-    rbs_string_t unquoted_str = rbs_unquote_string(rbs_parser_peek_current_token(state));
+    rbs_string_t unquoted_str = rbs_unquote_string(&state->allocator, rbs_parser_peek_current_token(state));
     rbs_location_t *symbolLoc = rbs_location_current_token(state);
     rbs_constant_id_t constant_id = rbs_constant_pool_insert_string(&state->constant_pool, unquoted_str);
     rbs_ast_symbol_t *name = rbs_ast_symbol_new(&state->allocator, symbolLoc, &state->constant_pool, constant_id);
@@ -917,13 +917,11 @@ static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types
     rbs_location_t *symbolLoc = rbs_location_current_token(state);
     rbs_string_t current_token = rbs_parser_peek_current_token(state);
 
-    rbs_string_t symbol = rbs_string_copy_slice(&current_token, offset_bytes, rbs_string_len(current_token) - offset_bytes);
+    rbs_string_t symbol = rbs_string_copy_slice(&state->allocator, &current_token, offset_bytes, rbs_string_len(current_token) - offset_bytes);
 
-    rbs_string_t unquoted_symbol = rbs_unquote_string(symbol);
-    rbs_string_free(&symbol);
+    rbs_string_t unquoted_symbol = rbs_unquote_string(&state->allocator, symbol);
 
     rbs_constant_id_t constant_id = rbs_constant_pool_insert_string(&state->constant_pool, unquoted_symbol);
-    // rbs_string_free(&unquoted_symbol);
 
     literal = rbs_ast_symbol_new(&state->allocator, symbolLoc, &state->constant_pool, constant_id);
     break;
@@ -1103,7 +1101,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     rbs_location_t *loc = rbs_location_current_token(state);
 
     rbs_string_t string = rbs_parser_peek_current_token(state);
-    rbs_string_t stripped_string = rbs_string_strip_whitespace(&string);
+    rbs_string_t stripped_string = rbs_string_strip_whitespace(&state->allocator, &string);
 
     rbs_node_t *literal = (rbs_node_t *) rbs_ast_integer_new(&state->allocator, loc, stripped_string);
     *type = (rbs_node_t *) rbs_types_literal_new(&state->allocator, loc, literal);
@@ -1123,7 +1121,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
   case tDQSTRING: {
     rbs_location_t *loc = rbs_location_current_token(state);
 
-    rbs_string_t unquoted_str = rbs_unquote_string(rbs_parser_peek_current_token(state));
+    rbs_string_t unquoted_str = rbs_unquote_string(&state->allocator, rbs_parser_peek_current_token(state));
     rbs_node_t *literal = (rbs_node_t *) rbs_ast_string_new(&state->allocator, loc, unquoted_str);
     *type = (rbs_node_t *) rbs_types_literal_new(&state->allocator, loc, literal);
     return true;
@@ -1547,11 +1545,10 @@ static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotati
     state->lexstate->encoding->char_width((const uint8_t *) "%", (size_t) 1) +
     state->lexstate->encoding->char_width((const uint8_t *) "a", (size_t) 1);
 
-  rbs_string_t str = {
-    .start = state->lexstate->string.start + rg.start.byte_pos + offset_bytes,
-    .end = state->lexstate->string.end,
-    .type = RBS_STRING_SHARED,
-  };
+  rbs_string_t str = rbs_string_new(
+    state->lexstate->string.start + rg.start.byte_pos + offset_bytes,
+    state->lexstate->string.end
+  );
   unsigned int open_char = utf8_to_codepoint(str);
 
   unsigned int close_char;
@@ -1584,13 +1581,13 @@ static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotati
   size_t total_offset = offset_bytes + open_bytes;
 
   rbs_string_t annotation_str = rbs_string_copy_slice(
+    &state->allocator,
     &current_token,
     total_offset,
     rbs_string_len(current_token) - total_offset - close_bytes
   );
 
-  rbs_string_t stripped_annotation_str = rbs_string_strip_whitespace(&annotation_str);
-  rbs_string_free(&annotation_str);
+  rbs_string_t stripped_annotation_str = rbs_string_strip_whitespace(&state->allocator, &annotation_str);
 
   *annotation = rbs_ast_annotation_new(&state->allocator, rbs_location_new(&state->allocator, rg), stripped_annotation_str);
   return true;
@@ -1668,7 +1665,7 @@ static bool parse_method_name(parserstate *state, range *range, rbs_ast_symbol_t
   }
   case tQIDENT: {
     rbs_string_t string = rbs_parser_peek_current_token(state);
-    rbs_string_t unquoted_str = rbs_unquote_string(string);
+    rbs_string_t unquoted_str = rbs_unquote_string(&state->allocator, string);
     rbs_constant_id_t constant_id = rbs_constant_pool_insert_string(&state->constant_pool, unquoted_str);
     rbs_location_t *symbolLoc = rbs_location_current_token(state);
     *symbol = rbs_ast_symbol_new(&state->allocator, symbolLoc, &state->constant_pool, constant_id);
