@@ -1,23 +1,28 @@
-#include "rbs_extension.h"
-#include "rbs/util/rbs_constant_pool.h"
+#include "rbs/parserstate.h"
+
+#include "rbs/parser.h"
+#include "rbs/encoding.h"
+#include "rbs/rbs_buffer.h"
+
+#include <stdio.h>
 
 #define RESET_TABLE_P(table) (table->size == 0)
 
-id_table *alloc_empty_table(void) {
-  id_table *table = malloc(sizeof(id_table));
+id_table *alloc_empty_table(rbs_allocator_t *allocator) {
+  id_table *table = rbs_allocator_alloc(allocator, id_table);
 
   *table = (id_table) {
     .size = 10,
     .count = 0,
-    .ids = calloc(10, sizeof(rbs_constant_id_t)),
+    .ids = rbs_allocator_calloc(allocator, 10, rbs_constant_id_t),
     .next = NULL,
   };
 
   return table;
 }
 
-id_table *alloc_reset_table(void) {
-  id_table *table = malloc(sizeof(id_table));
+id_table *alloc_reset_table(rbs_allocator_t *allocator) {
+  id_table *table = rbs_allocator_alloc(allocator, id_table);
 
   *table = (id_table) {
     .size = 0,
@@ -31,54 +36,58 @@ id_table *alloc_reset_table(void) {
 
 id_table *parser_push_typevar_table(parserstate *state, bool reset) {
   if (reset) {
-    id_table *table = alloc_reset_table();
+    id_table *table = alloc_reset_table(&state->allocator);
     table->next = state->vars;
     state->vars = table;
   }
 
-  id_table *table = alloc_empty_table();
+  id_table *table = alloc_empty_table(&state->allocator);
   table->next = state->vars;
   state->vars = table;
 
   return table;
 }
 
-void parser_pop_typevar_table(parserstate *state) {
+NODISCARD
+bool parser_pop_typevar_table(parserstate *state) {
   id_table *table;
 
   if (state->vars) {
     table = state->vars;
     state->vars = table->next;
-    free(table->ids);
-    free(table);
   } else {
-    rb_raise(rb_eRuntimeError, "Cannot pop empty table");
+    set_error(state, state->current_token, false, "Cannot pop empty table");
+    return false;
   }
 
   if (state->vars && RESET_TABLE_P(state->vars)) {
     table = state->vars;
     state->vars = table->next;
-    free(table);
   }
+
+  return true;
 }
 
-void parser_insert_typevar(parserstate *state, rbs_constant_id_t id) {
+NODISCARD
+bool parser_insert_typevar(parserstate *state, rbs_constant_id_t id) {
   id_table *table = state->vars;
 
   if (RESET_TABLE_P(table)) {
-    rb_raise(rb_eRuntimeError, "Cannot insert to reset table");
+    set_error(state, state->current_token, false, "Cannot insert to reset table");
+    return false;
   }
 
   if (table->size == table->count) {
     // expand
     rbs_constant_id_t *ptr = table->ids;
     table->size += 10;
-    table->ids = calloc(table->size, sizeof(rbs_constant_id_t));
+    table->ids = rbs_allocator_calloc(&state->allocator, table->size, rbs_constant_id_t);
     memcpy(table->ids, ptr, sizeof(rbs_constant_id_t) * table->count);
-    free(ptr);
   }
 
   table->ids[table->count++] = id;
+
+  return true;
 }
 
 bool parser_typevar_member(parserstate *state, rbs_constant_id_t id) {
@@ -143,22 +152,6 @@ bool parser_advance_if(parserstate *state, enum TokenType type) {
   }
 }
 
-void parser_assert(parserstate *state, enum TokenType type) {
-  if (state->current_token.type != type) {
-    raise_syntax_error(
-      state,
-      state->current_token,
-      "expected a token `%s`",
-      token_type_str(type)
-    );
-  }
-}
-
-void parser_advance_assert(parserstate *state, enum TokenType type) {
-  parser_advance(state);
-  parser_assert(state, type);
-}
-
 void print_token(token tok) {
   printf(
     "%s char=%d...%d\n",
@@ -174,26 +167,61 @@ void insert_comment_line(parserstate *state, token tok) {
   comment *com = comment_get_comment(state->last_comment, prev_line);
 
   if (com) {
-    comment_insert_new_line(com, tok);
+    comment_insert_new_line(&state->allocator, com, tok);
   } else {
-    state->last_comment = alloc_comment(tok, state->last_comment);
+    state->last_comment = alloc_comment(&state->allocator, tok, state->last_comment);
   }
 }
 
-VALUE get_comment(parserstate *state, int subject_line) {
+static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) {
+  size_t hash_bytes = state->lexstate->encoding->char_width((const uint8_t *) "#", (size_t) 1);
+  size_t space_bytes = state->lexstate->encoding->char_width((const uint8_t *) " ", (size_t) 1);
+
+  rbs_buffer_t rbs_buffer;
+  rbs_buffer_init(&state->allocator, &rbs_buffer);
+
+  for (size_t i = 0; i < com->line_count; i++) {
+    token tok = com->tokens[i];
+
+    const char *comment_start = state->lexstate->string.start + tok.range.start.byte_pos + hash_bytes;
+    size_t comment_bytes = RANGE_BYTES(tok.range) - hash_bytes;
+
+    rbs_string_t str = rbs_string_new(
+      comment_start,
+      state->lexstate->string.end
+    );
+    unsigned char c = utf8_to_codepoint(str);
+
+    if (c == ' ') {
+      comment_start += space_bytes;
+      comment_bytes -= space_bytes;
+    }
+
+    rbs_buffer_append_string(&state->allocator, &rbs_buffer, comment_start, comment_bytes);
+    rbs_buffer_append_cstr(&state->allocator, &rbs_buffer, "\n");
+  }
+
+  return rbs_ast_comment_new(
+    &state->allocator,
+    rbs_location_new(&state->allocator, (range) { .start = com->start, .end = com->end }),
+    rbs_buffer_to_string(&rbs_buffer)
+  );
+}
+
+rbs_ast_comment_t *get_comment(parserstate *state, int subject_line) {
   int comment_line = subject_line - 1;
 
   comment *com = comment_get_comment(state->last_comment, comment_line);
 
   if (com) {
-    return comment_to_ruby(com, state->buffer);
+    return parse_comment_lines(state, com);
   } else {
-    return Qnil;
+    return NULL;
   }
 }
 
-comment *alloc_comment(token comment_token, comment *last_comment) {
-  comment *new_comment = malloc(sizeof(comment));
+comment *alloc_comment(rbs_allocator_t *allocator, token comment_token, comment *last_comment) {
+  comment *new_comment = rbs_allocator_alloc(allocator, comment);
 
   *new_comment = (comment) {
     .start = comment_token.range.start,
@@ -206,21 +234,12 @@ comment *alloc_comment(token comment_token, comment *last_comment) {
     .next_comment = last_comment,
   };
 
-  comment_insert_new_line(new_comment, comment_token);
+  comment_insert_new_line(allocator, new_comment, comment_token);
 
   return new_comment;
 }
 
-void free_comment(comment *com) {
-  if (com->next_comment) {
-    free_comment(com->next_comment);
-  }
-
-  free(com->tokens);
-  free(com);
-}
-
-void comment_insert_new_line(comment *com, token comment_token) {
+void comment_insert_new_line(rbs_allocator_t *allocator, comment *com, token comment_token) {
   if (com->line_count == 0) {
     com->start = comment_token.range.start;
   }
@@ -230,11 +249,10 @@ void comment_insert_new_line(comment *com, token comment_token) {
 
     if (com->tokens) {
       token *p = com->tokens;
-      com->tokens = calloc(com->line_size, sizeof(token));
+      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
       memcpy(com->tokens, p, sizeof(token) * com->line_count);
-      free(p);
     } else {
-      com->tokens = calloc(com->line_size, sizeof(token));
+      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
     }
   }
 
@@ -258,42 +276,8 @@ comment *comment_get_comment(comment *com, int line) {
   return comment_get_comment(com->next_comment, line);
 }
 
-VALUE comment_to_ruby(comment *com, VALUE buffer) {
-  VALUE content = rb_funcall(buffer, rb_intern("content"), 0);
-  rb_encoding *enc = rb_enc_get(content);
-  VALUE string = rb_enc_str_new_cstr("", enc);
-
-  int hash_bytes = rb_enc_codelen('#', enc);
-  int space_bytes = rb_enc_codelen(' ', enc);
-
-  for (size_t i = 0; i < com->line_count; i++) {
-    token tok = com->tokens[i];
-
-    char *comment_start = RSTRING_PTR(content) + tok.range.start.byte_pos + hash_bytes;
-    int comment_bytes = RANGE_BYTES(tok.range) - hash_bytes;
-    unsigned char c = rb_enc_mbc_to_codepoint(comment_start, RSTRING_END(content), enc);
-
-    if (c == ' ') {
-      comment_start += space_bytes;
-      comment_bytes -= space_bytes;
-    }
-
-    rb_str_cat(string, comment_start, comment_bytes);
-    rb_str_cat_cstr(string, "\n");
-  }
-
-  return rbs_ast_comment(
-    string,
-    rbs_location_pp(buffer, &com->start, &com->end)
-  );
-}
-
-lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
-  if (start_pos < 0 || end_pos < 0) {
-    rb_raise(rb_eArgError, "negative position range: %d...%d", start_pos, end_pos);
-  }
-
-  lexstate *lexer = malloc(sizeof(lexstate));
+lexstate *alloc_lexer(rbs_allocator_t *allocator, rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
+  lexstate *lexer = rbs_allocator_alloc(allocator, lexstate);
 
   position start_position = (position) {
     .byte_pos = 0,
@@ -310,6 +294,7 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
     .start = { 0 },
     .first_token_of_line = false,
     .last_char = 0,
+    .encoding = encoding,
   };
 
   skipn(lexer, start_pos);
@@ -319,8 +304,12 @@ lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
   return lexer;
 }
 
-parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_pos, VALUE variables) {
-  parserstate *parser = malloc(sizeof(parserstate));
+parserstate *alloc_parser(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
+  rbs_allocator_t allocator;
+  rbs_allocator_init(&allocator);
+
+  lexstate *lexer = alloc_lexer(&allocator, string, encoding, start_pos, end_pos);
+  parserstate *parser = rbs_allocator_alloc(&allocator, parserstate);
 
   *parser = (parserstate) {
     .lexstate = lexer,
@@ -329,12 +318,13 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     .next_token = NullToken,
     .next_token2 = NullToken,
     .next_token3 = NullToken,
-    .buffer = buffer,
 
     .vars = NULL,
     .last_comment = NULL,
 
     .constant_pool = {},
+    .allocator = allocator,
+    .error = NULL,
   };
 
   // The parser's constant pool is mainly used for storing the names of type variables, which usually aren't many.
@@ -361,37 +351,29 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
   parser_advance(parser);
   parser_advance(parser);
 
-  if (!NIL_P(variables)) {
-    if (!RB_TYPE_P(variables, T_ARRAY)) {
-      rb_raise(rb_eTypeError,
-               "wrong argument type %"PRIsVALUE" (must be array or nil)",
-               rb_obj_class(variables));
-    }
-
-    parser_push_typevar_table(parser, true);
-
-    for (long i = 0; i < rb_array_len(variables); i++) {
-      VALUE symbol = rb_ary_entry(variables, i);
-      VALUE name = rb_sym2str(symbol);
-
-      rbs_constant_id_t id = rbs_constant_pool_insert_shared(
-        &parser->constant_pool,
-        (const uint8_t *) RSTRING_PTR(name),
-        RSTRING_LEN(name)
-      );
-
-      parser_insert_typevar(parser, id);
-    }
-  }
-
   return parser;
 }
 
-void free_parser(parserstate *parser) {
-  free(parser->lexstate);
-  if (parser->last_comment) {
-    free_comment(parser->last_comment);
+void rbs_parser_declare_type_variables(parserstate *parser, size_t count, const char **variables) {
+  if (variables == NULL) return; // Nothing to do.
+
+  parser_push_typevar_table(parser, true);
+
+  for (size_t i = 0; i < count; i++) {
+    rbs_constant_id_t name = rbs_constant_pool_insert_shared(
+      &parser->constant_pool,
+      (const uint8_t *) variables[i],
+      strlen(variables[i])
+    );
+
+    if (!parser_insert_typevar(parser, name)) {
+      fprintf(stderr, "RuntimeError: %s\n", parser->error->message);
+      exit(1);
+    }
   }
+}
+
+void free_parser(parserstate *parser) {
   rbs_constant_pool_free(&parser->constant_pool);
-  free(parser);
+  rbs_allocator_free(&parser->allocator);
 }

@@ -1,6 +1,9 @@
 #ifndef RBS__LEXER_H
 #define RBS__LEXER_H
 
+#include "rbs_string.h"
+#include "rbs_encoding.h"
+
 enum TokenType {
   NullType,         /* (Nothing) */
   pEOF,             /* EOF */
@@ -123,13 +126,14 @@ typedef struct {
  * ```
  * */
 typedef struct {
-  VALUE string;
+  rbs_string_t string;
   int start_pos;                  /* The character position that defines the start of the input */
   int end_pos;                    /* The character position that defines the end of the input */
   position current;               /* The current position */
   position start;                 /* The start position of the current token */
   bool first_token_of_line;       /* This flag is used for tLINECOMMENT */
   unsigned int last_char;         /* Last peeked character */
+  const rbs_encoding_t *encoding;
 } lexstate;
 
 extern token NullToken;

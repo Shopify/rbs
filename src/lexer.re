@@ -1,4 +1,4 @@
-#include "rbs_extension.h"
+#include "rbs/lexer.h"
 
 token rbsparser_next_token(lexstate *state) {
   lexstate backup;

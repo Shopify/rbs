@@ -1,10 +1,14 @@
 #ifndef RBS__PARSERSTATE_H
 #define RBS__PARSERSTATE_H
 
-#include <stdbool.h>
+#include "rbs/defines.h"
+#include "rbs/util/rbs_allocator.h"
+#include "rbs/util/rbs_constant_pool.h"
+#include "rbs/lexer.h"
+#include "rbs/ast.h"
 
-#include "lexer.h"
-#include "location.h"
+#include <stdbool.h>
+#include <stddef.h>
 
 /**
  * id_table represents a set of RBS constant IDs.
@@ -41,6 +45,12 @@ typedef struct comment {
   struct comment *next_comment;
 } comment;
 
+typedef struct error {
+  char *message;
+  token token;
+  bool syntax_error;
+} error;
+
 /**
  * An RBS parser is a LL(3) parser.
  * */
@@ -51,19 +61,18 @@ typedef struct {
   token next_token;       /* The first lookahead token */
   token next_token2;      /* The second lookahead token */
   token next_token3;      /* The third lookahead token */
-  VALUE buffer;
 
   id_table *vars;         /* Known type variables */
   comment *last_comment;  /* Last read comment */
 
   rbs_constant_pool_t constant_pool;
+  rbs_allocator_t allocator;
+  error *error;
 } parserstate;
 
-comment *alloc_comment(token comment_token, comment *last_comment);
-void free_comment(comment *com);
-void comment_insert_new_line(comment *com, token comment_token);
+comment *alloc_comment(rbs_allocator_t *, token comment_token, comment *last_comment);
+void comment_insert_new_line(rbs_allocator_t *, comment *com, token comment_token);
 comment *comment_get_comment(comment *com, int line);
-VALUE comment_to_ruby(comment *com, VALUE buffer);
 
 /**
  * Insert new table entry.
@@ -82,11 +91,12 @@ VALUE comment_to_ruby(comment *com, VALUE buffer);
  * ```
  * */
 id_table *parser_push_typevar_table(parserstate *state, bool reset);
-void parser_pop_typevar_table(parserstate *state);
+NODISCARD bool parser_pop_typevar_table(parserstate *state);
+
 /**
  * Insert new type variable into the latest table.
  * */
-void parser_insert_typevar(parserstate *state, rbs_constant_id_t id);
+NODISCARD bool parser_insert_typevar(parserstate *state, rbs_constant_id_t id);
 
 /**
  * Returns true if given type variable is recorded in the table.
@@ -103,36 +113,32 @@ bool parser_typevar_member(parserstate *state, rbs_constant_id_t id);
  * alloc_lexer(string, 0, 31)    // New lexstate with buffer content
  * ```
  * */
-lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos);
+lexstate *alloc_lexer(rbs_allocator_t *, rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos);
 
 /**
  * Allocate new parserstate object.
+ * Optionally call `rbs_parser_declare_type_variables_from_ruby_array()` after, to populate the type variable table.
+ *
+ * Once allocated, optionally call `rbs_parser_declare_type_variables` if you'd like to declare
+ * any type variables to be used during the parsing.
  *
  * ```
- * alloc_parser(buffer, lexer, 0, 1, variables)    // New parserstate with variables
- * alloc_parser(buffer, lexer, 3, 5, Qnil)         // New parserstate without variables
+ * alloc_parser(buffer, string, encoding, 0, 1);
+ * rbs_parser_declare_type_variables_from_ruby_array(variables);
  * ```
  * */
-parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_pos, VALUE variables);
+parserstate *alloc_parser(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos);
 void free_parser(parserstate *parser);
+
+/**
+ * Declare type variables to be used during parsing.
+ * */
+void rbs_parser_declare_type_variables(parserstate *parser, size_t count, const char **variables);
+
 /**
  * Advance one token.
  * */
 void parser_advance(parserstate *state);
-
-/**
- * @brief Raises an exception if `current_token->type != type`.
- *
- * @param state
- * @param type
- */
-void parser_assert(parserstate *state, enum TokenType type);
-
-/**
- * Advance one token, and assert the current token type.
- * Raises an exception if `current_token->type != type`.
- * */
-void parser_advance_assert(parserstate *state, enum TokenType type);
 
 /**
  * Advance one token if the next_token is a token of the type.
@@ -158,6 +164,6 @@ void insert_comment_line(parserstate *state, token token);
  * end
  * ```
  * */
-VALUE get_comment(parserstate *state, int subject_line);
+rbs_ast_comment_t *get_comment(parserstate *state, int subject_line);
 
 #endif
