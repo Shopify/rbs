@@ -105,7 +105,7 @@ int token_bytes(token tok) {
   return RANGE_BYTES(tok.range);
 }
 
-unsigned int peek(lexstate *state) {
+unsigned int rbs_peek(lexstate *state) {
   if (state->current.char_pos == state->end_pos) {
     state->last_char = '\0';
     return 0;
@@ -152,7 +152,7 @@ token next_eof_token(lexstate *state) {
 
 void rbs_skip(lexstate *state) {
   if (!state->last_char) {
-    peek(state);
+    rbs_peek(state);
   }
 
   size_t byte_len;
@@ -178,7 +178,7 @@ void rbs_skip(lexstate *state) {
 
 void skipn(lexstate *state, size_t size) {
   for (size_t i = 0; i < size; i ++) {
-    peek(state);
+    rbs_peek(state);
     rbs_skip(state);
   }
 }

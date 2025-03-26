@@ -154,7 +154,7 @@ const char *token_type_str(enum TokenType type);
 /**
  * Read next character.
  * */
-unsigned int peek(lexstate *state);
+unsigned int rbs_peek(lexstate *state);
 
 /**
  * Skip one character.

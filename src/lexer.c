@@ -12,7 +12,7 @@ token rbsparser_next_token(lexstate *state) {
 {
 	unsigned int yych;
 	unsigned int yyaccept = 0;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	switch (yych) {
 		case 0x00000000: goto yy1;
 		case '\t':
@@ -126,7 +126,7 @@ yy3:
 #line 127 "src/lexer.c"
 yy4:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '\t') goto yy4;
 	if (yych == ' ') goto yy4;
 yy5:
@@ -138,7 +138,7 @@ yy6:
 	goto yy5;
 yy7:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '=') goto yy24;
 	if (yych == '~') goto yy24;
 yy8:
@@ -149,12 +149,12 @@ yy9:
 	yyaccept = 0;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy3;
 	goto yy67;
 yy10:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy11;
 	if (yych != '\n') goto yy10;
 yy11:
@@ -168,7 +168,7 @@ yy11:
 #line 169 "src/lexer.c"
 yy12:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= ')') {
 		if (yych <= 0x0000001F) {
 			if (yych <= '\n') {
@@ -216,7 +216,7 @@ yy13:
 	yyaccept = 1;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy74;
 	goto yy8;
 yy14:
@@ -228,7 +228,7 @@ yy15:
 	yyaccept = 0;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy3;
 	goto yy76;
 yy16:
@@ -243,14 +243,14 @@ yy17:
 #line 244 "src/lexer.c"
 yy18:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '*') goto yy80;
 #line 35 "src/lexer.re"
 	{ return next_token(state, pSTAR); }
 #line 251 "src/lexer.c"
 yy19:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '/') goto yy8;
 	if (yych <= '9') goto yy25;
 	if (yych == '@') goto yy24;
@@ -262,7 +262,7 @@ yy20:
 #line 263 "src/lexer.c"
 yy21:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') goto yy8;
 		if (yych <= '9') goto yy25;
@@ -276,7 +276,7 @@ yy22:
 	yyaccept = 2;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '.') goto yy82;
 yy23:
 #line 37 "src/lexer.re"
@@ -287,7 +287,7 @@ yy24:
 	goto yy8;
 yy25:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '/') goto yy26;
 	if (yych <= '9') goto yy25;
 	if (yych == '_') goto yy25;
@@ -299,7 +299,7 @@ yy27:
 	yyaccept = 3;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	switch (yych) {
 		case '!': goto yy83;
 		case '"': goto yy85;
@@ -382,7 +382,7 @@ yy28:
 #line 383 "src/lexer.c"
 yy29:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= ';') goto yy30;
 	if (yych <= '<') goto yy24;
 	if (yych <= '=') goto yy99;
@@ -392,7 +392,7 @@ yy30:
 #line 393 "src/lexer.c"
 yy31:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '>') {
 		if (yych <= '<') goto yy32;
 		if (yych <= '=') goto yy100;
@@ -406,7 +406,7 @@ yy32:
 #line 407 "src/lexer.c"
 yy33:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '<') goto yy8;
 	if (yych <= '>') goto yy24;
 	goto yy8;
@@ -419,7 +419,7 @@ yy35:
 	yyaccept = 0;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '^') {
 		if (yych <= '?') goto yy3;
 		if (yych <= '@') goto yy102;
@@ -432,7 +432,7 @@ yy35:
 	}
 yy36:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -455,7 +455,7 @@ yy37:
 #line 456 "src/lexer.c"
 yy38:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == ']') goto yy107;
 #line 26 "src/lexer.re"
 	{ return next_token(state, pLBRACKET); }
@@ -472,7 +472,7 @@ yy40:
 #line 473 "src/lexer.c"
 yy41:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -498,7 +498,7 @@ yy43:
 	yyaccept = 4;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= ' ') {
 		if (yych <= 0x00000000) goto yy44;
 		if (yych <= 0x0000001F) goto yy114;
@@ -511,7 +511,7 @@ yy44:
 #line 512 "src/lexer.c"
 yy45:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 'r') {
 		if (yych == 'l') goto yy115;
 		goto yy53;
@@ -526,33 +526,33 @@ yy46:
 #line 527 "src/lexer.c"
 yy47:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy119;
 	goto yy53;
 yy48:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy120;
 	goto yy53;
 yy49:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy121;
 	goto yy53;
 yy50:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy122;
 	if (yych == 'x') goto yy123;
 	goto yy53;
 yy51:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy124;
 	goto yy53;
 yy52:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 yy53:
 	if (yych <= '=') {
 		if (yych <= '/') {
@@ -576,39 +576,39 @@ yy53:
 	}
 yy54:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy125;
 	goto yy53;
 yy55:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy127;
 	goto yy53;
 yy56:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'i') goto yy128;
 	goto yy53;
 yy57:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'u') goto yy129;
 	goto yy53;
 yy58:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'r') goto yy130;
 	if (yych == 'u') goto yy131;
 	goto yy53;
 yy59:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy132;
 	if (yych == 'i') goto yy133;
 	goto yy53;
 yy60:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 'q') {
 		if (yych == 'o') goto yy134;
 		goto yy53;
@@ -619,13 +619,13 @@ yy60:
 	}
 yy61:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy137;
 	if (yych == 's') goto yy138;
 	goto yy53;
 yy62:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy139;
 	goto yy53;
 yy63:
@@ -645,7 +645,7 @@ yy65:
 #line 646 "src/lexer.c"
 yy66:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 yy67:
 	if (yych <= '"') {
 		if (yych <= 0x00000000) goto yy68;
@@ -689,13 +689,13 @@ yy69:
 #line 690 "src/lexer.c"
 yy70:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'u') goto yy140;
 	if (yych == 'x') goto yy141;
 	goto yy66;
 yy71:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= ',') {
 		if (yych <= '\f') {
 			if (yych <= 0x00000000) goto yy72;
@@ -731,7 +731,7 @@ yy73:
 	goto yy72;
 yy74:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 'Z') {
 		if (yych <= '(') {
 			if (yych <= '\'') goto yy68;
@@ -752,7 +752,7 @@ yy74:
 	}
 yy75:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 yy76:
 	if (yych <= '\'') {
 		if (yych <= 0x00000000) goto yy68;
@@ -769,7 +769,7 @@ yy78:
 #line 770 "src/lexer.c"
 yy79:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '\'') {
 		if (yych <= 0x00000000) goto yy68;
 		if (yych <= '&') goto yy75;
@@ -790,12 +790,12 @@ yy81:
 #line 791 "src/lexer.c"
 yy82:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '.') goto yy148;
 	goto yy68;
 yy83:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '=') goto yy87;
 	if (yych == '~') goto yy87;
 yy84:
@@ -804,7 +804,7 @@ yy84:
 #line 805 "src/lexer.c"
 yy85:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '"') {
 		if (yych <= 0x00000000) goto yy68;
 		if (yych <= '!') goto yy85;
@@ -815,7 +815,7 @@ yy85:
 	}
 yy86:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= ')') {
 		if (yych <= 0x0000001F) {
 			if (yych <= '\n') {
@@ -864,7 +864,7 @@ yy87:
 	goto yy84;
 yy88:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '\'') {
 		if (yych <= 0x00000000) goto yy68;
 		if (yych <= '&') goto yy88;
@@ -875,12 +875,12 @@ yy88:
 	}
 yy89:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '*') goto yy87;
 	goto yy84;
 yy90:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '@') goto yy87;
 	goto yy84;
 yy91:
@@ -890,26 +890,26 @@ yy91:
 #line 891 "src/lexer.c"
 yy92:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= ';') goto yy84;
 	if (yych <= '<') goto yy87;
 	if (yych <= '=') goto yy157;
 	goto yy84;
 yy93:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '=') goto yy158;
 	if (yych == '~') goto yy87;
 	goto yy68;
 yy94:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '<') goto yy84;
 	if (yych <= '>') goto yy87;
 	goto yy84;
 yy95:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '^') {
 		if (yych <= '?') goto yy68;
 		if (yych <= '@') goto yy159;
@@ -922,7 +922,7 @@ yy95:
 	}
 yy96:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '>') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy162;
@@ -946,17 +946,17 @@ yy97:
 #line 947 "src/lexer.c"
 yy98:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == ']') goto yy158;
 	goto yy68;
 yy99:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '>') goto yy24;
 	goto yy8;
 yy100:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '=') goto yy24;
 	goto yy8;
 yy101:
@@ -966,7 +966,7 @@ yy101:
 #line 967 "src/lexer.c"
 yy102:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '^') {
 		if (yych <= '@') goto yy68;
 		if (yych <= 'Z') goto yy163;
@@ -978,7 +978,7 @@ yy102:
 	}
 yy103:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 'Z') {
 		if (yych <= '/') goto yy104;
 		if (yych <= '9') goto yy103;
@@ -1007,14 +1007,14 @@ yy106:
 #line 1008 "src/lexer.c"
 yy107:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '=') goto yy24;
 #line 47 "src/lexer.re"
 	{ return next_token(state, pAREF_OPR); }
 #line 1015 "src/lexer.c"
 yy108:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 yy109:
 	if (yych <= '=') {
 		if (yych <= '/') {
@@ -1038,7 +1038,7 @@ yy110:
 #line 1039 "src/lexer.c"
 yy111:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1061,23 +1061,23 @@ yy112:
 #line 1062 "src/lexer.c"
 yy113:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy165;
 	goto yy109;
 yy114:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy68;
 	if (yych == '`') goto yy166;
 	goto yy114;
 yy115:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'i') goto yy167;
 	goto yy53;
 yy116:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1100,43 +1100,43 @@ yy117:
 #line 1101 "src/lexer.c"
 yy118:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy168;
 	goto yy53;
 yy119:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy169;
 	if (yych == 't') goto yy170;
 	goto yy53;
 yy120:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy172;
 	goto yy53;
 yy121:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'f') goto yy173;
 	goto yy53;
 yy122:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy175;
 	goto yy53;
 yy123:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy177;
 	goto yy53;
 yy124:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy178;
 	goto yy53;
 yy125:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '^') {
 		if (yych <= '9') {
 			if (yych == '!') goto yy105;
@@ -1170,74 +1170,74 @@ yy126:
 #line 1171 "src/lexer.c"
 yy127:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy182;
 	goto yy53;
 yy128:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy183;
 	goto yy53;
 yy129:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy185;
 	goto yy53;
 yy130:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy187;
 	if (yych == 'i') goto yy188;
 	goto yy53;
 yy131:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'b') goto yy189;
 	goto yy53;
 yy132:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy190;
 	goto yy53;
 yy133:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy191;
 	goto yy53;
 yy134:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'p') goto yy192;
 	goto yy53;
 yy135:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'u') goto yy194;
 	goto yy53;
 yy136:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'p') goto yy195;
 	goto yy53;
 yy137:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'c') goto yy196;
 	if (yych == 't') goto yy197;
 	goto yy53;
 yy138:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy198;
 	goto yy53;
 yy139:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'i') goto yy200;
 	goto yy53;
 yy140:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy201;
@@ -1250,7 +1250,7 @@ yy140:
 	}
 yy141:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '/') goto yy68;
 	if (yych <= '9') goto yy66;
 	if (yych <= '`') goto yy68;
@@ -1258,31 +1258,31 @@ yy141:
 	goto yy68;
 yy142:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy68;
 	if (yych == ')') goto yy202;
 	goto yy142;
 yy143:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy68;
 	if (yych == '>') goto yy203;
 	goto yy143;
 yy144:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy68;
 	if (yych == ']') goto yy204;
 	goto yy144;
 yy145:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy68;
 	if (yych == '}') goto yy205;
 	goto yy145;
 yy146:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 0x00000000) goto yy68;
 	if (yych == '|') goto yy206;
 	goto yy146;
@@ -1290,7 +1290,7 @@ yy147:
 	yyaccept = 5;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '\'') {
 		if (yych <= 0x00000000) goto yy78;
 		if (yych <= '&') goto yy75;
@@ -1311,13 +1311,13 @@ yy149:
 #line 1312 "src/lexer.c"
 yy150:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'u') goto yy207;
 	if (yych == 'x') goto yy208;
 	goto yy85;
 yy151:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= ',') {
 		if (yych <= '\f') {
 			if (yych <= 0x00000000) goto yy152;
@@ -1359,7 +1359,7 @@ yy155:
 #line 1360 "src/lexer.c"
 yy156:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '\'') {
 		if (yych <= 0x00000000) goto yy68;
 		if (yych <= '&') goto yy88;
@@ -1370,17 +1370,17 @@ yy156:
 	}
 yy157:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '>') goto yy87;
 	goto yy84;
 yy158:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '=') goto yy87;
 	goto yy84;
 yy159:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '^') {
 		if (yych <= '@') goto yy68;
 		if (yych <= 'Z') goto yy210;
@@ -1392,7 +1392,7 @@ yy159:
 	}
 yy160:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '>') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy212;
@@ -1419,7 +1419,7 @@ yy162:
 	goto yy97;
 yy163:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 'Z') {
 		if (yych <= '/') goto yy164;
 		if (yych <= '9') goto yy163;
@@ -1438,7 +1438,7 @@ yy164:
 #line 1439 "src/lexer.c"
 yy165:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy213;
 	goto yy109;
 yy166:
@@ -1448,22 +1448,22 @@ yy166:
 #line 1449 "src/lexer.c"
 yy167:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy214;
 	goto yy53;
 yy168:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'r') goto yy215;
 	goto yy53;
 yy169:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy216;
 	goto yy53;
 yy170:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1486,12 +1486,12 @@ yy171:
 #line 1487 "src/lexer.c"
 yy172:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 's') goto yy218;
 	goto yy53;
 yy173:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1514,7 +1514,7 @@ yy174:
 #line 1515 "src/lexer.c"
 yy175:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1537,37 +1537,37 @@ yy176:
 #line 1538 "src/lexer.c"
 yy177:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy219;
 	goto yy53;
 yy178:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 's') goto yy220;
 	goto yy53;
 yy179:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy221;
 	goto yy53;
 yy180:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy222;
 	goto yy53;
 yy181:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy223;
 	goto yy53;
 yy182:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'u') goto yy224;
 	goto yy53;
 yy183:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1590,7 +1590,7 @@ yy184:
 #line 1591 "src/lexer.c"
 yy185:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1613,32 +1613,32 @@ yy186:
 #line 1614 "src/lexer.c"
 yy187:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'p') goto yy225;
 	goto yy53;
 yy188:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'v') goto yy226;
 	goto yy53;
 yy189:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy227;
 	goto yy53;
 yy190:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'f') goto yy228;
 	goto yy53;
 yy191:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'g') goto yy230;
 	goto yy53;
 yy192:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1661,27 +1661,27 @@ yy193:
 #line 1662 "src/lexer.c"
 yy194:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy231;
 	goto yy53;
 yy195:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy233;
 	goto yy53;
 yy196:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'h') goto yy235;
 	goto yy53;
 yy197:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'y') goto yy236;
 	goto yy53;
 yy198:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1704,12 +1704,12 @@ yy199:
 #line 1705 "src/lexer.c"
 yy200:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy237;
 	goto yy53;
 yy201:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy239;
@@ -1747,7 +1747,7 @@ yy206:
 #line 1748 "src/lexer.c"
 yy207:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy240;
@@ -1760,7 +1760,7 @@ yy207:
 	}
 yy208:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '/') goto yy68;
 	if (yych <= '9') goto yy85;
 	if (yych <= '`') goto yy68;
@@ -1770,7 +1770,7 @@ yy209:
 	yyaccept = 6;
 	rbs_skip(state);
 	backup = *state;
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '\'') {
 		if (yych <= 0x00000000) goto yy155;
 		if (yych <= '&') goto yy88;
@@ -1781,7 +1781,7 @@ yy209:
 	}
 yy210:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '>') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy241;
@@ -1808,22 +1808,22 @@ yy212:
 	goto yy161;
 yy213:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy242;
 	goto yy109;
 yy214:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 's') goto yy243;
 	goto yy53;
 yy215:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '_') goto yy245;
 	goto yy53;
 yy216:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1846,57 +1846,57 @@ yy217:
 #line 1847 "src/lexer.c"
 yy218:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 's') goto yy246;
 	goto yy53;
 yy219:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy248;
 	goto yy53;
 yy220:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy249;
 	goto yy53;
 yy221:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'u') goto yy251;
 	goto yy53;
 yy222:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy252;
 	goto yy53;
 yy223:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'r') goto yy253;
 	goto yy53;
 yy224:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy254;
 	goto yy53;
 yy225:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy255;
 	goto yy53;
 yy226:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy256;
 	goto yy53;
 yy227:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'i') goto yy257;
 	goto yy53;
 yy228:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1919,12 +1919,12 @@ yy229:
 #line 1920 "src/lexer.c"
 yy230:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'l') goto yy258;
 	goto yy53;
 yy231:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1947,7 +1947,7 @@ yy232:
 #line 1948 "src/lexer.c"
 yy233:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -1970,17 +1970,17 @@ yy234:
 #line 1971 "src/lexer.c"
 yy235:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy259;
 	goto yy53;
 yy236:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'p') goto yy260;
 	goto yy53;
 yy237:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2003,7 +2003,7 @@ yy238:
 #line 2004 "src/lexer.c"
 yy239:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy261;
@@ -2016,7 +2016,7 @@ yy239:
 	}
 yy240:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy262;
@@ -2032,12 +2032,12 @@ yy241:
 	goto yy211;
 yy242:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy263;
 	goto yy109;
 yy243:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2060,7 +2060,7 @@ yy244:
 #line 2061 "src/lexer.c"
 yy245:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= 'q') {
 		if (yych == 'a') goto yy264;
 		goto yy53;
@@ -2071,7 +2071,7 @@ yy245:
 	}
 yy246:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2094,12 +2094,12 @@ yy247:
 #line 2095 "src/lexer.c"
 yy248:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy267;
 	goto yy53;
 yy249:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2122,57 +2122,57 @@ yy250:
 #line 2123 "src/lexer.c"
 yy251:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy269;
 	goto yy53;
 yy252:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy270;
 	goto yy53;
 yy253:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'f') goto yy271;
 	goto yy53;
 yy254:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy272;
 	goto yy53;
 yy255:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy274;
 	goto yy53;
 yy256:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy275;
 	goto yy53;
 yy257:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'c') goto yy276;
 	goto yy53;
 yy258:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy278;
 	goto yy53;
 yy259:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'c') goto yy279;
 	goto yy53;
 yy260:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy280;
 	goto yy53;
 yy261:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy66;
@@ -2185,7 +2185,7 @@ yy261:
 	}
 yy262:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy281;
@@ -2198,27 +2198,27 @@ yy262:
 	}
 yy263:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '_') goto yy282;
 	goto yy109;
 yy264:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'c') goto yy283;
 	goto yy53;
 yy265:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy284;
 	goto yy53;
 yy266:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'r') goto yy285;
 	goto yy53;
 yy267:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2241,22 +2241,22 @@ yy268:
 #line 2242 "src/lexer.c"
 yy269:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy286;
 	goto yy53;
 yy270:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'c') goto yy288;
 	goto yy53;
 yy271:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy289;
 	goto yy53;
 yy272:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2279,17 +2279,17 @@ yy273:
 #line 2280 "src/lexer.c"
 yy274:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy290;
 	goto yy53;
 yy275:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy292;
 	goto yy53;
 yy276:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2312,22 +2312,22 @@ yy277:
 #line 2313 "src/lexer.c"
 yy278:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy294;
 	goto yy53;
 yy279:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'k') goto yy295;
 	goto yy53;
 yy280:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy296;
 	goto yy53;
 yy281:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '@') {
 		if (yych <= '/') goto yy68;
 		if (yych <= '9') goto yy85;
@@ -2340,27 +2340,27 @@ yy281:
 	}
 yy282:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == '_') goto yy298;
 	goto yy109;
 yy283:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'c') goto yy300;
 	goto yy53;
 yy284:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'a') goto yy301;
 	goto yy53;
 yy285:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'i') goto yy302;
 	goto yy53;
 yy286:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2383,17 +2383,17 @@ yy287:
 #line 2384 "src/lexer.c"
 yy288:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy303;
 	goto yy53;
 yy289:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'c') goto yy305;
 	goto yy53;
 yy290:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2416,7 +2416,7 @@ yy291:
 #line 2417 "src/lexer.c"
 yy292:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2439,17 +2439,17 @@ yy293:
 #line 2440 "src/lexer.c"
 yy294:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy306;
 	goto yy53;
 yy295:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy307;
 	goto yy53;
 yy296:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2472,7 +2472,7 @@ yy297:
 #line 2473 "src/lexer.c"
 yy298:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2495,22 +2495,22 @@ yy299:
 #line 2496 "src/lexer.c"
 yy300:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy308;
 	goto yy53;
 yy301:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy309;
 	goto yy53;
 yy302:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 't') goto yy310;
 	goto yy53;
 yy303:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2533,37 +2533,37 @@ yy304:
 #line 2534 "src/lexer.c"
 yy305:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy311;
 	goto yy53;
 yy306:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'n') goto yy313;
 	goto yy53;
 yy307:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'd') goto yy315;
 	goto yy53;
 yy308:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 's') goto yy317;
 	goto yy53;
 yy309:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy318;
 	goto yy53;
 yy310:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'e') goto yy319;
 	goto yy53;
 yy311:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2586,7 +2586,7 @@ yy312:
 #line 2587 "src/lexer.c"
 yy313:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2609,7 +2609,7 @@ yy314:
 #line 2610 "src/lexer.c"
 yy315:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2632,27 +2632,27 @@ yy316:
 #line 2633 "src/lexer.c"
 yy317:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 's') goto yy320;
 	goto yy53;
 yy318:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'r') goto yy321;
 	goto yy53;
 yy319:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'r') goto yy323;
 	goto yy53;
 yy320:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych == 'o') goto yy325;
 	goto yy53;
 yy321:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2675,7 +2675,7 @@ yy322:
 #line 2676 "src/lexer.c"
 yy323:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
@@ -2698,10 +2698,10 @@ yy324:
 #line 2699 "src/lexer.c"
 yy325:
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych != 'r') goto yy53;
 	rbs_skip(state);
-	yych = peek(state);
+	yych = rbs_peek(state);
 	if (yych <= '=') {
 		if (yych <= '/') {
 			if (yych == '!') goto yy105;
