@@ -2957,7 +2957,7 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
 
         enum TokenType ident_type = state->current_token.type;
 
-        range type_name_range = null_range_p(namespace_range)
+        range type_name_range = rbs_null_range_p(namespace_range)
           ? state->current_token.range
           : (range) { .start = namespace_range.start, .end = state->current_token.range.end };
 
