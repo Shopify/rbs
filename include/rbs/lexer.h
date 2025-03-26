@@ -178,6 +178,6 @@ token rbs_next_eof_token(lexstate *state);
 
 token rbsparser_next_token(lexstate *state);
 
-void print_token(token tok);
+void rbs_print_token(token tok);
 
 #endif

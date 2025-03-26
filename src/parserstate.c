@@ -153,7 +153,7 @@ bool parser_advance_if(parserstate *state, enum TokenType type) {
   }
 }
 
-void print_token(token tok) {
+void rbs_print_token(token tok) {
   printf(
     "%s char=%d...%d\n",
     token_type_str(tok.type),
