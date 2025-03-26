@@ -147,7 +147,7 @@ int rbs_token_bytes(token tok);
 #define rbs_null_position_p(pos) (pos.byte_pos == -1)
 #define rbs_null_range_p(range) (range.start.byte_pos == -1)
 #define rbs_nonnull_pos_or(pos1, pos2) (rbs_null_position_p(pos1) ? pos2 : pos1)
-#define RANGE_BYTES(range) (range.end.byte_pos - range.start.byte_pos)
+#define RBS_RANGE_BYTES(range) (range.end.byte_pos - range.start.byte_pos)
 
 const char *token_type_str(enum TokenType type);
 

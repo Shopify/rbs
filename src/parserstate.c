@@ -185,7 +185,7 @@ static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) 
     token tok = com->tokens[i];
 
     const char *comment_start = state->lexstate->string.start + tok.range.start.byte_pos + hash_bytes;
-    size_t comment_bytes = RANGE_BYTES(tok.range) - hash_bytes;
+    size_t comment_bytes = RBS_RANGE_BYTES(tok.range) - hash_bytes;
 
     rbs_string_t str = rbs_string_new(
       comment_start,

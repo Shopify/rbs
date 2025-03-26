@@ -102,7 +102,7 @@ int rbs_token_chars(token tok) {
 }
 
 int rbs_token_bytes(token tok) {
-  return RANGE_BYTES(tok.range);
+  return RBS_RANGE_BYTES(tok.range);
 }
 
 unsigned int rbs_peek(lexstate *state) {
