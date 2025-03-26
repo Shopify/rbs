@@ -191,7 +191,7 @@ static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) 
       comment_start,
       state->lexstate->string.end
     );
-    unsigned char c = utf8_to_codepoint(str);
+    unsigned char c = rbs_utf8_to_codepoint(str);
 
     if (c == ' ') {
       comment_start += space_bytes;

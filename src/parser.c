@@ -1549,7 +1549,7 @@ static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotati
     state->lexstate->string.start + rg.start.byte_pos + offset_bytes,
     state->lexstate->string.end
   );
-  unsigned int open_char = utf8_to_codepoint(str);
+  unsigned int open_char = rbs_utf8_to_codepoint(str);
 
   unsigned int close_char;
 

@@ -114,7 +114,7 @@ unsigned int peek(lexstate *state) {
       state->string.start + state->current.byte_pos,
       state->string.end
     );
-    unsigned int c = utf8_to_codepoint(str);
+    unsigned int c = rbs_utf8_to_codepoint(str);
     state->last_char = c;
     return c;
   }
