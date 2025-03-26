@@ -176,7 +176,7 @@ void rbs_skip(lexstate *state) {
   }
 }
 
-void skipn(lexstate *state, size_t size) {
+void rbs_skipn(lexstate *state, size_t size) {
   for (size_t i = 0; i < size; i ++) {
     rbs_peek(state);
     rbs_skip(state);

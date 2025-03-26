@@ -164,7 +164,7 @@ void rbs_skip(lexstate *state);
 /**
  * Skip n characters.
  * */
-void skipn(lexstate *state, size_t size);
+void rbs_skipn(lexstate *state, size_t size);
 
 /**
  * Return new token with given type.

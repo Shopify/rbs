@@ -298,7 +298,7 @@ lexstate *alloc_lexer(rbs_allocator_t *allocator, rbs_string_t string, const rbs
     .encoding = encoding,
   };
 
-  skipn(lexer, start_pos);
+  rbs_skipn(lexer, start_pos);
   lexer->start = lexer->current;
   lexer->first_token_of_line = lexer->current.column == 0;
 
