@@ -979,7 +979,7 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
 
     range type_range = {
       .start = name_range.start,
-      .end = nonnull_pos_or(args_range.end, name_range.end),
+      .end = rbs_nonnull_pos_or(args_range.end, name_range.end),
     };
 
     rbs_location_t *loc = rbs_location_new(&state->allocator, type_range);
@@ -1497,7 +1497,7 @@ static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_l
 
   range decl_range;
   decl_range.start = state->current_token.range.start;
-  comment_pos = nonnull_pos_or(comment_pos, decl_range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, decl_range.start);
 
   range keyword_range = state->current_token.range;
 
@@ -1751,7 +1751,7 @@ NODISCARD
 static bool parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_methoddefinition_t **method_definition) {
   range member_range;
   member_range.start = state->current_token.range.start;
-  comment_pos = nonnull_pos_or(comment_pos, member_range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
 
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
@@ -1934,7 +1934,7 @@ NODISCARD
 static bool parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **mixin_member) {
   range member_range;
   member_range.start = state->current_token.range.start;
-  comment_pos = nonnull_pos_or(comment_pos, member_range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
 
   enum TokenType type = state->current_token.type;
   range keyword_range = state->current_token.range;
@@ -2017,7 +2017,7 @@ static bool parse_alias_member(parserstate *state, bool instance_only, position 
   member_range.start = state->current_token.range.start;
   range keyword_range = state->current_token.range;
 
-  comment_pos = nonnull_pos_or(comment_pos, member_range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   rbs_keyword_t *kind;
@@ -2073,7 +2073,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
 
   range member_range;
   member_range.start = state->current_token.range.start;
-  comment_pos = nonnull_pos_or(comment_pos, member_range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   switch (state->current_token.type)
@@ -2213,7 +2213,7 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
   range member_range;
 
   member_range.start = state->current_token.range.start;
-  comment_pos = nonnull_pos_or(comment_pos, member_range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   range visibility_range;
@@ -2381,7 +2381,7 @@ static bool parse_interface_decl(parserstate *state, position comment_pos, rbs_n
 
   range member_range;
   member_range.start = state->current_token.range.start;
-  comment_pos = nonnull_pos_or(comment_pos, member_range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
 
   range keyword_range = state->current_token.range;
 
@@ -2622,7 +2622,7 @@ NODISCARD
 static bool parse_module_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **module_decl) {
   range keyword_range = state->current_token.range;
 
-  comment_pos = nonnull_pos_or(comment_pos, state->current_token.range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, state->current_token.range.start);
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   parser_advance(state);
@@ -2744,7 +2744,7 @@ NODISCARD
 static bool parse_class_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **class_decl) {
   range keyword_range = state->current_token.range;
 
-  comment_pos = nonnull_pos_or(comment_pos, state->current_token.range.start);
+  comment_pos = rbs_nonnull_pos_or(comment_pos, state->current_token.range.start);
   rbs_ast_comment_t *comment = get_comment(state, comment_pos.line);
 
   parser_advance(state);
