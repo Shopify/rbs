@@ -139,11 +139,6 @@ void parser_advance(parserstate *state);
 void print_parser(parserstate *state);
 
 /**
- * Insert new comment line token.
- * */
-void insert_comment_line(parserstate *state, token token);
-
-/**
  * Returns a RBS::Comment object associated with an subject at `subject_line`.
  *
  * ```rbs

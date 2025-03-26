@@ -3081,6 +3081,20 @@ static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) 
   );
 }
 
+/**
+ * Insert new comment line token.
+ * */
+static void insert_comment_line(parserstate *state, token tok) {
+  int prev_line = tok.range.start.line - 1;
+
+  comment *com = comment_get_comment(state->last_comment, prev_line);
+
+  if (com) {
+    comment_insert_new_line(&state->allocator, com, tok);
+  } else {
+    state->last_comment = alloc_comment(&state->allocator, tok, state->last_comment);
+  }
+}
 
 bool parse_signature(parserstate *state, rbs_signature_t **signature) {
   range signature_range;
@@ -3249,18 +3263,6 @@ void rbs_print_token(token tok) {
     tok.range.start.char_pos,
     tok.range.end.char_pos
   );
-}
-
-void insert_comment_line(parserstate *state, token tok) {
-  int prev_line = tok.range.start.line - 1;
-
-  comment *com = comment_get_comment(state->last_comment, prev_line);
-
-  if (com) {
-    comment_insert_new_line(&state->allocator, com, tok);
-  } else {
-    state->last_comment = alloc_comment(&state->allocator, tok, state->last_comment);
-  }
 }
 
 rbs_ast_comment_t *get_comment(parserstate *state, int subject_line) {
