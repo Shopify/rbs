@@ -174,7 +174,7 @@ token rbs_next_token(lexstate *state, enum TokenType type);
 /**
  * Return new token with EOF type.
  * */
-token next_eof_token(lexstate *state);
+token rbs_next_eof_token(lexstate *state);
 
 token rbsparser_next_token(lexstate *state);
 

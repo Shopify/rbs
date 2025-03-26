@@ -134,7 +134,7 @@ token rbs_next_token(lexstate *state, enum TokenType type) {
   return t;
 }
 
-token next_eof_token(lexstate *state) {
+token rbs_next_eof_token(lexstate *state) {
   if ((size_t) state->current.byte_pos == rbs_string_len(state->string) + 1) {
     // End of String
     token t;

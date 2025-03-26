@@ -141,7 +141,7 @@ token rbsparser_next_token(lexstate *state) {
       skip = ([ \t]+|[\r\n]);
 
       skip     { return rbs_next_token(state, tTRIVIA); }
-      "\x00"   { return next_eof_token(state); }
+      "\x00"   { return rbs_next_eof_token(state); }
       *        { return rbs_next_token(state, ErrorToken); }
   */
 }
