@@ -4,7 +4,7 @@
 #include "rbs_string.h"
 #include "rbs_encoding.h"
 
-enum TokenType {
+enum RBSTokenType {
   NullType,         /* (Nothing) */
   pEOF,             /* EOF */
   ErrorToken,       /* Error */
@@ -111,7 +111,7 @@ typedef struct {
 } range;
 
 typedef struct {
-  enum TokenType type;
+  enum RBSTokenType type;
   range range;
 } token;
 
@@ -149,7 +149,7 @@ int rbs_token_bytes(token tok);
 #define rbs_nonnull_pos_or(pos1, pos2) (rbs_null_position_p(pos1) ? pos2 : pos1)
 #define RBS_RANGE_BYTES(range) (range.end.byte_pos - range.start.byte_pos)
 
-const char *token_type_str(enum TokenType type);
+const char *token_type_str(enum RBSTokenType type);
 
 /**
  * Read next character.
@@ -169,7 +169,7 @@ void rbs_skipn(lexstate *state, size_t size);
 /**
  * Return new token with given type.
  * */
-token rbs_next_token(lexstate *state, enum TokenType type);
+token rbs_next_token(lexstate *state, enum RBSTokenType type);
 
 /**
  * Return new token with EOF type.

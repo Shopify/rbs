@@ -250,7 +250,7 @@ static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rb
               | {} type `,` ... `,` <type> eol
 */
 NODISCARD
-static bool parse_type_list(parserstate *state, enum TokenType eol, rbs_node_list_t *types) {
+static bool parse_type_list(parserstate *state, enum RBSTokenType eol, rbs_node_list_t *types) {
   while (true) {
     rbs_node_t *type;
     CHECK_PARSE(parse_type(state, &type));
@@ -275,7 +275,7 @@ static bool parse_type_list(parserstate *state, enum TokenType eol, rbs_node_lis
   return true;
 }
 
-static bool is_keyword_token(enum TokenType type) {
+static bool is_keyword_token(enum RBSTokenType type) {
   switch (type)
   {
   case tLIDENT:
@@ -1936,7 +1936,7 @@ static bool parse_mixin_member(parserstate *state, bool from_interface, position
   member_range.start = state->current_token.range.start;
   comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
 
-  enum TokenType type = state->current_token.type;
+  enum RBSTokenType type = state->current_token.type;
   range keyword_range = state->current_token.range;
 
   bool reset_typevar_scope;
@@ -2238,7 +2238,7 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
     break;
   }
 
-  enum TokenType attr_type = state->current_token.type;
+  enum RBSTokenType attr_type = state->current_token.type;
   range keyword_range = state->current_token.range;
 
   range kind_range;
@@ -2955,7 +2955,7 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
       case tUIDENT: {
         parser_advance(state);
 
-        enum TokenType ident_type = state->current_token.type;
+        enum RBSTokenType ident_type = state->current_token.type;
 
         range type_name_range = rbs_null_range_p(namespace_range)
           ? state->current_token.range

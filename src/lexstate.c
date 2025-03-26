@@ -93,7 +93,7 @@ token NullToken = { .type = NullType, .range = {} };
 position NullPosition = { -1, -1, -1, -1 };
 range NULL_RANGE = { { -1, -1, -1, -1 }, { -1, -1, -1, -1 } };
 
-const char *token_type_str(enum TokenType type) {
+const char *token_type_str(enum RBSTokenType type) {
   return RBS_TOKENTYPE_NAMES[type];
 }
 
@@ -120,7 +120,7 @@ unsigned int rbs_peek(lexstate *state) {
   }
 }
 
-token rbs_next_token(lexstate *state, enum TokenType type) {
+token rbs_next_token(lexstate *state, enum RBSTokenType type) {
   token t;
 
   t.type = type;

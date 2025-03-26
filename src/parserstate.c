@@ -144,7 +144,7 @@ void parser_advance(parserstate *state) {
  *
  * @returns true if token advances, false otherwise.
  **/
-bool parser_advance_if(parserstate *state, enum TokenType type) {
+bool parser_advance_if(parserstate *state, enum RBSTokenType type) {
   if (state->next_token.type == type) {
     parser_advance(state);
     return true;
