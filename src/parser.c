@@ -1603,7 +1603,7 @@ static bool parse_annotations(parserstate *state, rbs_node_list_t *annotations, 
     if (state->next_token.type == tANNOTATION) {
       parser_advance(state);
 
-      if (null_position_p((*annot_pos))) {
+      if (rbs_null_position_p((*annot_pos))) {
         *annot_pos = state->current_token.range.start;
       }
 
@@ -2919,7 +2919,7 @@ static bool parse_namespace(parserstate *state, range *rg, rbs_namespace_t **nam
       rbs_location_t *symbolLoc = rbs_location_new(&state->allocator, state->next_token.range);
       rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(&state->allocator, symbolLoc, &state->constant_pool, INTERN_TOKEN(state, state->next_token));
       rbs_node_list_append(path, (rbs_node_t *)symbol);
-      if (null_position_p(rg->start)) {
+      if (rbs_null_position_p(rg->start)) {
         rg->start = state->next_token.range.start;
       }
       rg->end = state->next_token2.range.end;
