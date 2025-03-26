@@ -120,7 +120,7 @@ unsigned int rbs_peek(lexstate *state) {
   }
 }
 
-token next_token(lexstate *state, enum TokenType type) {
+token rbs_next_token(lexstate *state, enum TokenType type) {
   token t;
 
   t.type = type;
@@ -146,7 +146,7 @@ token next_eof_token(lexstate *state) {
     return t;
   } else {
     // NULL byte in the middle of the string
-    return next_token(state, pEOF);
+    return rbs_next_token(state, pEOF);
   }
 }
 

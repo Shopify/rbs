@@ -169,7 +169,7 @@ void rbs_skipn(lexstate *state, size_t size);
 /**
  * Return new token with given type.
  * */
-token next_token(lexstate *state, enum TokenType type);
+token rbs_next_token(lexstate *state, enum TokenType type);
 
 /**
  * Return new token with EOF type.
