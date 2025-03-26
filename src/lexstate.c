@@ -97,7 +97,7 @@ const char *token_type_str(enum TokenType type) {
   return RBS_TOKENTYPE_NAMES[type];
 }
 
-int token_chars(token tok) {
+int rbs_token_chars(token tok) {
   return tok.range.end.char_pos - tok.range.start.char_pos;
 }
 
