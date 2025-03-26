@@ -136,10 +136,6 @@ void rbs_parser_declare_type_variables(parserstate *parser, size_t count, const 
  * */
 void parser_advance(parserstate *state);
 
-/**
- * Advance one token if the next_token is a token of the type.
- * */
-bool parser_advance_if(parserstate *state, enum RBSTokenType type);
 void print_parser(parserstate *state);
 
 /**

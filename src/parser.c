@@ -400,6 +400,21 @@ static bool is_keyword(parserstate *state) {
   return false;
 }
 
+/**
+ * Advance token if _next_ token is `type`.
+ * Ensures one token advance and `state->current_token.type == type`, or current token not changed.
+ *
+ * @returns true if token advances, false otherwise.
+ **/
+static bool parser_advance_if(parserstate *state, enum RBSTokenType type) {
+  if (state->next_token.type == type) {
+    parser_advance(state);
+    return true;
+  } else {
+    return false;
+  }
+}
+
 /*
   params ::= {} `)`
            | {} `?` `)`               -- Untyped function params (assign params.required = nil)
@@ -3224,21 +3239,6 @@ void parser_advance(parserstate *state) {
     } else {
       break;
     }
-  }
-}
-
-/**
- * Advance token if _next_ token is `type`.
- * Ensures one token advance and `state->current_token.type == type`, or current token not changed.
- *
- * @returns true if token advances, false otherwise.
- **/
-bool parser_advance_if(parserstate *state, enum RBSTokenType type) {
-  if (state->next_token.type == type) {
-    parser_advance(state);
-    return true;
-  } else {
-    return false;
   }
 }
 
