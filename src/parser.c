@@ -128,7 +128,7 @@ typedef enum {
   ALIAS_NAME = 4
 } TypeNameKind;
 
-void parser_advance_no_gap(parserstate *state) {
+static void parser_advance_no_gap(parserstate *state) {
   if (state->current_token.range.end.byte_pos == state->next_token.range.start.byte_pos) {
     parser_advance(state);
   } else {
