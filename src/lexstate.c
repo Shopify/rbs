@@ -101,7 +101,7 @@ int rbs_token_chars(token tok) {
   return tok.range.end.char_pos - tok.range.start.char_pos;
 }
 
-int token_bytes(token tok) {
+int rbs_token_bytes(token tok) {
   return RANGE_BYTES(tok.range);
 }
 

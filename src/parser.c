@@ -23,7 +23,7 @@
   rbs_constant_pool_insert_shared_with_encoding(             \
     &parserstate->constant_pool,                             \
     (const uint8_t *) rbs_peek_token(parserstate->lexstate, tok),\
-    token_bytes(tok),                                        \
+    rbs_token_bytes(tok),                                        \
     (void *) parserstate->lexstate->encoding                 \
   )
 
@@ -894,7 +894,7 @@ static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
 NODISCARD
 static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types_literal_t **symbol) {
   size_t offset_bytes = state->lexstate->encoding->char_width((const uint8_t *) ":", (size_t) 1);
-  size_t bytes = token_bytes(state->current_token) - offset_bytes;
+  size_t bytes = rbs_token_bytes(state->current_token) - offset_bytes;
 
   rbs_ast_symbol_t *literal;
 
@@ -1137,7 +1137,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
   }
   case tUIDENT: {
     const char *name_str = rbs_peek_token(state->lexstate, state->current_token);
-    size_t name_len = token_bytes(state->current_token);
+    size_t name_len = rbs_token_bytes(state->current_token);
 
     rbs_constant_id_t name = rbs_constant_pool_find(&state->constant_pool, (const uint8_t *) name_str, name_len);
 
