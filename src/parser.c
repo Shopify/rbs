@@ -22,7 +22,7 @@
 #define INTERN_TOKEN(parserstate, tok)                       \
   rbs_constant_pool_insert_shared_with_encoding(             \
     &parserstate->constant_pool,                             \
-    (const uint8_t *) peek_token(parserstate->lexstate, tok),\
+    (const uint8_t *) rbs_peek_token(parserstate->lexstate, tok),\
     token_bytes(tok),                                        \
     (void *) parserstate->lexstate->encoding                 \
   )
@@ -344,7 +344,7 @@ static bool parse_function_param(parserstate *state, rbs_types_function_param_t 
 static rbs_constant_id_t intern_token_start_end(parserstate *state, token start_token, token end_token) {
   return rbs_constant_pool_insert_shared_with_encoding(
     &state->constant_pool,
-    (const uint8_t *) peek_token(state->lexstate, start_token),
+    (const uint8_t *) rbs_peek_token(state->lexstate, start_token),
     end_token.range.end.byte_pos - start_token.range.start.byte_pos,
     state->lexstate->encoding
   );
@@ -903,7 +903,7 @@ static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types
   case tSYMBOL: {
     rbs_location_t *symbolLoc = rbs_location_current_token(state);
 
-    char *buffer = peek_token(state->lexstate, state->current_token);
+    char *buffer = rbs_peek_token(state->lexstate, state->current_token);
     rbs_constant_id_t constant_id = rbs_constant_pool_insert_shared(
       &state->constant_pool,
       (const uint8_t *) buffer+offset_bytes,
@@ -1136,7 +1136,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
     return true;
   }
   case tUIDENT: {
-    const char *name_str = peek_token(state->lexstate, state->current_token);
+    const char *name_str = rbs_peek_token(state->lexstate, state->current_token);
     size_t name_len = token_bytes(state->current_token);
 
     rbs_constant_id_t name = rbs_constant_pool_find(&state->constant_pool, (const uint8_t *) name_str, name_len);

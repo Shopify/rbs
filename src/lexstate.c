@@ -183,6 +183,6 @@ void skipn(lexstate *state, size_t size) {
   }
 }
 
-char *peek_token(lexstate *state, token tok) {
+char *rbs_peek_token(lexstate *state, token tok) {
   return (char *) state->string.start + tok.range.start.byte_pos;
 }

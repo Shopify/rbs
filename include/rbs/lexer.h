@@ -140,7 +140,7 @@ extern token NullToken;
 extern position NullPosition;
 extern range NULL_RANGE;
 
-char *peek_token(lexstate *state, token tok);
+char *rbs_peek_token(lexstate *state, token tok);
 int token_chars(token tok);
 int token_bytes(token tok);
 
