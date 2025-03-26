@@ -3081,6 +3081,62 @@ static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) 
   );
 }
 
+static comment *comment_get_comment(comment *com, int line) {
+  if (com == NULL) {
+    return NULL;
+  }
+
+  if (com->end.line < line) {
+    return NULL;
+  }
+
+  if (com->end.line == line) {
+    return com;
+  }
+
+  return comment_get_comment(com->next_comment, line);
+}
+
+static void comment_insert_new_line(rbs_allocator_t *allocator, comment *com, token comment_token) {
+  if (com->line_count == 0) {
+    com->start = comment_token.range.start;
+  }
+
+  if (com->line_count == com->line_size) {
+    com->line_size += 10;
+
+    if (com->tokens) {
+      token *p = com->tokens;
+      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
+      memcpy(com->tokens, p, sizeof(token) * com->line_count);
+    } else {
+      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
+    }
+  }
+
+  com->tokens[com->line_count++] = comment_token;
+  com->end = comment_token.range.end;
+}
+
+static comment *alloc_comment(rbs_allocator_t *allocator, token comment_token, comment *last_comment) {
+  comment *new_comment = rbs_allocator_alloc(allocator, comment);
+
+  *new_comment = (comment) {
+    .start = comment_token.range.start,
+    .end = comment_token.range.end,
+
+    .line_size = 0,
+    .line_count = 0,
+    .tokens = NULL,
+
+    .next_comment = last_comment,
+  };
+
+  comment_insert_new_line(allocator, new_comment, comment_token);
+
+  return new_comment;
+}
+
 /**
  * Insert new comment line token.
  * */
@@ -3275,62 +3331,6 @@ rbs_ast_comment_t *get_comment(parserstate *state, int subject_line) {
   } else {
     return NULL;
   }
-}
-
-comment *alloc_comment(rbs_allocator_t *allocator, token comment_token, comment *last_comment) {
-  comment *new_comment = rbs_allocator_alloc(allocator, comment);
-
-  *new_comment = (comment) {
-    .start = comment_token.range.start,
-    .end = comment_token.range.end,
-
-    .line_size = 0,
-    .line_count = 0,
-    .tokens = NULL,
-
-    .next_comment = last_comment,
-  };
-
-  comment_insert_new_line(allocator, new_comment, comment_token);
-
-  return new_comment;
-}
-
-void comment_insert_new_line(rbs_allocator_t *allocator, comment *com, token comment_token) {
-  if (com->line_count == 0) {
-    com->start = comment_token.range.start;
-  }
-
-  if (com->line_count == com->line_size) {
-    com->line_size += 10;
-
-    if (com->tokens) {
-      token *p = com->tokens;
-      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
-      memcpy(com->tokens, p, sizeof(token) * com->line_count);
-    } else {
-      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
-    }
-  }
-
-  com->tokens[com->line_count++] = comment_token;
-  com->end = comment_token.range.end;
-}
-
-comment *comment_get_comment(comment *com, int line) {
-  if (com == NULL) {
-    return NULL;
-  }
-
-  if (com->end.line < line) {
-    return NULL;
-  }
-
-  if (com->end.line == line) {
-    return com;
-  }
-
-  return comment_get_comment(com->next_comment, line);
 }
 
 lexstate *alloc_lexer(rbs_allocator_t *allocator, rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {

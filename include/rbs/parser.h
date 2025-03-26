@@ -153,10 +153,6 @@ void print_parser(parserstate *state);
  * */
 rbs_ast_comment_t *get_comment(parserstate *state, int subject_line);
 
-comment *alloc_comment(rbs_allocator_t *, token comment_token, comment *last_comment);
-void comment_insert_new_line(rbs_allocator_t *, comment *com, token comment_token);
-comment *comment_get_comment(comment *com, int line);
-
 void set_error(parserstate *state, token tok, bool syntax_error, const char *fmt, ...) RBS_ATTRIBUTE_FORMAT(4, 5);
 
 bool parse_type(parserstate *state, rbs_node_t **type);
