@@ -79,6 +79,8 @@
     ASSERT_TOKEN(state, expected_type) \
   } while(0);
 
+#define RESET_TABLE_P(table) (table->size == 0)
+
 typedef struct {
   rbs_node_list_t *required_positionals;
   rbs_node_list_t *optional_positionals;
@@ -1018,6 +1020,27 @@ static bool parse_singleton_type(parserstate *state, rbs_types_classsingleton_t 
   return true;
 }
 
+/**
+ * Returns true if given type variable is recorded in the table.
+ * If not found, it goes one table up, if it's not a reset table.
+ * Or returns false, if it's a reset table.
+ * */
+static bool parser_typevar_member(parserstate *state, rbs_constant_id_t id) {
+  id_table *table = state->vars;
+
+  while (table && !RESET_TABLE_P(table)) {
+    for (size_t i = 0; i < table->count; i++) {
+      if (table->ids[i] == id) {
+        return true;
+      }
+    }
+
+    table = table->next;
+  }
+
+  return false;
+}
+
 /*
   simple ::= {} `(` type <`)`>
            | {} <base type>
@@ -1380,6 +1403,26 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
     rg->end = state->current_token.range.end;
   } else {
     *rg = NULL_RANGE;
+  }
+
+  return true;
+}
+
+NODISCARD
+static bool parser_pop_typevar_table(parserstate *state) {
+  id_table *table;
+
+  if (state->vars) {
+    table = state->vars;
+    state->vars = table->next;
+  } else {
+    set_error(state, state->current_token, false, "Cannot pop empty table");
+    return false;
+  }
+
+  if (state->vars && RESET_TABLE_P(state->vars)) {
+    table = state->vars;
+    state->vars = table->next;
   }
 
   return true;
@@ -3181,8 +3224,6 @@ bool parse_signature(parserstate *state, rbs_signature_t **signature) {
   return true;
 }
 
-#define RESET_TABLE_P(table) (table->size == 0)
-
 id_table *alloc_empty_table(rbs_allocator_t *allocator) {
   id_table *table = rbs_allocator_alloc(allocator, id_table);
 
@@ -3224,26 +3265,6 @@ id_table *parser_push_typevar_table(parserstate *state, bool reset) {
 }
 
 NODISCARD
-bool parser_pop_typevar_table(parserstate *state) {
-  id_table *table;
-
-  if (state->vars) {
-    table = state->vars;
-    state->vars = table->next;
-  } else {
-    set_error(state, state->current_token, false, "Cannot pop empty table");
-    return false;
-  }
-
-  if (state->vars && RESET_TABLE_P(state->vars)) {
-    table = state->vars;
-    state->vars = table->next;
-  }
-
-  return true;
-}
-
-NODISCARD
 bool parser_insert_typevar(parserstate *state, rbs_constant_id_t id) {
   id_table *table = state->vars;
 
@@ -3263,22 +3284,6 @@ bool parser_insert_typevar(parserstate *state, rbs_constant_id_t id) {
   table->ids[table->count++] = id;
 
   return true;
-}
-
-bool parser_typevar_member(parserstate *state, rbs_constant_id_t id) {
-  id_table *table = state->vars;
-
-  while (table && !RESET_TABLE_P(table)) {
-    for (size_t i = 0; i < table->count; i++) {
-      if (table->ids[i] == id) {
-        return true;
-      }
-    }
-
-    table = table->next;
-  }
-
-  return false;
 }
 
 void print_parser(parserstate *state) {

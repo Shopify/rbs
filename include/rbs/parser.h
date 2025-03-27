@@ -87,19 +87,11 @@ typedef struct {
  * ```
  * */
 id_table *parser_push_typevar_table(parserstate *state, bool reset);
-NODISCARD bool parser_pop_typevar_table(parserstate *state);
 
 /**
  * Insert new type variable into the latest table.
  * */
 NODISCARD bool parser_insert_typevar(parserstate *state, rbs_constant_id_t id);
-
-/**
- * Returns true if given type variable is recorded in the table.
- * If not found, it goes one table up, if it's not a reset table.
- * Or returns false, if it's a reset table.
- * */
-bool parser_typevar_member(parserstate *state, rbs_constant_id_t id);
 
 /**
  * Allocate new lexstate object.
