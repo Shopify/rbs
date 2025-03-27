@@ -3250,7 +3250,7 @@ id_table *alloc_reset_table(rbs_allocator_t *allocator) {
   return table;
 }
 
-id_table *parser_push_typevar_table(parserstate *state, bool reset) {
+void parser_push_typevar_table(parserstate *state, bool reset) {
   if (reset) {
     id_table *table = alloc_reset_table(&state->allocator);
     table->next = state->vars;
@@ -3260,8 +3260,6 @@ id_table *parser_push_typevar_table(parserstate *state, bool reset) {
   id_table *table = alloc_empty_table(&state->allocator);
   table->next = state->vars;
   state->vars = table;
-
-  return table;
 }
 
 NODISCARD

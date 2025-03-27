@@ -86,7 +86,7 @@ typedef struct {
  * end
  * ```
  * */
-id_table *parser_push_typevar_table(parserstate *state, bool reset);
+void parser_push_typevar_table(parserstate *state, bool reset);
 
 /**
  * Insert new type variable into the latest table.
