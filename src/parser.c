@@ -3421,24 +3421,6 @@ void free_parser(parserstate *parser) {
   rbs_allocator_free(&parser->allocator);
 }
 
-void rbs_parser_declare_type_variables(parserstate *parser, size_t count, const char **variables) {
-  if (variables == NULL) return; // Nothing to do.
-
-  parser_push_typevar_table(parser, true);
-
-  for (size_t i = 0; i < count; i++) {
-    rbs_constant_id_t name = rbs_constant_pool_insert_shared(
-      &parser->constant_pool,
-      (const uint8_t *) variables[i],
-      strlen(variables[i])
-    );
-
-    if (!parser_insert_typevar(parser, name)) {
-      rbs_assert(false, "Failed to insert type variable. Message: %s", parser->error->message);
-    }
-  }
-}
-
 void set_error(parserstate *state, token tok, bool syntax_error, const char *fmt, ...) {
   if (state->error) {
     return;
