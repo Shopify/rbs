@@ -23,7 +23,7 @@
  *
  * A comment object represents the six lines of comments.
  * */
-typedef struct comment {
+typedef struct rbs_comment_t {
   position start;
   position end;
 
@@ -31,8 +31,8 @@ typedef struct comment {
   size_t line_count;
   token *tokens;
 
-  struct comment *next_comment;
-} comment;
+  struct rbs_comment_t *next_comment;
+} rbs_comment_t;
 
 typedef struct error {
   char *message;
@@ -52,7 +52,7 @@ typedef struct {
   token next_token3;      /* The third lookahead token */
 
   struct id_table *vars;  /* Known type variables */
-  comment *last_comment;  /* Last read comment */
+  rbs_comment_t *last_comment;  /* Last read comment */
 
   rbs_constant_pool_t constant_pool;
   rbs_allocator_t allocator;

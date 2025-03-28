@@ -3100,7 +3100,7 @@ static bool parse_use_directive(rbs_parser_t *state, rbs_ast_directives_use_t **
   return true;
 }
 
-static rbs_ast_comment_t *parse_comment_lines(rbs_parser_t *state, comment *com) {
+static rbs_ast_comment_t *parse_comment_lines(rbs_parser_t *state, rbs_comment_t *com) {
   size_t hash_bytes = state->lexstate->encoding->char_width((const uint8_t *) "#", (size_t) 1);
   size_t space_bytes = state->lexstate->encoding->char_width((const uint8_t *) " ", (size_t) 1);
 
@@ -3135,7 +3135,7 @@ static rbs_ast_comment_t *parse_comment_lines(rbs_parser_t *state, comment *com)
   );
 }
 
-static comment *comment_get_comment(comment *com, int line) {
+static rbs_comment_t *comment_get_comment(rbs_comment_t *com, int line) {
   if (com == NULL) {
     return NULL;
   }
@@ -3151,7 +3151,7 @@ static comment *comment_get_comment(comment *com, int line) {
   return comment_get_comment(com->next_comment, line);
 }
 
-static void comment_insert_new_line(rbs_allocator_t *allocator, comment *com, token comment_token) {
+static void comment_insert_new_line(rbs_allocator_t *allocator, rbs_comment_t *com, token comment_token) {
   if (com->line_count == 0) {
     com->start = comment_token.range.start;
   }
@@ -3172,10 +3172,10 @@ static void comment_insert_new_line(rbs_allocator_t *allocator, comment *com, to
   com->end = comment_token.range.end;
 }
 
-static comment *alloc_comment(rbs_allocator_t *allocator, token comment_token, comment *last_comment) {
-  comment *new_comment = rbs_allocator_alloc(allocator, comment);
+static rbs_comment_t *alloc_comment(rbs_allocator_t *allocator, token comment_token, rbs_comment_t *last_comment) {
+  rbs_comment_t *new_comment = rbs_allocator_alloc(allocator, rbs_comment_t);
 
-  *new_comment = (comment) {
+  *new_comment = (rbs_comment_t) {
     .start = comment_token.range.start,
     .end = comment_token.range.end,
 
@@ -3197,7 +3197,7 @@ static comment *alloc_comment(rbs_allocator_t *allocator, token comment_token, c
 static void insert_comment_line(rbs_parser_t *state, token tok) {
   int prev_line = tok.range.start.line - 1;
 
-  comment *com = comment_get_comment(state->last_comment, prev_line);
+  rbs_comment_t *com = comment_get_comment(state->last_comment, prev_line);
 
   if (com) {
     comment_insert_new_line(&state->allocator, com, tok);
@@ -3338,7 +3338,7 @@ void rbs_print_token(token tok) {
 rbs_ast_comment_t *get_comment(rbs_parser_t *state, int subject_line) {
   int comment_line = subject_line - 1;
 
-  comment *com = comment_get_comment(state->last_comment, comment_line);
+  rbs_comment_t *com = comment_get_comment(state->last_comment, comment_line);
 
   if (com) {
     return parse_comment_lines(state, com);
