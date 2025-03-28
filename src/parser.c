@@ -20,12 +20,12 @@
     strlen(str)                      \
   )
 
-#define INTERN_TOKEN(parserstate, tok)                       \
+#define INTERN_TOKEN(rbs_parser_t, tok)                       \
   rbs_constant_pool_insert_shared_with_encoding(             \
-    &parserstate->constant_pool,                             \
-    (const uint8_t *) rbs_peek_token(parserstate->lexstate, tok),\
+    &rbs_parser_t->constant_pool,                             \
+    (const uint8_t *) rbs_peek_token(rbs_parser_t->lexstate, tok),\
     rbs_token_bytes(tok),                                        \
-    (void *) parserstate->lexstate->encoding                 \
+    (void *) rbs_parser_t->lexstate->encoding                 \
   )
 
 #define KEYWORD_CASES \
@@ -112,17 +112,17 @@ static bool rbs_is_untyped_params(method_params *params) {
  * @param state
  * @return New RBS::Location object.
  * */
-static rbs_location_t *rbs_location_current_token(parserstate *state) {
+static rbs_location_t *rbs_location_current_token(rbs_parser_t *state) {
   return rbs_location_new(&state->allocator, state->current_token.range);
 }
 
-static bool parse_optional(parserstate *state, rbs_node_t **optional);
-static bool parse_simple(parserstate *state, rbs_node_t **type);
+static bool parse_optional(rbs_parser_t *state, rbs_node_t **optional);
+static bool parse_simple(rbs_parser_t *state, rbs_node_t **type);
 
 /**
  * @returns A borrowed copy of the current token, which does *not* need to be freed.
  */
-static rbs_string_t rbs_parser_peek_current_token(parserstate *state) {
+static rbs_string_t rbs_parser_peek_current_token(rbs_parser_t *state) {
   range rg = state->current_token.range;
 
   const char *start = state->lexstate->string.start + rg.start.byte_pos;
@@ -141,7 +141,7 @@ typedef enum {
   ALIAS_NAME = 4
 } TypeNameKind;
 
-static void parser_advance_no_gap(parserstate *state) {
+static void parser_advance_no_gap(rbs_parser_t *state) {
   if (state->current_token.range.end.byte_pos == state->next_token.range.start.byte_pos) {
     parser_advance(state);
   } else {
@@ -155,7 +155,7 @@ static void parser_advance_no_gap(parserstate *state) {
               | {<tXIDENT>}
 */
 NODISCARD
-static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rbs_typename_t **typename) {
+static bool parse_type_name(rbs_parser_t *state, TypeNameKind kind, range *rg, rbs_typename_t **typename) {
   bool absolute = false;
 
   if (rg) {
@@ -241,7 +241,7 @@ static bool parse_type_name(parserstate *state, TypeNameKind kind, range *rg, rb
               | {} type `,` ... `,` <type> eol
 */
 NODISCARD
-static bool parse_type_list(parserstate *state, enum RBSTokenType eol, rbs_node_list_t *types) {
+static bool parse_type_list(rbs_parser_t *state, enum RBSTokenType eol, rbs_node_list_t *types) {
   while (true) {
     rbs_node_t *type;
     CHECK_PARSE(parse_type(state, &type));
@@ -287,7 +287,7 @@ static bool is_keyword_token(enum RBSTokenType type) {
                    | {} type <param>
 */
 NODISCARD
-static bool parse_function_param(parserstate *state, rbs_types_function_param_t **function_param) {
+static bool parse_function_param(rbs_parser_t *state, rbs_types_function_param_t **function_param) {
   range type_range;
   type_range.start = state->next_token.range.start;
   rbs_node_t *type;
@@ -332,7 +332,7 @@ static bool parse_function_param(parserstate *state, rbs_types_function_param_t 
   }
 }
 
-static rbs_constant_id_t intern_token_start_end(parserstate *state, token start_token, token end_token) {
+static rbs_constant_id_t intern_token_start_end(rbs_parser_t *state, token start_token, token end_token) {
   return rbs_constant_pool_insert_shared_with_encoding(
     &state->constant_pool,
     (const uint8_t *) rbs_peek_token(state->lexstate, start_token),
@@ -346,7 +346,7 @@ static rbs_constant_id_t intern_token_start_end(parserstate *state, token start_
                 | {} keyword <`?`> `:`
 */
 NODISCARD
-static bool parse_keyword_key(parserstate *state, rbs_ast_symbol_t **key) {
+static bool parse_keyword_key(rbs_parser_t *state, rbs_ast_symbol_t **key) {
   parser_advance(state);
 
   rbs_location_t *symbolLoc = rbs_location_current_token(state);
@@ -370,7 +370,7 @@ static bool parse_keyword_key(parserstate *state, rbs_ast_symbol_t **key) {
   keyword ::= {} keyword `:` <function_param>
 */
 NODISCARD
-static bool parse_keyword(parserstate *state, rbs_hash_t *keywords, rbs_hash_t *memo) {
+static bool parse_keyword(rbs_parser_t *state, rbs_hash_t *keywords, rbs_hash_t *memo) {
   rbs_ast_symbol_t *key = NULL;
   CHECK_PARSE(parse_keyword_key(state, &key));
 
@@ -396,7 +396,7 @@ Returns true if keyword is given.
 
   is_keyword === {} KEYWORD `:`
 */
-static bool is_keyword(parserstate *state) {
+static bool is_keyword(rbs_parser_t *state) {
   if (is_keyword_token(state->next_token.type)) {
     if (state->next_token2.type == pCOLON && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos) {
       return true;
@@ -419,7 +419,7 @@ static bool is_keyword(parserstate *state) {
  *
  * @returns true if token advances, false otherwise.
  **/
-static bool parser_advance_if(parserstate *state, enum RBSTokenType type) {
+static bool parser_advance_if(rbs_parser_t *state, enum RBSTokenType type) {
   if (state->next_token.type == type) {
     parser_advance(state);
     return true;
@@ -458,7 +458,7 @@ static bool parser_advance_if(parserstate *state, enum RBSTokenType type) {
              | {} `**` <function_param>
 */
 NODISCARD
-static bool parse_params(parserstate *state, method_params *params) {
+static bool parse_params(rbs_parser_t *state, method_params *params) {
   if (state->next_token.type == pQUESTION && state->next_token2.type == pRPAREN) {
     params->required_positionals = NULL;
     parser_advance(state);
@@ -624,7 +624,7 @@ EOP:
              | {} simple_type <`?`>
 */
 NODISCARD
-static bool parse_optional(parserstate *state, rbs_node_t **optional) {
+static bool parse_optional(rbs_parser_t *state, rbs_node_t **optional) {
   range rg;
   rg.start = state->next_token.range.start;
 
@@ -660,7 +660,7 @@ static void initialize_method_params(method_params *params, rbs_allocator_t *all
                       | {} `[` `self` `:` type <`]`>
 */
 NODISCARD
-static bool parse_self_type_binding(parserstate *state, rbs_node_t **self_type) {
+static bool parse_self_type_binding(rbs_parser_t *state, rbs_node_t **self_type) {
   if (state->next_token.type == pLBRACKET) {
     parser_advance(state);
     ADVANCE_ASSERT(state, kSELF);
@@ -688,7 +688,7 @@ typedef struct {
              | {} self_type_binding? `->` <optional>
 */
 NODISCARD
-static bool parse_function(parserstate *state, bool accept_type_binding, parse_function_result **result) {
+static bool parse_function(rbs_parser_t *state, bool accept_type_binding, parse_function_result **result) {
   rbs_node_t *function = NULL;
   rbs_types_block_t *block = NULL;
   rbs_node_t *function_self_type = NULL;
@@ -799,7 +799,7 @@ static bool parse_function(parserstate *state, bool accept_type_binding, parse_f
   proc_type ::= {`^`} <function>
 */
 NODISCARD
-static bool parse_proc_type(parserstate *state, rbs_types_proc_t **proc) {
+static bool parse_proc_type(rbs_parser_t *state, rbs_types_proc_t **proc) {
   position start = state->current_token.range.start;
   parse_function_result *result = rbs_allocator_alloc(&state->allocator, parse_function_result);
   CHECK_PARSE(parse_function(state, true, &result));
@@ -810,7 +810,7 @@ static bool parse_proc_type(parserstate *state, rbs_types_proc_t **proc) {
   return true;
 }
 
-static void check_key_duplication(parserstate *state, rbs_hash_t *fields, rbs_node_t *key) {
+static void check_key_duplication(rbs_parser_t *state, rbs_hash_t *fields, rbs_node_t *key) {
   if (rbs_hash_find(fields, ((rbs_node_t *) key))) {
     set_error(state, state->current_token, true, "duplicated record key");
   }
@@ -827,7 +827,7 @@ static void check_key_duplication(parserstate *state, rbs_hash_t *fields, rbs_no
                      | {} literal_type `=>` <type>
 */
 NODISCARD
-static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
+static bool parse_record_attributes(rbs_parser_t *state, rbs_hash_t **fields) {
   *fields = rbs_hash_new(&state->allocator);
 
   if (state->next_token.type == pRBRACE) return true;
@@ -898,7 +898,7 @@ static bool parse_record_attributes(parserstate *state, rbs_hash_t **fields) {
   symbol ::= {<tSYMBOL>}
 */
 NODISCARD
-static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types_literal_t **symbol) {
+static bool parse_symbol(rbs_parser_t *state, rbs_location_t *location, rbs_types_literal_t **symbol) {
   size_t offset_bytes = state->lexstate->encoding->char_width((const uint8_t *) ":", (size_t) 1);
   size_t bytes = rbs_token_bytes(state->current_token) - offset_bytes;
 
@@ -948,7 +948,7 @@ static bool parse_symbol(parserstate *state, rbs_location_t *location, rbs_types
              | {} `[` type_list <`]`>
  */
 NODISCARD
-static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t **type) {
+static bool parse_instance_type(rbs_parser_t *state, bool parse_alias, rbs_node_t **type) {
     TypeNameKind expected_kind = INTERFACE_NAME | CLASS_NAME;
     if (parse_alias) {
       expected_kind |= ALIAS_NAME;
@@ -1008,7 +1008,7 @@ static bool parse_instance_type(parserstate *state, bool parse_alias, rbs_node_t
   singleton_type ::= {`singleton`} `(` type_name <`)`>
 */
 NODISCARD
-static bool parse_singleton_type(parserstate *state, rbs_types_classsingleton_t **singleton) {
+static bool parse_singleton_type(rbs_parser_t *state, rbs_types_classsingleton_t **singleton) {
   ASSERT_TOKEN(state, kSINGLETON);
 
   range type_range;
@@ -1036,7 +1036,7 @@ static bool parse_singleton_type(parserstate *state, rbs_types_classsingleton_t 
  * If not found, it goes one table up, if it's not a reset table.
  * Or returns false, if it's a reset table.
  * */
-static bool parser_typevar_member(parserstate *state, rbs_constant_id_t id) {
+static bool parser_typevar_member(rbs_parser_t *state, rbs_constant_id_t id) {
   id_table *table = state->vars;
 
   while (table && !RESET_TABLE_P(table)) {
@@ -1063,7 +1063,7 @@ static bool parser_typevar_member(parserstate *state, rbs_constant_id_t id) {
            | {} `^` <function>
 */
 NODISCARD
-static bool parse_simple(parserstate *state, rbs_node_t **type) {
+static bool parse_simple(rbs_parser_t *state, rbs_node_t **type) {
   parser_advance(state);
 
   switch (state->current_token.type) {
@@ -1238,7 +1238,7 @@ static bool parse_simple(parserstate *state, rbs_node_t **type) {
                  | {} <optional>
 */
 NODISCARD
-static bool parse_intersection(parserstate *state, rbs_node_t **type) {
+static bool parse_intersection(rbs_parser_t *state, rbs_node_t **type) {
   range rg;
   rg.start = state->next_token.range.start;
 
@@ -1270,7 +1270,7 @@ static bool parse_intersection(parserstate *state, rbs_node_t **type) {
   union ::= {} intersection '|' ... '|' <intersection>
           | {} <intersection>
 */
-bool parse_type(parserstate *state, rbs_node_t **type) {
+bool parse_type(rbs_parser_t *state, rbs_node_t **type) {
   range rg;
   rg.start = state->next_token.range.start;
   rbs_node_list_t *union_types = rbs_node_list_new(&state->allocator);
@@ -1305,7 +1305,7 @@ bool parse_type(parserstate *state, rbs_node_t **type) {
   type_param ::= tUIDENT upper_bound? default_type?                           (module_type_params == false)
 */
 NODISCARD
-static bool parse_type_params(parserstate *state, range *rg, bool module_type_params, rbs_node_list_t **params) {
+static bool parse_type_params(rbs_parser_t *state, range *rg, bool module_type_params, rbs_node_list_t **params) {
   *params = rbs_node_list_new(&state->allocator);
 
   bool required_param_allowed = true;
@@ -1420,7 +1420,7 @@ static bool parse_type_params(parserstate *state, range *rg, bool module_type_pa
 }
 
 NODISCARD
-static bool parser_pop_typevar_table(parserstate *state) {
+static bool parser_pop_typevar_table(rbs_parser_t *state) {
   id_table *table;
 
   if (state->vars) {
@@ -1443,7 +1443,7 @@ static bool parser_pop_typevar_table(parserstate *state) {
   method_type ::= {} type_params <function>
   */
 // TODO: Should this be NODISCARD?
-bool parse_method_type(parserstate *state, rbs_methodtype_t **method_type) {
+bool parse_method_type(rbs_parser_t *state, rbs_methodtype_t **method_type) {
   parser_push_typevar_table(state, false);
 
   range rg;
@@ -1477,7 +1477,7 @@ bool parse_method_type(parserstate *state, rbs_methodtype_t **method_type) {
   global_decl ::= {tGIDENT} `:` <type>
 */
 NODISCARD
-static bool parse_global_decl(parserstate *state, rbs_node_list_t *annotations, rbs_ast_declarations_global_t **global) {
+static bool parse_global_decl(rbs_parser_t *state, rbs_node_list_t *annotations, rbs_ast_declarations_global_t **global) {
   range decl_range;
   decl_range.start = state->current_token.range.start;
 
@@ -1508,7 +1508,7 @@ static bool parse_global_decl(parserstate *state, rbs_node_list_t *annotations, 
   const_decl ::= {const_name} `:` <type>
 */
 NODISCARD
-static bool parse_const_decl(parserstate *state, rbs_node_list_t *annotations, rbs_ast_declarations_constant_t **constant) {
+static bool parse_const_decl(rbs_parser_t *state, rbs_node_list_t *annotations, rbs_ast_declarations_constant_t **constant) {
   range decl_range;
 
   decl_range.start = state->current_token.range.start;
@@ -1539,7 +1539,7 @@ static bool parse_const_decl(parserstate *state, rbs_node_list_t *annotations, r
   type_decl ::= {kTYPE} alias_name `=` <type>
 */
 NODISCARD
-static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_typealias_t **typealias) {
+static bool parse_type_decl(rbs_parser_t *state, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_typealias_t **typealias) {
   parser_push_typevar_table(state, true);
 
   range decl_range;
@@ -1585,7 +1585,7 @@ static bool parse_type_decl(parserstate *state, position comment_pos, rbs_node_l
   annotation ::= {<tANNOTATION>}
 */
 NODISCARD
-static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotation) {
+static bool parse_annotation(rbs_parser_t *state, rbs_ast_annotation_t **annotation) {
   range rg = state->current_token.range;
 
   size_t offset_bytes =
@@ -1643,7 +1643,7 @@ static bool parse_annotation(parserstate *state, rbs_ast_annotation_t **annotati
                 | {<>}
 */
 NODISCARD
-static bool parse_annotations(parserstate *state, rbs_node_list_t *annotations, position *annot_pos) {
+static bool parse_annotations(rbs_parser_t *state, rbs_node_list_t *annotations, position *annot_pos) {
   *annot_pos = NullPosition;
 
   while (true) {
@@ -1670,7 +1670,7 @@ static bool parse_annotations(parserstate *state, rbs_node_list_t *annotations, 
                 | {} (IDENT | keyword)~<`?`>
 */
 NODISCARD
-static bool parse_method_name(parserstate *state, range *range, rbs_ast_symbol_t **symbol) {
+static bool parse_method_name(rbs_parser_t *state, range *range, rbs_ast_symbol_t **symbol) {
   parser_advance(state);
 
   switch (state->current_token.type)
@@ -1750,7 +1750,7 @@ typedef enum {
 
   @param allow_selfq `true` to accept `self?` kind.
 */
-static InstanceSingletonKind parse_instance_singleton_kind(parserstate *state, bool allow_selfq, range *rg) {
+static InstanceSingletonKind parse_instance_singleton_kind(rbs_parser_t *state, bool allow_selfq, range *rg) {
   InstanceSingletonKind kind = INSTANCE_KIND;
 
   if (state->next_token.type == kSELF) {
@@ -1795,7 +1795,7 @@ static InstanceSingletonKind parse_instance_singleton_kind(parserstate *state, b
  * @param accept_overload `true` to accept overloading (...) definition.
  * */
 NODISCARD
-static bool parse_member_def(parserstate *state, bool instance_only, bool accept_overload, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_methoddefinition_t **method_definition) {
+static bool parse_member_def(rbs_parser_t *state, bool instance_only, bool accept_overload, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_methoddefinition_t **method_definition) {
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
@@ -1950,7 +1950,7 @@ static bool parse_member_def(parserstate *state, bool instance_only, bool accept
  * @param kind
  * */
 NODISCARD
-static bool class_instance_name(parserstate *state, TypeNameKind kind, rbs_node_list_t *args, range *name_range, range *args_range, rbs_typename_t **name) {
+static bool class_instance_name(rbs_parser_t *state, TypeNameKind kind, rbs_node_list_t *args, range *name_range, range *args_range, rbs_typename_t **name) {
   parser_advance(state);
 
   rbs_typename_t *typename = NULL;
@@ -1978,7 +1978,7 @@ static bool class_instance_name(parserstate *state, TypeNameKind kind, rbs_node_
  * @param from_interface `true` when the member is in an interface.
  * */
 NODISCARD
-static bool parse_mixin_member(parserstate *state, bool from_interface, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **mixin_member) {
+static bool parse_mixin_member(rbs_parser_t *state, bool from_interface, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **mixin_member) {
   range member_range;
   member_range.start = state->current_token.range.start;
   comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
@@ -2059,7 +2059,7 @@ static bool parse_mixin_member(parserstate *state, bool from_interface, position
  * @param[in] instance_only `true` to reject `self.` alias.
  * */
 NODISCARD
-static bool parse_alias_member(parserstate *state, bool instance_only, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_alias_t **alias_member) {
+static bool parse_alias_member(rbs_parser_t *state, bool instance_only, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_alias_t **alias_member) {
   range member_range;
   member_range.start = state->current_token.range.start;
   range keyword_range = state->current_token.range;
@@ -2112,7 +2112,7 @@ static bool parse_alias_member(parserstate *state, bool instance_only, position 
                     | {tA2IDENT} `:` <type>
 */
 NODISCARD
-static bool parse_variable_member(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **variable_member) {
+static bool parse_variable_member(rbs_parser_t *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **variable_member) {
   if (annotations->length > 0) {
     set_error(state, state->current_token, true, "annotation cannot be given to variable members");
     return false;
@@ -2217,7 +2217,7 @@ static bool parse_variable_member(parserstate *state, position comment_pos, rbs_
                       | {<`private`>}
 */
 NODISCARD
-static bool parse_visibility_member(parserstate *state, rbs_node_list_t *annotations, rbs_node_t **visibility_member) {
+static bool parse_visibility_member(rbs_parser_t *state, rbs_node_list_t *annotations, rbs_node_t **visibility_member) {
   if (annotations->length > 0) {
     set_error(state, state->current_token, true, "annotation cannot be given to visibility members");
     return false;
@@ -2256,7 +2256,7 @@ static bool parse_visibility_member(parserstate *state, rbs_node_list_t *annotat
              | `(` `)`            # No variable
 */
 NODISCARD
-static bool parse_attribute_member(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **attribute_member) {
+static bool parse_attribute_member(rbs_parser_t *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **attribute_member) {
   range member_range;
 
   member_range.start = state->current_token.range.start;
@@ -2375,7 +2375,7 @@ static bool parse_attribute_member(parserstate *state, position comment_pos, rbs
                      | alias_member   (instance only)
 */
 NODISCARD
-static bool parse_interface_members(parserstate *state, rbs_node_list_t **members) {
+static bool parse_interface_members(rbs_parser_t *state, rbs_node_list_t **members) {
   *members = rbs_node_list_new(&state->allocator);
 
   while (state->next_token.type != kEND) {
@@ -2423,7 +2423,7 @@ static bool parse_interface_members(parserstate *state, rbs_node_list_t **member
   interface_decl ::= {`interface`} interface_name module_type_params interface_members <kEND>
 */
 NODISCARD
-static bool parse_interface_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_interface_t **interface_decl) {
+static bool parse_interface_decl(rbs_parser_t *state, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_interface_t **interface_decl) {
   parser_push_typevar_table(state, true);
 
   range member_range;
@@ -2471,7 +2471,7 @@ static bool parse_interface_decl(parserstate *state, position comment_pos, rbs_n
                      | module_name `[` type_list <`]`>
 */
 NODISCARD
-static bool parse_module_self_types(parserstate *state, rbs_node_list_t *array) {
+static bool parse_module_self_types(rbs_parser_t *state, rbs_node_list_t *array) {
   while (true) {
     parser_advance(state);
 
@@ -2512,7 +2512,7 @@ static bool parse_module_self_types(parserstate *state, rbs_node_list_t *array) 
 }
 
 NODISCARD
-static bool parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl);
+static bool parse_nested_decl(rbs_parser_t *state, const char *nested_in, position annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl);
 
 /*
   module_members ::= {} ...<module_member> kEND
@@ -2526,7 +2526,7 @@ static bool parse_nested_decl(parserstate *state, const char *nested_in, positio
                   | `private`
 */
 NODISCARD
-static bool parse_module_members(parserstate *state, rbs_node_list_t **members) {
+static bool parse_module_members(rbs_parser_t *state, rbs_node_list_t **members) {
   *members = rbs_node_list_new(&state->allocator);
 
   while (state->next_token.type != kEND) {
@@ -2614,7 +2614,7 @@ static bool parse_module_members(parserstate *state, rbs_node_list_t **members) 
                 | {module_name} module_name module_type_params `:` module_self_types module_members <kEND>
 */
 NODISCARD
-static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_typename_t *module_name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_module_t **module_decl) {
+static bool parse_module_decl0(rbs_parser_t *state, range keyword_range, rbs_typename_t *module_name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_module_t **module_decl) {
   parser_push_typevar_table(state, true);
 
   range decl_range;
@@ -2666,7 +2666,7 @@ static bool parse_module_decl0(parserstate *state, range keyword_range, rbs_type
 
 */
 NODISCARD
-static bool parse_module_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **module_decl) {
+static bool parse_module_decl(rbs_parser_t *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **module_decl) {
   range keyword_range = state->current_token.range;
 
   comment_pos = rbs_nonnull_pos_or(comment_pos, state->current_token.range.start);
@@ -2714,7 +2714,7 @@ static bool parse_module_decl(parserstate *state, position comment_pos, rbs_node
                      | {<>}
 */
 NODISCARD
-static bool parse_class_decl_super(parserstate *state, range *lt_range, rbs_ast_declarations_class_super_t **super) {
+static bool parse_class_decl_super(rbs_parser_t *state, range *lt_range, rbs_ast_declarations_class_super_t **super) {
   if (parser_advance_if(state, pLT)) {
     *lt_range = state->current_token.range;
 
@@ -2746,7 +2746,7 @@ static bool parse_class_decl_super(parserstate *state, range *lt_range, rbs_ast_
   class_decl ::= {class_name} type_params class_decl_super class_members <`end`>
 */
 NODISCARD
-static bool parse_class_decl0(parserstate *state, range keyword_range, rbs_typename_t *name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_class_t **class_decl) {
+static bool parse_class_decl0(rbs_parser_t *state, range keyword_range, rbs_typename_t *name, range name_range, rbs_ast_comment_t *comment, rbs_node_list_t *annotations, rbs_ast_declarations_class_t **class_decl) {
   parser_push_typevar_table(state, true);
 
   range decl_range;
@@ -2788,7 +2788,7 @@ static bool parse_class_decl0(parserstate *state, range keyword_range, rbs_typen
                | {`class`} class_name <class_decl0>
 */
 NODISCARD
-static bool parse_class_decl(parserstate *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **class_decl) {
+static bool parse_class_decl(rbs_parser_t *state, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **class_decl) {
   range keyword_range = state->current_token.range;
 
   comment_pos = rbs_nonnull_pos_or(comment_pos, state->current_token.range.start);
@@ -2838,7 +2838,7 @@ static bool parse_class_decl(parserstate *state, position comment_pos, rbs_node_
                 | {<class_decl>}
 */
 NODISCARD
-static bool parse_nested_decl(parserstate *state, const char *nested_in, position annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl) {
+static bool parse_nested_decl(rbs_parser_t *state, const char *nested_in, position annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl) {
   parser_push_typevar_table(state, true);
 
   switch (state->current_token.type) {
@@ -2890,7 +2890,7 @@ static bool parse_nested_decl(parserstate *state, const char *nested_in, positio
 }
 
 NODISCARD
-static bool parse_decl(parserstate *state, rbs_node_t **decl) {
+static bool parse_decl(rbs_parser_t *state, rbs_node_t **decl) {
   rbs_node_list_t *annotations = rbs_node_list_new(&state->allocator);
   position annot_pos = NullPosition;
 
@@ -2946,7 +2946,7 @@ static bool parse_decl(parserstate *state, rbs_node_t **decl) {
               | {} <>                                            (empty -- returns empty namespace)
 */
 NODISCARD
-static bool parse_namespace(parserstate *state, range *rg, rbs_namespace_t **namespace) {
+static bool parse_namespace(rbs_parser_t *state, range *rg, rbs_namespace_t **namespace) {
   bool is_absolute = false;
 
   if (state->next_token.type == pCOLON2) {
@@ -2989,7 +2989,7 @@ static bool parse_namespace(parserstate *state, range *rg, rbs_namespace_t **nam
                | {} namespace <tSTAR>
 */
 NODISCARD
-static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
+static bool parse_use_clauses(rbs_parser_t *state, rbs_node_list_t *clauses) {
   while (true) {
     range namespace_range = NULL_RANGE;
     rbs_namespace_t *namespace = NULL;
@@ -3078,7 +3078,7 @@ static bool parse_use_clauses(parserstate *state, rbs_node_list_t *clauses) {
   use_directive ::= {} `use` <clauses>
  */
 NODISCARD
-static bool parse_use_directive(parserstate *state, rbs_ast_directives_use_t **use_directive) {
+static bool parse_use_directive(rbs_parser_t *state, rbs_ast_directives_use_t **use_directive) {
   if (state->next_token.type == kUSE) {
     parser_advance(state);
 
@@ -3100,7 +3100,7 @@ static bool parse_use_directive(parserstate *state, rbs_ast_directives_use_t **u
   return true;
 }
 
-static rbs_ast_comment_t *parse_comment_lines(parserstate *state, comment *com) {
+static rbs_ast_comment_t *parse_comment_lines(rbs_parser_t *state, comment *com) {
   size_t hash_bytes = state->lexstate->encoding->char_width((const uint8_t *) "#", (size_t) 1);
   size_t space_bytes = state->lexstate->encoding->char_width((const uint8_t *) " ", (size_t) 1);
 
@@ -3194,7 +3194,7 @@ static comment *alloc_comment(rbs_allocator_t *allocator, token comment_token, c
 /**
  * Insert new comment line token.
  * */
-static void insert_comment_line(parserstate *state, token tok) {
+static void insert_comment_line(rbs_parser_t *state, token tok) {
   int prev_line = tok.range.start.line - 1;
 
   comment *com = comment_get_comment(state->last_comment, prev_line);
@@ -3206,7 +3206,7 @@ static void insert_comment_line(parserstate *state, token tok) {
   }
 }
 
-bool parse_signature(parserstate *state, rbs_signature_t **signature) {
+bool parse_signature(rbs_parser_t *state, rbs_signature_t **signature) {
   range signature_range;
   signature_range.start = state->current_token.range.start;
 
@@ -3261,7 +3261,7 @@ id_table *alloc_reset_table(rbs_allocator_t *allocator) {
   return table;
 }
 
-void parser_push_typevar_table(parserstate *state, bool reset) {
+void parser_push_typevar_table(rbs_parser_t *state, bool reset) {
   if (reset) {
     id_table *table = alloc_reset_table(&state->allocator);
     table->next = state->vars;
@@ -3274,7 +3274,7 @@ void parser_push_typevar_table(parserstate *state, bool reset) {
 }
 
 NODISCARD
-bool parser_insert_typevar(parserstate *state, rbs_constant_id_t id) {
+bool parser_insert_typevar(rbs_parser_t *state, rbs_constant_id_t id) {
   id_table *table = state->vars;
 
   if (RESET_TABLE_P(table)) {
@@ -3295,14 +3295,14 @@ bool parser_insert_typevar(parserstate *state, rbs_constant_id_t id) {
   return true;
 }
 
-void print_parser(parserstate *state) {
+void print_parser(rbs_parser_t *state) {
   printf("  current_token = %s (%d...%d)\n", token_type_str(state->current_token.type), state->current_token.range.start.char_pos, state->current_token.range.end.char_pos);
   printf("     next_token = %s (%d...%d)\n", token_type_str(state->next_token.type), state->next_token.range.start.char_pos, state->next_token.range.end.char_pos);
   printf("    next_token2 = %s (%d...%d)\n", token_type_str(state->next_token2.type), state->next_token2.range.start.char_pos, state->next_token2.range.end.char_pos);
   printf("    next_token3 = %s (%d...%d)\n", token_type_str(state->next_token3.type), state->next_token3.range.start.char_pos, state->next_token3.range.end.char_pos);
 }
 
-void parser_advance(parserstate *state) {
+void parser_advance(rbs_parser_t *state) {
   state->current_token = state->next_token;
   state->next_token = state->next_token2;
   state->next_token2 = state->next_token3;
@@ -3335,7 +3335,7 @@ void rbs_print_token(token tok) {
   );
 }
 
-rbs_ast_comment_t *get_comment(parserstate *state, int subject_line) {
+rbs_ast_comment_t *get_comment(rbs_parser_t *state, int subject_line) {
   int comment_line = subject_line - 1;
 
   comment *com = comment_get_comment(state->last_comment, comment_line);
@@ -3375,14 +3375,14 @@ lexstate *alloc_lexer(rbs_allocator_t *allocator, rbs_string_t string, const rbs
   return lexer;
 }
 
-parserstate *alloc_parser(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
+rbs_parser_t *alloc_parser(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
   rbs_allocator_t allocator;
   rbs_allocator_init(&allocator);
 
   lexstate *lexer = alloc_lexer(&allocator, string, encoding, start_pos, end_pos);
-  parserstate *parser = rbs_allocator_alloc(&allocator, parserstate);
+  rbs_parser_t *parser = rbs_allocator_alloc(&allocator, rbs_parser_t);
 
-  *parser = (parserstate) {
+  *parser = (rbs_parser_t) {
     .lexstate = lexer,
 
     .current_token = NullToken,
@@ -3425,12 +3425,12 @@ parserstate *alloc_parser(rbs_string_t string, const rbs_encoding_t *encoding, i
   return parser;
 }
 
-void free_parser(parserstate *parser) {
+void free_parser(rbs_parser_t *parser) {
   rbs_constant_pool_free(&parser->constant_pool);
   rbs_allocator_free(&parser->allocator);
 }
 
-void set_error(parserstate *state, token tok, bool syntax_error, const char *fmt, ...) {
+void set_error(rbs_parser_t *state, token tok, bool syntax_error, const char *fmt, ...) {
   if (state->error) {
     return;
   }
