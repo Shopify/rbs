@@ -1,10 +1,9 @@
 #ifndef RBS__RBS_LOCATION_H
 #define RBS__RBS_LOCATION_H
 
-#include "lexer.h"
-
 #include "rbs/util/rbs_constant_pool.h"
 #include "rbs/util/rbs_allocator.h"
+#include "rbs/rbs_lexer.h"
 #include "rbs/rbs_location_internals.h"
 
 typedef struct rbs_location {

@@ -4,7 +4,7 @@
 #include "rbs/defines.h"
 #include "rbs/util/rbs_allocator.h"
 #include "rbs/util/rbs_constant_pool.h"
-#include "rbs/lexer.h"
+#include "rbs/rbs_lexer.h"
 #include "rbs/rbs_ast.h"
 
 #include <stdbool.h>
