@@ -1,5 +1,5 @@
 /**
- * @file defines.h
+ * @file rbs_defines.h
  *
  * Macro definitions used throughout the rbs library.
  *

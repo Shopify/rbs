@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "rbs/defines.h"
+#include "rbs/rbs_defines.h"
 #include "rbs/rbs_string.h"
 #include "rbs/rbs_buffer.h"
 #include "rbs/rbs_parser.h"

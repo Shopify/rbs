@@ -1,7 +1,7 @@
 #ifndef RBS__PARSER_H
 #define RBS__PARSER_H
 
-#include "rbs/defines.h"
+#include "rbs/rbs_defines.h"
 #include "rbs/util/rbs_allocator.h"
 #include "rbs/util/rbs_constant_pool.h"
 #include "rbs/rbs_lexer.h"
