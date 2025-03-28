@@ -1,4 +1,3 @@
-#include "rbs/parser.h"
 
 #include <stdlib.h>
 #include <stdarg.h>
@@ -9,6 +8,7 @@
 #include "rbs/defines.h"
 #include "rbs/rbs_string.h"
 #include "rbs/rbs_buffer.h"
+#include "rbs/rbs_parser.h"
 #include "rbs/rbs_unescape.h"
 #include "rbs/rbs_encoding.h"
 #include "rbs/util/rbs_assert.h"
