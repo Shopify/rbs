@@ -75,12 +75,12 @@ typedef struct {
  * end
  * ```
  * */
-void parser_push_typevar_table(rbs_parser_t *state, bool reset);
+void parser_push_typevar_table(rbs_parser_t *parser, bool reset);
 
 /**
  * Insert new type variable into the latest table.
  * */
-NODISCARD bool parser_insert_typevar(rbs_parser_t *state, rbs_constant_id_t id);
+NODISCARD bool parser_insert_typevar(rbs_parser_t *parser, rbs_constant_id_t id);
 
 /**
  * Allocate new lexstate object.
@@ -105,9 +105,9 @@ void free_parser(rbs_parser_t *parser);
 /**
  * Advance one token.
  * */
-void parser_advance(rbs_parser_t *state);
+void parser_advance(rbs_parser_t *parser);
 
-void print_parser(rbs_parser_t *state);
+void print_parser(rbs_parser_t *parser);
 
 /**
  * Returns a RBS::Comment object associated with an subject at `subject_line`.
@@ -122,12 +122,12 @@ void print_parser(rbs_parser_t *state);
  * end
  * ```
  * */
-rbs_ast_comment_t *get_comment(rbs_parser_t *state, int subject_line);
+rbs_ast_comment_t *get_comment(rbs_parser_t *parser, int subject_line);
 
-void set_error(rbs_parser_t *state, token tok, bool syntax_error, const char *fmt, ...) RBS_ATTRIBUTE_FORMAT(4, 5);
+void set_error(rbs_parser_t *parser, token tok, bool syntax_error, const char *fmt, ...) RBS_ATTRIBUTE_FORMAT(4, 5);
 
-bool parse_type(rbs_parser_t *state, rbs_node_t **type);
-bool parse_method_type(rbs_parser_t *state, rbs_methodtype_t **method_type);
-bool parse_signature(rbs_parser_t *state, rbs_signature_t **signature);
+bool parse_type(rbs_parser_t *parser, rbs_node_t **type);
+bool parse_method_type(rbs_parser_t *parser, rbs_methodtype_t **method_type);
+bool parse_signature(rbs_parser_t *parser, rbs_signature_t **signature);
 
 #endif
