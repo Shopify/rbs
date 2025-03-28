@@ -17,7 +17,7 @@ rbs_position_t rbs_loc_position3(int char_pos, int line, int column) {
   return (rbs_position_t) { 0, char_pos, line, column };
 }
 
-static rbs_loc_range rbs_new_loc_range(range rg) {
+static rbs_loc_range rbs_new_loc_range(rbs_range_t rg) {
   rbs_loc_range r = { rg.start.char_pos, rg.end.char_pos };
   return r;
 }
@@ -55,7 +55,7 @@ static void check_children_cap(rbs_loc *loc) {
   }
 }
 
-void rbs_loc_legacy_add_optional_child(rbs_loc *loc, rbs_constant_id_t name, range r) {
+void rbs_loc_legacy_add_optional_child(rbs_loc *loc, rbs_constant_id_t name, rbs_range_t r) {
   check_children_cap(loc);
 
   unsigned short i = loc->children->len++;
@@ -65,7 +65,7 @@ void rbs_loc_legacy_add_optional_child(rbs_loc *loc, rbs_constant_id_t name, ran
   };
 }
 
-void rbs_loc_legacy_add_required_child(rbs_loc *loc, rbs_constant_id_t name, range r) {
+void rbs_loc_legacy_add_required_child(rbs_loc *loc, rbs_constant_id_t name, rbs_range_t r) {
   rbs_loc_legacy_add_optional_child(loc, name, r);
 
   unsigned short last_index = loc->children->len - 1;
@@ -179,7 +179,7 @@ static rbs_constant_id_t rbs_constant_pool_insert_ruby_symbol(VALUE symbol) {
 static VALUE location_add_required_child(VALUE self, VALUE name, VALUE start, VALUE end) {
   rbs_loc *loc = rbs_check_location(self);
 
-  range rg;
+  rbs_range_t rg;
   rg.start = rbs_loc_position(FIX2INT(start));
   rg.end = rbs_loc_position(FIX2INT(end));
 
@@ -191,7 +191,7 @@ static VALUE location_add_required_child(VALUE self, VALUE name, VALUE start, VA
 static VALUE location_add_optional_child(VALUE self, VALUE name, VALUE start, VALUE end) {
   rbs_loc *loc = rbs_check_location(self);
 
-  range rg;
+  rbs_range_t rg;
   rg.start = rbs_loc_position(FIX2INT(start));
   rg.end = rbs_loc_position(FIX2INT(end));
 
@@ -208,7 +208,7 @@ static VALUE location_add_optional_no_child(VALUE self, VALUE name) {
   return Qnil;
 }
 
-VALUE rbs_new_location(VALUE buffer, range rg) {
+VALUE rbs_new_location(VALUE buffer, rbs_range_t rg) {
   rbs_loc *loc;
   VALUE obj = TypedData_Make_Struct(RBS_Location, rbs_loc, &location_type, loc);
 

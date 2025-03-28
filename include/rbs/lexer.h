@@ -108,11 +108,11 @@ typedef struct {
 typedef struct {
   rbs_position_t start;
   rbs_position_t end;
-} range;
+} rbs_range_t;
 
 typedef struct {
   enum RBSTokenType type;
-  range range;
+  rbs_range_t range;
 } token;
 
 /**
@@ -138,7 +138,7 @@ typedef struct {
 
 extern token NullToken;
 extern rbs_position_t NullPosition;
-extern range NULL_RANGE;
+extern rbs_range_t NULL_RANGE;
 
 char *rbs_peek_token(lexstate *state, token tok);
 int rbs_token_chars(token tok);
