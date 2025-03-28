@@ -3447,7 +3447,7 @@ void set_error(rbs_parser_t *parser, token tok, bool syntax_error, const char *f
   vsnprintf(message, length + 1, fmt, args);
   va_end(args);
 
-  parser->error = rbs_allocator_alloc(&parser->allocator, error);
+  parser->error = rbs_allocator_alloc(&parser->allocator, rbs_error_t);
   parser->error->token = tok;
   parser->error->message = message;
   parser->error->syntax_error = syntax_error;

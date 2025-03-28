@@ -15,7 +15,7 @@
  * foo.rbs:11:21...11:25: Syntax error: {message}, token=`{tok source}` ({tok type})
  * ```
  * */
-static NORETURN(void) raise_error(error *error, VALUE buffer) {
+static NORETURN(void) raise_error(rbs_error_t *error, VALUE buffer) {
   rbs_assert(error != NULL, "raise_error() called with NULL error");
 
   if (!error->syntax_error) {

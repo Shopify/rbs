@@ -34,11 +34,11 @@ typedef struct rbs_comment_t {
   struct rbs_comment_t *next_comment;
 } rbs_comment_t;
 
-typedef struct error {
+typedef struct rbs_error_t {
   char *message;
   token token;
   bool syntax_error;
-} error;
+} rbs_error_t;
 
 /**
  * An RBS parser is a LL(3) parser.
@@ -56,7 +56,7 @@ typedef struct {
 
   rbs_constant_pool_t constant_pool;
   rbs_allocator_t allocator;
-  error *error;
+  rbs_error_t *error;
 } rbs_parser_t;
 
 /**
