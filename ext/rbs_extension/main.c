@@ -289,7 +289,7 @@ static VALUE rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
   lexstate *lexer = alloc_lexer_from_buffer(&allocator, string, encoding, 0, FIX2INT(end_pos));
 
   VALUE results = rb_ary_new();
-  token token = NullToken;
+  rbs_token_t token = NullToken;
   while (token.type != pEOF) {
     token = rbsparser_next_token(lexer);
     VALUE type = ID2SYM(rb_intern(token_type_str(token.type)));

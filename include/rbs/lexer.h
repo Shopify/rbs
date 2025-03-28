@@ -113,7 +113,7 @@ typedef struct {
 typedef struct {
   enum RBSTokenType type;
   rbs_range_t range;
-} token;
+} rbs_token_t;
 
 /**
  * The lexer state is the curren token.
@@ -136,13 +136,13 @@ typedef struct {
   const rbs_encoding_t *encoding;
 } lexstate;
 
-extern token NullToken;
+extern rbs_token_t NullToken;
 extern rbs_position_t NullPosition;
 extern rbs_range_t NULL_RANGE;
 
-char *rbs_peek_token(lexstate *state, token tok);
-int rbs_token_chars(token tok);
-int rbs_token_bytes(token tok);
+char *rbs_peek_token(lexstate *state, rbs_token_t tok);
+int rbs_token_chars(rbs_token_t tok);
+int rbs_token_bytes(rbs_token_t tok);
 
 #define rbs_null_position_p(pos) (pos.byte_pos == -1)
 #define rbs_null_range_p(range) (range.start.byte_pos == -1)
@@ -167,17 +167,17 @@ void rbs_skip(lexstate *state);
 void rbs_skipn(lexstate *state, size_t size);
 
 /**
- * Return new token with given type.
+ * Return new rbs_token_t with given type.
  * */
-token rbs_next_token(lexstate *state, enum RBSTokenType type);
+rbs_token_t rbs_next_token(lexstate *state, enum RBSTokenType type);
 
 /**
- * Return new token with EOF type.
+ * Return new rbs_token_t with EOF type.
  * */
-token rbs_next_eof_token(lexstate *state);
+rbs_token_t rbs_next_eof_token(lexstate *state);
 
-token rbsparser_next_token(lexstate *state);
+rbs_token_t rbsparser_next_token(lexstate *state);
 
-void rbs_print_token(token tok);
+void rbs_print_token(rbs_token_t tok);
 
 #endif

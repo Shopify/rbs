@@ -332,7 +332,7 @@ static bool parse_function_param(rbs_parser_t *parser, rbs_types_function_param_
   }
 }
 
-static rbs_constant_id_t intern_token_start_end(rbs_parser_t *parser, token start_token, token end_token) {
+static rbs_constant_id_t intern_token_start_end(rbs_parser_t *parser, rbs_token_t start_token, rbs_token_t end_token) {
   return rbs_constant_pool_insert_shared_with_encoding(
     &parser->constant_pool,
     (const uint8_t *) rbs_peek_token(parser->lexstate, start_token),
@@ -3108,7 +3108,7 @@ static rbs_ast_comment_t *parse_comment_lines(rbs_parser_t *parser, rbs_comment_
   rbs_buffer_init(&parser->allocator, &rbs_buffer);
 
   for (size_t i = 0; i < com->line_count; i++) {
-    token tok = com->tokens[i];
+    rbs_token_t tok = com->tokens[i];
 
     const char *comment_start = parser->lexstate->string.start + tok.range.start.byte_pos + hash_bytes;
     size_t comment_bytes = RBS_RANGE_BYTES(tok.range) - hash_bytes;
@@ -3151,7 +3151,7 @@ static rbs_comment_t *comment_get_comment(rbs_comment_t *com, int line) {
   return comment_get_comment(com->next_comment, line);
 }
 
-static void comment_insert_new_line(rbs_allocator_t *allocator, rbs_comment_t *com, token comment_token) {
+static void comment_insert_new_line(rbs_allocator_t *allocator, rbs_comment_t *com, rbs_token_t comment_token) {
   if (com->line_count == 0) {
     com->start = comment_token.range.start;
   }
@@ -3160,11 +3160,11 @@ static void comment_insert_new_line(rbs_allocator_t *allocator, rbs_comment_t *c
     com->line_size += 10;
 
     if (com->tokens) {
-      token *p = com->tokens;
-      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
-      memcpy(com->tokens, p, sizeof(token) * com->line_count);
+      rbs_token_t *p = com->tokens;
+      com->tokens = rbs_allocator_calloc(allocator, com->line_size, rbs_token_t);
+      memcpy(com->tokens, p, sizeof(rbs_token_t) * com->line_count);
     } else {
-      com->tokens = rbs_allocator_calloc(allocator, com->line_size, token);
+      com->tokens = rbs_allocator_calloc(allocator, com->line_size, rbs_token_t);
     }
   }
 
@@ -3172,7 +3172,7 @@ static void comment_insert_new_line(rbs_allocator_t *allocator, rbs_comment_t *c
   com->end = comment_token.range.end;
 }
 
-static rbs_comment_t *alloc_comment(rbs_allocator_t *allocator, token comment_token, rbs_comment_t *last_comment) {
+static rbs_comment_t *alloc_comment(rbs_allocator_t *allocator, rbs_token_t comment_token, rbs_comment_t *last_comment) {
   rbs_comment_t *new_comment = rbs_allocator_alloc(allocator, rbs_comment_t);
 
   *new_comment = (rbs_comment_t) {
@@ -3194,7 +3194,7 @@ static rbs_comment_t *alloc_comment(rbs_allocator_t *allocator, token comment_to
 /**
  * Insert new comment line token.
  * */
-static void insert_comment_line(rbs_parser_t *parser, token tok) {
+static void insert_comment_line(rbs_parser_t *parser, rbs_token_t tok) {
   int prev_line = tok.range.start.line - 1;
 
   rbs_comment_t *com = comment_get_comment(parser->last_comment, prev_line);
@@ -3326,7 +3326,7 @@ void parser_advance(rbs_parser_t *parser) {
   }
 }
 
-void rbs_print_token(token tok) {
+void rbs_print_token(rbs_token_t tok) {
   printf(
     "%s char=%d...%d\n",
     token_type_str(tok.type),
@@ -3430,7 +3430,7 @@ void free_parser(rbs_parser_t *parser) {
   rbs_allocator_free(&parser->allocator);
 }
 
-void set_error(rbs_parser_t *parser, token tok, bool syntax_error, const char *fmt, ...) {
+void set_error(rbs_parser_t *parser, rbs_token_t tok, bool syntax_error, const char *fmt, ...) {
   if (parser->error) {
     return;
   }
