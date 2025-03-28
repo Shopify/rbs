@@ -800,11 +800,11 @@ static bool parse_function(rbs_parser_t *parser, bool accept_type_binding, parse
 */
 NODISCARD
 static bool parse_proc_type(rbs_parser_t *parser, rbs_types_proc_t **proc) {
-  position start = parser->current_token.range.start;
+  rbs_position_t start = parser->current_token.range.start;
   parse_function_result *result = rbs_allocator_alloc(&parser->allocator, parse_function_result);
   CHECK_PARSE(parse_function(parser, true, &result));
 
-  position end = parser->current_token.range.end;
+  rbs_position_t end = parser->current_token.range.end;
   rbs_location_t *loc = rbs_location_new(&parser->allocator, (range) { .start = start, .end = end });
   *proc = rbs_types_proc_new(&parser->allocator, loc, result->function, result->block, result->function_self_type);
   return true;
@@ -1212,11 +1212,11 @@ static bool parse_simple(rbs_parser_t *parser, rbs_node_t **type) {
     return true;
   }
   case pLBRACE: {
-    position start = parser->current_token.range.start;
+    rbs_position_t start = parser->current_token.range.start;
     rbs_hash_t *fields = NULL;
     CHECK_PARSE(parse_record_attributes(parser, &fields));
     ADVANCE_ASSERT(parser, pRBRACE);
-    position end = parser->current_token.range.end;
+    rbs_position_t end = parser->current_token.range.end;
     rbs_location_t *loc = rbs_location_new(&parser->allocator, (range) { .start = start, .end = end });
     *type = (rbs_node_t *) rbs_types_record_new(&parser->allocator, loc, fields);
     return true;
@@ -1539,7 +1539,7 @@ static bool parse_const_decl(rbs_parser_t *parser, rbs_node_list_t *annotations,
   type_decl ::= {kTYPE} alias_name `=` <type>
 */
 NODISCARD
-static bool parse_type_decl(rbs_parser_t *parser, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_typealias_t **typealias) {
+static bool parse_type_decl(rbs_parser_t *parser, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_typealias_t **typealias) {
   parser_push_typevar_table(parser, true);
 
   range decl_range;
@@ -1643,7 +1643,7 @@ static bool parse_annotation(rbs_parser_t *parser, rbs_ast_annotation_t **annota
                 | {<>}
 */
 NODISCARD
-static bool parse_annotations(rbs_parser_t *parser, rbs_node_list_t *annotations, position *annot_pos) {
+static bool parse_annotations(rbs_parser_t *parser, rbs_node_list_t *annotations, rbs_position_t *annot_pos) {
   *annot_pos = NullPosition;
 
   while (true) {
@@ -1795,7 +1795,7 @@ static InstanceSingletonKind parse_instance_singleton_kind(rbs_parser_t *parser,
  * @param accept_overload `true` to accept overloading (...) definition.
  * */
 NODISCARD
-static bool parse_member_def(rbs_parser_t *parser, bool instance_only, bool accept_overload, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_methoddefinition_t **method_definition) {
+static bool parse_member_def(rbs_parser_t *parser, bool instance_only, bool accept_overload, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_ast_members_methoddefinition_t **method_definition) {
   range member_range;
   member_range.start = parser->current_token.range.start;
   comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
@@ -1858,7 +1858,7 @@ static bool parse_member_def(rbs_parser_t *parser, bool instance_only, bool acce
   bool loop = true;
   while (loop) {
     rbs_node_list_t *annotations = rbs_node_list_new(&parser->allocator);
-    position overload_annot_pos = NullPosition;
+    rbs_position_t overload_annot_pos = NullPosition;
 
     range overload_range;
     overload_range.start = parser->current_token.range.start;
@@ -1978,7 +1978,7 @@ static bool class_instance_name(rbs_parser_t *parser, TypeNameKind kind, rbs_nod
  * @param from_interface `true` when the member is in an interface.
  * */
 NODISCARD
-static bool parse_mixin_member(rbs_parser_t *parser, bool from_interface, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **mixin_member) {
+static bool parse_mixin_member(rbs_parser_t *parser, bool from_interface, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_node_t **mixin_member) {
   range member_range;
   member_range.start = parser->current_token.range.start;
   comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
@@ -2059,7 +2059,7 @@ static bool parse_mixin_member(rbs_parser_t *parser, bool from_interface, positi
  * @param[in] instance_only `true` to reject `self.` alias.
  * */
 NODISCARD
-static bool parse_alias_member(rbs_parser_t *parser, bool instance_only, position comment_pos, rbs_node_list_t *annotations, rbs_ast_members_alias_t **alias_member) {
+static bool parse_alias_member(rbs_parser_t *parser, bool instance_only, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_ast_members_alias_t **alias_member) {
   range member_range;
   member_range.start = parser->current_token.range.start;
   range keyword_range = parser->current_token.range;
@@ -2112,7 +2112,7 @@ static bool parse_alias_member(rbs_parser_t *parser, bool instance_only, positio
                     | {tA2IDENT} `:` <type>
 */
 NODISCARD
-static bool parse_variable_member(rbs_parser_t *parser, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **variable_member) {
+static bool parse_variable_member(rbs_parser_t *parser, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_node_t **variable_member) {
   if (annotations->length > 0) {
     set_error(parser, parser->current_token, true, "annotation cannot be given to variable members");
     return false;
@@ -2256,7 +2256,7 @@ static bool parse_visibility_member(rbs_parser_t *parser, rbs_node_list_t *annot
              | `(` `)`            # No variable
 */
 NODISCARD
-static bool parse_attribute_member(rbs_parser_t *parser, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **attribute_member) {
+static bool parse_attribute_member(rbs_parser_t *parser, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_node_t **attribute_member) {
   range member_range;
 
   member_range.start = parser->current_token.range.start;
@@ -2380,7 +2380,7 @@ static bool parse_interface_members(rbs_parser_t *parser, rbs_node_list_t **memb
 
   while (parser->next_token.type != kEND) {
     rbs_node_list_t *annotations = rbs_node_list_new(&parser->allocator);
-    position annot_pos = NullPosition;
+    rbs_position_t annot_pos = NullPosition;
 
     CHECK_PARSE(parse_annotations(parser, annotations, &annot_pos));
     parser_advance(parser);
@@ -2423,7 +2423,7 @@ static bool parse_interface_members(rbs_parser_t *parser, rbs_node_list_t **memb
   interface_decl ::= {`interface`} interface_name module_type_params interface_members <kEND>
 */
 NODISCARD
-static bool parse_interface_decl(rbs_parser_t *parser, position comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_interface_t **interface_decl) {
+static bool parse_interface_decl(rbs_parser_t *parser, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_ast_declarations_interface_t **interface_decl) {
   parser_push_typevar_table(parser, true);
 
   range member_range;
@@ -2512,7 +2512,7 @@ static bool parse_module_self_types(rbs_parser_t *parser, rbs_node_list_t *array
 }
 
 NODISCARD
-static bool parse_nested_decl(rbs_parser_t *parser, const char *nested_in, position annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl);
+static bool parse_nested_decl(rbs_parser_t *parser, const char *nested_in, rbs_position_t annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl);
 
 /*
   module_members ::= {} ...<module_member> kEND
@@ -2531,7 +2531,7 @@ static bool parse_module_members(rbs_parser_t *parser, rbs_node_list_t **members
 
   while (parser->next_token.type != kEND) {
     rbs_node_list_t *annotations = rbs_node_list_new(&parser->allocator);
-    position annot_pos;
+    rbs_position_t annot_pos;
     CHECK_PARSE(parse_annotations(parser, annotations, &annot_pos));
 
     parser_advance(parser);
@@ -2666,7 +2666,7 @@ static bool parse_module_decl0(rbs_parser_t *parser, range keyword_range, rbs_ty
 
 */
 NODISCARD
-static bool parse_module_decl(rbs_parser_t *parser, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **module_decl) {
+static bool parse_module_decl(rbs_parser_t *parser, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_node_t **module_decl) {
   range keyword_range = parser->current_token.range;
 
   comment_pos = rbs_nonnull_pos_or(comment_pos, parser->current_token.range.start);
@@ -2788,7 +2788,7 @@ static bool parse_class_decl0(rbs_parser_t *parser, range keyword_range, rbs_typ
                | {`class`} class_name <class_decl0>
 */
 NODISCARD
-static bool parse_class_decl(rbs_parser_t *parser, position comment_pos, rbs_node_list_t *annotations, rbs_node_t **class_decl) {
+static bool parse_class_decl(rbs_parser_t *parser, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_node_t **class_decl) {
   range keyword_range = parser->current_token.range;
 
   comment_pos = rbs_nonnull_pos_or(comment_pos, parser->current_token.range.start);
@@ -2838,7 +2838,7 @@ static bool parse_class_decl(rbs_parser_t *parser, position comment_pos, rbs_nod
                 | {<class_decl>}
 */
 NODISCARD
-static bool parse_nested_decl(rbs_parser_t *parser, const char *nested_in, position annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl) {
+static bool parse_nested_decl(rbs_parser_t *parser, const char *nested_in, rbs_position_t annot_pos, rbs_node_list_t *annotations, rbs_node_t **decl) {
   parser_push_typevar_table(parser, true);
 
   switch (parser->current_token.type) {
@@ -2892,7 +2892,7 @@ static bool parse_nested_decl(rbs_parser_t *parser, const char *nested_in, posit
 NODISCARD
 static bool parse_decl(rbs_parser_t *parser, rbs_node_t **decl) {
   rbs_node_list_t *annotations = rbs_node_list_new(&parser->allocator);
-  position annot_pos = NullPosition;
+  rbs_position_t annot_pos = NullPosition;
 
   CHECK_PARSE(parse_annotations(parser, annotations, &annot_pos));
   parser_advance(parser);
@@ -3350,7 +3350,7 @@ rbs_ast_comment_t *get_comment(rbs_parser_t *parser, int subject_line) {
 lexstate *alloc_lexer(rbs_allocator_t *allocator, rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
   lexstate *lexer = rbs_allocator_alloc(allocator, lexstate);
 
-  position start_position = (position) {
+  rbs_position_t start_position = (rbs_position_t) {
     .byte_pos = 0,
     .char_pos = 0,
     .line = 1,

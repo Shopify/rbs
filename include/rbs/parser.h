@@ -24,8 +24,8 @@
  * A comment object represents the six lines of comments.
  * */
 typedef struct rbs_comment_t {
-  position start;
-  position end;
+  rbs_position_t start;
+  rbs_position_t end;
 
   size_t line_size;
   size_t line_count;

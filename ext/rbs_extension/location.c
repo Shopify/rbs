@@ -9,14 +9,12 @@
 rbs_loc_range RBS_LOC_NULL_RANGE = { -1, -1 };
 VALUE RBS_Location;
 
-position rbs_loc_position(int char_pos) {
-  position pos = { 0, char_pos, -1, -1 };
-  return pos;
+rbs_position_t rbs_loc_position(int char_pos) {
+  return (rbs_position_t) { 0, char_pos, -1, -1 };
 }
 
-position rbs_loc_position3(int char_pos, int line, int column) {
-  position pos = { 0, char_pos, line, column };
-  return pos;
+rbs_position_t rbs_loc_position3(int char_pos, int line, int column) {
+  return (rbs_position_t) { 0, char_pos, line, column };
 }
 
 static rbs_loc_range rbs_new_loc_range(range rg) {

@@ -90,7 +90,7 @@ static const char *RBS_TOKENTYPE_NAMES[] = {
 };
 
 token NullToken = { .type = NullType, .range = {} };
-position NullPosition = { -1, -1, -1, -1 };
+rbs_position_t NullPosition = { -1, -1, -1, -1 };
 range NULL_RANGE = { { -1, -1, -1, -1 }, { -1, -1, -1, -1 } };
 
 const char *token_type_str(enum RBSTokenType type) {

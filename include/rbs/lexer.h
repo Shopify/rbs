@@ -103,11 +103,11 @@ typedef struct {
   int char_pos;
   int line;
   int column;
-} position;
+} rbs_position_t;
 
 typedef struct {
-  position start;
-  position end;
+  rbs_position_t start;
+  rbs_position_t end;
 } range;
 
 typedef struct {
@@ -129,15 +129,15 @@ typedef struct {
   rbs_string_t string;
   int start_pos;                  /* The character position that defines the start of the input */
   int end_pos;                    /* The character position that defines the end of the input */
-  position current;               /* The current position */
-  position start;                 /* The start position of the current token */
+  rbs_position_t current;               /* The current position */
+  rbs_position_t start;                 /* The start position of the current token */
   bool first_token_of_line;       /* This flag is used for tLINECOMMENT */
   unsigned int last_char;         /* Last peeked character */
   const rbs_encoding_t *encoding;
 } lexstate;
 
 extern token NullToken;
-extern position NullPosition;
+extern rbs_position_t NullPosition;
 extern range NULL_RANGE;
 
 char *rbs_peek_token(lexstate *state, token tok);
