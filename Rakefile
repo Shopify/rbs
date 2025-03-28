@@ -72,8 +72,8 @@ task :templates do
   sh "#{ruby} templates/template.rb ext/rbs_extension/class_constants.h"
   sh "#{ruby} templates/template.rb ext/rbs_extension/class_constants.c"
 
-  sh "#{ruby} templates/template.rb include/rbs/ast.h"
-  sh "#{ruby} templates/template.rb src/ast.c"
+  sh "#{ruby} templates/template.rb include/rbs/rbs_ast.h"
+  sh "#{ruby} templates/template.rb src/rbs_ast.c"
 end
 
 task :compile => "ext/rbs_extension/class_constants.h"
