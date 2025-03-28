@@ -70,7 +70,7 @@
 
 #define ASSERT_TOKEN(parser, expected_type) \
   if (parser->current_token.type != expected_type) { \
-    set_error(parser, parser->current_token, true, "expected a token `%s`", token_type_str(expected_type)); \
+    set_error(parser, parser->current_token, true, "expected a token `%s`", rbs_token_type_str(expected_type)); \
     return false; \
   }
 
@@ -3296,10 +3296,10 @@ bool parser_insert_typevar(rbs_parser_t *parser, rbs_constant_id_t id) {
 }
 
 void print_parser(rbs_parser_t *parser) {
-  printf("  current_token = %s (%d...%d)\n", token_type_str(parser->current_token.type), parser->current_token.range.start.char_pos, parser->current_token.range.end.char_pos);
-  printf("     next_token = %s (%d...%d)\n", token_type_str(parser->next_token.type), parser->next_token.range.start.char_pos, parser->next_token.range.end.char_pos);
-  printf("    next_token2 = %s (%d...%d)\n", token_type_str(parser->next_token2.type), parser->next_token2.range.start.char_pos, parser->next_token2.range.end.char_pos);
-  printf("    next_token3 = %s (%d...%d)\n", token_type_str(parser->next_token3.type), parser->next_token3.range.start.char_pos, parser->next_token3.range.end.char_pos);
+  printf("  current_token = %s (%d...%d)\n", rbs_token_type_str(parser->current_token.type), parser->current_token.range.start.char_pos, parser->current_token.range.end.char_pos);
+  printf("     next_token = %s (%d...%d)\n", rbs_token_type_str(parser->next_token.type), parser->next_token.range.start.char_pos, parser->next_token.range.end.char_pos);
+  printf("    next_token2 = %s (%d...%d)\n", rbs_token_type_str(parser->next_token2.type), parser->next_token2.range.start.char_pos, parser->next_token2.range.end.char_pos);
+  printf("    next_token3 = %s (%d...%d)\n", rbs_token_type_str(parser->next_token3.type), parser->next_token3.range.start.char_pos, parser->next_token3.range.end.char_pos);
 }
 
 void parser_advance(rbs_parser_t *parser) {
@@ -3329,7 +3329,7 @@ void parser_advance(rbs_parser_t *parser) {
 void rbs_print_token(rbs_token_t tok) {
   printf(
     "%s char=%d...%d\n",
-    token_type_str(tok.type),
+    rbs_token_type_str(tok.type),
     tok.range.start.char_pos,
     tok.range.end.char_pos
   );
