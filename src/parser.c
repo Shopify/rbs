@@ -7,10 +7,10 @@
 #include <string.h>
 
 #include "rbs/defines.h"
-#include "rbs/encoding.h"
 #include "rbs/rbs_string.h"
 #include "rbs/rbs_buffer.h"
 #include "rbs/rbs_unescape.h"
+#include "rbs/rbs_encoding.h"
 #include "rbs/util/rbs_assert.h"
 
 #define INTERN(str)                  \

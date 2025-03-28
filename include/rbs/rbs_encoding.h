@@ -7,6 +7,7 @@
 #define RBS_RBS_ENCODING_H
 
 #include "rbs_strncasecmp.h"
+#include "rbs_string.h"
 
 #include <assert.h>
 #include <stdbool.h>
@@ -278,5 +279,9 @@ extern const rbs_encoding_t rbs_encodings[RBS_ENCODING_MAXIMUM];
  * @returns A pointer to the encoding struct if one is found, otherwise NULL.
  */
 const rbs_encoding_t * rbs_encoding_find(const uint8_t *start, const uint8_t *end);
+
+unsigned int rbs_utf8_to_codepoint(const rbs_string_t string);
+
+int rbs_utf8_codelen(unsigned int c);
 
 #endif
