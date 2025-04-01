@@ -1,4 +1,4 @@
-#include "rbs/rbs_encoding.h"
+#include "rbs/util/rbs_encoding.h"
 #include "rbs/util/rbs_assert.h"
 
 #include <ctype.h>
