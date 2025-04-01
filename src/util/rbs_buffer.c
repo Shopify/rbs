@@ -48,3 +48,7 @@ void rbs_buffer_append_string(rbs_allocator_t *allocator, rbs_buffer_t *buffer, 
 void rbs_buffer_append_cstr(rbs_allocator_t *allocator, rbs_buffer_t *buffer, const char *value) {
     rbs_buffer_append_string(allocator, buffer, value, strlen(value));
 }
+
+rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer) {
+    return rbs_string_new(buffer->value, buffer->value + buffer->length);
+}
