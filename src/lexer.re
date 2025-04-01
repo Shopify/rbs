@@ -1,7 +1,7 @@
 #include "rbs/lexer.h"
 
-rbs_token_t rbsparser_next_token(lexstate *state) {
-  lexstate backup;
+rbs_token_t rbsparser_next_token(rbs_lexer_t *state) {
+  rbs_lexer_t backup;
 
   backup = *state;
 

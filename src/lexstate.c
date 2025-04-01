@@ -104,7 +104,7 @@ int rbs_token_bytes(rbs_token_t tok) {
   return RBS_RANGE_BYTES(tok.range);
 }
 
-unsigned int rbs_peek(lexstate *state) {
+unsigned int rbs_peek(rbs_lexer_t *state) {
   if (state->current.char_pos == state->end_pos) {
     state->last_char = '\0';
     return 0;
@@ -119,7 +119,7 @@ unsigned int rbs_peek(lexstate *state) {
   }
 }
 
-rbs_token_t rbs_next_token(lexstate *state, enum RBSTokenType type) {
+rbs_token_t rbs_next_token(rbs_lexer_t *state, enum RBSTokenType type) {
   rbs_token_t t;
 
   t.type = type;
@@ -133,7 +133,7 @@ rbs_token_t rbs_next_token(lexstate *state, enum RBSTokenType type) {
   return t;
 }
 
-rbs_token_t rbs_next_eof_token(lexstate *state) {
+rbs_token_t rbs_next_eof_token(rbs_lexer_t *state) {
   if ((size_t) state->current.byte_pos == rbs_string_len(state->string) + 1) {
     // End of String
     rbs_token_t t;
@@ -149,7 +149,7 @@ rbs_token_t rbs_next_eof_token(lexstate *state) {
   }
 }
 
-void rbs_skip(lexstate *state) {
+void rbs_skip(rbs_lexer_t *state) {
   if (!state->last_char) {
     rbs_peek(state);
   }
@@ -175,13 +175,13 @@ void rbs_skip(lexstate *state) {
   }
 }
 
-void rbs_skipn(lexstate *state, size_t size) {
+void rbs_skipn(rbs_lexer_t *state, size_t size) {
   for (size_t i = 0; i < size; i ++) {
     rbs_peek(state);
     rbs_skip(state);
   }
 }
 
-char *rbs_peek_token(lexstate *state, rbs_token_t tok) {
+char *rbs_peek_token(rbs_lexer_t *state, rbs_token_t tok) {
   return (char *) state->string.start + tok.range.start.byte_pos;
 }
