@@ -3311,7 +3311,7 @@ void rbs_parser_advance(rbs_parser_t *parser) {
       break;
     }
 
-    parser->next_token3 = rbsparser_next_token(parser->rbs_lexer_t);
+    parser->next_token3 = rbs_lexer_next_token(parser->rbs_lexer_t);
 
     if (parser->next_token3.type == tCOMMENT) {
       // skip

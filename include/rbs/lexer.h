@@ -176,7 +176,7 @@ rbs_token_t rbs_next_token(rbs_lexer_t *lexer, enum RBSTokenType type);
  * */
 rbs_token_t rbs_next_eof_token(rbs_lexer_t *lexer);
 
-rbs_token_t rbsparser_next_token(rbs_lexer_t *lexer);
+rbs_token_t rbs_lexer_next_token(rbs_lexer_t *lexer);
 
 void rbs_print_token(rbs_token_t tok);
 

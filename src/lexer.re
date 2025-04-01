@@ -1,6 +1,6 @@
 #include "rbs/lexer.h"
 
-rbs_token_t rbsparser_next_token(rbs_lexer_t *lexer) {
+rbs_token_t rbs_lexer_next_token(rbs_lexer_t *lexer) {
   rbs_lexer_t backup;
 
   backup = *lexer;
