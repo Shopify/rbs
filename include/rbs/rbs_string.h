@@ -53,4 +53,6 @@ bool rbs_string_equal(const rbs_string_t lhs, const rbs_string_t rhs);
  */
 rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer);
 
+unsigned int rbs_utf8_string_to_codepoint(const rbs_string_t string);
+
 #endif
