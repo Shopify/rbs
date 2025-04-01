@@ -39,3 +39,7 @@ bool rbs_string_equal(const rbs_string_t lhs, const rbs_string_t rhs) {
     if (rbs_string_len(lhs) != rbs_string_len(rhs)) return false;
     return strncmp(lhs.start, rhs.start, rbs_string_len(lhs)) == 0;
 }
+
+rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer) {
+    return rbs_string_new(buffer->value, buffer->value + buffer->length);
+}

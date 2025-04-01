@@ -1,14 +1,11 @@
 #ifndef RBS__RBS_BUFFER_H
 #define RBS__RBS_BUFFER_H
 
-#include "rbs_string.h"
 #include "rbs/util/rbs_allocator.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-
-
 
 /**
  * The default capacity of a rbs_buffer_t.
@@ -73,13 +70,5 @@ void rbs_buffer_append_cstr(rbs_allocator_t *, rbs_buffer_t *buffer, const char 
  * @param length The length of the string to append.
  */
 void rbs_buffer_append_string(rbs_allocator_t *, rbs_buffer_t *buffer, const char *value, size_t length);
-
-/**
- * Convert the buffer to a rbs_string_t.
- *
- * @param buffer The buffer to convert.
- * @returns The converted rbs_string_t.
- */
-rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer);
 
 #endif

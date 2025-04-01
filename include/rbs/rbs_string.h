@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include "rbs/util/rbs_allocator.h"
+#include "rbs/util/rbs_buffer.h"
 
 typedef struct {
   const char *start;
@@ -43,5 +44,13 @@ size_t rbs_string_len(const rbs_string_t self);
  * Compares two strings for equality.
  */
 bool rbs_string_equal(const rbs_string_t lhs, const rbs_string_t rhs);
+
+/**
+ * Convert the buffer to a rbs_string_t.
+ *
+ * @param buffer The buffer to convert.
+ * @returns The converted rbs_string_t.
+ */
+rbs_string_t rbs_buffer_to_string(rbs_buffer_t *buffer);
 
 #endif
