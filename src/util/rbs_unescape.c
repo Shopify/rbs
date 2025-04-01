@@ -1,5 +1,5 @@
 #include "rbs/encoding.h"
-#include "rbs/rbs_unescape.h"
+#include "rbs/util/rbs_unescape.h"
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
