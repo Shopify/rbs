@@ -2941,7 +2941,7 @@ rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
   StringValue(string);
 
   rbs_allocator_t allocator;
-  rbs_allocator_init(&allocator);
+  rbs_allocator_init(&allocator, rbs_allocator_default_mem());
   lexstate *lexer = alloc_lexer(&allocator, string, 0, FIX2INT(end_pos));
 
   VALUE results = rb_ary_new();
