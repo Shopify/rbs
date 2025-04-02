@@ -117,6 +117,7 @@ void rbs_allocator_init(rbs_allocator_t *allocator, size_t size) {
 }
 
 void rbs_allocator_free(rbs_allocator_t *allocator) {
+  if (allocator->start == 0) { return; }
     destroy_memory((void*)allocator->start, allocator->end - allocator->start);
     *allocator = (rbs_allocator_t) {
       .start = 0,
