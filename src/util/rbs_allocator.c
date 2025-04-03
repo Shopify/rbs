@@ -105,20 +105,21 @@ void rbs_allocator_init(rbs_allocator_t *allocator, size_t size) {
     void* mem = map_memory(size + page_size);
     // Guard page; remove range checks in alloc fast path and hard fail if we
     // consume all memory
-    void* last_page = (char*)mem + size;
-    assert(is_page_aligned((uintptr_t)mem + size));
+    void* last_page = (char *) mem + size;
     guard_page(last_page, page_size);
-    uintptr_t start = (uintptr_t)mem;
+    uintptr_t start = (uintptr_t) mem;
+    uintptr_t end = start + size;
+    assert(is_page_aligned(end));
     *allocator = (rbs_allocator_t) {
       .start = start,
       .heap_ptr = start,
-      .end = start + size,
+      .end = end,
     };
 }
 
 void rbs_allocator_free(rbs_allocator_t *allocator) {
   if (allocator->start == 0) { return; }
-    destroy_memory((void*)allocator->start, allocator->end - allocator->start);
+    destroy_memory((void *) allocator->start, allocator->end - allocator->start);
     *allocator = (rbs_allocator_t) {
       .start = 0,
       .heap_ptr = 0,
@@ -131,7 +132,7 @@ void *rbs_allocator_malloc_impl(rbs_allocator_t *allocator, size_t size, size_t 
     assert(size % alignment == 0 && "size must be a multiple of the alignment");
     uintptr_t aligned = align(allocator->heap_ptr, alignment);
     allocator->heap_ptr = aligned + size;
-    return (void*)aligned;
+    return (void *) aligned;
 }
 
 // Note: This will eagerly fill with zeroes, unlike `calloc()` which can map a page in a page to be zeroed lazily.
