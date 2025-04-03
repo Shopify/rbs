@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <inttypes.h>
+#include <stdalign.h>
 
 typedef struct rbs_allocator {
     uintptr_t start;
