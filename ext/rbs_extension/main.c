@@ -125,7 +125,6 @@ static VALUE parse_type_try(VALUE a) {
 
 
   VALUE ruby_ast = rbs_struct_to_ruby_value(ctx, type);
-  rbs_node_destroy((rbs_node_t *) type);
   return ruby_ast;
 }
 
@@ -214,7 +213,6 @@ static VALUE parse_method_type_try(VALUE a) {
   );
 
   VALUE ruby_ast = rbs_struct_to_ruby_value(ctx, (rbs_node_t *) method_type);
-  rbs_node_destroy((rbs_node_t *) method_type);
   return ruby_ast;
 }
 
@@ -255,7 +253,6 @@ static VALUE parse_signature_try(VALUE a) {
   );
 
   VALUE ruby_ast = rbs_struct_to_ruby_value(ctx, (rbs_node_t *) signature);
-  rbs_node_destroy((rbs_node_t *) signature);
   return ruby_ast;
 }
 
