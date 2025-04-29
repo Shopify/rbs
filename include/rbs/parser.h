@@ -130,4 +130,7 @@ bool rbs_parse_type(rbs_parser_t *parser, rbs_node_t **type);
 bool rbs_parse_method_type(rbs_parser_t *parser, rbs_method_type_t **method_type);
 bool rbs_parse_signature(rbs_parser_t *parser, rbs_signature_t **signature);
 
+bool rbs_parse_type_params(rbs_parser_t *parser, rbs_range_t *rg, bool module_type_params, rbs_node_list_t **params);
+bool rbs_parse_member_def(rbs_parser_t *parser, bool instance_only, bool accept_overload, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_ast_members_method_definition_t **method_definition);
+
 #endif

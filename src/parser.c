@@ -3236,6 +3236,14 @@ bool rbs_parse_signature(rbs_parser_t *parser, rbs_signature_t **signature) {
   return true;
 }
 
+bool rbs_parse_type_params(rbs_parser_t *parser, rbs_range_t *rg, bool module_type_params, rbs_node_list_t **params) {
+  return parse_type_params(parser, rg, module_type_params, params);
+}
+
+bool rbs_parse_member_def(rbs_parser_t *parser, bool instance_only, bool accept_overload, rbs_position_t comment_pos, rbs_node_list_t *annotations, rbs_ast_members_method_definition_t **method_definition) {
+  return parse_member_def(parser, instance_only, accept_overload, comment_pos, annotations, method_definition);
+}
+
 id_table *alloc_empty_table(rbs_allocator_t *allocator) {
   id_table *table = rbs_allocator_alloc(allocator, id_table);
 
