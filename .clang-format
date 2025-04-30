@@ -24,9 +24,15 @@ AlignTrailingComments: true
 DerivePointerAlignment: false
 PointerAlignment: Right
 
+# Function calls formatting
+BinPackArguments: false
+BinPackParameters: false
+AllowAllArgumentsOnNextLine: false
+ExperimentalAutoDetectBinPacking: false
+PenaltyBreakBeforeFirstCallParameter: 1
+
 # Wrapping and Breaking
 ColumnLimit: 0
-AllowAllParametersOfDeclarationOnNextLine: false
 AllowShortBlocksOnASingleLine: Never
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortFunctionsOnASingleLine: All
@@ -35,8 +41,6 @@ AllowShortLoopsOnASingleLine: false
 AlwaysBreakAfterReturnType: None
 AlwaysBreakBeforeMultilineStrings: false
 AlwaysBreakTemplateDeclarations: No
-BinPackArguments: false
-BinPackParameters: false
 BreakBeforeBinaryOperators: None
 BreakBeforeTernaryOperators: false
 BreakConstructorInitializers: BeforeColon
