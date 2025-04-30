@@ -48,13 +48,13 @@ typedef struct {
   lexstate *lexstate;
 
   token current_token;
-  token next_token;       /* The first lookahead token */
-  token next_token2;      /* The second lookahead token */
-  token next_token3;      /* The third lookahead token */
+  token next_token;  /* The first lookahead token */
+  token next_token2; /* The second lookahead token */
+  token next_token3; /* The third lookahead token */
   VALUE buffer;
 
-  id_table *vars;         /* Known type variables */
-  comment *last_comment;  /* Last read comment */
+  id_table *vars;        /* Known type variables */
+  comment *last_comment; /* Last read comment */
 
   rbs_constant_pool_t constant_pool;
 } parserstate;

@@ -2,95 +2,95 @@
 #define RBS__LEXER_H
 
 enum TokenType {
-  NullType,         /* (Nothing) */
-  pEOF,             /* EOF */
-  ErrorToken,       /* Error */
+  NullType,   /* (Nothing) */
+  pEOF,       /* EOF */
+  ErrorToken, /* Error */
 
-  pLPAREN,          /* ( */
-  pRPAREN,          /* ) */
-  pCOLON,           /* : */
-  pCOLON2,          /* :: */
-  pLBRACKET,        /* [ */
-  pRBRACKET,        /* ] */
-  pLBRACE,          /* { */
-  pRBRACE,          /* } */
-  pHAT,             /* ^ */
-  pARROW,           /* -> */
-  pFATARROW,        /* => */
-  pCOMMA,           /* , */
-  pBAR,             /* | */
-  pAMP,             /* & */
-  pSTAR,            /* * */
-  pSTAR2,           /* ** */
-  pDOT,             /* . */
-  pDOT3,            /* ... */
-  pBANG,            /* ! */
-  pQUESTION,        /* ? */
-  pLT,              /* < */
-  pEQ,              /* = */
+  pLPAREN,   /* ( */
+  pRPAREN,   /* ) */
+  pCOLON,    /* : */
+  pCOLON2,   /* :: */
+  pLBRACKET, /* [ */
+  pRBRACKET, /* ] */
+  pLBRACE,   /* { */
+  pRBRACE,   /* } */
+  pHAT,      /* ^ */
+  pARROW,    /* -> */
+  pFATARROW, /* => */
+  pCOMMA,    /* , */
+  pBAR,      /* | */
+  pAMP,      /* & */
+  pSTAR,     /* * */
+  pSTAR2,    /* ** */
+  pDOT,      /* . */
+  pDOT3,     /* ... */
+  pBANG,     /* ! */
+  pQUESTION, /* ? */
+  pLT,       /* < */
+  pEQ,       /* = */
 
-  kALIAS,           /* alias */
-  kATTRACCESSOR,    /* attr_accessor */
-  kATTRREADER,      /* attr_reader */
-  kATTRWRITER,      /* attr_writer */
-  kBOOL,            /* bool */
-  kBOT,             /* bot */
-  kCLASS,           /* class */
-  kDEF,             /* def */
-  kEND,             /* end */
-  kEXTEND,          /* extend */
-  kFALSE,           /* false */
-  kIN,              /* in */
-  kINCLUDE,         /* include */
-  kINSTANCE,        /* instance */
-  kINTERFACE,       /* interface */
-  kMODULE,          /* module */
-  kNIL,             /* nil */
-  kOUT,             /* out */
-  kPREPEND,         /* prepend */
-  kPRIVATE,         /* private */
-  kPUBLIC,          /* public */
-  kSELF,            /* self */
-  kSINGLETON,       /* singleton */
-  kTOP,             /* top */
-  kTRUE,            /* true */
-  kTYPE,            /* type */
-  kUNCHECKED,       /* unchecked */
-  kUNTYPED,         /* untyped */
-  kVOID,            /* void */
-  kUSE,             /* use */
-  kAS,              /* as */
-  k__TODO__,        /* __todo__ */
-  kATRBS,           /* @rbs */
-  kSKIP,            /* skip */
-  kRETURN,          /* return */
+  kALIAS,        /* alias */
+  kATTRACCESSOR, /* attr_accessor */
+  kATTRREADER,   /* attr_reader */
+  kATTRWRITER,   /* attr_writer */
+  kBOOL,         /* bool */
+  kBOT,          /* bot */
+  kCLASS,        /* class */
+  kDEF,          /* def */
+  kEND,          /* end */
+  kEXTEND,       /* extend */
+  kFALSE,        /* false */
+  kIN,           /* in */
+  kINCLUDE,      /* include */
+  kINSTANCE,     /* instance */
+  kINTERFACE,    /* interface */
+  kMODULE,       /* module */
+  kNIL,          /* nil */
+  kOUT,          /* out */
+  kPREPEND,      /* prepend */
+  kPRIVATE,      /* private */
+  kPUBLIC,       /* public */
+  kSELF,         /* self */
+  kSINGLETON,    /* singleton */
+  kTOP,          /* top */
+  kTRUE,         /* true */
+  kTYPE,         /* type */
+  kUNCHECKED,    /* unchecked */
+  kUNTYPED,      /* untyped */
+  kVOID,         /* void */
+  kUSE,          /* use */
+  kAS,           /* as */
+  k__TODO__,     /* __todo__ */
+  kATRBS,        /* @rbs */
+  kSKIP,         /* skip */
+  kRETURN,       /* return */
 
-  tLIDENT,          /* Identifiers starting with lower case */
-  tUIDENT,          /* Identifiers starting with upper case */
-  tULIDENT,         /* Identifiers starting with `_` followed by upper case */
-  tULLIDENT,        /* Identifiers starting with `_` followed by lower case */
-  tGIDENT,          /* Identifiers starting with `$` */
-  tAIDENT,          /* Identifiers starting with `@` */
-  tA2IDENT,         /* Identifiers starting with `@@` */
-  tBANGIDENT,       /* Identifiers ending with `!` */
-  tEQIDENT,         /* Identifiers ending with `=` */
-  tQIDENT,          /* Quoted identifier */
-  pAREF_OPR,        /* [] */
-  tOPERATOR,        /* Operator identifier */
+  tLIDENT,    /* Identifiers starting with lower case */
+  tUIDENT,    /* Identifiers starting with upper case */
+  tULIDENT,   /* Identifiers starting with `_` followed by upper case */
+  tULLIDENT,  /* Identifiers starting with `_` followed by lower case */
+  tGIDENT,    /* Identifiers starting with `$` */
+  tAIDENT,    /* Identifiers starting with `@` */
+  tA2IDENT,   /* Identifiers starting with `@@` */
+  tBANGIDENT, /* Identifiers ending with `!` */
+  tEQIDENT,   /* Identifiers ending with `=` */
+  tQIDENT,    /* Quoted identifier */
+  pAREF_OPR,  /* [] */
+  tOPERATOR,  /* Operator identifier */
 
-  tCOMMENT,         /* Comment */
-  tLINECOMMENT,     /* Comment of all line */
-  tINLINECOMMENT,   /* Comment in inline decl starting with -- */
+  tCOMMENT,       /* Comment */
+  tLINECOMMENT,   /* Comment of all line */
+  tINLINECOMMENT, /* Comment in inline decl starting with -- */
 
-  tTRIVIA,          /* Trivia tokens -- space and new line */
+  tTRIVIA, /* Trivia tokens -- space and new line */
 
-  tDQSTRING,        /* Double quoted string */
-  tSQSTRING,        /* Single quoted string */
-  tINTEGER,         /* Integer */
-  tSYMBOL,          /* Symbol */
-  tDQSYMBOL,        /* Double quoted symbol */
-  tSQSYMBOL,        /* Single quoted symbol */
-  tANNOTATION,      /* Annotation */
+  tDQSTRING,   /* Double quoted string */
+  tSQSTRING,   /* Single quoted string */
+  tINTEGER,    /* Integer */
+  tSYMBOL,     /* Symbol */
+  tDQSYMBOL,   /* Double quoted symbol */
+  tSQSYMBOL,   /* Single quoted symbol */
+  tANNOTATION, /* Annotation */
 };
 
 /**
@@ -128,12 +128,12 @@ typedef struct {
  * */
 typedef struct {
   VALUE string;
-  int start_pos;                  /* The character position that defines the start of the input */
-  int end_pos;                    /* The character position that defines the end of the input */
-  position current;               /* The current position */
-  position start;                 /* The start position of the current token */
-  bool first_token_of_line;       /* This flag is used for tLINECOMMENT */
-  unsigned int last_char;         /* Last peeked character */
+  int start_pos;            /* The character position that defines the start of the input */
+  int end_pos;              /* The character position that defines the end of the input */
+  position current;         /* The current position */
+  position start;           /* The start position of the current token */
+  bool first_token_of_line; /* This flag is used for tLINECOMMENT */
+  unsigned int last_char;   /* Last peeked character */
 } lexstate;
 
 extern token NullToken;

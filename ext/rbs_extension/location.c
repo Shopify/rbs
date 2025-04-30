@@ -40,7 +40,7 @@ void rbs_loc_alloc_children(rbs_loc *loc, unsigned short cap) {
     .len = 0,
     .required_p = 0,
     .cap = cap,
-    .entries = {{ 0 }},
+    .entries = { { 0 } },
   };
 }
 
@@ -86,8 +86,7 @@ void rbs_loc_free(rbs_loc *loc) {
   ruby_xfree(loc);
 }
 
-static void rbs_loc_mark(void *ptr)
-{
+static void rbs_loc_mark(void *ptr) {
   rbs_loc *loc = ptr;
   rb_gc_mark(loc->buffer);
 }
@@ -103,8 +102,10 @@ static size_t rbs_loc_memsize(const void *ptr) {
 
 static rb_data_type_t location_type = {
   "RBS::Location",
-  {rbs_loc_mark, (RUBY_DATA_FUNC)rbs_loc_free, rbs_loc_memsize},
-  0, 0, RUBY_TYPED_FREE_IMMEDIATELY
+  { rbs_loc_mark, (RUBY_DATA_FUNC) rbs_loc_free, rbs_loc_memsize },
+  0,
+  0,
+  RUBY_TYPED_FREE_IMMEDIATELY
 };
 
 static VALUE location_s_allocate(VALUE klass) {
@@ -257,7 +258,7 @@ static VALUE location_aref(VALUE self, VALUE name) {
 }
 
 static VALUE rbs_constant_to_ruby_symbol(rbs_constant_t *constant) {
-  return ID2SYM(rb_intern2((const char *)constant->start, constant->length));
+  return ID2SYM(rb_intern2((const char *) constant->start, constant->length));
 }
 
 static VALUE location_optional_keys(VALUE self) {

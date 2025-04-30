@@ -3,54 +3,52 @@
 
 #define INTERN(str)                  \
   rbs_constant_pool_insert_constant( \
-    RBS_GLOBAL_CONSTANT_POOL,        \
-    (const uint8_t *) str,           \
-    strlen(str)                      \
-  )
+      RBS_GLOBAL_CONSTANT_POOL,      \
+      (const uint8_t *) str,         \
+      strlen(str))
 
-#define INTERN_TOKEN(parserstate, tok) \
-  rb_intern3(\
-    peek_token(parserstate->lexstate, tok),\
-    token_bytes(tok),\
-    rb_enc_get(parserstate->lexstate->string)\
-  )
+#define INTERN_TOKEN(parserstate, tok)        \
+  rb_intern3(                                 \
+      peek_token(parserstate->lexstate, tok), \
+      token_bytes(tok),                       \
+      rb_enc_get(parserstate->lexstate->string))
 
 #define KEYWORD_CASES \
-  case kBOOL:\
-  case kBOT: \
-  case kCLASS: \
-  case kFALSE: \
-  case kINSTANCE: \
-  case kINTERFACE: \
-  case kNIL: \
-  case kSELF: \
-  case kSINGLETON: \
-  case kTOP: \
-  case kTRUE: \
-  case kVOID: \
-  case kTYPE: \
-  case kUNCHECKED: \
-  case kIN: \
-  case kOUT: \
-  case kEND: \
-  case kDEF: \
-  case kINCLUDE: \
-  case kEXTEND: \
-  case kPREPEND: \
-  case kALIAS: \
-  case kMODULE: \
-  case kATTRREADER: \
-  case kATTRWRITER: \
+  case kBOOL:         \
+  case kBOT:          \
+  case kCLASS:        \
+  case kFALSE:        \
+  case kINSTANCE:     \
+  case kINTERFACE:    \
+  case kNIL:          \
+  case kSELF:         \
+  case kSINGLETON:    \
+  case kTOP:          \
+  case kTRUE:         \
+  case kVOID:         \
+  case kTYPE:         \
+  case kUNCHECKED:    \
+  case kIN:           \
+  case kOUT:          \
+  case kEND:          \
+  case kDEF:          \
+  case kINCLUDE:      \
+  case kEXTEND:       \
+  case kPREPEND:      \
+  case kALIAS:        \
+  case kMODULE:       \
+  case kATTRREADER:   \
+  case kATTRWRITER:   \
   case kATTRACCESSOR: \
-  case kPUBLIC: \
-  case kPRIVATE: \
-  case kUNTYPED: \
-  case kUSE: \
-  case kAS: \
-  case k__TODO__: \
-  case kSKIP: \
-  case kRETURN: \
-  /* nop */
+  case kPUBLIC:       \
+  case kPRIVATE:      \
+  case kUNTYPED:      \
+  case kUSE:          \
+  case kAS:           \
+  case k__TODO__:     \
+  case kSKIP:         \
+  case kRETURN:       \
+    /* nop */
 
 typedef struct {
   VALUE required_positionals;
@@ -89,10 +87,9 @@ static bool rbs_is_untyped_params(method_params *params) {
 //  * */
 static VALUE rbs_location_current_token(parserstate *state) {
   return rbs_location_pp(
-    state->buffer,
-    &state->current_token.range.start,
-    &state->current_token.range.end
-  );
+      state->buffer,
+      &state->current_token.range.start,
+      &state->current_token.range.end);
 }
 
 static VALUE parse_optional(parserstate *state);
@@ -100,10 +97,9 @@ static VALUE parse_simple(parserstate *state);
 
 static VALUE string_of_loc(parserstate *state, position start, position end) {
   return rb_enc_str_new(
-    RSTRING_PTR(state->lexstate->string) + start.byte_pos,
+      RSTRING_PTR(state->lexstate->string) + start.byte_pos,
       end.byte_pos - start.byte_pos,
-      rb_enc_get(state->lexstate->string)
-  );
+      rb_enc_get(state->lexstate->string));
 }
 
 /**
@@ -111,12 +107,12 @@ static VALUE string_of_loc(parserstate *state, position start, position end) {
  * */
 static NORETURN(void) rbs_abort(void) {
   rb_raise(
-    rb_eRuntimeError,
-    "Unexpected error"
-  );
+      rb_eRuntimeError,
+      "Unexpected error");
 }
 
-NORETURN(void) raise_syntax_error(parserstate *state, token tok, const char *fmt, ...) {
+NORETURN(void)
+raise_syntax_error(parserstate *state, token tok, const char *fmt, ...) {
   va_list args;
   va_start(args, fmt);
   VALUE message = rb_vsprintf(fmt, args);
@@ -126,13 +122,12 @@ NORETURN(void) raise_syntax_error(parserstate *state, token tok, const char *fmt
   VALUE type = rb_str_new_cstr(token_type_str(tok.type));
 
   VALUE error = rb_funcall(
-    RBS_ParsingError,
-    rb_intern("new"),
-    3,
-    location,
-    message,
-    type
-  );
+      RBS_ParsingError,
+      rb_intern("new"),
+      3,
+      location,
+      message,
+      type);
 
   rb_exc_raise(error);
 }
@@ -148,10 +143,9 @@ void parser_advance_no_gap(parserstate *state) {
     parser_advance(state);
   } else {
     raise_syntax_error(
-      state,
-      state->next_token,
-      "unexpected token"
-    );
+        state,
+        state->next_token,
+        "unexpected token");
   }
 }
 
@@ -174,11 +168,7 @@ static VALUE parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
   }
 
   while (
-    state->current_token.type == tUIDENT
-    && state->next_token.type == pCOLON2
-    && state->current_token.range.end.byte_pos == state->next_token.range.start.byte_pos
-    && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos
-  ) {
+      state->current_token.type == tUIDENT && state->next_token.type == pCOLON2 && state->current_token.range.end.byte_pos == state->next_token.range.start.byte_pos && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos) {
     melt_array(&path);
     rb_ary_push(path, ID2SYM(INTERN_TOKEN(state, state->current_token)));
 
@@ -189,50 +179,49 @@ static VALUE parse_type_name(parserstate *state, TypeNameKind kind, range *rg) {
   VALUE namespace = rbs_namespace(path, absolute);
 
   switch (state->current_token.type) {
-    case tLIDENT:
-    case kSKIP:
-    case kRETURN:
-      if (kind & ALIAS_NAME) goto success;
-      goto error;
-    case tULIDENT:
-      if (kind & INTERFACE_NAME) goto success;
-      goto error;
-    case tUIDENT:
-      if (kind & CLASS_NAME) goto success;
-      goto error;
-    default:
-      goto error;
+  case tLIDENT:
+  case kSKIP:
+  case kRETURN:
+    if (kind & ALIAS_NAME) goto success;
+    goto error;
+  case tULIDENT:
+    if (kind & INTERFACE_NAME) goto success;
+    goto error;
+  case tUIDENT:
+    if (kind & CLASS_NAME) goto success;
+    goto error;
+  default:
+    goto error;
   }
 
-  success: {
-    if (rg) {
-      rg->end = state->current_token.range.end;
-    }
-
-    return rbs_type_name(namespace, ID2SYM(INTERN_TOKEN(state, state->current_token)));
+success: {
+  if (rg) {
+    rg->end = state->current_token.range.end;
   }
 
-  error: {
-    VALUE ids = rb_ary_new();
-    if (kind & ALIAS_NAME) {
-      rb_ary_push(ids, rb_str_new_literal("alias name"));
-    }
-    if (kind & INTERFACE_NAME) {
-      rb_ary_push(ids, rb_str_new_literal("interface name"));
-    }
-    if (kind & CLASS_NAME) {
-      rb_ary_push(ids, rb_str_new_literal("class/module/constant name"));
-    }
+  return rbs_type_name(namespace, ID2SYM(INTERN_TOKEN(state, state->current_token)));
+}
 
-    VALUE string = rb_funcall(ids, rb_intern("join"), 1, rb_str_new_cstr(", "));
+error: {
+  VALUE ids = rb_ary_new();
+  if (kind & ALIAS_NAME) {
+    rb_ary_push(ids, rb_str_new_literal("alias name"));
+  }
+  if (kind & INTERFACE_NAME) {
+    rb_ary_push(ids, rb_str_new_literal("interface name"));
+  }
+  if (kind & CLASS_NAME) {
+    rb_ary_push(ids, rb_str_new_literal("class/module/constant name"));
+  }
 
-    raise_syntax_error(
+  VALUE string = rb_funcall(ids, rb_intern("join"), 1, rb_str_new_cstr(", "));
+
+  raise_syntax_error(
       state,
       state->current_token,
-      "expected one of %"PRIsVALUE,
-      string
-    );
-  }
+      "expected one of %" PRIsVALUE,
+      string);
+}
 }
 
 /*
@@ -255,25 +244,23 @@ static void parse_type_list(parserstate *state, enum TokenType eol, VALUE *types
         break;
       } else {
         raise_syntax_error(
-          state,
-          state->next_token,
-          "comma delimited type list is expected"
-        );
+            state,
+            state->next_token,
+            "comma delimited type list is expected");
       }
     }
   }
 }
 
 static bool is_keyword_token(enum TokenType type) {
-  switch (type)
-  {
+  switch (type) {
   case tLIDENT:
   case tUIDENT:
   case tULIDENT:
   case tULLIDENT:
   case tQIDENT:
   case tBANGIDENT:
-  KEYWORD_CASES
+    KEYWORD_CASES
     return true;
   default:
     return false;
@@ -311,10 +298,9 @@ static VALUE parse_function_param(parserstate *state) {
 
     if (!is_keyword_token(state->current_token.type)) {
       raise_syntax_error(
-        state,
-        state->current_token,
-        "unexpected token for function parameter name"
-      );
+          state,
+          state->current_token,
+          "unexpected token for function parameter name");
     }
 
     VALUE name = rb_to_symbol(rbs_unquote_string(state, state->current_token.range, 0));
@@ -329,10 +315,9 @@ static VALUE parse_function_param(parserstate *state) {
 
 static ID intern_token_start_end(parserstate *state, token start_token, token end_token) {
   return rb_intern3(
-    peek_token(state->lexstate, start_token),
-    end_token.range.end.byte_pos - start_token.range.start.byte_pos,
-    rb_enc_get(state->lexstate->string)
-  );
+      peek_token(state->lexstate, start_token),
+      end_token.range.end.byte_pos - start_token.range.start.byte_pos,
+      rb_enc_get(state->lexstate->string));
 }
 
 /*
@@ -359,10 +344,9 @@ static void parse_keyword(parserstate *state, VALUE *keywords, VALUE memo) {
 
   if (!NIL_P(rb_hash_aref(memo, key))) {
     raise_syntax_error(
-      state,
-      state->current_token,
-      "duplicated keyword argument"
-    );
+        state,
+        state->current_token,
+        "duplicated keyword argument");
   } else {
     rb_hash_aset(memo, key, Qtrue);
   }
@@ -387,10 +371,7 @@ static bool is_keyword(parserstate *state) {
       return true;
     }
 
-    if (state->next_token2.type == pQUESTION
-        && state->next_token3.type == pCOLON
-        && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos
-        && state->next_token2.range.end.byte_pos == state->next_token3.range.start.byte_pos) {
+    if (state->next_token2.type == pQUESTION && state->next_token3.type == pCOLON && state->next_token.range.end.byte_pos == state->next_token2.range.start.byte_pos && state->next_token2.range.end.byte_pos == state->next_token3.range.start.byte_pos) {
       return true;
     }
   }
@@ -443,25 +424,25 @@ static void parse_params(parserstate *state, method_params *params) {
     VALUE param;
 
     switch (state->next_token.type) {
-      case pQUESTION:
-        goto PARSE_OPTIONAL_PARAMS;
-      case pSTAR:
-        goto PARSE_REST_PARAM;
-      case pSTAR2:
+    case pQUESTION:
+      goto PARSE_OPTIONAL_PARAMS;
+    case pSTAR:
+      goto PARSE_REST_PARAM;
+    case pSTAR2:
+      goto PARSE_KEYWORDS;
+    case pRPAREN:
+      goto EOP;
+
+    default:
+      if (is_keyword(state)) {
         goto PARSE_KEYWORDS;
-      case pRPAREN:
-        goto EOP;
+      }
 
-      default:
-        if (is_keyword(state)) {
-          goto PARSE_KEYWORDS;
-        }
+      param = parse_function_param(state);
+      melt_array(&params->required_positionals);
+      rb_ary_push(params->required_positionals, param);
 
-        param = parse_function_param(state);
-        melt_array(&params->required_positionals);
-        rb_ary_push(params->required_positionals, param);
-
-        break;
+      break;
     }
 
     if (!parser_advance_if(state, pCOMMA)) {
@@ -474,22 +455,22 @@ PARSE_OPTIONAL_PARAMS:
     VALUE param;
 
     switch (state->next_token.type) {
-      case pQUESTION:
-        parser_advance(state);
+    case pQUESTION:
+      parser_advance(state);
 
-        if (is_keyword(state)) {
-          parse_keyword(state, &params->optional_keywords, memo);
-          parser_advance_if(state, pCOMMA);
-          goto PARSE_KEYWORDS;
-        }
+      if (is_keyword(state)) {
+        parse_keyword(state, &params->optional_keywords, memo);
+        parser_advance_if(state, pCOMMA);
+        goto PARSE_KEYWORDS;
+      }
 
-        param = parse_function_param(state);
-        melt_array(&params->optional_positionals);
-        rb_ary_push(params->optional_positionals, param);
+      param = parse_function_param(state);
+      melt_array(&params->optional_positionals);
+      rb_ary_push(params->optional_positionals, param);
 
-        break;
-      default:
-        goto PARSE_REST_PARAM;
+      break;
+    default:
+      goto PARSE_REST_PARAM;
     }
 
     if (!parser_advance_if(state, pCOMMA)) {
@@ -513,25 +494,25 @@ PARSE_TRAILING_PARAMS:
     VALUE param;
 
     switch (state->next_token.type) {
-      case pQUESTION:
+    case pQUESTION:
+      goto PARSE_KEYWORDS;
+    case pSTAR:
+      goto EOP;
+    case pSTAR2:
+      goto PARSE_KEYWORDS;
+    case pRPAREN:
+      goto EOP;
+
+    default:
+      if (is_keyword(state)) {
         goto PARSE_KEYWORDS;
-      case pSTAR:
-        goto EOP;
-      case pSTAR2:
-        goto PARSE_KEYWORDS;
-      case pRPAREN:
-        goto EOP;
+      }
 
-      default:
-        if (is_keyword(state)) {
-          goto PARSE_KEYWORDS;
-        }
+      param = parse_function_param(state);
+      melt_array(&params->trailing_positionals);
+      rb_ary_push(params->trailing_positionals, param);
 
-        param = parse_function_param(state);
-        melt_array(&params->trailing_positionals);
-        rb_ary_push(params->trailing_positionals, param);
-
-        break;
+      break;
     }
 
     if (!parser_advance_if(state, pCOMMA)) {
@@ -548,10 +529,9 @@ PARSE_KEYWORDS:
         parse_keyword(state, &params->optional_keywords, memo);
       } else {
         raise_syntax_error(
-          state,
-          state->next_token,
-          "optional keyword argument type is expected"
-        );
+            state,
+            state->next_token,
+            "optional keyword argument type is expected");
       }
       break;
 
@@ -566,15 +546,14 @@ PARSE_KEYWORDS:
     case tULIDENT:
     case tULLIDENT:
     case tBANGIDENT:
-    KEYWORD_CASES
+      KEYWORD_CASES
       if (is_keyword(state)) {
         parse_keyword(state, &params->required_keywords, memo);
       } else {
         raise_syntax_error(
-          state,
-          state->next_token,
-          "required keyword argument type is expected"
-        );
+            state,
+            state->next_token,
+            "required keyword argument type is expected");
       }
       break;
 
@@ -590,10 +569,9 @@ PARSE_KEYWORDS:
 EOP:
   if (state->next_token.type != pRPAREN) {
     raise_syntax_error(
-      state,
-      state->next_token,
-      "unexpected token for method type parameters"
-    );
+        state,
+        state->next_token,
+        "unexpected token for method type parameters");
   }
 
   return;
@@ -619,7 +597,7 @@ static VALUE parse_optional(parserstate *state) {
   }
 }
 
-static void initialize_method_params(method_params *params){
+static void initialize_method_params(method_params *params) {
   *params = (method_params) {
     .required_positionals = EMPTY_ARRAY,
     .optional_positionals = EMPTY_ARRAY,
@@ -705,15 +683,14 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
       block_function = rbs_untyped_function(block_return_type);
     } else {
       block_function = rbs_function(
-        block_params.required_positionals,
-        block_params.optional_positionals,
-        block_params.rest_positionals,
-        block_params.trailing_positionals,
-        block_params.required_keywords,
-        block_params.optional_keywords,
-        block_params.rest_keywords,
-        block_return_type
-      );
+          block_params.required_positionals,
+          block_params.optional_positionals,
+          block_params.rest_positionals,
+          block_params.trailing_positionals,
+          block_params.required_keywords,
+          block_params.optional_keywords,
+          block_params.rest_keywords,
+          block_return_type);
     }
 
     *block = rbs_block(block_function, required, block_self_type);
@@ -728,15 +705,14 @@ static void parse_function(parserstate *state, VALUE *function, VALUE *block, VA
     *function = rbs_untyped_function(type);
   } else {
     *function = rbs_function(
-      params.required_positionals,
-      params.optional_positionals,
-      params.rest_positionals,
-      params.trailing_positionals,
-      params.required_keywords,
-      params.optional_keywords,
-      params.rest_keywords,
-      type
-    );
+        params.required_positionals,
+        params.optional_positionals,
+        params.rest_positionals,
+        params.trailing_positionals,
+        params.required_keywords,
+        params.optional_keywords,
+        params.rest_keywords,
+        type);
   }
 }
 
@@ -758,10 +734,9 @@ static VALUE parse_proc_type(parserstate *state) {
 static void check_key_duplication(parserstate *state, VALUE fields, VALUE key) {
   if (!NIL_P(rb_hash_aref(fields, key))) {
     raise_syntax_error(
-      state,
-      state->current_token,
-      "duplicated record key"
-    );
+        state,
+        state->current_token,
+        "duplicated record key");
   }
 }
 
@@ -784,8 +759,8 @@ static VALUE parse_record_attributes(parserstate *state) {
 
   while (true) {
     VALUE key, type,
-          value = rb_ary_new(),
-          required = Qtrue;
+        value = rb_ary_new(),
+        required = Qtrue;
 
     if (state->next_token.type == pQUESTION) {
       // { ?foo: type } syntax
@@ -814,10 +789,9 @@ static VALUE parse_record_attributes(parserstate *state) {
       }
       default:
         raise_syntax_error(
-          state,
-          state->next_token,
-          "unexpected record key token"
-        );
+            state,
+            state->next_token,
+            "unexpected record key token");
       }
       check_key_duplication(state, fields, key);
       parser_advance_assert(state, pFATARROW);
@@ -850,20 +824,18 @@ static VALUE parse_symbol(parserstate *state) {
 
   VALUE literal;
 
-  switch (state->current_token.type)
-  {
+  switch (state->current_token.type) {
   case tSYMBOL: {
     char *buffer = peek_token(state->lexstate, state->current_token);
-    literal = ID2SYM(rb_intern3(buffer+offset_bytes, bytes, enc));
+    literal = ID2SYM(rb_intern3(buffer + offset_bytes, bytes, enc));
     break;
   }
   case tDQSYMBOL:
   case tSQSYMBOL: {
     literal = rb_funcall(
-      rbs_unquote_string(state, state->current_token.range, offset_bytes),
-      rb_intern("to_sym"),
-      0
-    );
+        rbs_unquote_string(state, state->current_token.range, offset_bytes),
+        rb_intern("to_sym"),
+        0);
     break;
   }
   default:
@@ -871,9 +843,8 @@ static VALUE parse_symbol(parserstate *state) {
   }
 
   return rbs_literal(
-    literal,
-    rbs_location_current_token(state)
-  );
+      literal,
+      rbs_location_current_token(state));
 }
 
 /*
@@ -883,70 +854,69 @@ static VALUE parse_symbol(parserstate *state) {
              | {} `[` type_list <`]`>
  */
 static VALUE parse_instance_type(parserstate *state, bool parse_alias) {
-    TypeNameKind expected_kind = INTERFACE_NAME | CLASS_NAME;
-    if (parse_alias) {
-      expected_kind |= ALIAS_NAME;
-    }
+  TypeNameKind expected_kind = INTERFACE_NAME | CLASS_NAME;
+  if (parse_alias) {
+    expected_kind |= ALIAS_NAME;
+  }
 
-    range name_range;
-    VALUE typename = parse_type_name(state, expected_kind, &name_range);
-    VALUE types = EMPTY_ARRAY;
+  range name_range;
+  VALUE typename = parse_type_name(state, expected_kind, &name_range);
+  VALUE types = EMPTY_ARRAY;
 
-    TypeNameKind kind;
-    switch (state->current_token.type) {
-      case tUIDENT: {
-        kind = CLASS_NAME;
-        break;
-      }
-      case tULIDENT: {
-        kind = INTERFACE_NAME;
-        break;
-      }
-      case kSKIP:
-      case kRETURN:
-      case tLIDENT: {
-        kind = ALIAS_NAME;
-        break;
-      }
-      default:
-        raise_syntax_error(
-          state,
-          state->current_token,
-          "unexpected token for type name"
-        );
-    }
+  TypeNameKind kind;
+  switch (state->current_token.type) {
+  case tUIDENT: {
+    kind = CLASS_NAME;
+    break;
+  }
+  case tULIDENT: {
+    kind = INTERFACE_NAME;
+    break;
+  }
+  case kSKIP:
+  case kRETURN:
+  case tLIDENT: {
+    kind = ALIAS_NAME;
+    break;
+  }
+  default:
+    raise_syntax_error(
+        state,
+        state->current_token,
+        "unexpected token for type name");
+  }
 
-    range args_range;
-    if (state->next_token.type == pLBRACKET) {
-      parser_advance(state);
-      args_range.start = state->current_token.range.start;
-      parse_type_list(state, pRBRACKET, &types);
-      parser_advance_assert(state, pRBRACKET);
-      args_range.end = state->current_token.range.end;
-    } else {
-      args_range = NULL_RANGE;
-    }
+  range args_range;
+  if (state->next_token.type == pLBRACKET) {
+    parser_advance(state);
+    args_range.start = state->current_token.range.start;
+    parse_type_list(state, pRBRACKET, &types);
+    parser_advance_assert(state, pRBRACKET);
+    args_range.end = state->current_token.range.end;
+  } else {
+    args_range = NULL_RANGE;
+  }
 
-    range type_range = {
-      .start = name_range.start,
-      .end = nonnull_pos_or(args_range.end, name_range.end),
-    };
+  range type_range = {
+    .start = name_range.start,
+    .end = nonnull_pos_or(args_range.end, name_range.end),
+  };
 
-    VALUE location = rbs_new_location(state->buffer, type_range);
-    rbs_loc *loc = rbs_check_location(location);
-    rbs_loc_alloc_children(loc, 2);
-    rbs_loc_add_required_child(loc, INTERN("name"), name_range);
-    rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
+  VALUE location = rbs_new_location(state->buffer, type_range);
+  rbs_loc *loc = rbs_check_location(location);
+  rbs_loc_alloc_children(loc, 2);
+  rbs_loc_add_required_child(loc, INTERN("name"), name_range);
+  rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    if (kind == CLASS_NAME) {
-      return rbs_class_instance(typename, types, location);
-    } else if (kind == INTERFACE_NAME) {
-      return rbs_interface(typename, types, location);
-    } else if (kind == ALIAS_NAME) {
-      return rbs_alias(typename, types, location);
-    } else {
-      return Qnil;
-    }
+  if (kind == CLASS_NAME) {
+    return rbs_class_instance(typename, types, location);
+  } else if (kind == INTERFACE_NAME) {
+    return rbs_interface(typename, types, location);
+  } else if (kind == ALIAS_NAME) {
+    return rbs_alias(typename, types, location);
+  } else {
+    return Qnil;
+  }
 }
 
 /*
@@ -1025,14 +995,12 @@ static VALUE parse_simple(parserstate *state) {
   }
   case tINTEGER: {
     VALUE literal = rb_funcall(
-      string_of_loc(state, state->current_token.range.start, state->current_token.range.end),
-      rb_intern("to_i"),
-      0
-    );
+        string_of_loc(state, state->current_token.range.start, state->current_token.range.end),
+        rb_intern("to_i"),
+        0);
     return rbs_literal(
-      literal,
-      rbs_location_current_token(state)
-    );
+        literal,
+        rbs_location_current_token(state));
   }
   case kTRUE: {
     return rbs_literal(Qtrue, rbs_location_current_token(state));
@@ -1044,9 +1012,8 @@ static VALUE parse_simple(parserstate *state) {
   case tDQSTRING: {
     VALUE literal = rbs_unquote_string(state, state->current_token.range, 0);
     return rbs_literal(
-      literal,
-      rbs_location_current_token(state)
-    );
+        literal,
+        rbs_location_current_token(state));
   }
   case tSYMBOL:
   case tSQSYMBOL:
@@ -1066,9 +1033,9 @@ static VALUE parse_simple(parserstate *state) {
     // fallthrough for type name
   }
   case tULIDENT: // fallthrough
-  case tLIDENT: // fallthrough
-  case kSKIP: // fallthrough
-  case kRETURN: // fallthrough
+  case tLIDENT:  // fallthrough
+  case kSKIP:    // fallthrough
+  case kRETURN:  // fallthrough
   case pCOLON2: {
     return parse_instance_type(state, true);
   }
@@ -1103,10 +1070,9 @@ static VALUE parse_simple(parserstate *state) {
   }
   default:
     raise_syntax_error(
-      state,
-      state->current_token,
-      "unexpected token for simple type"
-    );
+        state,
+        state->current_token,
+        "unexpected token for simple type");
   }
 }
 
@@ -1217,10 +1183,9 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
       range name_range = state->current_token.range;
 
       rbs_constant_id_t id = rbs_constant_pool_insert_shared(
-        &state->constant_pool,
-        (const uint8_t *) peek_token(state->lexstate, state->current_token),
-        token_bytes(state->current_token)
-      );
+          &state->constant_pool,
+          (const uint8_t *) peek_token(state->lexstate, state->current_token),
+          token_bytes(state->current_token));
 
       VALUE name = ID2SYM(INTERN_TOKEN(state, state->current_token));
 
@@ -1247,10 +1212,9 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
         } else {
           if (!required_param_allowed) {
             raise_syntax_error(
-              state,
-              state->current_token,
-              "required type parameter is not allowed after optional type parameter"
-            );
+                state,
+                state->current_token,
+                "required type parameter is not allowed after optional type parameter");
           }
         }
       }
@@ -1287,11 +1251,10 @@ static VALUE parse_type_params(parserstate *state, range *rg, bool module_type_p
   }
 
   rb_funcall(
-    RBS_AST_TypeParam,
-    rb_intern("resolve_variables"),
-    1,
-    params
-  );
+      RBS_AST_TypeParam,
+      rb_intern("resolve_variables"),
+      1,
+      params);
 
   return params;
 }
@@ -1327,11 +1290,10 @@ VALUE parse_method_type(parserstate *state) {
   rbs_loc_add_optional_child(loc, INTERN("type_params"), params_range);
 
   return rbs_method_type(
-    type_params,
-    function,
-    block,
-    location
-  );
+      type_params,
+      function,
+      block,
+      location);
 }
 
 /*
@@ -1424,13 +1386,12 @@ static VALUE parse_type_decl(parserstate *state, position comment_pos, VALUE ann
   parser_pop_typevar_table(state);
 
   return rbs_ast_decl_type_alias(
-    typename,
-    type_params,
-    type,
-    annotations,
-    location,
-    get_comment(state, comment_pos.line)
-  );
+      typename,
+      type_params,
+      type,
+      annotations,
+      location,
+      get_comment(state, comment_pos.line));
 }
 
 /*
@@ -1445,10 +1406,9 @@ static VALUE parse_annotation(parserstate *state) {
   int offset_bytes = rb_enc_codelen('%', enc) + rb_enc_codelen('a', enc);
 
   unsigned int open_char = rb_enc_mbc_to_codepoint(
-    RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes,
-    RSTRING_END(state->lexstate->string),
-    enc
-  );
+      RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes,
+      RSTRING_END(state->lexstate->string),
+      enc);
 
   unsigned int close_char;
 
@@ -1477,10 +1437,9 @@ static VALUE parse_annotation(parserstate *state) {
 
   char *buffer = RSTRING_PTR(state->lexstate->string) + rg.start.byte_pos + offset_bytes + open_bytes;
   VALUE string = rb_enc_str_new(
-    buffer,
-    rg.end.byte_pos - rg.start.byte_pos - offset_bytes - open_bytes - close_bytes,
-    enc
-  );
+      buffer,
+      rg.end.byte_pos - rg.start.byte_pos - offset_bytes - open_bytes - close_bytes,
+      enc);
   rb_funcall(string, rb_intern("strip!"), 0);
 
   VALUE location = rbs_location_current_token(state);
@@ -1518,23 +1477,21 @@ static void parse_annotations(parserstate *state, VALUE *annotations, position *
 static VALUE parse_method_name(parserstate *state, range *range) {
   parser_advance(state);
 
-  switch (state->current_token.type)
-  {
+  switch (state->current_token.type) {
   case tUIDENT:
   case tLIDENT:
   case tULIDENT:
   case tULLIDENT:
-  KEYWORD_CASES
+    KEYWORD_CASES
     if (state->next_token.type == pQUESTION && state->current_token.range.end.byte_pos == state->next_token.range.start.byte_pos) {
       range->start = state->current_token.range.start;
       range->end = state->next_token.range.end;
       parser_advance(state);
 
       ID id = rb_intern3(
-        RSTRING_PTR(state->lexstate->string) + range->start.byte_pos,
-        range->end.byte_pos - range->start.byte_pos,
-        rb_enc_get(state->lexstate->string)
-      );
+          RSTRING_PTR(state->lexstate->string) + range->start.byte_pos,
+          range->end.byte_pos - range->start.byte_pos,
+          rb_enc_get(state->lexstate->string));
 
       return ID2SYM(id);
     } else {
@@ -1564,10 +1521,9 @@ static VALUE parse_method_name(parserstate *state, range *range) {
 
   default:
     raise_syntax_error(
-      state,
-      state->current_token,
-      "unexpected token for method name"
-    );
+        state,
+        state->current_token,
+        "unexpected token for method name");
   }
 }
 
@@ -1595,10 +1551,7 @@ static InstanceSingletonKind parse_instance_singleton_kind(parserstate *state, b
       parser_advance(state);
       kind = SINGLETON_KIND;
     } else if (
-      state->next_token2.type == pQUESTION
-    && state->next_token.range.end.char_pos == state->next_token2.range.start.char_pos
-    && state->next_token3.type == pDOT
-    && allow_selfq) {
+        state->next_token2.type == pQUESTION && state->next_token.range.end.char_pos == state->next_token2.range.start.char_pos && state->next_token3.type == pDOT && allow_selfq) {
       parser_advance(state);
       parser_advance(state);
       parser_advance(state);
@@ -1637,8 +1590,7 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
 
   range visibility_range;
   VALUE visibility;
-  switch (state->current_token.type)
-  {
+  switch (state->current_token.type) {
   case kPRIVATE: {
     visibility_range = state->current_token.range;
     visibility = ID2SYM(rb_intern("private"));
@@ -1677,10 +1629,9 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
 
   if (state->next_token.type == pDOT && RB_SYM2ID(name) == rb_intern("self?")) {
     raise_syntax_error(
-      state,
-      state->next_token,
-      "`self?` method cannot have visibility"
-    );
+        state,
+        state->next_token,
+        "`self?` method cannot have visibility");
   } else {
     parser_advance_assert(state, pCOLON);
   }
@@ -1702,13 +1653,12 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
     case pARROW:
     case pLBRACE:
     case pLBRACKET:
-    case pQUESTION:
-      {
-        VALUE method_type = parse_method_type(state);
-        rb_ary_push(overloads, rbs_ast_members_method_definition_overload(annotations, method_type));
-        member_range.end = state->current_token.range.end;
-        break;
-      }
+    case pQUESTION: {
+      VALUE method_type = parse_method_type(state);
+      rb_ary_push(overloads, rbs_ast_members_method_definition_overload(annotations, method_type));
+      member_range.end = state->current_token.range.end;
+      break;
+    }
 
     case pDOT3:
       if (accept_overload) {
@@ -1720,18 +1670,16 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
         break;
       } else {
         raise_syntax_error(
-          state,
-          state->next_token,
-          "unexpected overloading method definition"
-        );
+            state,
+            state->next_token,
+            "unexpected overloading method definition");
       }
 
     default:
       raise_syntax_error(
-        state,
-        state->next_token,
-        "unexpected token for method type"
-      );
+          state,
+          state->next_token,
+          "unexpected token for method type");
     }
 
     if (state->next_token.type == pBAR) {
@@ -1768,15 +1716,14 @@ static VALUE parse_member_def(parserstate *state, bool instance_only, bool accep
   rbs_loc_add_optional_child(loc, INTERN("visibility"), visibility_range);
 
   return rbs_ast_members_method_definition(
-    name,
-    k,
-    overloads,
-    annotations,
-    location,
-    comment,
-    overloading,
-    visibility
-  );
+      name,
+      k,
+      overloads,
+      annotations,
+      location,
+      comment,
+      overloading,
+      visibility);
 }
 
 /**
@@ -1817,8 +1764,7 @@ static VALUE parse_mixin_member(parserstate *state, bool from_interface, positio
   range keyword_range = state->current_token.range;
 
   bool reset_typevar_scope;
-  switch (type)
-  {
+  switch (type) {
   case kINCLUDE:
     reset_typevar_scope = false;
     break;
@@ -1835,10 +1781,9 @@ static VALUE parse_mixin_member(parserstate *state, bool from_interface, positio
   if (from_interface) {
     if (state->current_token.type != kINCLUDE) {
       raise_syntax_error(
-        state,
-        state->current_token,
-        "unexpected mixin in interface declaration"
-      );
+          state,
+          state->current_token,
+          "unexpected mixin in interface declaration");
     }
   }
 
@@ -1849,10 +1794,9 @@ static VALUE parse_mixin_member(parserstate *state, bool from_interface, positio
   range name_range;
   range args_range = NULL_RANGE;
   class_instance_name(
-    state,
-    from_interface ? INTERFACE_NAME : (INTERFACE_NAME | CLASS_NAME),
-    &name, &args, &name_range, &args_range
-  );
+      state,
+      from_interface ? INTERFACE_NAME : (INTERFACE_NAME | CLASS_NAME),
+      &name, &args, &name_range, &args_range);
 
   parser_pop_typevar_table(state);
 
@@ -1866,8 +1810,7 @@ static VALUE parse_mixin_member(parserstate *state, bool from_interface, positio
   rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
   VALUE comment = get_comment(state, comment_pos.line);
-  switch (type)
-  {
+  switch (type) {
   case kINCLUDE:
     return rbs_ast_members_include(name, args, annotations, location, comment);
   case kEXTEND:
@@ -1931,13 +1874,12 @@ static VALUE parse_alias_member(parserstate *state, bool instance_only, position
   rbs_loc_add_optional_child(loc, INTERN("old_kind"), old_kind_range);
 
   return rbs_ast_members_alias(
-    new_name,
-    old_name,
-    kind,
-    annotations,
-    location,
-    comment
-  );
+      new_name,
+      old_name,
+      kind,
+      annotations,
+      location,
+      comment);
 }
 
 /*
@@ -1948,10 +1890,9 @@ static VALUE parse_alias_member(parserstate *state, bool instance_only, position
 static VALUE parse_variable_member(parserstate *state, position comment_pos, VALUE annotations) {
   if (rb_array_len(annotations) > 0) {
     raise_syntax_error(
-      state,
-      state->current_token,
-      "annotation cannot be given to variable members"
-    );
+        state,
+        state->current_token,
+        "annotation cannot be given to variable members");
   }
 
   range member_range;
@@ -1959,8 +1900,7 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
   comment_pos = nonnull_pos_or(comment_pos, member_range.start);
   VALUE comment = get_comment(state, comment_pos.line);
 
-  switch (state->current_token.type)
-  {
+  switch (state->current_token.type) {
   case tAIDENT:
   case kATRBS: {
     range name_range = state->current_token.range;
@@ -2013,10 +1953,9 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
       parser_advance(state);
     } else {
       raise_syntax_error(
-        state,
-        state->current_token,
-        "expected a instance variable name"
-      );
+          state,
+          state->current_token,
+          "expected a instance variable name");
     }
 
     range name_range = state->current_token.range;
@@ -2051,16 +1990,14 @@ static VALUE parse_variable_member(parserstate *state, position comment_pos, VAL
 static VALUE parse_visibility_member(parserstate *state, VALUE annotations) {
   if (rb_array_len(annotations) > 0) {
     raise_syntax_error(
-      state,
-      state->current_token,
-      "annotation cannot be given to visibility members"
-    );
+        state,
+        state->current_token,
+        "annotation cannot be given to visibility members");
   }
 
   VALUE location = rbs_new_location(state->buffer, state->current_token.range);
 
-  switch (state->current_token.type)
-  {
+  switch (state->current_token.type) {
   case kPUBLIC:
     return rbs_ast_members_public(location);
   case kPRIVATE:
@@ -2092,8 +2029,7 @@ static VALUE parse_attribute_member(parserstate *state, position comment_pos, VA
 
   VALUE visibility;
   range visibility_range;
-  switch (state->current_token.type)
-  {
+  switch (state->current_token.type) {
   case kPRIVATE:
     visibility = ID2SYM(rb_intern("private"));
     visibility_range = state->current_token.range;
@@ -2161,8 +2097,7 @@ static VALUE parse_attribute_member(parserstate *state, position comment_pos, VA
   rbs_loc_add_optional_child(loc, INTERN("ivar_name"), ivar_name_range);
   rbs_loc_add_optional_child(loc, INTERN("visibility"), visibility_range);
 
-  switch (attr_type)
-  {
+  switch (attr_type) {
   case kATTRREADER:
     return rbs_ast_members_attr_reader(attr_name, type, ivar_name, kind, annotations, location, comment, visibility);
   case kATTRWRITER:
@@ -2213,10 +2148,9 @@ static VALUE parse_interface_members(parserstate *state) {
 
     default:
       raise_syntax_error(
-        state,
-        state->current_token,
-        "unexpected token for interface declaration member"
-      );
+          state,
+          state->current_token,
+          "unexpected token for interface declaration member");
     }
 
     melt_array(&members);
@@ -2261,13 +2195,12 @@ static VALUE parse_interface_decl(parserstate *state, position comment_pos, VALU
   rbs_loc_add_optional_child(loc, INTERN("type_params"), type_params_range);
 
   return rbs_ast_decl_interface(
-    name,
-    params,
-    members,
-    annotations,
-    location,
-    get_comment(state, comment_pos.line)
-  );
+      name,
+      params,
+      members,
+      annotations,
+      location,
+      get_comment(state, comment_pos.line));
 }
 
 /*
@@ -2338,8 +2271,7 @@ static VALUE parse_module_members(parserstate *state) {
     parser_advance(state);
 
     VALUE member;
-    switch (state->current_token.type)
-    {
+    switch (state->current_token.type) {
     case kDEF: {
       member = parse_member_def(state, false, true, annot_pos, annotations);
       break;
@@ -2375,8 +2307,7 @@ static VALUE parse_module_members(parserstate *state) {
     case kPUBLIC:
     case kPRIVATE:
       if (state->next_token.range.start.line == state->current_token.range.start.line) {
-        switch (state->next_token.type)
-        {
+        switch (state->next_token.type) {
         case kDEF: {
           member = parse_member_def(state, false, true, annot_pos, annotations);
           break;
@@ -2452,14 +2383,13 @@ static VALUE parse_module_decl0(parserstate *state, range keyword_range, VALUE m
   parser_pop_typevar_table(state);
 
   return rbs_ast_decl_module(
-    module_name,
-    type_params,
-    self_types,
-    members,
-    annotations,
-    location,
-    comment
-  );
+      module_name,
+      type_params,
+      self_types,
+      members,
+      annotations,
+      location,
+      comment);
 }
 
 /*
@@ -2570,14 +2500,13 @@ static VALUE parse_class_decl0(parserstate *state, range keyword_range, VALUE na
   rbs_loc_add_optional_child(loc, INTERN("lt"), lt_range);
 
   return rbs_ast_decl_class(
-    name,
-    type_params,
-    super,
-    members,
-    annotations,
-    location,
-    comment
-  );
+      name,
+      type_params,
+      super,
+      members,
+      annotations,
+      location,
+      comment);
 }
 
 /*
@@ -2660,10 +2589,9 @@ static VALUE parse_nested_decl(parserstate *state, const char *nested_in, positi
   }
   default:
     raise_syntax_error(
-      state,
-      state->current_token,
-      "unexpected token for class/module declaration member"
-    );
+        state,
+        state->current_token,
+        "unexpected token for class/module declaration member");
   }
 
   parser_pop_typevar_table(state);
@@ -2700,10 +2628,9 @@ static VALUE parse_decl(parserstate *state) {
   }
   default:
     raise_syntax_error(
-      state,
-      state->current_token,
-      "cannot start a declaration"
-    );
+        state,
+        state->current_token,
+        "cannot start a declaration");
   }
 }
 
@@ -2756,74 +2683,71 @@ static void parse_use_clauses(parserstate *state, VALUE clauses) {
     range namespace_range = NULL_RANGE;
     VALUE namespace = parse_namespace(state, &namespace_range);
 
-    switch (state->next_token.type)
-    {
-      case tLIDENT:
-      case tULIDENT:
-      case tUIDENT: {
+    switch (state->next_token.type) {
+    case tLIDENT:
+    case tULIDENT:
+    case tUIDENT: {
+      parser_advance(state);
+
+      enum TokenType ident_type = state->current_token.type;
+
+      range type_name_range = null_range_p(namespace_range)
+                                  ? state->current_token.range
+                                  : (range) { .start = namespace_range.start, .end = state->current_token.range.end };
+
+      VALUE type_name = rbs_type_name(namespace, ID2SYM(INTERN_TOKEN(state, state->current_token)));
+
+      range keyword_range = NULL_RANGE;
+      range new_name_range = NULL_RANGE;
+
+      VALUE new_name = Qnil;
+      range clause_range = type_name_range;
+      if (state->next_token.type == kAS) {
         parser_advance(state);
+        keyword_range = state->current_token.range;
 
-        enum TokenType ident_type = state->current_token.type;
+        if (ident_type == tUIDENT) parser_advance_assert(state, tUIDENT);
+        if (ident_type == tLIDENT) parser_advance_assert(state, tLIDENT);
+        if (ident_type == tULIDENT) parser_advance_assert(state, tULIDENT);
 
-        range type_name_range = null_range_p(namespace_range)
-          ? state->current_token.range
-          : (range) { .start = namespace_range.start, .end = state->current_token.range.end };
-
-        VALUE type_name = rbs_type_name(namespace, ID2SYM(INTERN_TOKEN(state, state->current_token)));
-
-        range keyword_range = NULL_RANGE;
-        range new_name_range = NULL_RANGE;
-
-        VALUE new_name = Qnil;
-        range clause_range = type_name_range;
-        if (state->next_token.type == kAS) {
-          parser_advance(state);
-          keyword_range = state->current_token.range;
-
-          if (ident_type == tUIDENT) parser_advance_assert(state, tUIDENT);
-          if (ident_type == tLIDENT) parser_advance_assert(state, tLIDENT);
-          if (ident_type == tULIDENT) parser_advance_assert(state, tULIDENT);
-
-          new_name = ID2SYM(INTERN_TOKEN(state, state->current_token));
-          new_name_range = state->current_token.range;
-          clause_range.end = new_name_range.end;
-        }
-
-        VALUE location = rbs_new_location(state->buffer, clause_range);
-        rbs_loc *loc = rbs_check_location(location);
-        rbs_loc_alloc_children(loc, 3);
-        rbs_loc_add_required_child(loc, INTERN("type_name"), type_name_range);
-        rbs_loc_add_optional_child(loc, INTERN("keyword"), keyword_range);
-        rbs_loc_add_optional_child(loc, INTERN("new_name"), new_name_range);
-
-        rb_ary_push(clauses, rbs_ast_directives_use_single_clause(type_name, new_name, location));
-
-        break;
+        new_name = ID2SYM(INTERN_TOKEN(state, state->current_token));
+        new_name_range = state->current_token.range;
+        clause_range.end = new_name_range.end;
       }
-      case pSTAR:
-      {
-        range clause_range = namespace_range;
-        parser_advance(state);
 
-        range star_range = state->current_token.range;
-        clause_range.end = star_range.end;
+      VALUE location = rbs_new_location(state->buffer, clause_range);
+      rbs_loc *loc = rbs_check_location(location);
+      rbs_loc_alloc_children(loc, 3);
+      rbs_loc_add_required_child(loc, INTERN("type_name"), type_name_range);
+      rbs_loc_add_optional_child(loc, INTERN("keyword"), keyword_range);
+      rbs_loc_add_optional_child(loc, INTERN("new_name"), new_name_range);
 
-        VALUE location = rbs_new_location(state->buffer, clause_range);
-        rbs_loc *loc = rbs_check_location(location);
-        rbs_loc_alloc_children(loc, 2);
-        rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
-        rbs_loc_add_required_child(loc, INTERN("star"), star_range);
+      rb_ary_push(clauses, rbs_ast_directives_use_single_clause(type_name, new_name, location));
 
-        rb_ary_push(clauses, rbs_ast_directives_use_wildcard_clause(namespace, location));
+      break;
+    }
+    case pSTAR: {
+      range clause_range = namespace_range;
+      parser_advance(state);
 
-        break;
-      }
-      default:
-        raise_syntax_error(
+      range star_range = state->current_token.range;
+      clause_range.end = star_range.end;
+
+      VALUE location = rbs_new_location(state->buffer, clause_range);
+      rbs_loc *loc = rbs_check_location(location);
+      rbs_loc_alloc_children(loc, 2);
+      rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
+      rbs_loc_add_required_child(loc, INTERN("star"), star_range);
+
+      rb_ary_push(clauses, rbs_ast_directives_use_wildcard_clause(namespace, location));
+
+      break;
+    }
+    default:
+      raise_syntax_error(
           state,
           state->next_token,
-          "use clause is expected"
-        );
+          "use clause is expected");
     }
 
     if (state->next_token.type == pCOMMA) {
@@ -2884,7 +2808,7 @@ VALUE parse_signature(parserstate *state) {
 
 /**
  * @brief
-  * overload ::= {} annotations <method_type>
+ * overload ::= {} annotations <method_type>
  */
 static void parse_method_overload(parserstate *state, VALUE *annotations, VALUE *method_type) {
   position pos;
@@ -2941,93 +2865,87 @@ static VALUE parse_inline_comment(parserstate *state) {
 
 static VALUE parse_inline_leading_annotation(parserstate *state) {
   switch (state->next_token.type) {
-    case pCOLON: {
-      // :
-      range colon_range = state->next_token.range;
-      parser_advance(state);
+  case pCOLON: {
+    // :
+    range colon_range = state->next_token.range;
+    parser_advance(state);
 
-      VALUE annotations = EMPTY_ARRAY;
-      VALUE method_type;
+    VALUE annotations = EMPTY_ARRAY;
+    VALUE method_type;
 
-      parse_method_overload(state, &annotations, &method_type);
+    parse_method_overload(state, &annotations, &method_type);
 
-      return rbs_ast_ruby_annotations_colon_method_type_annotation(
+    return rbs_ast_ruby_annotations_colon_method_type_annotation(
         rbs_new_location(state->buffer, (range) { .start = colon_range.start, .end = state->current_token.range.end }),
         rbs_new_location(state->buffer, colon_range),
         annotations,
-        method_type
-      );
+        method_type);
+  }
+  case kATRBS: {
+    range rbs_range = state->next_token.range;
+    parser_advance(state);
+
+    switch (state->next_token.type) {
+    case pLPAREN:
+    case pLBRACKET:
+    case pLBRACE:
+    case tANNOTATION: {
+      VALUE overloads = rb_ary_new();
+      VALUE bar_locations = EMPTY_ARRAY;
+
+      parse_inline_method_overloads(state, &overloads, &bar_locations);
+
+      return rbs_ast_ruby_annotations_method_types_annotation(
+          rbs_new_location(state->buffer, (range) { .start = rbs_range.start, .end = state->current_token.range.end }),
+          rbs_new_location(state->buffer, rbs_range),
+          overloads,
+          bar_locations);
     }
-    case kATRBS: {
-      range rbs_range = state->next_token.range;
+    case kSKIP: {
       parser_advance(state);
 
-      switch (state->next_token.type) {
-        case pLPAREN:
-        case pLBRACKET:
-        case pLBRACE:
-        case tANNOTATION: {
-          VALUE overloads = rb_ary_new();
-          VALUE bar_locations = EMPTY_ARRAY;
+      range skip_loc = state->current_token.range;
+      VALUE comment_loc = parse_inline_comment(state);
 
-          parse_inline_method_overloads(state, &overloads, &bar_locations);
+      return rbs_ast_ruby_annotations_skip_annotation(
+          rbs_new_location(state->buffer, (range) { .start = rbs_range.start, .end = state->current_token.range.end }),
+          rbs_new_location(state->buffer, rbs_range),
+          rbs_new_location(state->buffer, skip_loc),
+          comment_loc);
+    }
+    case kRETURN: {
+      parser_advance(state);
 
-          return rbs_ast_ruby_annotations_method_types_annotation(
-            rbs_new_location(state->buffer, (range) { .start = rbs_range.start, .end = state->current_token.range.end }),
-            rbs_new_location(state->buffer, rbs_range),
-            overloads,
-            bar_locations
-          );
-        }
-        case kSKIP: {
-          parser_advance(state);
+      range return_loc = state->current_token.range;
+      parser_advance_assert(state, pCOLON);
+      range colon_loc = state->current_token.range;
 
-          range skip_loc = state->current_token.range;
-          VALUE comment_loc = parse_inline_comment(state);
+      VALUE return_type = parse_type(state);
 
-          return rbs_ast_ruby_annotations_skip_annotation(
-            rbs_new_location(state->buffer, (range) { .start = rbs_range.start, .end = state->current_token.range.end }),
-            rbs_new_location(state->buffer, rbs_range),
-            rbs_new_location(state->buffer, skip_loc),
-            comment_loc
-          );
-        }
-        case kRETURN: {
-          parser_advance(state);
+      VALUE comment_loc = parse_inline_comment(state);
 
-          range return_loc = state->current_token.range;
-          parser_advance_assert(state, pCOLON);
-          range colon_loc = state->current_token.range;
-
-          VALUE return_type = parse_type(state);
-
-          VALUE comment_loc = parse_inline_comment(state);
-
-          return rbs_ast_ruby_annotations_return_type_annotation(
-            rbs_new_location(state->buffer, (range) { .start = rbs_range.start, .end = state->current_token.range.end }),
-            rbs_new_location(state->buffer, rbs_range),
-            rbs_new_location(state->buffer, return_loc),
-            rbs_new_location(state->buffer, colon_loc),
-            return_type,
-            comment_loc
-          );
-        }
-        default: {
-          raise_syntax_error(
-            state,
-            state->next_token,
-            "unexpected token for @rbs annotation"
-          );
-        }
-      }
+      return rbs_ast_ruby_annotations_return_type_annotation(
+          rbs_new_location(state->buffer, (range) { .start = rbs_range.start, .end = state->current_token.range.end }),
+          rbs_new_location(state->buffer, rbs_range),
+          rbs_new_location(state->buffer, return_loc),
+          rbs_new_location(state->buffer, colon_loc),
+          return_type,
+          comment_loc);
     }
     default: {
       raise_syntax_error(
+          state,
+          state->next_token,
+          "unexpected token for @rbs annotation");
+    }
+    }
+  }
+  default: {
+    raise_syntax_error(
         state,
         state->next_token,
-        "unexpected token for inline leading annotation"
-      );
-    }
+        "unexpected token for inline leading annotation");
+  }
   }
 }
 
@@ -3035,24 +2953,22 @@ static VALUE parse_inline_trailing_annotation(parserstate *state) {
   range prefix_range = state->next_token.range;
 
   switch (state->next_token.type) {
-    case pCOLON: {
-      parser_advance(state);
+  case pCOLON: {
+    parser_advance(state);
 
-      VALUE type = parse_type(state);
+    VALUE type = parse_type(state);
 
-      return rbs_ast_ruby_annotations_node_type_assertion(
+    return rbs_ast_ruby_annotations_node_type_assertion(
         rbs_new_location(state->buffer, (range) { .start = prefix_range.start, .end = state->current_token.range.end }),
         rbs_new_location(state->buffer, prefix_range),
-        type
-      );
-    }
-    default: {
-      raise_syntax_error(
+        type);
+  }
+  default: {
+    raise_syntax_error(
         state,
         state->next_token,
-        "unexpected token for inline trailing annotation"
-      );
-    }
+        "unexpected token for inline trailing annotation");
+  }
   }
 }
 
@@ -3063,13 +2979,13 @@ struct parse_type_arg {
 
 static VALUE
 ensure_free_parser(VALUE parser) {
-  free_parser((parserstate *)parser);
+  free_parser((parserstate *) parser);
   return Qnil;
 }
 
 static VALUE
 parse_type_try(VALUE a) {
-  struct parse_type_arg *arg = (struct parse_type_arg *)a;
+  struct parse_type_arg *arg = (struct parse_type_arg *) a;
 
   if (arg->parser->next_token.type == pEOF) {
     return Qnil;
@@ -3085,8 +3001,7 @@ parse_type_try(VALUE a) {
 }
 
 static VALUE
-rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof)
-{
+rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
   lexstate *lexer = alloc_lexer(string, FIX2INT(start_pos), FIX2INT(end_pos));
@@ -3095,12 +3010,12 @@ rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, V
     parser,
     require_eof
   };
-  return rb_ensure(parse_type_try, (VALUE)&arg, ensure_free_parser, (VALUE)parser);
+  return rb_ensure(parse_type_try, (VALUE) &arg, ensure_free_parser, (VALUE) parser);
 }
 
 static VALUE
 parse_method_type_try(VALUE a) {
-  struct parse_type_arg *arg = (struct parse_type_arg *)a;
+  struct parse_type_arg *arg = (struct parse_type_arg *) a;
 
   if (arg->parser->next_token.type == pEOF) {
     return Qnil;
@@ -3116,8 +3031,7 @@ parse_method_type_try(VALUE a) {
 }
 
 static VALUE
-rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof)
-{
+rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos, VALUE variables, VALUE require_eof) {
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
   lexstate *lexer = alloc_lexer(string, FIX2INT(start_pos), FIX2INT(end_pos));
@@ -3126,23 +3040,22 @@ rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_pos, VALUE end
     parser,
     require_eof
   };
-  return rb_ensure(parse_method_type_try, (VALUE)&arg, ensure_free_parser, (VALUE)parser);
+  return rb_ensure(parse_method_type_try, (VALUE) &arg, ensure_free_parser, (VALUE) parser);
 }
 
 static VALUE
 parse_signature_try(VALUE a) {
-  parserstate *parser = (parserstate *)a;
+  parserstate *parser = (parserstate *) a;
   return parse_signature(parser);
 }
 
 static VALUE
-rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos)
-{
+rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE start_pos, VALUE end_pos) {
   VALUE string = rb_funcall(buffer, rb_intern("content"), 0);
   StringValue(string);
   lexstate *lexer = alloc_lexer(string, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(buffer, lexer, FIX2INT(start_pos), FIX2INT(end_pos), Qnil);
-  return rb_ensure(parse_signature_try, (VALUE)parser, ensure_free_parser, (VALUE)parser);
+  return rb_ensure(parse_signature_try, (VALUE) parser, ensure_free_parser, (VALUE) parser);
 }
 
 static VALUE
@@ -3167,7 +3080,7 @@ rbsparser_lex(VALUE self, VALUE buffer, VALUE end_pos) {
 }
 
 static VALUE parse_inline_leading_try(VALUE a) {
-  parserstate *parser = (parserstate *)a;
+  parserstate *parser = (parserstate *) a;
   VALUE annotation = parse_inline_leading_annotation(parser);
 
   parser_advance_assert(parser, pEOF);
@@ -3181,11 +3094,11 @@ static VALUE rbsparser_parse_inline_leading_annotation(VALUE self, VALUE buffer,
   lexstate *lexer = alloc_lexer(string, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(buffer, lexer, FIX2INT(start_pos), FIX2INT(end_pos), variables);
 
-  return rb_ensure(parse_inline_leading_try, (VALUE)parser, ensure_free_parser, (VALUE)parser);
+  return rb_ensure(parse_inline_leading_try, (VALUE) parser, ensure_free_parser, (VALUE) parser);
 }
 
 static VALUE parse_inline_trailing_try(VALUE a) {
-  parserstate *parser = (parserstate *)a;
+  parserstate *parser = (parserstate *) a;
   VALUE annotation = parse_inline_trailing_annotation(parser);
 
   parser_advance_assert(parser, pEOF);
@@ -3199,7 +3112,7 @@ static VALUE rbsparser_parse_inline_trailing_annotation(VALUE self, VALUE buffer
   lexstate *lexer = alloc_lexer(string, FIX2INT(start_pos), FIX2INT(end_pos));
   parserstate *parser = alloc_parser(buffer, lexer, FIX2INT(start_pos), FIX2INT(end_pos), variables);
 
-  return rb_ensure(parse_inline_trailing_try, (VALUE)parser, ensure_free_parser, (VALUE)parser);
+  return rb_ensure(parse_inline_trailing_try, (VALUE) parser, ensure_free_parser, (VALUE) parser);
 }
 
 void rbs__init_parser(void) {

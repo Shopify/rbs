@@ -121,7 +121,7 @@ void parser_advance(parserstate *state) {
     } else if (state->next_token3.type == tLINECOMMENT) {
       insert_comment_line(state, state->next_token3);
     } else if (state->next_token3.type == tTRIVIA) {
-      //skip
+      // skip
     } else {
       break;
     }
@@ -146,11 +146,10 @@ bool parser_advance_if(parserstate *state, enum TokenType type) {
 void parser_assert(parserstate *state, enum TokenType type) {
   if (state->current_token.type != type) {
     raise_syntax_error(
-      state,
-      state->current_token,
-      "expected a token `%s`",
-      token_type_str(type)
-    );
+        state,
+        state->current_token,
+        "expected a token `%s`",
+        token_type_str(type));
   }
 }
 
@@ -161,11 +160,10 @@ void parser_advance_assert(parserstate *state, enum TokenType type) {
 
 void print_token(token tok) {
   printf(
-    "%s char=%d...%d\n",
-    token_type_str(tok.type),
-    tok.range.start.char_pos,
-    tok.range.end.char_pos
-  );
+      "%s char=%d...%d\n",
+      token_type_str(tok.type),
+      tok.range.start.char_pos,
+      tok.range.end.char_pos);
 }
 
 void insert_comment_line(parserstate *state, token tok) {
@@ -283,9 +281,8 @@ VALUE comment_to_ruby(comment *com, VALUE buffer) {
   }
 
   return rbs_ast_comment(
-    string,
-    rbs_location_pp(buffer, &com->start, &com->end)
-  );
+      string,
+      rbs_location_pp(buffer, &com->start, &com->end));
 }
 
 lexstate *alloc_lexer(VALUE string, int start_pos, int end_pos) {
@@ -365,7 +362,7 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
     if (!RB_TYPE_P(variables, T_ARRAY)) {
       free_parser(parser);
       rb_raise(rb_eTypeError,
-               "wrong argument type %"PRIsVALUE" (must be array or nil)",
+               "wrong argument type %" PRIsVALUE " (must be array or nil)",
                rb_obj_class(variables));
     }
 
@@ -376,10 +373,9 @@ parserstate *alloc_parser(VALUE buffer, lexstate *lexer, int start_pos, int end_
       VALUE name = rb_sym2str(symbol);
 
       rbs_constant_id_t id = rbs_constant_pool_insert_shared(
-        &parser->constant_pool,
-        (const uint8_t *) RSTRING_PTR(name),
-        RSTRING_LEN(name)
-      );
+          &parser->constant_pool,
+          (const uint8_t *) RSTRING_PTR(name),
+          RSTRING_LEN(name));
 
       parser_insert_typevar(parser, id);
     }

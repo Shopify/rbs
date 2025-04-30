@@ -3,14 +3,11 @@
 
 #include "ruby/vm.h"
 
-static
-void Deinit_rbs_extension(ruby_vm_t *_) {
+static void Deinit_rbs_extension(ruby_vm_t *_) {
   rbs_constant_pool_free(RBS_GLOBAL_CONSTANT_POOL);
 }
 
-void
-Init_rbs_extension(void)
-{
+void Init_rbs_extension(void) {
 #ifdef HAVE_RB_EXT_RACTOR_SAFE
   rb_ext_ractor_safe(true);
 #endif
