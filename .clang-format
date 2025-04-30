@@ -14,7 +14,7 @@ IndentWrappedFunctionNames: false
 AccessModifierOffset: -2
 
 # Alignment
-AlignAfterOpenBracket: DontAlign
+AlignAfterOpenBracket: BlockIndent
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignConsecutiveMacros: false
@@ -30,6 +30,7 @@ BinPackParameters: false
 AllowAllArgumentsOnNextLine: false
 ExperimentalAutoDetectBinPacking: false
 PenaltyBreakBeforeFirstCallParameter: 1
+AlwaysBreakAfterDefinitionReturnType: None
 
 # Wrapping and Breaking
 ColumnLimit: 0

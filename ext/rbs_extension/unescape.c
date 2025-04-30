@@ -7,7 +7,8 @@ VALUE rbs_unquote_string(parserstate *state, range rg, int offset_bytes) {
   unsigned int first_char = rb_enc_mbc_to_codepoint(
     RSTRING_PTR(string) + rg.start.byte_pos + offset_bytes,
     RSTRING_END(string),
-    enc);
+    enc
+  );
 
   int byte_length = rg.end.byte_pos - rg.start.byte_pos - offset_bytes;
 
@@ -25,5 +26,6 @@ VALUE rbs_unquote_string(parserstate *state, range rg, int offset_bytes) {
     rb_intern("unescape_string"),
     2,
     str,
-    first_char == '\"' ? Qtrue : Qfalse);
+    first_char == '\"' ? Qtrue : Qfalse
+  );
 }
