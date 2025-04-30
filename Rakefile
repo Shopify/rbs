@@ -106,8 +106,17 @@ namespace :format do
 
     needs_format = false
     files.each do |file|
-      unless system("clang-format --dry-run -Werror -style=file #{file} >/dev/null 2>&1")
+      formatted = `clang-format -style=file #{file}`
+      original = File.read(file)
+
+      if formatted != original
         puts "❌ #{file} needs formatting"
+        puts "Diff:"
+        # Save formatted version to temp file and run diff
+        temp_file = "#{file}.formatted"
+        File.write(temp_file, formatted)
+        system("diff -u #{file} #{temp_file}")
+        File.unlink(temp_file)
         needs_format = true
       end
     end

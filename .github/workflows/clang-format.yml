@@ -30,7 +30,14 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libdb-dev curl autoconf automake m4 libtool clang-format
+          sudo apt-get install -y libdb-dev curl autoconf automake m4 libtool
+      - name: Install clang-format from LLVM
+        run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo apt-add-repository "deb http://apt.llvm.org/jammy/ llvm-toolchain-jammy main"
+          sudo apt-get update
+          sudo apt-get install -y clang-format
+          clang-format --version
       - name: Install Re2c
         run: |
           cd /tmp
@@ -50,5 +57,6 @@ jobs:
           bin/setup
       - name: Check C code formatting
         run: |
+          clang-format --version
           bundle exec rake templates
           bundle exec rake format:c_check
