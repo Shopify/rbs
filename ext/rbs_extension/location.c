@@ -257,7 +257,7 @@ static VALUE location_aref(VALUE self, VALUE name) {
 }
 
 static VALUE rbs_constant_to_ruby_symbol(rbs_constant_t *constant) {
-  return ID2SYM(rb_intern2((const char *) constant->start, constant->length));
+  return ID2SYM(rb_intern2((const char *)constant->start, constant->length));
 }
 
 static VALUE location_optional_keys(VALUE self) {
