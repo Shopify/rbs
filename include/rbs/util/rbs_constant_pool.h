@@ -47,38 +47,38 @@ static const rbs_constant_pool_bucket_type_t RBS_CONSTANT_POOL_BUCKET_CONSTANT =
 
 /** A bucket in the hash map. */
 typedef struct {
-    /** The incremental ID used for indexing back into the pool. */
-    unsigned int id: 30;
+  /** The incremental ID used for indexing back into the pool. */
+  unsigned int id : 30;
 
-    /** The type of the bucket, which determines how to free it. */
-    rbs_constant_pool_bucket_type_t type: 2;
+  /** The type of the bucket, which determines how to free it. */
+  rbs_constant_pool_bucket_type_t type : 2;
 
-    /** The hash of the bucket. */
-    uint32_t hash;
+  /** The hash of the bucket. */
+  uint32_t hash;
 } rbs_constant_pool_bucket_t;
 
 /** A constant in the pool which effectively stores a string. */
 typedef struct {
-    /** A pointer to the start of the string. */
-    const uint8_t *start;
+  /** A pointer to the start of the string. */
+  const uint8_t *start;
 
-    /** The length of the string. */
-    size_t length;
+  /** The length of the string. */
+  size_t length;
 } rbs_constant_t;
 
 /** The overall constant pool, which stores constants found while parsing. */
 typedef struct {
-    /** The buckets in the hash map. */
-    rbs_constant_pool_bucket_t *buckets;
+  /** The buckets in the hash map. */
+  rbs_constant_pool_bucket_t *buckets;
 
-    /** The constants that are stored in the buckets. */
-    rbs_constant_t *constants;
+  /** The constants that are stored in the buckets. */
+  rbs_constant_t *constants;
 
-    /** The number of buckets in the hash map. */
-    uint32_t size;
+  /** The number of buckets in the hash map. */
+  uint32_t size;
 
-    /** The number of buckets that have been allocated in the hash map. */
-    uint32_t capacity;
+  /** The number of buckets that have been allocated in the hash map. */
+  uint32_t capacity;
 } rbs_constant_pool_t;
 
 // A global constant pool for storing permenant keywords, such as the names of location children in `parser.c`.
@@ -100,7 +100,7 @@ bool rbs_constant_pool_init(rbs_constant_pool_t *pool, uint32_t capacity);
  * @param constant_id The id of the constant to get.
  * @return A pointer to the constant.
  */
-rbs_constant_t * rbs_constant_pool_id_to_constant(const rbs_constant_pool_t *pool, rbs_constant_id_t constant_id);
+rbs_constant_t *rbs_constant_pool_id_to_constant(const rbs_constant_pool_t *pool, rbs_constant_id_t constant_id);
 
 /**
  * Find a constant in a constant pool. Returns the id of the constant, or 0 if

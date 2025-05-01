@@ -53,9 +53,7 @@ static void declare_type_variables(rbs_parser_t *parser, VALUE variables, VALUE 
 
   if (!RB_TYPE_P(variables, T_ARRAY)) {
     rbs_parser_free(parser);
-    rb_raise(rb_eTypeError,
-      "wrong argument type %"PRIsVALUE" (must be an Array of Symbols or nil)",
-      rb_obj_class(variables));
+    rb_raise(rb_eTypeError, "wrong argument type %" PRIsVALUE " (must be an Array of Symbols or nil)", rb_obj_class(variables));
   }
 
   rbs_parser_push_typevar_table(parser, true);
@@ -65,9 +63,7 @@ static void declare_type_variables(rbs_parser_t *parser, VALUE variables, VALUE 
 
     if (!RB_TYPE_P(symbol, T_SYMBOL)) {
       rbs_parser_free(parser);
-      rb_raise(rb_eTypeError,
-        "Type variables Array contains invalid value %"PRIsVALUE" of type %"PRIsVALUE" (must be an Array of Symbols or nil)",
-        rb_inspect(symbol), rb_obj_class(symbol));
+      rb_raise(rb_eTypeError, "Type variables Array contains invalid value %" PRIsVALUE " of type %" PRIsVALUE " (must be an Array of Symbols or nil)", rb_inspect(symbol), rb_obj_class(symbol));
     }
 
     VALUE name_str = rb_sym2str(symbol);
@@ -92,12 +88,12 @@ struct parse_type_arg {
 };
 
 static VALUE ensure_free_parser(VALUE parser) {
-  rbs_parser_free((rbs_parser_t *)parser);
+  rbs_parser_free((rbs_parser_t *) parser);
   return Qnil;
 }
 
 static VALUE parse_type_try(VALUE a) {
-  struct parse_type_arg *arg = (struct parse_type_arg *)a;
+  struct parse_type_arg *arg = (struct parse_type_arg *) a;
   rbs_parser_t *parser = arg->parser;
 
   if (parser->next_token.type == pEOF) {
@@ -155,8 +151,7 @@ static rbs_parser_t *alloc_parser_from_buffer(VALUE buffer, int start_pos, int e
 
   return rbs_parser_new(
     rbs_string_from_ruby_string(string),
-    rbs_encoding_find((const uint8_t *) encoding_name,
-    (const uint8_t *) (encoding_name + strlen(encoding_name))),
+    rbs_encoding_find((const uint8_t *) encoding_name, (const uint8_t *) (encoding_name + strlen(encoding_name))),
     start_pos,
     end_pos
   );
@@ -176,7 +171,7 @@ static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VAL
     .require_eof = require_eof
   };
 
-  VALUE result = rb_ensure(parse_type_try, (VALUE)&arg, ensure_free_parser, (VALUE)parser);
+  VALUE result = rb_ensure(parse_type_try, (VALUE) &arg, ensure_free_parser, (VALUE) parser);
 
   RB_GC_GUARD(string);
 
@@ -184,7 +179,7 @@ static VALUE rbsparser_parse_type(VALUE self, VALUE buffer, VALUE start_pos, VAL
 }
 
 static VALUE parse_method_type_try(VALUE a) {
-  struct parse_type_arg *arg = (struct parse_type_arg *)a;
+  struct parse_type_arg *arg = (struct parse_type_arg *) a;
   rbs_parser_t *parser = arg->parser;
 
   if (parser->next_token.type == pEOF) {
@@ -227,7 +222,7 @@ static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_p
     .require_eof = require_eof
   };
 
-  VALUE result = rb_ensure(parse_method_type_try, (VALUE)&arg, ensure_free_parser, (VALUE)parser);
+  VALUE result = rb_ensure(parse_method_type_try, (VALUE) &arg, ensure_free_parser, (VALUE) parser);
 
   RB_GC_GUARD(string);
 
@@ -235,7 +230,7 @@ static VALUE rbsparser_parse_method_type(VALUE self, VALUE buffer, VALUE start_p
 }
 
 static VALUE parse_signature_try(VALUE a) {
-  struct parse_type_arg *arg = (struct parse_type_arg *)a;
+  struct parse_type_arg *arg = (struct parse_type_arg *) a;
   rbs_parser_t *parser = arg->parser;
 
   rbs_signature_t *signature = NULL;
@@ -265,7 +260,7 @@ static VALUE rbsparser_parse_signature(VALUE self, VALUE buffer, VALUE start_pos
     .require_eof = false
   };
 
-  VALUE result = rb_ensure(parse_signature_try, (VALUE)&arg, ensure_free_parser, (VALUE)parser);
+  VALUE result = rb_ensure(parse_signature_try, (VALUE) &arg, ensure_free_parser, (VALUE) parser);
 
   RB_GC_GUARD(string);
 
@@ -308,7 +303,7 @@ static VALUE rbsparser_parse_inline_leading_annotation(VALUE self, VALUE buffer,
     .require_eof = Qfalse
   };
 
-  VALUE result = rb_ensure(parse_inline_leading_annotation_try, (VALUE)&arg, ensure_free_parser, (VALUE)parser);
+  VALUE result = rb_ensure(parse_inline_leading_annotation_try, (VALUE) &arg, ensure_free_parser, (VALUE) parser);
 
   RB_GC_GUARD(string);
 
@@ -396,14 +391,11 @@ void rbs__init_parser(void) {
   rb_define_singleton_method(RBS_Parser, "_lex", rbsparser_lex, 2);
 }
 
-static
-void Deinit_rbs_extension(ruby_vm_t *_) {
+static void Deinit_rbs_extension(ruby_vm_t *_) {
   rbs_constant_pool_free(RBS_GLOBAL_CONSTANT_POOL);
 }
 
-void
-Init_rbs_extension(void)
-{
+void Init_rbs_extension(void) {
 #ifdef HAVE_RB_EXT_RACTOR_SAFE
   rb_ext_ractor_safe(true);
 #endif

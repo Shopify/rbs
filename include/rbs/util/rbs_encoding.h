@@ -18,44 +18,44 @@
  * invalid for the encoding and type.
  */
 typedef struct {
-    /**
+  /**
      * Return the number of bytes that the next character takes if it is valid
      * in the encoding. Does not read more than n bytes. It is assumed that n is
      * at least 1.
      */
-    size_t (*char_width)(const uint8_t *b, ptrdiff_t n);
+  size_t (*char_width)(const uint8_t *b, ptrdiff_t n);
 
-    /**
+  /**
      * Return the number of bytes that the next character takes if it is valid
      * in the encoding and is alphabetical. Does not read more than n bytes. It
      * is assumed that n is at least 1.
      */
-    size_t (*alpha_char)(const uint8_t *b, ptrdiff_t n);
+  size_t (*alpha_char)(const uint8_t *b, ptrdiff_t n);
 
-    /**
+  /**
      * Return the number of bytes that the next character takes if it is valid
      * in the encoding and is alphanumeric. Does not read more than n bytes. It
      * is assumed that n is at least 1.
      */
-    size_t (*alnum_char)(const uint8_t *b, ptrdiff_t n);
+  size_t (*alnum_char)(const uint8_t *b, ptrdiff_t n);
 
-    /**
+  /**
      * Return true if the next character is valid in the encoding and is an
      * uppercase character. Does not read more than n bytes. It is assumed that
      * n is at least 1.
      */
-    bool (*isupper_char)(const uint8_t *b, ptrdiff_t n);
+  bool (*isupper_char)(const uint8_t *b, ptrdiff_t n);
 
-    /**
+  /**
      * The name of the encoding. This should correspond to a value that can be
      * passed to Encoding.find in Ruby.
      */
-    const char *name;
+  const char *name;
 
-    /**
+  /**
      * Return true if the encoding is a multibyte encoding.
      */
-    bool multibyte;
+  bool multibyte;
 } rbs_encoding_t;
 
 /**
@@ -131,103 +131,103 @@ extern const uint8_t rbs_encoding_unicode_table[256];
  * These are all of the encodings that prism supports.
  */
 typedef enum {
-    RBS_ENCODING_UTF_8 = 0,
-    RBS_ENCODING_US_ASCII,
-    RBS_ENCODING_ASCII_8BIT,
-    RBS_ENCODING_EUC_JP,
-    RBS_ENCODING_WINDOWS_31J,
+  RBS_ENCODING_UTF_8 = 0,
+  RBS_ENCODING_US_ASCII,
+  RBS_ENCODING_ASCII_8BIT,
+  RBS_ENCODING_EUC_JP,
+  RBS_ENCODING_WINDOWS_31J,
 
 // We optionally support excluding the full set of encodings to only support the
 // minimum necessary to process Ruby code without encoding comments.
 #ifndef RBS_ENCODING_EXCLUDE_FULL
-    RBS_ENCODING_BIG5,
-    RBS_ENCODING_BIG5_HKSCS,
-    RBS_ENCODING_BIG5_UAO,
-    RBS_ENCODING_CESU_8,
-    RBS_ENCODING_CP51932,
-    RBS_ENCODING_CP850,
-    RBS_ENCODING_CP852,
-    RBS_ENCODING_CP855,
-    RBS_ENCODING_CP949,
-    RBS_ENCODING_CP950,
-    RBS_ENCODING_CP951,
-    RBS_ENCODING_EMACS_MULE,
-    RBS_ENCODING_EUC_JP_MS,
-    RBS_ENCODING_EUC_JIS_2004,
-    RBS_ENCODING_EUC_KR,
-    RBS_ENCODING_EUC_TW,
-    RBS_ENCODING_GB12345,
-    RBS_ENCODING_GB18030,
-    RBS_ENCODING_GB1988,
-    RBS_ENCODING_GB2312,
-    RBS_ENCODING_GBK,
-    RBS_ENCODING_IBM437,
-    RBS_ENCODING_IBM720,
-    RBS_ENCODING_IBM737,
-    RBS_ENCODING_IBM775,
-    RBS_ENCODING_IBM852,
-    RBS_ENCODING_IBM855,
-    RBS_ENCODING_IBM857,
-    RBS_ENCODING_IBM860,
-    RBS_ENCODING_IBM861,
-    RBS_ENCODING_IBM862,
-    RBS_ENCODING_IBM863,
-    RBS_ENCODING_IBM864,
-    RBS_ENCODING_IBM865,
-    RBS_ENCODING_IBM866,
-    RBS_ENCODING_IBM869,
-    RBS_ENCODING_ISO_8859_1,
-    RBS_ENCODING_ISO_8859_2,
-    RBS_ENCODING_ISO_8859_3,
-    RBS_ENCODING_ISO_8859_4,
-    RBS_ENCODING_ISO_8859_5,
-    RBS_ENCODING_ISO_8859_6,
-    RBS_ENCODING_ISO_8859_7,
-    RBS_ENCODING_ISO_8859_8,
-    RBS_ENCODING_ISO_8859_9,
-    RBS_ENCODING_ISO_8859_10,
-    RBS_ENCODING_ISO_8859_11,
-    RBS_ENCODING_ISO_8859_13,
-    RBS_ENCODING_ISO_8859_14,
-    RBS_ENCODING_ISO_8859_15,
-    RBS_ENCODING_ISO_8859_16,
-    RBS_ENCODING_KOI8_R,
-    RBS_ENCODING_KOI8_U,
-    RBS_ENCODING_MAC_CENT_EURO,
-    RBS_ENCODING_MAC_CROATIAN,
-    RBS_ENCODING_MAC_CYRILLIC,
-    RBS_ENCODING_MAC_GREEK,
-    RBS_ENCODING_MAC_ICELAND,
-    RBS_ENCODING_MAC_JAPANESE,
-    RBS_ENCODING_MAC_ROMAN,
-    RBS_ENCODING_MAC_ROMANIA,
-    RBS_ENCODING_MAC_THAI,
-    RBS_ENCODING_MAC_TURKISH,
-    RBS_ENCODING_MAC_UKRAINE,
-    RBS_ENCODING_SHIFT_JIS,
-    RBS_ENCODING_SJIS_DOCOMO,
-    RBS_ENCODING_SJIS_KDDI,
-    RBS_ENCODING_SJIS_SOFTBANK,
-    RBS_ENCODING_STATELESS_ISO_2022_JP,
-    RBS_ENCODING_STATELESS_ISO_2022_JP_KDDI,
-    RBS_ENCODING_TIS_620,
-    RBS_ENCODING_UTF8_MAC,
-    RBS_ENCODING_UTF8_DOCOMO,
-    RBS_ENCODING_UTF8_KDDI,
-    RBS_ENCODING_UTF8_SOFTBANK,
-    RBS_ENCODING_WINDOWS_1250,
-    RBS_ENCODING_WINDOWS_1251,
-    RBS_ENCODING_WINDOWS_1252,
-    RBS_ENCODING_WINDOWS_1253,
-    RBS_ENCODING_WINDOWS_1254,
-    RBS_ENCODING_WINDOWS_1255,
-    RBS_ENCODING_WINDOWS_1256,
-    RBS_ENCODING_WINDOWS_1257,
-    RBS_ENCODING_WINDOWS_1258,
-    RBS_ENCODING_WINDOWS_874,
+  RBS_ENCODING_BIG5,
+  RBS_ENCODING_BIG5_HKSCS,
+  RBS_ENCODING_BIG5_UAO,
+  RBS_ENCODING_CESU_8,
+  RBS_ENCODING_CP51932,
+  RBS_ENCODING_CP850,
+  RBS_ENCODING_CP852,
+  RBS_ENCODING_CP855,
+  RBS_ENCODING_CP949,
+  RBS_ENCODING_CP950,
+  RBS_ENCODING_CP951,
+  RBS_ENCODING_EMACS_MULE,
+  RBS_ENCODING_EUC_JP_MS,
+  RBS_ENCODING_EUC_JIS_2004,
+  RBS_ENCODING_EUC_KR,
+  RBS_ENCODING_EUC_TW,
+  RBS_ENCODING_GB12345,
+  RBS_ENCODING_GB18030,
+  RBS_ENCODING_GB1988,
+  RBS_ENCODING_GB2312,
+  RBS_ENCODING_GBK,
+  RBS_ENCODING_IBM437,
+  RBS_ENCODING_IBM720,
+  RBS_ENCODING_IBM737,
+  RBS_ENCODING_IBM775,
+  RBS_ENCODING_IBM852,
+  RBS_ENCODING_IBM855,
+  RBS_ENCODING_IBM857,
+  RBS_ENCODING_IBM860,
+  RBS_ENCODING_IBM861,
+  RBS_ENCODING_IBM862,
+  RBS_ENCODING_IBM863,
+  RBS_ENCODING_IBM864,
+  RBS_ENCODING_IBM865,
+  RBS_ENCODING_IBM866,
+  RBS_ENCODING_IBM869,
+  RBS_ENCODING_ISO_8859_1,
+  RBS_ENCODING_ISO_8859_2,
+  RBS_ENCODING_ISO_8859_3,
+  RBS_ENCODING_ISO_8859_4,
+  RBS_ENCODING_ISO_8859_5,
+  RBS_ENCODING_ISO_8859_6,
+  RBS_ENCODING_ISO_8859_7,
+  RBS_ENCODING_ISO_8859_8,
+  RBS_ENCODING_ISO_8859_9,
+  RBS_ENCODING_ISO_8859_10,
+  RBS_ENCODING_ISO_8859_11,
+  RBS_ENCODING_ISO_8859_13,
+  RBS_ENCODING_ISO_8859_14,
+  RBS_ENCODING_ISO_8859_15,
+  RBS_ENCODING_ISO_8859_16,
+  RBS_ENCODING_KOI8_R,
+  RBS_ENCODING_KOI8_U,
+  RBS_ENCODING_MAC_CENT_EURO,
+  RBS_ENCODING_MAC_CROATIAN,
+  RBS_ENCODING_MAC_CYRILLIC,
+  RBS_ENCODING_MAC_GREEK,
+  RBS_ENCODING_MAC_ICELAND,
+  RBS_ENCODING_MAC_JAPANESE,
+  RBS_ENCODING_MAC_ROMAN,
+  RBS_ENCODING_MAC_ROMANIA,
+  RBS_ENCODING_MAC_THAI,
+  RBS_ENCODING_MAC_TURKISH,
+  RBS_ENCODING_MAC_UKRAINE,
+  RBS_ENCODING_SHIFT_JIS,
+  RBS_ENCODING_SJIS_DOCOMO,
+  RBS_ENCODING_SJIS_KDDI,
+  RBS_ENCODING_SJIS_SOFTBANK,
+  RBS_ENCODING_STATELESS_ISO_2022_JP,
+  RBS_ENCODING_STATELESS_ISO_2022_JP_KDDI,
+  RBS_ENCODING_TIS_620,
+  RBS_ENCODING_UTF8_MAC,
+  RBS_ENCODING_UTF8_DOCOMO,
+  RBS_ENCODING_UTF8_KDDI,
+  RBS_ENCODING_UTF8_SOFTBANK,
+  RBS_ENCODING_WINDOWS_1250,
+  RBS_ENCODING_WINDOWS_1251,
+  RBS_ENCODING_WINDOWS_1252,
+  RBS_ENCODING_WINDOWS_1253,
+  RBS_ENCODING_WINDOWS_1254,
+  RBS_ENCODING_WINDOWS_1255,
+  RBS_ENCODING_WINDOWS_1256,
+  RBS_ENCODING_WINDOWS_1257,
+  RBS_ENCODING_WINDOWS_1258,
+  RBS_ENCODING_WINDOWS_874,
 #endif
 
-    RBS_ENCODING_MAXIMUM
+  RBS_ENCODING_MAXIMUM
 } rbs_encoding_type_t;
 
 /**
@@ -275,6 +275,6 @@ extern const rbs_encoding_t rbs_encodings[RBS_ENCODING_MAXIMUM];
  * @param end A pointer to the last byte of the name.
  * @returns A pointer to the encoding struct if one is found, otherwise NULL.
  */
-const rbs_encoding_t * rbs_encoding_find(const uint8_t *start, const uint8_t *end);
+const rbs_encoding_t *rbs_encoding_find(const uint8_t *start, const uint8_t *end);
 
 #endif

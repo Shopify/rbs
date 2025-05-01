@@ -18,14 +18,14 @@
  * A rbs_buffer_t is a simple memory buffer that stores data in a contiguous block of memory.
  */
 typedef struct {
-    /** The length of the buffer in bytes. */
-    size_t length;
+  /** The length of the buffer in bytes. */
+  size_t length;
 
-    /** The capacity of the buffer in bytes that has been allocated. */
-    size_t capacity;
+  /** The capacity of the buffer in bytes that has been allocated. */
+  size_t capacity;
 
-    /** A pointer to the start of the buffer. */
-    char *value;
+  /** A pointer to the start of the buffer. */
+  char *value;
 } rbs_buffer_t;
 
 /**

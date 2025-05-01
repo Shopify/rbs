@@ -47,12 +47,12 @@ typedef struct {
   rbs_lexer_t *rbs_lexer_t;
 
   rbs_token_t current_token;
-  rbs_token_t next_token;       /* The first lookahead token */
-  rbs_token_t next_token2;      /* The second lookahead token */
-  rbs_token_t next_token3;      /* The third lookahead token */
+  rbs_token_t next_token;  /* The first lookahead token */
+  rbs_token_t next_token2; /* The second lookahead token */
+  rbs_token_t next_token3; /* The third lookahead token */
 
-  struct id_table *vars;  /* Known type variables */
-  rbs_comment_t *last_comment;  /* Last read comment */
+  struct id_table *vars;       /* Known type variables */
+  rbs_comment_t *last_comment; /* Last read comment */
 
   rbs_constant_pool_t constant_pool;
   rbs_allocator_t *allocator;

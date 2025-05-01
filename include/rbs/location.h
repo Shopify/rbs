@@ -28,8 +28,8 @@ typedef struct {
 } rbs_loc_children;
 
 typedef struct rbs_location {
-    rbs_range_t rg;
-    rbs_loc_children *children;
+  rbs_range_t rg;
+  rbs_loc_children *children;
 } rbs_location_t;
 
 typedef struct rbs_location_list_node {

@@ -16,9 +16,9 @@
 
 /// A bag of values needed when copying RBS C structs into Ruby objects.
 typedef struct rbs_translation_context {
-    rbs_constant_pool_t *constant_pool;
-    VALUE buffer;
-    rb_encoding *encoding;
+  rbs_constant_pool_t *constant_pool;
+  VALUE buffer;
+  rb_encoding *encoding;
 } rbs_translation_context_t;
 
 rbs_translation_context_t rbs_translation_context_create(rbs_constant_pool_t *, VALUE buffer_string, rb_encoding *ruby_encoding);

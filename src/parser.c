@@ -19,66 +19,67 @@
     strlen(str)                      \
   )
 
-#define INTERN_TOKEN(parser, tok)                       \
-  rbs_constant_pool_insert_shared_with_encoding(             \
-    &parser->constant_pool,                             \
-    (const uint8_t *) rbs_peek_token(parser->rbs_lexer_t, tok),\
-    rbs_token_bytes(tok),                                        \
-    (void *) parser->rbs_lexer_t->encoding                 \
+#define INTERN_TOKEN(parser, tok)                               \
+  rbs_constant_pool_insert_shared_with_encoding(                \
+    &parser->constant_pool,                                     \
+    (const uint8_t *) rbs_peek_token(parser->rbs_lexer_t, tok), \
+    rbs_token_bytes(tok),                                       \
+    (void *) parser->rbs_lexer_t->encoding                      \
   )
 
 #define KEYWORD_CASES \
-  case kBOOL:\
-  case kBOT: \
-  case kCLASS: \
-  case kFALSE: \
-  case kINSTANCE: \
-  case kINTERFACE: \
-  case kNIL: \
-  case kSELF: \
-  case kSINGLETON: \
-  case kTOP: \
-  case kTRUE: \
-  case kVOID: \
-  case kTYPE: \
-  case kUNCHECKED: \
-  case kIN: \
-  case kOUT: \
-  case kEND: \
-  case kDEF: \
-  case kINCLUDE: \
-  case kEXTEND: \
-  case kPREPEND: \
-  case kALIAS: \
-  case kMODULE: \
-  case kATTRREADER: \
-  case kATTRWRITER: \
+  case kBOOL:         \
+  case kBOT:          \
+  case kCLASS:        \
+  case kFALSE:        \
+  case kINSTANCE:     \
+  case kINTERFACE:    \
+  case kNIL:          \
+  case kSELF:         \
+  case kSINGLETON:    \
+  case kTOP:          \
+  case kTRUE:         \
+  case kVOID:         \
+  case kTYPE:         \
+  case kUNCHECKED:    \
+  case kIN:           \
+  case kOUT:          \
+  case kEND:          \
+  case kDEF:          \
+  case kINCLUDE:      \
+  case kEXTEND:       \
+  case kPREPEND:      \
+  case kALIAS:        \
+  case kMODULE:       \
+  case kATTRREADER:   \
+  case kATTRWRITER:   \
   case kATTRACCESSOR: \
-  case kPUBLIC: \
-  case kPRIVATE: \
-  case kUNTYPED: \
-  case kUSE: \
-  case kAS: \
-  case k__TODO__: \
-  case kSKIP: \
-  case kRETURN: \
-  /* nop */
+  case kPUBLIC:       \
+  case kPRIVATE:      \
+  case kUNTYPED:      \
+  case kUSE:          \
+  case kAS:           \
+  case k__TODO__:     \
+  case kSKIP:         \
+  case kRETURN:       \
+    /* nop */
 
 #define CHECK_PARSE(call) \
-  if (!call) { \
-    return false; \
+  if (!call) {            \
+    return false;         \
   }
 
-#define ASSERT_TOKEN(parser, expected_type) \
-  if (parser->current_token.type != expected_type) { \
+#define ASSERT_TOKEN(parser, expected_type)                                                                                \
+  if (parser->current_token.type != expected_type) {                                                                       \
     rbs_parser_set_error(parser, parser->current_token, true, "expected a token `%s`", rbs_token_type_str(expected_type)); \
-    return false; \
+    return false;                                                                                                          \
   }
 
-#define ADVANCE_ASSERT(parser, expected_type) do {\
-    rbs_parser_advance(parser); \
-    ASSERT_TOKEN(parser, expected_type) \
-  } while(0);
+#define ADVANCE_ASSERT(parser, expected_type) \
+  do {                                        \
+    rbs_parser_advance(parser);               \
+    ASSERT_TOKEN(parser, expected_type)       \
+  } while (0);
 
 #define RESET_TABLE_P(table) (table->size == 0)
 
@@ -173,15 +174,12 @@ static bool parse_type_name(rbs_parser_t *parser, TypeNameKind kind, rbs_range_t
   rbs_node_list_t *path = rbs_node_list_new(ALLOCATOR());
 
   while (
-    parser->current_token.type == tUIDENT
-    && parser->next_token.type == pCOLON2
-    && parser->current_token.range.end.byte_pos == parser->next_token.range.start.byte_pos
-    && parser->next_token.range.end.byte_pos == parser->next_token2.range.start.byte_pos
+    parser->current_token.type == tUIDENT && parser->next_token.type == pCOLON2 && parser->current_token.range.end.byte_pos == parser->next_token.range.start.byte_pos && parser->next_token.range.end.byte_pos == parser->next_token2.range.start.byte_pos
   ) {
     rbs_constant_id_t symbol_value = INTERN_TOKEN(parser, parser->current_token);
     rbs_location_t *symbolLoc = rbs_location_new(ALLOCATOR(), parser->next_token.range);
     rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, symbol_value);
-    rbs_node_list_append(path, (rbs_node_t *)symbol);
+    rbs_node_list_append(path, (rbs_node_t *) symbol);
 
     rbs_parser_advance(parser);
     rbs_parser_advance(parser);
@@ -195,50 +193,50 @@ static bool parse_type_name(rbs_parser_t *parser, TypeNameKind kind, rbs_range_t
   rbs_namespace_t *namespace = rbs_namespace_new(ALLOCATOR(), loc, path, absolute);
 
   switch (parser->current_token.type) {
-    case tLIDENT:
-    case kSKIP:
-    case kRETURN:
-      if (kind & ALIAS_NAME) goto success;
-      goto error_handling;
-    case tULIDENT:
-      if (kind & INTERFACE_NAME) goto success;
-      goto error_handling;
-    case tUIDENT:
-      if (kind & CLASS_NAME) goto success;
-      goto error_handling;
-    default:
-      goto error_handling;
+  case tLIDENT:
+  case kSKIP:
+  case kRETURN:
+    if (kind & ALIAS_NAME) goto success;
+    goto error_handling;
+  case tULIDENT:
+    if (kind & INTERFACE_NAME) goto success;
+    goto error_handling;
+  case tUIDENT:
+    if (kind & CLASS_NAME) goto success;
+    goto error_handling;
+  default:
+    goto error_handling;
   }
 
-  success: {
-    if (rg) {
-      rg->end = parser->current_token.range.end;
-    }
-
-    rbs_location_t *symbolLoc = rbs_location_current_token(parser);
-    rbs_constant_id_t name = INTERN_TOKEN(parser, parser->current_token);
-    rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, name);
-    *type_name = rbs_type_name_new(ALLOCATOR(), rbs_location_new(ALLOCATOR(), *rg), namespace, symbol);
-    return true;
+success: {
+  if (rg) {
+    rg->end = parser->current_token.range.end;
   }
 
-  error_handling: {
-    const char *ids = NULL;
-    if (kind & ALIAS_NAME) {
-      ids = "alias name";
-    }
-    if (kind & INTERFACE_NAME) {
-      ids = "interface name";
-    }
-    if (kind & CLASS_NAME) {
-      ids = "class/module/constant name";
-    }
+  rbs_location_t *symbolLoc = rbs_location_current_token(parser);
+  rbs_constant_id_t name = INTERN_TOKEN(parser, parser->current_token);
+  rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, name);
+  *type_name = rbs_type_name_new(ALLOCATOR(), rbs_location_new(ALLOCATOR(), *rg), namespace, symbol);
+  return true;
+}
 
-    rbs_assert(ids != NULL, "Unknown kind of type: %i", kind);
-
-    rbs_parser_set_error(parser, parser->current_token, true, "expected one of %s", ids);
-    return false;
+error_handling: {
+  const char *ids = NULL;
+  if (kind & ALIAS_NAME) {
+    ids = "alias name";
   }
+  if (kind & INTERFACE_NAME) {
+    ids = "interface name";
+  }
+  if (kind & CLASS_NAME) {
+    ids = "class/module/constant name";
+  }
+
+  rbs_assert(ids != NULL, "Unknown kind of type: %i", kind);
+
+  rbs_parser_set_error(parser, parser->current_token, true, "expected one of %s", ids);
+  return false;
+}
 }
 
 /*
@@ -272,15 +270,14 @@ static bool parse_type_list(rbs_parser_t *parser, enum RBSTokenType eol, rbs_nod
 }
 
 static bool is_keyword_token(enum RBSTokenType type) {
-  switch (type)
-  {
+  switch (type) {
   case tLIDENT:
   case tUIDENT:
   case tULIDENT:
   case tULLIDENT:
   case tQIDENT:
   case tBANGIDENT:
-  KEYWORD_CASES
+    KEYWORD_CASES
     return true;
   default:
     return false;
@@ -407,10 +404,7 @@ static bool is_keyword(rbs_parser_t *parser) {
       return true;
     }
 
-    if (parser->next_token2.type == pQUESTION
-        && parser->next_token3.type == pCOLON
-        && parser->next_token.range.end.byte_pos == parser->next_token2.range.start.byte_pos
-        && parser->next_token2.range.end.byte_pos == parser->next_token3.range.start.byte_pos) {
+    if (parser->next_token2.type == pQUESTION && parser->next_token3.type == pCOLON && parser->next_token.range.end.byte_pos == parser->next_token2.range.start.byte_pos && parser->next_token2.range.end.byte_pos == parser->next_token3.range.start.byte_pos) {
       return true;
     }
   }
@@ -477,25 +471,25 @@ static bool parse_params(rbs_parser_t *parser, method_params *params) {
 
   while (true) {
     switch (parser->next_token.type) {
-      case pQUESTION:
-        goto PARSE_OPTIONAL_PARAMS;
-      case pSTAR:
-        goto PARSE_REST_PARAM;
-      case pSTAR2:
+    case pQUESTION:
+      goto PARSE_OPTIONAL_PARAMS;
+    case pSTAR:
+      goto PARSE_REST_PARAM;
+    case pSTAR2:
+      goto PARSE_KEYWORDS;
+    case pRPAREN:
+      goto EOP;
+
+    default:
+      if (is_keyword(parser)) {
         goto PARSE_KEYWORDS;
-      case pRPAREN:
-        goto EOP;
+      }
 
-      default:
-        if (is_keyword(parser)) {
-          goto PARSE_KEYWORDS;
-        }
+      rbs_types_function_param_t *param = NULL;
+      CHECK_PARSE(parse_function_param(parser, &param));
+      rbs_node_list_append(params->required_positionals, (rbs_node_t *) param);
 
-        rbs_types_function_param_t *param = NULL;
-        CHECK_PARSE(parse_function_param(parser, &param));
-        rbs_node_list_append(params->required_positionals, (rbs_node_t *)param);
-
-        break;
+      break;
     }
 
     if (!parser_advance_if(parser, pCOMMA)) {
@@ -506,22 +500,22 @@ static bool parse_params(rbs_parser_t *parser, method_params *params) {
 PARSE_OPTIONAL_PARAMS:
   while (true) {
     switch (parser->next_token.type) {
-      case pQUESTION:
-        rbs_parser_advance(parser);
+    case pQUESTION:
+      rbs_parser_advance(parser);
 
-        if (is_keyword(parser)) {
-          CHECK_PARSE(parse_keyword(parser, params->optional_keywords, memo));
-          parser_advance_if(parser, pCOMMA);
-          goto PARSE_KEYWORDS;
-        }
+      if (is_keyword(parser)) {
+        CHECK_PARSE(parse_keyword(parser, params->optional_keywords, memo));
+        parser_advance_if(parser, pCOMMA);
+        goto PARSE_KEYWORDS;
+      }
 
-        rbs_types_function_param_t *param = NULL;
-        CHECK_PARSE(parse_function_param(parser, &param));
-        rbs_node_list_append(params->optional_positionals, (rbs_node_t *)param);
+      rbs_types_function_param_t *param = NULL;
+      CHECK_PARSE(parse_function_param(parser, &param));
+      rbs_node_list_append(params->optional_positionals, (rbs_node_t *) param);
 
-        break;
-      default:
-        goto PARSE_REST_PARAM;
+      break;
+    default:
+      goto PARSE_REST_PARAM;
     }
 
     if (!parser_advance_if(parser, pCOMMA)) {
@@ -545,25 +539,25 @@ PARSE_REST_PARAM:
 PARSE_TRAILING_PARAMS:
   while (true) {
     switch (parser->next_token.type) {
-      case pQUESTION:
+    case pQUESTION:
+      goto PARSE_KEYWORDS;
+    case pSTAR:
+      goto EOP;
+    case pSTAR2:
+      goto PARSE_KEYWORDS;
+    case pRPAREN:
+      goto EOP;
+
+    default:
+      if (is_keyword(parser)) {
         goto PARSE_KEYWORDS;
-      case pSTAR:
-        goto EOP;
-      case pSTAR2:
-        goto PARSE_KEYWORDS;
-      case pRPAREN:
-        goto EOP;
+      }
 
-      default:
-        if (is_keyword(parser)) {
-          goto PARSE_KEYWORDS;
-        }
+      rbs_types_function_param_t *param = NULL;
+      CHECK_PARSE(parse_function_param(parser, &param));
+      rbs_node_list_append(params->trailing_positionals, (rbs_node_t *) param);
 
-        rbs_types_function_param_t *param = NULL;
-        CHECK_PARSE(parse_function_param(parser, &param));
-        rbs_node_list_append(params->trailing_positionals, (rbs_node_t *)param);
-
-        break;
+      break;
     }
 
     if (!parser_advance_if(parser, pCOMMA)) {
@@ -597,7 +591,7 @@ PARSE_KEYWORDS:
     case tULIDENT:
     case tULLIDENT:
     case tBANGIDENT:
-    KEYWORD_CASES
+      KEYWORD_CASES
       if (is_keyword(parser)) {
         CHECK_PARSE(parse_keyword(parser, params->required_keywords, memo));
       } else {
@@ -909,15 +903,14 @@ static bool parse_symbol(rbs_parser_t *parser, rbs_location_t *location, rbs_typ
 
   rbs_ast_symbol_t *literal;
 
-  switch (parser->current_token.type)
-  {
+  switch (parser->current_token.type) {
   case tSYMBOL: {
     rbs_location_t *symbolLoc = rbs_location_current_token(parser);
 
     char *buffer = rbs_peek_token(parser->rbs_lexer_t, parser->current_token);
     rbs_constant_id_t constant_id = rbs_constant_pool_insert_shared(
       &parser->constant_pool,
-      (const uint8_t *) buffer+offset_bytes,
+      (const uint8_t *) buffer + offset_bytes,
       bytes
     );
     literal = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, constant_id);
@@ -954,68 +947,68 @@ static bool parse_symbol(rbs_parser_t *parser, rbs_location_t *location, rbs_typ
  */
 NODISCARD
 static bool parse_instance_type(rbs_parser_t *parser, bool parse_alias, rbs_node_t **type) {
-    TypeNameKind expected_kind = INTERFACE_NAME | CLASS_NAME;
-    if (parse_alias) {
-      expected_kind |= ALIAS_NAME;
-    }
+  TypeNameKind expected_kind = INTERFACE_NAME | CLASS_NAME;
+  if (parse_alias) {
+    expected_kind |= ALIAS_NAME;
+  }
 
-    rbs_range_t name_range;
-    rbs_type_name_t *type_name = NULL;
-    CHECK_PARSE(parse_type_name(parser, expected_kind, &name_range, &type_name));
+  rbs_range_t name_range;
+  rbs_type_name_t *type_name = NULL;
+  CHECK_PARSE(parse_type_name(parser, expected_kind, &name_range, &type_name));
 
-    rbs_node_list_t *types = rbs_node_list_new(ALLOCATOR());
+  rbs_node_list_t *types = rbs_node_list_new(ALLOCATOR());
 
-    TypeNameKind kind;
-    switch (parser->current_token.type) {
-      case tUIDENT: {
-        kind = CLASS_NAME;
-        break;
-      }
-      case tULIDENT: {
-        kind = INTERFACE_NAME;
-        break;
-      }
-      case kSKIP:
-      case kRETURN:
-      case tLIDENT: {
-        kind = ALIAS_NAME;
-        break;
-      }
-      default:
-        rbs_parser_set_error(parser, parser->current_token, false, "unexpected token for type name");
-        return false;
-      }
+  TypeNameKind kind;
+  switch (parser->current_token.type) {
+  case tUIDENT: {
+    kind = CLASS_NAME;
+    break;
+  }
+  case tULIDENT: {
+    kind = INTERFACE_NAME;
+    break;
+  }
+  case kSKIP:
+  case kRETURN:
+  case tLIDENT: {
+    kind = ALIAS_NAME;
+    break;
+  }
+  default:
+    rbs_parser_set_error(parser, parser->current_token, false, "unexpected token for type name");
+    return false;
+  }
 
-    rbs_range_t args_range;
-    if (parser->next_token.type == pLBRACKET) {
-      rbs_parser_advance(parser);
-      args_range.start = parser->current_token.range.start;
-      CHECK_PARSE(parse_type_list(parser, pRBRACKET, types));
-      ADVANCE_ASSERT(parser, pRBRACKET);
-      args_range.end = parser->current_token.range.end;
-    } else {
-      args_range = NULL_RANGE;
-    }
+  rbs_range_t args_range;
+  if (parser->next_token.type == pLBRACKET) {
+    rbs_parser_advance(parser);
+    args_range.start = parser->current_token.range.start;
+    CHECK_PARSE(parse_type_list(parser, pRBRACKET, types));
+    ADVANCE_ASSERT(parser, pRBRACKET);
+    args_range.end = parser->current_token.range.end;
+  } else {
+    args_range = NULL_RANGE;
+  }
 
-    rbs_range_t type_range = {
-      .start = name_range.start,
-      .end = rbs_nonnull_pos_or(args_range.end, name_range.end),
-    };
+  rbs_range_t type_range = {
+    .start = name_range.start,
+    .end = rbs_nonnull_pos_or(args_range.end, name_range.end),
+  };
 
-    rbs_location_t *loc = rbs_location_new(ALLOCATOR(), type_range);
-    rbs_loc_alloc_children(ALLOCATOR(), loc, 2);
-    rbs_loc_add_required_child(loc, INTERN("name"), name_range);
-    rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
+  rbs_location_t *loc = rbs_location_new(ALLOCATOR(), type_range);
+  rbs_loc_alloc_children(ALLOCATOR(), loc, 2);
+  rbs_loc_add_required_child(loc, INTERN("name"), name_range);
+  rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
-    if (kind == CLASS_NAME) {
-      *type = (rbs_node_t *) rbs_types_class_instance_new(ALLOCATOR(), loc, type_name, types);
-    } else if (kind == INTERFACE_NAME) {
-      *type = (rbs_node_t *) rbs_types_interface_new(ALLOCATOR(), loc, type_name, types);
-    } else if (kind == ALIAS_NAME) {
-      *type = (rbs_node_t *) rbs_types_alias_new(ALLOCATOR(), loc, type_name, types);
-    }
+  if (kind == CLASS_NAME) {
+    *type = (rbs_node_t *) rbs_types_class_instance_new(ALLOCATOR(), loc, type_name, types);
+  } else if (kind == INTERFACE_NAME) {
+    *type = (rbs_node_t *) rbs_types_interface_new(ALLOCATOR(), loc, type_name, types);
+  } else if (kind == ALIAS_NAME) {
+    *type = (rbs_node_t *) rbs_types_alias_new(ALLOCATOR(), loc, type_name, types);
+  }
 
-    return true;
+  return true;
 }
 
 /*
@@ -1142,7 +1135,7 @@ static bool parse_simple(rbs_parser_t *parser, rbs_node_t **type) {
     rbs_location_t *loc = rbs_location_current_token(parser);
 
     rbs_string_t string = rbs_parser_peek_current_token(parser);
-    rbs_string_t stripped_string = rbs_string_strip_whitespace( &string);
+    rbs_string_t stripped_string = rbs_string_strip_whitespace(&string);
 
     rbs_node_t *literal = (rbs_node_t *) rbs_ast_integer_new(ALLOCATOR(), loc, stripped_string);
     *type = (rbs_node_t *) rbs_types_literal_new(ALLOCATOR(), loc, literal);
@@ -1689,13 +1682,12 @@ NODISCARD
 static bool parse_method_name(rbs_parser_t *parser, rbs_range_t *range, rbs_ast_symbol_t **symbol) {
   rbs_parser_advance(parser);
 
-  switch (parser->current_token.type)
-  {
+  switch (parser->current_token.type) {
   case tUIDENT:
   case tLIDENT:
   case tULIDENT:
   case tULLIDENT:
-  KEYWORD_CASES
+    KEYWORD_CASES
     if (parser->next_token.type == pQUESTION && parser->current_token.range.end.byte_pos == parser->next_token.range.start.byte_pos) {
       range->start = parser->current_token.range.start;
       range->end = parser->next_token.range.end;
@@ -1777,10 +1769,8 @@ static InstanceSingletonKind parse_instance_singleton_kind(rbs_parser_t *parser,
       rbs_parser_advance(parser);
       kind = SINGLETON_KIND;
     } else if (
-      parser->next_token2.type == pQUESTION
-    && parser->next_token.range.end.char_pos == parser->next_token2.range.start.char_pos
-    && parser->next_token3.type == pDOT
-    && allow_selfq) {
+      parser->next_token2.type == pQUESTION && parser->next_token.range.end.char_pos == parser->next_token2.range.start.char_pos && parser->next_token3.type == pDOT && allow_selfq
+    ) {
       rbs_parser_advance(parser);
       rbs_parser_advance(parser);
       rbs_parser_advance(parser);
@@ -1820,8 +1810,7 @@ static bool parse_member_def(rbs_parser_t *parser, bool instance_only, bool acce
 
   rbs_range_t visibility_range;
   rbs_keyword_t *visibility;
-  switch (parser->current_token.type)
-  {
+  switch (parser->current_token.type) {
   case kPRIVATE: {
     visibility_range = parser->current_token.range;
     visibility = rbs_keyword_new(ALLOCATOR(), rbs_location_new(ALLOCATOR(), visibility_range), INTERN("private"));
@@ -1857,7 +1846,7 @@ static bool parse_member_def(rbs_parser_t *parser, bool instance_only, bool acce
   rbs_ast_symbol_t *name = NULL;
   CHECK_PARSE(parse_method_name(parser, &name_range, &name));
 
-  #define SELF_ID rbs_constant_pool_insert_constant(&parser->constant_pool, (const unsigned char *) "self?", strlen("self?"))
+#define SELF_ID rbs_constant_pool_insert_constant(&parser->constant_pool, (const unsigned char *) "self?", strlen("self?"))
 
   if (parser->next_token.type == pDOT && name->constant_id == SELF_ID) {
     rbs_parser_set_error(parser, parser->next_token, true, "`self?` method cannot have visibility");
@@ -1888,18 +1877,17 @@ static bool parse_member_def(rbs_parser_t *parser, bool instance_only, bool acce
     case pARROW:
     case pLBRACE:
     case pLBRACKET:
-    case pQUESTION:
-      {
-        rbs_method_type_t *method_type = NULL;
-        CHECK_PARSE(rbs_parse_method_type(parser, &method_type));
+    case pQUESTION: {
+      rbs_method_type_t *method_type = NULL;
+      CHECK_PARSE(rbs_parse_method_type(parser, &method_type));
 
-        overload_range.end = parser->current_token.range.end;
-        rbs_location_t *loc = rbs_location_new(ALLOCATOR(), overload_range);
-        rbs_node_t *overload = (rbs_node_t *) rbs_ast_members_method_definition_overload_new(ALLOCATOR(), loc, annotations, (rbs_node_t *) method_type);
-        rbs_node_list_append(overloads, overload);
-        member_range.end = parser->current_token.range.end;
-        break;
-      }
+      overload_range.end = parser->current_token.range.end;
+      rbs_location_t *loc = rbs_location_new(ALLOCATOR(), overload_range);
+      rbs_node_t *overload = (rbs_node_t *) rbs_ast_members_method_definition_overload_new(ALLOCATOR(), loc, annotations, (rbs_node_t *) method_type);
+      rbs_node_list_append(overloads, overload);
+      member_range.end = parser->current_token.range.end;
+      break;
+    }
 
     case pDOT3:
       if (accept_overload) {
@@ -2003,8 +1991,7 @@ static bool parse_mixin_member(rbs_parser_t *parser, bool from_interface, rbs_po
   rbs_range_t keyword_range = parser->current_token.range;
 
   bool reset_typevar_scope;
-  switch (type)
-  {
+  switch (type) {
   case kINCLUDE:
     reset_typevar_scope = false;
     break;
@@ -2035,7 +2022,10 @@ static bool parse_mixin_member(rbs_parser_t *parser, bool from_interface, rbs_po
   CHECK_PARSE(class_instance_name(
     parser,
     from_interface ? INTERFACE_NAME : (INTERFACE_NAME | CLASS_NAME),
-    args, &name_range, &args_range, &name
+    args,
+    &name_range,
+    &args_range,
+    &name
   ));
 
   CHECK_PARSE(parser_pop_typevar_table(parser));
@@ -2049,8 +2039,7 @@ static bool parse_mixin_member(rbs_parser_t *parser, bool from_interface, rbs_po
   rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
   rbs_ast_comment_t *comment = rbs_parser_get_comment(parser, comment_pos.line);
-  switch (type)
-  {
+  switch (type) {
   case kINCLUDE:
     *mixin_member = (rbs_node_t *) rbs_ast_members_include_new(ALLOCATOR(), loc, name, args, annotations, comment);
     return true;
@@ -2139,8 +2128,7 @@ static bool parse_variable_member(rbs_parser_t *parser, rbs_position_t comment_p
   comment_pos = rbs_nonnull_pos_or(comment_pos, member_range.start);
   rbs_ast_comment_t *comment = rbs_parser_get_comment(parser, comment_pos.line);
 
-  switch (parser->current_token.type)
-  {
+  switch (parser->current_token.type) {
   case tAIDENT:
   case kATRBS: {
     rbs_range_t name_range = parser->current_token.range;
@@ -2160,7 +2148,7 @@ static bool parse_variable_member(rbs_parser_t *parser, rbs_position_t comment_p
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), NULL_RANGE);
 
-    *variable_member = (rbs_node_t *)rbs_ast_members_instance_variable_new(ALLOCATOR(), loc, name, type, comment);
+    *variable_member = (rbs_node_t *) rbs_ast_members_instance_variable_new(ALLOCATOR(), loc, name, type, comment);
     return true;
   }
   case tA2IDENT: {
@@ -2225,7 +2213,7 @@ static bool parse_variable_member(rbs_parser_t *parser, rbs_position_t comment_p
     rbs_loc_add_required_child(loc, INTERN("colon"), colon_range);
     rbs_loc_add_optional_child(loc, INTERN("kind"), kind_range);
 
-    *variable_member = (rbs_node_t *)rbs_ast_members_class_instance_variable_new(ALLOCATOR(), loc, name, type, comment);
+    *variable_member = (rbs_node_t *) rbs_ast_members_class_instance_variable_new(ALLOCATOR(), loc, name, type, comment);
     return true;
   }
   default:
@@ -2247,8 +2235,7 @@ static bool parse_visibility_member(rbs_parser_t *parser, rbs_node_list_t *annot
 
   rbs_location_t *location = rbs_location_current_token(parser);
 
-  switch (parser->current_token.type)
-  {
+  switch (parser->current_token.type) {
   case kPUBLIC: {
     *visibility_member = (rbs_node_t *) rbs_ast_members_public_new(ALLOCATOR(), location);
     return true;
@@ -2287,8 +2274,7 @@ static bool parse_attribute_member(rbs_parser_t *parser, rbs_position_t comment_
 
   rbs_range_t visibility_range;
   rbs_keyword_t *visibility;
-  switch (parser->current_token.type)
-  {
+  switch (parser->current_token.type) {
   case kPRIVATE: {
     visibility_range = parser->current_token.range;
     visibility = rbs_keyword_new(ALLOCATOR(), rbs_location_new(ALLOCATOR(), visibility_range), INTERN("private"));
@@ -2372,8 +2358,7 @@ static bool parse_attribute_member(rbs_parser_t *parser, rbs_position_t comment_
   rbs_loc_add_optional_child(loc, INTERN("ivar_name"), ivar_name_range);
   rbs_loc_add_optional_child(loc, INTERN("visibility"), visibility_range);
 
-  switch (attr_type)
-  {
+  switch (attr_type) {
   case kATTRREADER:
     *attribute_member = (rbs_node_t *) rbs_ast_members_attr_reader_new(ALLOCATOR(), loc, attr_name, type, ivar_name, kind, annotations, comment, visibility);
     return true;
@@ -2521,7 +2506,7 @@ static bool parse_module_self_types(rbs_parser_t *parser, rbs_node_list_t *array
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
 
     rbs_ast_declarations_module_self_t *self_type = rbs_ast_declarations_module_self_new(ALLOCATOR(), loc, module_name, args);
-    rbs_node_list_append(array, (rbs_node_t *)self_type);
+    rbs_node_list_append(array, (rbs_node_t *) self_type);
 
     if (parser->next_token.type == pCOMMA) {
       rbs_parser_advance(parser);
@@ -2559,8 +2544,7 @@ static bool parse_module_members(rbs_parser_t *parser, rbs_node_list_t **members
     rbs_parser_advance(parser);
 
     rbs_node_t *member;
-    switch (parser->current_token.type)
-    {
+    switch (parser->current_token.type) {
     case kDEF: {
       rbs_ast_members_method_definition_t *method_definition;
       CHECK_PARSE(parse_member_def(parser, false, true, annot_pos, annotations, &method_definition));
@@ -2598,8 +2582,7 @@ static bool parse_module_members(rbs_parser_t *parser, rbs_node_list_t **members
     case kPUBLIC:
     case kPRIVATE:
       if (parser->next_token.range.start.line == parser->current_token.range.start.line) {
-        switch (parser->next_token.type)
-        {
+        switch (parser->next_token.type) {
         case kDEF: {
           rbs_ast_members_method_definition_t *method_definition = NULL;
           CHECK_PARSE(parse_member_def(parser, false, true, annot_pos, annotations, &method_definition));
@@ -2755,7 +2738,6 @@ static bool parse_class_decl_super(rbs_parser_t *parser, rbs_range_t *lt_range, 
     rbs_loc_alloc_children(ALLOCATOR(), loc, 2);
     rbs_loc_add_required_child(loc, INTERN("name"), name_range);
     rbs_loc_add_optional_child(loc, INTERN("args"), args_range);
-
 
     *super = rbs_ast_declarations_class_super_new(ALLOCATOR(), loc, name, args);
   } else {
@@ -2988,7 +2970,7 @@ static bool parse_namespace(rbs_parser_t *parser, rbs_range_t *rg, rbs_namespace
     if (parser->next_token.type == tUIDENT && parser->next_token2.type == pCOLON2) {
       rbs_location_t *symbolLoc = rbs_location_new(ALLOCATOR(), parser->next_token.range);
       rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, INTERN_TOKEN(parser, parser->next_token));
-      rbs_node_list_append(path, (rbs_node_t *)symbol);
+      rbs_node_list_append(path, (rbs_node_t *) symbol);
       if (rbs_null_position_p(rg->start)) {
         rg->start = parser->next_token.range.start;
       }
@@ -3018,73 +3000,69 @@ static bool parse_use_clauses(rbs_parser_t *parser, rbs_node_list_t *clauses) {
     rbs_namespace_t *namespace = NULL;
     CHECK_PARSE(parse_namespace(parser, &namespace_range, &namespace));
 
-    switch (parser->next_token.type)
-    {
-      case tLIDENT:
-      case tULIDENT:
-      case tUIDENT: {
+    switch (parser->next_token.type) {
+    case tLIDENT:
+    case tULIDENT:
+    case tUIDENT: {
+      rbs_parser_advance(parser);
+
+      enum RBSTokenType ident_type = parser->current_token.type;
+
+      rbs_range_t type_name_range = rbs_null_range_p(namespace_range) ? parser->current_token.range : (rbs_range_t) { .start = namespace_range.start, .end = parser->current_token.range.end };
+
+      rbs_location_t *symbolLoc = rbs_location_current_token(parser);
+      rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, INTERN_TOKEN(parser, parser->current_token));
+      rbs_type_name_t *type_name = rbs_type_name_new(ALLOCATOR(), rbs_location_new(ALLOCATOR(), type_name_range), namespace, symbol);
+
+      rbs_range_t keyword_range = NULL_RANGE;
+      rbs_range_t new_name_range = NULL_RANGE;
+      rbs_ast_symbol_t *new_name = NULL;
+      rbs_range_t clause_range = type_name_range;
+      if (parser->next_token.type == kAS) {
         rbs_parser_advance(parser);
+        keyword_range = parser->current_token.range;
 
-        enum RBSTokenType ident_type = parser->current_token.type;
+        if (ident_type == tUIDENT) ADVANCE_ASSERT(parser, tUIDENT);
+        if (ident_type == tLIDENT) ADVANCE_ASSERT(parser, tLIDENT);
+        if (ident_type == tULIDENT) ADVANCE_ASSERT(parser, tULIDENT);
 
-        rbs_range_t type_name_range = rbs_null_range_p(namespace_range)
-          ? parser->current_token.range
-          : (rbs_range_t) { .start = namespace_range.start, .end = parser->current_token.range.end };
-
-        rbs_location_t *symbolLoc = rbs_location_current_token(parser);
-        rbs_ast_symbol_t *symbol = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, INTERN_TOKEN(parser, parser->current_token));
-        rbs_type_name_t *type_name = rbs_type_name_new(ALLOCATOR(), rbs_location_new(ALLOCATOR(), type_name_range),namespace, symbol);
-
-        rbs_range_t keyword_range = NULL_RANGE;
-        rbs_range_t new_name_range = NULL_RANGE;
-        rbs_ast_symbol_t *new_name = NULL;
-        rbs_range_t clause_range = type_name_range;
-        if (parser->next_token.type == kAS) {
-          rbs_parser_advance(parser);
-          keyword_range = parser->current_token.range;
-
-          if (ident_type == tUIDENT) ADVANCE_ASSERT(parser, tUIDENT);
-          if (ident_type == tLIDENT) ADVANCE_ASSERT(parser, tLIDENT);
-          if (ident_type == tULIDENT) ADVANCE_ASSERT(parser, tULIDENT);
-
-          rbs_location_t *symbolLoc = rbs_location_new(ALLOCATOR(), new_name_range);
-          new_name = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, INTERN_TOKEN(parser, parser->current_token));
-          new_name_range = parser->current_token.range;
-          clause_range.end = new_name_range.end;
-        }
-
-        rbs_location_t *loc = rbs_location_new(ALLOCATOR(), clause_range);
-        rbs_loc_alloc_children(ALLOCATOR(), loc, 3);
-        rbs_loc_add_required_child(loc, INTERN("type_name"), type_name_range);
-        rbs_loc_add_optional_child(loc, INTERN("keyword"), keyword_range);
-        rbs_loc_add_optional_child(loc, INTERN("new_name"), new_name_range);
-
-        rbs_ast_directives_use_single_clause_t *clause = rbs_ast_directives_use_single_clause_new(ALLOCATOR(), loc, type_name, new_name);
-        rbs_node_list_append(clauses, (rbs_node_t *)clause);
-
-        break;
+        rbs_location_t *symbolLoc = rbs_location_new(ALLOCATOR(), new_name_range);
+        new_name = rbs_ast_symbol_new(ALLOCATOR(), symbolLoc, &parser->constant_pool, INTERN_TOKEN(parser, parser->current_token));
+        new_name_range = parser->current_token.range;
+        clause_range.end = new_name_range.end;
       }
-      case pSTAR:
-      {
-        rbs_range_t clause_range = namespace_range;
-        rbs_parser_advance(parser);
 
-        rbs_range_t star_range = parser->current_token.range;
-        clause_range.end = star_range.end;
+      rbs_location_t *loc = rbs_location_new(ALLOCATOR(), clause_range);
+      rbs_loc_alloc_children(ALLOCATOR(), loc, 3);
+      rbs_loc_add_required_child(loc, INTERN("type_name"), type_name_range);
+      rbs_loc_add_optional_child(loc, INTERN("keyword"), keyword_range);
+      rbs_loc_add_optional_child(loc, INTERN("new_name"), new_name_range);
 
-        rbs_location_t *loc = rbs_location_new(ALLOCATOR(), clause_range);
-        rbs_loc_alloc_children(ALLOCATOR(), loc, 2);
-        rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
-        rbs_loc_add_required_child(loc, INTERN("star"), star_range);
+      rbs_ast_directives_use_single_clause_t *clause = rbs_ast_directives_use_single_clause_new(ALLOCATOR(), loc, type_name, new_name);
+      rbs_node_list_append(clauses, (rbs_node_t *) clause);
 
-        rbs_ast_directives_use_wildcard_clause_t *clause = rbs_ast_directives_use_wildcard_clause_new(ALLOCATOR(), loc, namespace);
-        rbs_node_list_append(clauses, (rbs_node_t *)clause);
+      break;
+    }
+    case pSTAR: {
+      rbs_range_t clause_range = namespace_range;
+      rbs_parser_advance(parser);
 
-        break;
-      }
-      default:
-        rbs_parser_set_error(parser, parser->next_token, true, "use clause is expected");
-        return false;
+      rbs_range_t star_range = parser->current_token.range;
+      clause_range.end = star_range.end;
+
+      rbs_location_t *loc = rbs_location_new(ALLOCATOR(), clause_range);
+      rbs_loc_alloc_children(ALLOCATOR(), loc, 2);
+      rbs_loc_add_required_child(loc, INTERN("namespace"), namespace_range);
+      rbs_loc_add_required_child(loc, INTERN("star"), star_range);
+
+      rbs_ast_directives_use_wildcard_clause_t *clause = rbs_ast_directives_use_wildcard_clause_new(ALLOCATOR(), loc, namespace);
+      rbs_node_list_append(clauses, (rbs_node_t *) clause);
+
+      break;
+    }
+    default:
+      rbs_parser_set_error(parser, parser->next_token, true, "use clause is expected");
+      return false;
     }
 
     if (parser->next_token.type == pCOMMA) {
@@ -3243,7 +3221,7 @@ bool rbs_parse_signature(rbs_parser_t *parser, rbs_signature_t **signature) {
     if (use_node == NULL) {
       rbs_node_list_append(dirs, NULL);
     } else {
-      rbs_node_list_append(dirs, (rbs_node_t *)use_node);
+      rbs_node_list_append(dirs, (rbs_node_t *) use_node);
     }
   }
 
@@ -3544,145 +3522,145 @@ static bool parse_inline_comment(rbs_parser_t *parser, rbs_location_t **comment)
 NODISCARD
 static bool parse_inline_leading_annotation(rbs_parser_t *parser, rbs_ast_ruby_annotations_t **annotation) {
   switch (parser->next_token.type) {
-    case pCOLON: {
-      rbs_range_t colon_range = parser->next_token.range;
-      rbs_parser_advance(parser);
+  case pCOLON: {
+    rbs_range_t colon_range = parser->next_token.range;
+    rbs_parser_advance(parser);
 
-      rbs_node_list_t *annotations = rbs_node_list_new(ALLOCATOR());
-      rbs_method_type_t *method_type = NULL;
+    rbs_node_list_t *annotations = rbs_node_list_new(ALLOCATOR());
+    rbs_method_type_t *method_type = NULL;
 
-      if (!parse_method_overload(parser, annotations, &method_type)) {
+    if (!parse_method_overload(parser, annotations, &method_type)) {
+      return false;
+    }
+
+    rbs_range_t full_range = {
+      .start = colon_range.start,
+      .end = parser->current_token.range.end
+    };
+
+    rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
+    rbs_location_t *colon_loc = rbs_location_new(ALLOCATOR(), colon_range);
+
+    *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_colon_method_type_annotation_new(
+      ALLOCATOR(),
+      full_loc,
+      colon_loc,
+      annotations,
+      (rbs_node_t *) method_type
+    );
+    return true;
+  }
+  case kATRBS: {
+    rbs_range_t rbs_range = parser->next_token.range;
+    rbs_parser_advance(parser);
+
+    switch (parser->next_token.type) {
+    case pLPAREN:
+    case pLBRACKET:
+    case pLBRACE:
+    case tANNOTATION: {
+      rbs_node_list_t *overloads = rbs_node_list_new(ALLOCATOR());
+      rbs_location_list_t *bar_locations = rbs_location_list_new(ALLOCATOR());
+
+      if (!parse_inline_method_overloads(parser, overloads, bar_locations)) {
         return false;
       }
 
       rbs_range_t full_range = {
-        .start = colon_range.start,
+        .start = rbs_range.start,
         .end = parser->current_token.range.end
       };
 
       rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
-      rbs_location_t *colon_loc = rbs_location_new(ALLOCATOR(), colon_range);
+      rbs_location_t *rbs_loc = rbs_location_new(ALLOCATOR(), rbs_range);
 
-      *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_colon_method_type_annotation_new(
+      *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_method_types_annotation_new(
         ALLOCATOR(),
         full_loc,
-        colon_loc,
-        annotations,
-        (rbs_node_t *) method_type
+        rbs_loc,
+        overloads,
+        bar_locations
       );
       return true;
     }
-    case kATRBS: {
-      rbs_range_t rbs_range = parser->next_token.range;
+    case kSKIP: {
       rbs_parser_advance(parser);
 
-      switch (parser->next_token.type) {
-        case pLPAREN:
-        case pLBRACKET:
-        case pLBRACE:
-        case tANNOTATION: {
-          rbs_node_list_t *overloads = rbs_node_list_new(ALLOCATOR());
-          rbs_location_list_t *bar_locations = rbs_location_list_new(ALLOCATOR());
+      rbs_range_t skip_range = parser->current_token.range;
+      rbs_location_t *skip_loc = rbs_location_new(ALLOCATOR(), skip_range);
 
-          if (!parse_inline_method_overloads(parser, overloads, bar_locations)) {
-            return false;
-          }
-
-          rbs_range_t full_range = {
-            .start = rbs_range.start,
-            .end = parser->current_token.range.end
-          };
-
-          rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
-          rbs_location_t *rbs_loc = rbs_location_new(ALLOCATOR(), rbs_range);
-
-          *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_method_types_annotation_new(
-            ALLOCATOR(),
-            full_loc,
-            rbs_loc,
-            overloads,
-            bar_locations
-          );
-          return true;
-        }
-        case kSKIP: {
-          rbs_parser_advance(parser);
-
-          rbs_range_t skip_range = parser->current_token.range;
-          rbs_location_t *skip_loc = rbs_location_new(ALLOCATOR(), skip_range);
-
-          rbs_location_t *comment_loc = NULL;
-          if (!parse_inline_comment(parser, &comment_loc)) {
-            return false;
-          }
-
-          rbs_range_t full_range = {
-            .start = rbs_range.start,
-            .end = parser->current_token.range.end
-          };
-
-          rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
-          rbs_location_t *rbs_loc = rbs_location_new(ALLOCATOR(), rbs_range);
-
-          *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_skip_annotation_new(
-            ALLOCATOR(),
-            full_loc,
-            rbs_loc,
-            skip_loc,
-            comment_loc
-          );
-          return true;
-        }
-        case kRETURN: {
-          rbs_parser_advance(parser);
-
-          rbs_range_t return_range = parser->current_token.range;
-          rbs_location_t *return_loc = rbs_location_new(ALLOCATOR(), return_range);
-
-          ADVANCE_ASSERT(parser, pCOLON);
-
-          rbs_range_t colon_range = parser->current_token.range;
-          rbs_location_t *colon_loc = rbs_location_new(ALLOCATOR(), colon_range);
-
-          rbs_node_t *return_type = NULL;
-          if (!rbs_parse_type(parser, &return_type)) {
-            return false;
-          }
-
-          rbs_location_t *comment_loc = NULL;
-          if (!parse_inline_comment(parser, &comment_loc)) {
-            return false;
-          }
-
-          rbs_range_t full_range = {
-            .start = rbs_range.start,
-            .end = parser->current_token.range.end
-          };
-
-          rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
-          rbs_location_t *rbs_loc = rbs_location_new(ALLOCATOR(), rbs_range);
-
-          *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_return_type_annotation_new(
-            ALLOCATOR(),
-            full_loc,
-            rbs_loc,
-            return_loc,
-            colon_loc,
-            return_type,
-            comment_loc
-          );
-          return true;
-        }
-        default: {
-          rbs_parser_set_error(parser, parser->next_token, true, "unexpected token for @rbs annotation");
-          return false;
-        }
+      rbs_location_t *comment_loc = NULL;
+      if (!parse_inline_comment(parser, &comment_loc)) {
+        return false;
       }
+
+      rbs_range_t full_range = {
+        .start = rbs_range.start,
+        .end = parser->current_token.range.end
+      };
+
+      rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
+      rbs_location_t *rbs_loc = rbs_location_new(ALLOCATOR(), rbs_range);
+
+      *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_skip_annotation_new(
+        ALLOCATOR(),
+        full_loc,
+        rbs_loc,
+        skip_loc,
+        comment_loc
+      );
+      return true;
+    }
+    case kRETURN: {
+      rbs_parser_advance(parser);
+
+      rbs_range_t return_range = parser->current_token.range;
+      rbs_location_t *return_loc = rbs_location_new(ALLOCATOR(), return_range);
+
+      ADVANCE_ASSERT(parser, pCOLON);
+
+      rbs_range_t colon_range = parser->current_token.range;
+      rbs_location_t *colon_loc = rbs_location_new(ALLOCATOR(), colon_range);
+
+      rbs_node_t *return_type = NULL;
+      if (!rbs_parse_type(parser, &return_type)) {
+        return false;
+      }
+
+      rbs_location_t *comment_loc = NULL;
+      if (!parse_inline_comment(parser, &comment_loc)) {
+        return false;
+      }
+
+      rbs_range_t full_range = {
+        .start = rbs_range.start,
+        .end = parser->current_token.range.end
+      };
+
+      rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
+      rbs_location_t *rbs_loc = rbs_location_new(ALLOCATOR(), rbs_range);
+
+      *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_return_type_annotation_new(
+        ALLOCATOR(),
+        full_loc,
+        rbs_loc,
+        return_loc,
+        colon_loc,
+        return_type,
+        comment_loc
+      );
+      return true;
     }
     default: {
-      rbs_parser_set_error(parser, parser->next_token, true, "unexpected token for inline leading annotation");
+      rbs_parser_set_error(parser, parser->next_token, true, "unexpected token for @rbs annotation");
       return false;
     }
+    }
+  }
+  default: {
+    rbs_parser_set_error(parser, parser->next_token, true, "unexpected token for inline leading annotation");
+    return false;
+  }
   }
 }
 
@@ -3691,34 +3669,34 @@ static bool parse_inline_trailing_annotation(rbs_parser_t *parser, rbs_ast_ruby_
   rbs_range_t prefix_range = parser->next_token.range;
 
   switch (parser->next_token.type) {
-    case pCOLON: {
-      rbs_parser_advance(parser);
+  case pCOLON: {
+    rbs_parser_advance(parser);
 
-      rbs_node_t *type = NULL;
-      if (!rbs_parse_type(parser, &type)) {
-        return false;
-      }
-
-      rbs_range_t full_range = {
-        .start = prefix_range.start,
-        .end = parser->current_token.range.end
-      };
-
-      rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
-      rbs_location_t *prefix_loc = rbs_location_new(ALLOCATOR(), prefix_range);
-
-      *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_node_type_assertion_new(
-        ALLOCATOR(),
-        full_loc,
-        prefix_loc,
-        type
-      );
-      return true;
-    }
-    default: {
-      rbs_parser_set_error(parser, parser->next_token, true, "unexpected token for inline trailing annotation");
+    rbs_node_t *type = NULL;
+    if (!rbs_parse_type(parser, &type)) {
       return false;
     }
+
+    rbs_range_t full_range = {
+      .start = prefix_range.start,
+      .end = parser->current_token.range.end
+    };
+
+    rbs_location_t *full_loc = rbs_location_new(ALLOCATOR(), full_range);
+    rbs_location_t *prefix_loc = rbs_location_new(ALLOCATOR(), prefix_range);
+
+    *annotation = (rbs_ast_ruby_annotations_t *) rbs_ast_ruby_annotations_node_type_assertion_new(
+      ALLOCATOR(),
+      full_loc,
+      prefix_loc,
+      type
+    );
+    return true;
+  }
+  default: {
+    rbs_parser_set_error(parser, parser->next_token, true, "unexpected token for inline trailing annotation");
+    return false;
+  }
   }
 }
 

@@ -5,77 +5,77 @@ static const char *RBS_TOKENTYPE_NAMES[] = {
   "pEOF",
   "ErrorToken",
 
-  "pLPAREN",          /* ( */
-  "pRPAREN",          /* ) */
-  "pCOLON",           /* : */
-  "pCOLON2",          /* :: */
-  "pLBRACKET",        /* [ */
-  "pRBRACKET",        /* ] */
-  "pLBRACE",          /* { */
-  "pRBRACE",          /* } */
-  "pHAT",             /* ^ */
-  "pARROW",           /* -> */
-  "pFATARROW",        /* => */
-  "pCOMMA",           /* , */
-  "pBAR",             /* | */
-  "pAMP",             /* & */
-  "pSTAR",            /* * */
-  "pSTAR2",           /* ** */
-  "pDOT",             /* . */
-  "pDOT3",            /* ... */
-  "pBANG",            /* ! */
-  "pQUESTION",        /* ? */
-  "pLT",              /* < */
-  "pEQ",              /* = */
+  "pLPAREN",   /* ( */
+  "pRPAREN",   /* ) */
+  "pCOLON",    /* : */
+  "pCOLON2",   /* :: */
+  "pLBRACKET", /* [ */
+  "pRBRACKET", /* ] */
+  "pLBRACE",   /* { */
+  "pRBRACE",   /* } */
+  "pHAT",      /* ^ */
+  "pARROW",    /* -> */
+  "pFATARROW", /* => */
+  "pCOMMA",    /* , */
+  "pBAR",      /* | */
+  "pAMP",      /* & */
+  "pSTAR",     /* * */
+  "pSTAR2",    /* ** */
+  "pDOT",      /* . */
+  "pDOT3",     /* ... */
+  "pBANG",     /* ! */
+  "pQUESTION", /* ? */
+  "pLT",       /* < */
+  "pEQ",       /* = */
 
-  "kALIAS",           /* alias */
-  "kATTRACCESSOR",    /* attr_accessor */
-  "kATTRREADER",      /* attr_reader */
-  "kATTRWRITER",      /* attr_writer */
-  "kBOOL",            /* bool */
-  "kBOT",             /* bot */
-  "kCLASS",           /* class */
-  "kDEF",             /* def */
-  "kEND",             /* end */
-  "kEXTEND",          /* extend */
-  "kFALSE",           /* kFALSE */
-  "kIN",              /* in */
-  "kINCLUDE",         /* include */
-  "kINSTANCE",        /* instance */
-  "kINTERFACE",       /* interface */
-  "kMODULE",          /* module */
-  "kNIL",             /* nil */
-  "kOUT",             /* out */
-  "kPREPEND",         /* prepend */
-  "kPRIVATE",         /* private */
-  "kPUBLIC",          /* public */
-  "kSELF",            /* self */
-  "kSINGLETON",       /* singleton */
-  "kTOP",             /* top */
-  "kTRUE",            /* true */
-  "kTYPE",            /* type */
-  "kUNCHECKED",       /* unchecked */
-  "kUNTYPED",         /* untyped */
-  "kVOID",            /* void */
-  "kUSE",             /* use */
-  "kAS",              /* as */
-  "k__TODO__",        /* __todo__ */
-  "kATRBS",           /* @rbs */
-  "kSKIP",            /* skip */
-  "kRETURN",          /* return */
+  "kALIAS",        /* alias */
+  "kATTRACCESSOR", /* attr_accessor */
+  "kATTRREADER",   /* attr_reader */
+  "kATTRWRITER",   /* attr_writer */
+  "kBOOL",         /* bool */
+  "kBOT",          /* bot */
+  "kCLASS",        /* class */
+  "kDEF",          /* def */
+  "kEND",          /* end */
+  "kEXTEND",       /* extend */
+  "kFALSE",        /* kFALSE */
+  "kIN",           /* in */
+  "kINCLUDE",      /* include */
+  "kINSTANCE",     /* instance */
+  "kINTERFACE",    /* interface */
+  "kMODULE",       /* module */
+  "kNIL",          /* nil */
+  "kOUT",          /* out */
+  "kPREPEND",      /* prepend */
+  "kPRIVATE",      /* private */
+  "kPUBLIC",       /* public */
+  "kSELF",         /* self */
+  "kSINGLETON",    /* singleton */
+  "kTOP",          /* top */
+  "kTRUE",         /* true */
+  "kTYPE",         /* type */
+  "kUNCHECKED",    /* unchecked */
+  "kUNTYPED",      /* untyped */
+  "kVOID",         /* void */
+  "kUSE",          /* use */
+  "kAS",           /* as */
+  "k__TODO__",     /* __todo__ */
+  "kATRBS",        /* @rbs */
+  "kSKIP",         /* skip */
+  "kRETURN",       /* return */
 
-  "tLIDENT",          /* Identifiers starting with lower case */
-  "tUIDENT",          /* Identifiers starting with upper case */
-  "tULIDENT",         /* Identifiers starting with `_` */
+  "tLIDENT",  /* Identifiers starting with lower case */
+  "tUIDENT",  /* Identifiers starting with upper case */
+  "tULIDENT", /* Identifiers starting with `_` */
   "tULLIDENT",
-  "tGIDENT",          /* Identifiers starting with `$` */
-  "tAIDENT",          /* Identifiers starting with `@` */
-  "tA2IDENT",         /* Identifiers starting with `@@` */
+  "tGIDENT",  /* Identifiers starting with `$` */
+  "tAIDENT",  /* Identifiers starting with `@` */
+  "tA2IDENT", /* Identifiers starting with `@@` */
   "tBANGIDENT",
   "tEQIDENT",
-  "tQIDENT",          /* Quoted identifier */
-  "pAREF_OPR",        /* [] */
-  "tOPERATOR",        /* Operator identifier */
+  "tQIDENT",   /* Quoted identifier */
+  "pAREF_OPR", /* [] */
+  "tOPERATOR", /* Operator identifier */
 
   "tCOMMENT",
   "tLINECOMMENT",
@@ -83,13 +83,13 @@ static const char *RBS_TOKENTYPE_NAMES[] = {
 
   "tTRIVIA",
 
-  "tDQSTRING",        /* Double quoted string */
-  "tSQSTRING",        /* Single quoted string */
-  "tINTEGER",         /* Integer */
-  "tSYMBOL",          /* Symbol */
+  "tDQSTRING", /* Double quoted string */
+  "tSQSTRING", /* Single quoted string */
+  "tINTEGER",  /* Integer */
+  "tSYMBOL",   /* Symbol */
   "tDQSYMBOL",
   "tSQSYMBOL",
-  "tANNOTATION",      /* Annotation */
+  "tANNOTATION", /* Annotation */
 };
 
 rbs_token_t NullToken = { .type = NullType, .range = {} };
@@ -180,7 +180,7 @@ void rbs_skip(rbs_lexer_t *lexer) {
 }
 
 void rbs_skipn(rbs_lexer_t *lexer, size_t size) {
-  for (size_t i = 0; i < size; i ++) {
+  for (size_t i = 0; i < size; i++) {
     rbs_peek(lexer);
     rbs_skip(lexer);
   }
