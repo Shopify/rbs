@@ -3403,7 +3403,9 @@ rbs_lexer_t *rbs_lexer_new(rbs_allocator_t *allocator, rbs_string_t string, cons
     return lexer;
 }
 
-rbs_parser_t *rbs_parser_new_with_allocator(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos, rbs_allocator_t *allocator) {
+rbs_parser_t *rbs_parser_new(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
+    rbs_allocator_t *allocator = rbs_allocator_init();
+
     rbs_lexer_t *lexer = rbs_lexer_new(allocator, string, encoding, start_pos, end_pos);
     rbs_parser_t *parser = rbs_allocator_alloc(allocator, rbs_parser_t);
 
@@ -3421,7 +3423,6 @@ rbs_parser_t *rbs_parser_new_with_allocator(rbs_string_t string, const rbs_encod
         .constant_pool = { 0 },
         .allocator = allocator,
         .error = NULL,
-        .owns_allocator = false,
     };
 
     // The parser's constant pool is mainly used for storing the names of type variables, which usually aren't many.
@@ -3451,22 +3452,9 @@ rbs_parser_t *rbs_parser_new_with_allocator(rbs_string_t string, const rbs_encod
     return parser;
 }
 
-rbs_parser_t *rbs_parser_new(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos) {
-    rbs_allocator_t *allocator = rbs_allocator_init();
-    rbs_parser_t *parser = rbs_parser_new_with_allocator(string, encoding, start_pos, end_pos, allocator);
-    parser->owns_allocator = true;
-    return parser;
-}
-
 void rbs_parser_free(rbs_parser_t *parser) {
     rbs_constant_pool_free(&parser->constant_pool);
-    if (parser->owns_allocator) {
-        rbs_allocator_free(ALLOCATOR());
-    }
-}
-
-void rbs_parser_free_and_allocator(rbs_parser_t *parser) {
-    rbs_constant_pool_free(&parser->constant_pool);
+    rbs_allocator_free(ALLOCATOR());
 }
 
 void rbs_parser_set_error(rbs_parser_t *parser, rbs_token_t tok, bool syntax_error, const char *fmt, ...) {

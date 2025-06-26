@@ -27,8 +27,6 @@ void parse_lines_in(const char *file_path, bool print_results) {
         printf("Parsing %s line by line...\n", file_path);
     }
 
-    rbs_allocator_t *allocator = rbs_allocator_init();
-
     // Read and parse each line
     while (fgets(line, sizeof(line), file)) {
         line_count++;
@@ -67,7 +65,7 @@ void parse_lines_in(const char *file_path, bool print_results) {
         };
 
         // Create parser for this line
-        rbs_parser_t *parser = rbs_parser_new_with_allocator(rbs_string, RBS_ENCODING_UTF_8_ENTRY, 0, (int) len, allocator);
+        rbs_parser_t *parser = rbs_parser_new(rbs_string, RBS_ENCODING_UTF_8_ENTRY, 0, (int) len);
         if (!parser) {
             printf("Error: Failed to create RBS parser for line %d\n", line_count);
             failed_parses++;
@@ -89,8 +87,6 @@ void parse_lines_in(const char *file_path, bool print_results) {
         // Cleanup parser for this line
         rbs_parser_free(parser);
     }
-
-    rbs_allocator_free(allocator);
 
     // End timing
     clock_t end_time = clock();
