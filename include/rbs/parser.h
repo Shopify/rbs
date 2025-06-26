@@ -57,6 +57,7 @@ typedef struct {
     rbs_constant_pool_t constant_pool;
     rbs_allocator_t *allocator;
     rbs_error_t *error;
+    bool owns_allocator;
 } rbs_parser_t;
 
 /**
@@ -100,6 +101,7 @@ rbs_lexer_t *rbs_lexer_new(rbs_allocator_t *, rbs_string_t string, const rbs_enc
  * ```
  * */
 rbs_parser_t *rbs_parser_new(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos);
+rbs_parser_t *rbs_parser_new_with_allocator(rbs_string_t string, const rbs_encoding_t *encoding, int start_pos, int end_pos, rbs_allocator_t *allocator);
 void rbs_parser_free(rbs_parser_t *parser);
 
 /**
