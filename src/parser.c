@@ -3165,7 +3165,8 @@ static void comment_insert_new_line(rbs_allocator_t *allocator, rbs_comment_t *c
     }
 
     if (com->line_count == com->line_size) {
-        com->line_size += 10;
+        com->line_size *= 2;
+        com->line_size++;
 
         if (com->tokens) {
             rbs_token_t *p = com->tokens;
