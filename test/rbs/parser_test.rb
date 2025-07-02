@@ -687,6 +687,15 @@ class RBS::ParserTest < Test::Unit::TestCase
     end.tap do |exn|
       assert_equal "test.rbs:1:13...1:16: Syntax error: optional keyword argument type is expected, token=`Bar` (tUIDENT)", exn.message
     end
+
+    assert_raises RBS::ParsingError do
+      RBS::Parser.parse_method_type(buffer("-> Foo.Bar"))
+    end.tap do |exn|
+      assert_equal(
+        "test.rbs:1:6...1:7: Syntax error: expected a token `pEOF`, token=`.` (pDOT)",
+        exn.message
+      )
+    end
   end
 
   def test_duplicate_keyword
