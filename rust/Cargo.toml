@@ -1,5 +1,5 @@
 [workspace]
-members = [
+members = [ "ruby-rbs",
   "ruby-rbs-sys",
 ]
 
