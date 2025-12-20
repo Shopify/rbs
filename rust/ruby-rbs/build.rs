@@ -334,11 +334,10 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
     writeln!(file, "// Nodes to generate: {}", config.nodes.len())?;
     writeln!(file)?;
 
-    // TODO: Go through all of the nodes and generate the structs to back them up
     for node in &config.nodes {
-        writeln!(file, "#[allow(dead_code)]")?; // TODO: Remove this once all nodes that need parser are implemented
         writeln!(file, "#[derive(Debug)]")?;
         writeln!(file, "pub struct {}<'a> {{", node.rust_name)?;
+        writeln!(file, "    #[allow(dead_code)]")?;
         writeln!(file, "    parser: NonNull<rbs_parser_t>,")?;
         writeln!(
             file,
