@@ -143,7 +143,9 @@ fn write_node_field_accessor(
             field.c_name()
         )?;
     }
-    writeln!(file, "    }}")
+    writeln!(file, "    }}")?;
+    writeln!(file)?;
+    Ok(())
 }
 
 fn write_visit_trait(file: &mut File, config: &Config) -> Result<(), Box<dyn std::error::Error>> {
@@ -369,11 +371,13 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                             field.c_name()
                         )?;
                         writeln!(file, "    }}")?;
+                        writeln!(file)?;
                     }
                     "bool" => {
                         writeln!(file, "    pub fn {}(&self) -> bool {{", field.name)?;
                         writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
                         writeln!(file, "    }}")?;
+                        writeln!(file)?;
                     }
                     "rbs_ast_comment" => {
                         write_node_field_accessor(&mut file, field, "CommentNode")?
@@ -412,6 +416,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                             )?;
                             writeln!(file, "    }}")?;
                         }
+                        writeln!(file)?;
                     }
                     "rbs_location_list" => {
                         if field.optional {
@@ -444,6 +449,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                             )?;
                             writeln!(file, "    }}")?;
                         }
+                        writeln!(file)?;
                     }
                     "rbs_namespace" => {
                         write_node_field_accessor(&mut file, field, "NamespaceNode")?;
@@ -474,6 +480,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                             )?;
                         }
                         writeln!(file, "    }}")?;
+                        writeln!(file)?;
                     }
                     "rbs_node_list" => {
                         write_node_field_accessor(&mut file, field, "NodeList")?;
