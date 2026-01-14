@@ -117,6 +117,7 @@ fn write_node_field_accessor(
     rust_type: &str,
 ) -> std::io::Result<()> {
     if field.optional {
+        writeln!(file, "    #[must_use]")?;
         writeln!(
             file,
             "    pub fn {}(&self) -> Option<{rust_type}<'a>> {{",
@@ -136,6 +137,7 @@ fn write_node_field_accessor(
         )?;
         writeln!(file, "        }}")?;
     } else {
+        writeln!(file, "    #[must_use]")?;
         writeln!(
             file,
             "    pub fn {}(&self) -> {rust_type}<'a> {{",
@@ -372,6 +374,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
             for field in fields {
                 match field.c_type.as_str() {
                     "rbs_string" => {
+                        writeln!(file, "    #[must_use]")?;
                         writeln!(file, "    pub fn {}(&self) -> RBSString {{", field.name)?;
                         writeln!(
                             file,
@@ -382,6 +385,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                         writeln!(file)?;
                     }
                     "bool" => {
+                        writeln!(file, "    #[must_use]")?;
                         writeln!(file, "    pub fn {}(&self) -> bool {{", field.name)?;
                         writeln!(file, "        unsafe {{ (*self.pointer).{} }}", field.name)?;
                         writeln!(file, "    }}")?;
@@ -399,6 +403,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                     }
                     "rbs_location" => {
                         if field.optional {
+                            writeln!(file, "    #[must_use]")?;
                             writeln!(
                                 file,
                                 "    pub fn {}(&self) -> Option<RBSLocation> {{",
@@ -416,6 +421,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                             writeln!(file, "        }}")?;
                             writeln!(file, "    }}")?;
                         } else {
+                            writeln!(file, "    #[must_use]")?;
                             writeln!(file, "    pub fn {}(&self) -> RBSLocation {{", field.name)?;
                             writeln!(
                                 file,
@@ -428,6 +434,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                     }
                     "rbs_location_list" => {
                         if field.optional {
+                            writeln!(file, "    #[must_use]")?;
                             writeln!(
                                 file,
                                 "    pub fn {}(&self) -> Option<RBSLocationList> {{",
@@ -445,6 +452,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                             writeln!(file, "        }}")?;
                             writeln!(file, "    }}")?;
                         } else {
+                            writeln!(file, "    #[must_use]")?;
                             writeln!(
                                 file,
                                 "    pub fn {}(&self) -> RBSLocationList {{",
@@ -469,6 +477,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                             field.name.as_str()
                         };
                         if field.optional {
+                            writeln!(file, "    #[must_use]")?;
                             writeln!(file, "    pub fn {name}(&self) -> Option<Node<'a>> {{")?;
                             writeln!(
                                 file,
@@ -480,6 +489,7 @@ fn generate(config: &Config) -> Result<(), Box<dyn Error>> {
                                 "        if ptr.is_null() {{ None }} else {{ Some(Node::new(self.parser, ptr)) }}"
                             )?;
                         } else {
+                            writeln!(file, "    #[must_use]")?;
                             writeln!(file, "    pub fn {name}(&self) -> Node<'a> {{")?;
                             writeln!(
                                 file,
