@@ -44,6 +44,7 @@ GEM
     erb (6.0.1)
     extconf_compile_commands_json (0.0.7)
     ffi (1.17.3)
+    ffi (1.17.3-x86_64-linux-gnu)
     fileutils (1.8.0)
     goodcheck (3.1.0)
       marcel (>= 1.0, < 2.0)
@@ -69,7 +70,6 @@ GEM
     logger (1.7.0)
     marcel (1.1.0)
     memory_profiler (1.1.0)
-    mini_portile2 (2.8.9)
     minitest (6.0.1)
       prism (~> 1.5)
     minitest-mock (5.27.0)
@@ -79,8 +79,7 @@ GEM
     net-smtp (0.5.1)
       net-protocol
     nkf (0.2.0)
-    nokogiri (1.19.0)
-      mini_portile2 (~> 2.8.2)
+    nokogiri (1.19.1-x86_64-linux-gnu)
       racc (~> 1.4)
     ostruct (0.6.3)
     parallel (1.27.0)
@@ -141,7 +140,7 @@ GEM
     rubocop-ast (1.49.0)
       parser (>= 3.3.7.2)
       prism (~> 1.7)
-    rubocop-on-rbs (1.8.0)
+    rubocop-on-rbs (1.9.1)
       lint_roller (~> 1.1)
       rbs (~> 3.5)
       rubocop (>= 1.72.1, < 2.0)
@@ -190,7 +189,7 @@ GEM
     zlib (3.2.2)
 
 PLATFORMS
-  ruby
+  x86_64-linux
 
 DEPENDENCIES
   abbrev
