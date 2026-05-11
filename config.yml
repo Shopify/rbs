@@ -3,6 +3,11 @@
 nodes:
   - name: RBS::AST::Annotation
     rust_name: AnnotationNode
+    comment: |
+      Represents an annotation on a declaration.
+
+          %a{deprecated}
+          ^^^^^^^^^^^^^^
     fields:
       - name: string
         c_type: rbs_string
@@ -10,16 +15,30 @@ nodes:
     rust_name: BoolNode
     expose_to_ruby: false
     expose_location: false
+    comment: |
+      Represents a boolean value used internally by the parser.
     fields:
       - name: value
         c_type: bool
   - name: RBS::AST::Comment
     rust_name: CommentNode
+    comment: |
+      Represents a comment that precedes a declaration.
+
+          # This is a comment
+          ^^^^^^^^^^^^^^^^^^^
     fields:
       - name: string
         c_type: rbs_string
   - name: RBS::AST::Declarations::Class
     rust_name: ClassNode
+    comment: |
+      Represents a class declaration.
+
+          class Foo < Bar
+            def method: () -> void
+          end
+          ^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -43,6 +62,11 @@ nodes:
       - optional: lt
   - name: RBS::AST::Declarations::Class::Super
     rust_name: ClassSuperNode
+    comment: |
+      Represents the superclass clause in a class declaration.
+
+          class Foo < Bar[String]
+                      ^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -53,6 +77,11 @@ nodes:
       - optional: args
   - name: RBS::AST::Declarations::ClassAlias
     rust_name: ClassAliasNode
+    comment: |
+      Represents a class alias declaration.
+
+          class Foo = Bar
+          ^^^^^^^^^^^^^^^
     fields:
       - name: new_name
         c_type: rbs_type_name
@@ -70,6 +99,11 @@ nodes:
       - required: old_name
   - name: RBS::AST::Declarations::Constant
     rust_name: ConstantNode
+    comment: |
+      Represents a constant declaration.
+
+          FOO: String
+          ^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -85,6 +119,11 @@ nodes:
       - required: colon
   - name: RBS::AST::Declarations::Global
     rust_name: GlobalNode
+    comment: |
+      Represents a global variable declaration.
+
+          $LOAD_PATH: Array[String]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -100,6 +139,13 @@ nodes:
       - required: colon
   - name: RBS::AST::Declarations::Interface
     rust_name: InterfaceNode
+    comment: |
+      Represents an interface declaration.
+
+          interface _Printable
+            def to_s: () -> String
+          end
+          ^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -119,6 +165,13 @@ nodes:
       - optional: type_params
   - name: RBS::AST::Declarations::Module
     rust_name: ModuleNode
+    comment: |
+      Represents a module declaration.
+
+          module Enumerable[T] : _Each[T]
+            def count: () -> Integer
+          end
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -137,11 +190,16 @@ nodes:
       - required: keyword
       - required: name
       - required: end
-      - optional: type_params        
+      - optional: type_params
       - optional: colon
       - optional: self_types
   - name: RBS::AST::Declarations::Module::Self
     rust_name: ModuleSelfNode
+    comment: |
+      Represents a self type constraint in a module declaration.
+
+          module Foo : _Each[String]
+                       ^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -152,6 +210,11 @@ nodes:
       - optional: args
   - name: RBS::AST::Declarations::ModuleAlias
     rust_name: ModuleAliasNode
+    comment: |
+      Represents a module alias declaration.
+
+          module Foo = Bar
+          ^^^^^^^^^^^^^^^^
     fields:
       - name: new_name
         c_type: rbs_type_name
@@ -169,6 +232,11 @@ nodes:
       - required: old_name
   - name: RBS::AST::Declarations::TypeAlias
     rust_name: TypeAliasNode
+    comment: |
+      Represents a type alias declaration.
+
+          type json = String | Integer | Array[json] | Hash[String, json]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -188,6 +256,11 @@ nodes:
       - optional: type_params
   - name: RBS::AST::Directives::Use
     rust_name: UseNode
+    comment: |
+      Represents a `use` directive for importing type names.
+
+          use Foo::Bar, Baz::*
+          ^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: clauses
         c_type: rbs_node_list
@@ -195,6 +268,11 @@ nodes:
       - required: keyword
   - name: RBS::AST::Directives::Use::SingleClause
     rust_name: UseSingleClauseNode
+    comment: |
+      Represents a single type name import in a `use` directive.
+
+          use Foo::Bar as Baz
+              ^^^^^^^^^^^^^^^
     fields:
       - name: type_name
         c_type: rbs_type_name
@@ -207,6 +285,11 @@ nodes:
       - optional: new_name
   - name: RBS::AST::Directives::Use::WildcardClause
     rust_name: UseWildcardClauseNode
+    comment: |
+      Represents a wildcard import in a `use` directive.
+
+          use Foo::*
+              ^^^^^^
     fields:
       - name: namespace
         c_type: rbs_namespace
@@ -216,6 +299,11 @@ nodes:
       - required: star
   - name: RBS::AST::Members::Alias
     rust_name: AliasNode
+    comment: |
+      Represents a method alias member in a class or module.
+
+          alias to_str to_s
+          ^^^^^^^^^^^^^^^^^
     fields:
       - name: new_name
         c_type: rbs_ast_symbol
@@ -236,6 +324,11 @@ nodes:
       - optional: old_kind
   - name: RBS::AST::Members::AttrAccessor
     rust_name: AttrAccessorNode
+    comment: |
+      Represents an `attr_accessor` declaration.
+
+          attr_accessor name: String
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -262,6 +355,11 @@ nodes:
       - optional: visibility
   - name: RBS::AST::Members::AttrReader
     rust_name: AttrReaderNode
+    comment: |
+      Represents an `attr_reader` declaration.
+
+          attr_reader name: String
+          ^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -288,6 +386,11 @@ nodes:
       - optional: visibility
   - name: RBS::AST::Members::AttrWriter
     rust_name: AttrWriterNode
+    comment: |
+      Represents an `attr_writer` declaration.
+
+          attr_writer name: String
+          ^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -314,6 +417,11 @@ nodes:
       - optional: visibility
   - name: RBS::AST::Members::ClassInstanceVariable
     rust_name: ClassInstanceVariableNode
+    comment: |
+      Represents a class instance variable declaration.
+
+          self.@name: String
+          ^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -328,6 +436,11 @@ nodes:
       - optional: kind
   - name: RBS::AST::Members::ClassVariable
     rust_name: ClassVariableNode
+    comment: |
+      Represents a class variable declaration.
+
+          @@count: Integer
+          ^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -342,6 +455,11 @@ nodes:
       - optional: kind
   - name: RBS::AST::Members::Extend
     rust_name: ExtendNode
+    comment: |
+      Represents an `extend` member in a class or module.
+
+          extend Comparable[String]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -358,6 +476,11 @@ nodes:
       - optional: args
   - name: RBS::AST::Members::Include
     rust_name: IncludeNode
+    comment: |
+      Represents an `include` member in a class or module.
+
+          include Enumerable[String]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -374,6 +497,11 @@ nodes:
       - optional: args
   - name: RBS::AST::Members::InstanceVariable
     rust_name: InstanceVariableNode
+    comment: |
+      Represents an instance variable declaration.
+
+          @name: String
+          ^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -388,6 +516,11 @@ nodes:
       - optional: kind
   - name: RBS::AST::Members::MethodDefinition
     rust_name: MethodDefinitionNode
+    comment: |
+      Represents a method definition member.
+
+          def to_s: () -> String
+          ^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -413,6 +546,12 @@ nodes:
   - name: RBS::AST::Members::MethodDefinition::Overload
     rust_name: MethodDefinitionOverloadNode
     expose_location: false
+    comment: |
+      Represents a single overload in a method definition.
+
+          def fetch: (String) -> String
+                     | (String, String) -> String
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: annotations
         c_type: rbs_node_list
@@ -420,6 +559,11 @@ nodes:
         c_type: rbs_node
   - name: RBS::AST::Members::Prepend
     rust_name: PrependNode
+    comment: |
+      Represents a `prepend` member in a class or module.
+
+          prepend Comparable[String]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -436,10 +580,25 @@ nodes:
       - optional: args
   - name: RBS::AST::Members::Private
     rust_name: PrivateNode
+    comment: |
+      Represents a `private` visibility modifier.
+
+          private
+          ^^^^^^^
   - name: RBS::AST::Members::Public
     rust_name: PublicNode
+    comment: |
+      Represents a `public` visibility modifier.
+
+          public
+          ^^^^^^
   - name: RBS::AST::TypeParam
     rust_name: TypeParamNode
+    comment: |
+      Represents a type parameter in a class, module, interface, type alias, or method type.
+
+          class Foo[out T < Comparable = String]
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_ast_symbol
@@ -467,6 +626,11 @@ nodes:
     rust_name: IntegerNode
     expose_to_ruby: false
     expose_location: false
+    comment: |
+      Represents an integer literal value, used in literal types.
+
+          1
+          ^
     fields:
       - name: string_representation
         c_type: rbs_string
@@ -474,11 +638,21 @@ nodes:
     rust_name: StringNode
     expose_to_ruby: false
     expose_location: false
+    comment: |
+      Represents a string literal value, used in literal types.
+
+          "hello"
+          ^^^^^^^
     fields:
       - name: string
         c_type: rbs_string
   - name: RBS::MethodType
     rust_name: MethodTypeNode
+    comment: |
+      Represents a method type signature.
+
+          [T] (String, Integer) { (T) -> void } -> Array[T]
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: type_params
         c_type: rbs_node_list
@@ -493,6 +667,11 @@ nodes:
   - name: RBS::Namespace
     rust_name: NamespaceNode
     expose_location: false
+    comment: |
+      Represents a namespace prefix used in type names.
+
+          Foo::Bar::Baz
+          ^^^^^^^^^^
     fields:
       - name: path
         c_type: rbs_node_list
@@ -502,6 +681,8 @@ nodes:
     rust_name: SignatureNode
     expose_to_ruby: false
     expose_location: false
+    comment: |
+      Represents the root node of an RBS file, containing all top-level directives and declarations.
     fields:
       - name: directives
         c_type: rbs_node_list
@@ -510,6 +691,11 @@ nodes:
   - name: RBS::TypeName
     rust_name: TypeNameNode
     expose_location: false
+    comment: |
+      Represents a type name consisting of a namespace and a simple name.
+
+          Foo::Bar::Baz
+          ^^^^^^^^^^^^^
     fields:
       - name: namespace
         c_type: rbs_namespace
@@ -518,6 +704,11 @@ nodes:
         c_type: rbs_ast_symbol
   - name: RBS::Types::Alias
     rust_name: AliasTypeNode
+    comment: |
+      Represents a reference to a type alias.
+
+          json
+          ^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -528,28 +719,79 @@ nodes:
       - optional: args
   - name: RBS::Types::Bases::Any
     rust_name: AnyTypeNode
+    comment: |
+      Represents the `untyped` type. When `todo` is `true`, it represents `__todo__` which is
+      semantically equivalent to `untyped` but signals that the type should be filled in later.
+
+          untyped
+          ^^^^^^^
     fields:
       - name: todo
         c_type: bool
   - name: RBS::Types::Bases::Bool
     rust_name: BoolTypeNode
+    comment: |
+      Represents the `bool` base type.
+
+          bool
+          ^^^^
   - name: RBS::Types::Bases::Bottom
     rust_name: BottomTypeNode
+    comment: |
+      Represents the `bot` (bottom) base type.
+
+          bot
+          ^^^
   - name: RBS::Types::Bases::Class
     rust_name: ClassTypeNode
+    comment: |
+      Represents the `class` base type, referring to the singleton type of the enclosing class.
+
+          class
+          ^^^^^
   - name: RBS::Types::Bases::Instance
     rust_name: InstanceTypeNode
+    comment: |
+      Represents the `instance` base type, referring to an instance of the enclosing class.
+
+          instance
+          ^^^^^^^^
   - name: RBS::Types::Bases::Nil
     rust_name: NilTypeNode
+    comment: |
+      Represents the `nil` base type.
+
+          nil
+          ^^^
   - name: RBS::Types::Bases::Self
     rust_name: SelfTypeNode
+    comment: |
+      Represents the `self` base type, referring to the receiver type.
+
+          self
+          ^^^^
   - name: RBS::Types::Bases::Top
     rust_name: TopTypeNode
+    comment: |
+      Represents the `top` base type.
+
+          top
+          ^^^
   - name: RBS::Types::Bases::Void
     rust_name: VoidTypeNode
+    comment: |
+      Represents the `void` base type, used as a return type to indicate no meaningful value.
+
+          void
+          ^^^^
   - name: RBS::Types::Block
     rust_name: BlockTypeNode
     expose_location: true
+    comment: |
+      Represents a block type in a method signature.
+
+          () { (String) -> void } -> void
+             ^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: type
         c_type: rbs_node
@@ -560,6 +802,11 @@ nodes:
         optional: true  # NULL when no self binding (e.g., `{ () -> void }` vs `{ () [self: T] -> void }`)
   - name: RBS::Types::ClassInstance
     rust_name: ClassInstanceTypeNode
+    comment: |
+      Represents a class instance type.
+
+          Array[String]
+          ^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -570,6 +817,11 @@ nodes:
       - optional: args
   - name: RBS::Types::ClassSingleton
     rust_name: ClassSingletonTypeNode
+    comment: |
+      Represents a class singleton type.
+
+          singleton(Array)
+          ^^^^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -581,6 +833,11 @@ nodes:
   - name: RBS::Types::Function
     rust_name: FunctionTypeNode
     expose_location: false
+    comment: |
+      Represents a function type (the parameter list and return type of a method type).
+
+          (String, ?Integer, *Symbol, name: String, ?age: Integer, **untyped) -> void
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: required_positionals
         c_type: rbs_node_list
@@ -602,6 +859,11 @@ nodes:
         c_type: rbs_node
   - name: RBS::Types::Function::Param
     rust_name: FunctionParamNode
+    comment: |
+      Represents a parameter in a function type.
+
+          (String name) -> void
+           ^^^^^^^^^^^
     fields:
       - name: type
         c_type: rbs_node
@@ -612,6 +874,11 @@ nodes:
       - optional: name
   - name: RBS::Types::Interface
     rust_name: InterfaceTypeNode
+    comment: |
+      Represents an interface type.
+
+          _Each[String]
+          ^^^^^^^^^^^^^
     fields:
       - name: name
         c_type: rbs_type_name
@@ -622,21 +889,50 @@ nodes:
       - optional: args
   - name: RBS::Types::Intersection
     rust_name: IntersectionTypeNode
+    comment: |
+      Represents an intersection type.
+
+          String & _Printable
+          ^^^^^^^^^^^^^^^^^^^
     fields:
       - name: types
         c_type: rbs_node_list
   - name: RBS::Types::Literal
     rust_name: LiteralTypeNode
+    comment: |
+      Represents a literal type (a specific value as a type).
+
+          1
+          ^
+
+          "hello"
+          ^^^^^^^
+
+          :symbol
+          ^^^^^^^
+
+          true
+          ^^^^
     fields:
       - name: literal
         c_type: rbs_node
   - name: RBS::Types::Optional
     rust_name: OptionalTypeNode
+    comment: |
+      Represents an optional type (shorthand for a union with `nil`).
+
+          String?
+          ^^^^^^^
     fields:
       - name: type
         c_type: rbs_node
   - name: RBS::Types::Proc
     rust_name: ProcTypeNode
+    comment: |
+      Represents a proc type.
+
+          ^(String) -> void
+          ^^^^^^^^^^^^^^^^^
     fields:
       - name: type
         c_type: rbs_node
@@ -648,6 +944,11 @@ nodes:
         optional: true  # NULL when no self binding (e.g., `^() -> void` vs `^() [self: T] -> void`)
   - name: RBS::Types::Record
     rust_name: RecordTypeNode
+    comment: |
+      Represents a record type (a hash with fixed keys and value types).
+
+          { name: String, age: Integer }
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: all_fields
         c_type: rbs_hash
@@ -655,6 +956,8 @@ nodes:
     rust_name: RecordFieldTypeNode
     expose_to_ruby: false
     expose_location: false
+    comment: |
+      Represents a field type in a record type, containing the type and whether the field is required.
     fields:
       - name: type
         c_type: rbs_node
@@ -662,27 +965,53 @@ nodes:
         c_type: bool
   - name: RBS::Types::Tuple
     rust_name: TupleTypeNode
+    comment: |
+      Represents a tuple type (a fixed-length array with typed elements).
+
+          [String, Integer]
+          ^^^^^^^^^^^^^^^^^
     fields:
       - name: types
         c_type: rbs_node_list
   - name: RBS::Types::Union
     rust_name: UnionTypeNode
+    comment: |
+      Represents a union type.
+
+          String | Integer
+          ^^^^^^^^^^^^^^^^
     fields:
       - name: types
         c_type: rbs_node_list
   - name: RBS::Types::UntypedFunction
     rust_name: UntypedFunctionTypeNode
     expose_location: false
+    comment: |
+      Represents an untyped function, used when only the return type is specified
+      and the parameters are left untyped.
+
+          def method: () -> void
+                      ^^^^^^^^^^
     fields:
       - name: return_type
         c_type: rbs_node
   - name: RBS::Types::Variable
     rust_name: VariableTypeNode
+    comment: |
+      Represents a type variable reference.
+
+          T
+          ^
     fields:
       - name: name
         c_type: rbs_ast_symbol
   - name: RBS::AST::Ruby::Annotations::NodeTypeAssertion
     rust_name: NodeTypeAssertionNode
+    comment: |
+      Represents an inline type assertion annotation in Ruby code.
+
+          expr #: String
+               ^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -690,6 +1019,11 @@ nodes:
         c_type: rbs_node
   - name: RBS::AST::Ruby::Annotations::ColonMethodTypeAnnotation
     rust_name: ColonMethodTypeAnnotationNode
+    comment: |
+      Represents an inline method type annotation using the `:` prefix on a `def` line.
+
+          def foo(x) #: (String) -> void
+                     ^^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -699,6 +1033,12 @@ nodes:
         c_type: rbs_node
   - name: RBS::AST::Ruby::Annotations::MethodTypesAnnotation
     rust_name: MethodTypesAnnotationNode
+    comment: |
+      Represents an inline method type annotation using the `@rbs` prefix, supporting multiple
+      overloads separated by `|`.
+
+          #: @rbs (String) -> void | (Integer) -> void
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -711,6 +1051,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::SkipAnnotation
     rust_name: SkipAnnotationNode
+    comment: |
+      Represents an inline annotation to skip type checking for a definition.
+
+          #: @rbs skip
+             ^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -721,6 +1066,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::ReturnTypeAnnotation
     rust_name: ReturnTypeAnnotationNode
+    comment: |
+      Represents an inline return type annotation.
+
+          #: @rbs return: String
+             ^^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -735,6 +1085,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::TypeApplicationAnnotation
     rust_name: TypeApplicationAnnotationNode
+    comment: |
+      Represents an inline type application annotation for generic method calls.
+
+          foo #[String, Integer]
+              ^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -746,6 +1101,11 @@ nodes:
         c_type: rbs_location_range_list
   - name: RBS::AST::Ruby::Annotations::InstanceVariableAnnotation
     rust_name: InstanceVariableAnnotationNode
+    comment: |
+      Represents an inline instance variable type annotation.
+
+          #: @rbs @name: String
+             ^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -762,6 +1122,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::ClassAliasAnnotation
     rust_name: ClassAliasAnnotationNode
+    comment: |
+      Represents an inline class alias annotation.
+
+          Foo = Bar #: class-alias Foo::Bar
+                    ^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -774,6 +1139,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::ModuleAliasAnnotation
     rust_name: ModuleAliasAnnotationNode
+    comment: |
+      Represents an inline module alias annotation.
+
+          Foo = Bar #: module-alias Kernel::Helper
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -786,6 +1156,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::ModuleSelfAnnotation
     rust_name: ModuleSelfAnnotationNode
+    comment: |
+      Represents an inline module self type annotation.
+
+          #: @rbs module-self: _Each[String]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -810,6 +1185,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::ParamTypeAnnotation
     rust_name: ParamTypeAnnotationNode
+    comment: |
+      Represents an inline parameter type annotation.
+
+          #: @rbs x: String
+             ^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -824,6 +1204,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::SplatParamTypeAnnotation
     rust_name: SplatParamTypeAnnotationNode
+    comment: |
+      Represents an inline splat parameter type annotation.
+
+          #: @rbs *args: String
+             ^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -841,6 +1226,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::DoubleSplatParamTypeAnnotation
     rust_name: DoubleSplatParamTypeAnnotationNode
+    comment: |
+      Represents an inline double splat parameter type annotation.
+
+          #: @rbs **opts: bool
+             ^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -858,6 +1248,11 @@ nodes:
         optional: true
   - name: RBS::AST::Ruby::Annotations::BlockParamTypeAnnotation
     rust_name: BlockParamTypeAnnotationNode
+    comment: |
+      Represents an inline block parameter type annotation.
+
+          #: @rbs &block: ^(String) -> void
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     fields:
       - name: prefix_location
         c_type: rbs_location_range
@@ -879,7 +1274,6 @@ nodes:
       - name: comment_location
         c_type: rbs_location_range
         optional: true
-
 enums:
   attribute_visibility:
     optional: true
