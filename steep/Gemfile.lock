@@ -39,7 +39,7 @@ GEM
     parser (3.3.12.0)
       ast (~> 2.4.1)
       racc
-    power_assert (3.0.1)
+    power_assert (3.1.0)
     prism (1.9.0)
     racc (1.8.1)
     rainbow (3.1.1)
@@ -49,7 +49,7 @@ GEM
     rbs (3.10.4)
       logger
       tsort
-    ruby-lsp (0.26.10)
+    ruby-lsp (0.26.11)
       language_server-protocol (~> 3.17.0)
       prism (>= 1.2, < 2.0)
       rbs (>= 3, < 5)
